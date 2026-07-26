@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://overworld/player/playerController.gd" id="1_player"]
-[ext_resource type="PackedScene" path="res://overworld/player/art/model.glb" id="2_model"]
+[ext_resource type="PackedScene" path="res://overworld/player/art/models/model.glb" id="2_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.32
