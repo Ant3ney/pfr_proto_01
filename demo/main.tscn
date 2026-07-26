@@ -1,0 +1,110 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://overworld/player/playerCamera.gd" id="2_camera"]
+
+[sub_resource type="Shader" id="Shader_checker"]
+code = "shader_type spatial;
+
+uniform vec4 color_a : source_color = vec4(0.18, 0.48, 0.29, 1.0);
+uniform vec4 color_b : source_color = vec4(0.25, 0.58, 0.36, 1.0);
+uniform float squares = 16.0;
+
+void fragment() {
+	vec2 tile = floor(UV * squares);
+	float checker = mod(tile.x + tile.y, 2.0);
+	ALBEDO = mix(color_a.rgb, color_b.rgb, checker);
+	ROUGHNESS = 0.9;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_checker"]
+render_priority = 0
+shader = SubResource("Shader_checker")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("ShaderMaterial_checker")
+size = Vector2(24, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape_ground"]
+size = Vector3(24, 0.2, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape_horizontal_limit"]
+size = Vector3(24.6, 2, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape_vertical_limit"]
+size = Vector3(0.5, 2, 24.6)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.25, 0.56, 0.78, 1)
+sky_horizon_color = Color(0.78, 0.9, 0.93, 1)
+ground_bottom_color = Color(0.2, 0.32, 0.31, 1)
+ground_horizon_color = Color(0.75, 0.86, 0.85, 1)
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.84, 0.9, 1)
+ambient_light_energy = 0.42
+reflected_light_source = 1
+tonemap_mode = 0
+
+[node name="LocomotionPrototype" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, -28, 0)
+light_color = Color(1, 0.94, 0.82, 1)
+light_energy = 0.9
+shadow_enabled = true
+directional_shadow_max_distance = 35.0
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="GroundBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundBody"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("BoxShape_ground")
+
+[node name="NorthLimit" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, -12.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthLimit"]
+shape = SubResource("BoxShape_horizontal_limit")
+
+[node name="SouthLimit" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, 12.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthLimit"]
+shape = SubResource("BoxShape_horizontal_limit")
+
+[node name="WestLimit" type="StaticBody3D" parent="."]
+position = Vector3(-12.25, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestLimit"]
+shape = SubResource("BoxShape_vertical_limit")
+
+[node name="EastLimit" type="StaticBody3D" parent="."]
+position = Vector3(12.25, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EastLimit"]
+shape = SubResource("BoxShape_vertical_limit")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 10.5, 8.5)
+projection = 1
+size = 11.5
+near = 0.2
+far = 60.0
+current = true
+script = ExtResource("2_camera")
+target_path = NodePath("../Player")
