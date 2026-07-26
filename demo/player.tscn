@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://overworld/player/playerController.gd" id="1_player"]
-[ext_resource type="PackedScene" path="res://art/characters/zach/models/model.glb" id="2_model"]
+[ext_resource type="Resource" path="res://art/characters/zach/zach.tres" id="2_zach"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.32
@@ -9,15 +9,10 @@ height = 1.6
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_player")
-animation_player_path = NodePath("Visual/Model/AnimationPlayer")
-idle_animation = &"tr0021_00_00001_defaultwait01"
-run_animation = &"tr0021_00_00071_run01_000"
+character_art_asset_pack = ExtResource("2_zach")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.8, 0)
 shape = SubResource("CapsuleShape_player")
 
 [node name="Visual" type="Node3D" parent="."]
-
-[node name="Model" parent="Visual" instance=ExtResource("2_model")]
-rotation_degrees = Vector3(0, 180, 0)
