@@ -9,6 +9,9 @@ height = 1.6
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_player")
+animation_player_path = NodePath("Visual/Model/AnimationPlayer")
+idle_animation = &"tr0021_00_00001_defaultwait01"
+run_animation = &"tr0021_00_00071_run01_000"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.8, 0)
