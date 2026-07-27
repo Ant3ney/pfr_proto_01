@@ -5,6 +5,7 @@ extends Resource
 
 @export_group("Movement")
 @export_range(1.0, 10.0) var move_speed := 4.0
+@export_range(0.001, 0.5, 0.001, "or_greater") var arrival_distance := 0.025
 
 @export_group("Turning")
 ## Radius of normal moving turns, measured in meters. Lower values turn tighter.
@@ -26,16 +27,25 @@ func _init() -> void:
 func process_movement(
 	character: CharacterBody3D,
 	visual: Node3D,
-	input_vector: Vector2,
+	move_target: Vector3,
 	delta: float
 ) -> void:
-	var move_direction := _screen_input_to_world(character, input_vector)
-	var input_strength := input_vector.length()
+	var target_offset := move_target - character.global_position
+	target_offset.y = 0.0
+	var target_distance := target_offset.length()
 
 	character.velocity = Vector3.ZERO
 
-	if not move_direction.is_zero_approx():
-		_steer_toward(character, visual, move_direction, input_strength, delta)
+	if target_distance > arrival_distance:
+		var move_direction := target_offset / target_distance
+		var movement_strength := minf(target_distance, 1.0)
+		_steer_toward(
+			character,
+			visual,
+			move_direction,
+			movement_strength,
+			delta
+		)
 	else:
 		is_turning_in_place = false
 
@@ -87,24 +97,3 @@ func _steer_toward(
 	facing_direction = facing_direction.normalized()
 	character.velocity.x = facing_direction.x * current_speed
 	character.velocity.z = facing_direction.z * current_speed
-
-
-func _screen_input_to_world(
-	character: CharacterBody3D,
-	input_vector: Vector2
-) -> Vector3:
-	if input_vector.is_zero_approx():
-		return Vector3.ZERO
-
-	var camera := character.get_viewport().get_camera_3d()
-	if not camera:
-		return Vector3(input_vector.x, 0.0, input_vector.y).normalized()
-
-	var camera_right := camera.global_basis.x
-	var camera_forward := -camera.global_basis.z
-	camera_right.y = 0.0
-	camera_forward.y = 0.0
-	camera_right = camera_right.normalized()
-	camera_forward = camera_forward.normalized()
-
-	return (camera_right * input_vector.x - camera_forward * input_vector.y).normalized()

@@ -1,11 +1,14 @@
 class_name PFRCharacter
 extends CharacterBody3D
 
-## Reusable character locomotion. Child classes provide movement intent by
-## overriding _get_movement_input().
+## Reusable character locomotion. The active controller supplies world-space
+## move targets to the shared movement system.
 
 @export_group("Movement")
 @export var character_movement: CharacterMovement = CharacterMovement.new()
+
+@export_group("Controller")
+@export var controller: NPCController = NPCController.new()
 
 @export_group("Character Art")
 @export var character_art_asset_pack: PFRCharacterArtAssetPack
@@ -25,6 +28,8 @@ var _current_animation: StringName
 func _ready() -> void:
 	if not character_movement:
 		character_movement = CharacterMovement.new()
+	if not controller:
+		controller = NPCController.new()
 
 	if not _load_character_art_asset_pack():
 		set_physics_process(false)
@@ -41,15 +46,10 @@ func _physics_process(delta: float) -> void:
 	character_movement.process_movement(
 		self,
 		visual,
-		_get_movement_input(),
+		controller.get_move_target(self),
 		delta
 	)
 	_update_animation()
-
-
-## Override this in a child class to drive the character.
-func _get_movement_input() -> Vector2:
-	return Vector2.ZERO
 
 
 func _load_character_art_asset_pack() -> bool:
