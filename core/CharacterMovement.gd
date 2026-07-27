@@ -9,7 +9,7 @@ extends Resource
 
 @export_group("Turning")
 ## Radius of normal moving turns, measured in meters. Lower values turn tighter.
-@export_range(0.1, 5.0, 0.05, "or_greater") var turn_radius := 0.75
+@export_range(0.1, 5.0, 0.05, "or_greater") var turn_radius := 0.15
 ## Maximum rotation speed while traveling toward the input direction.
 @export_range(1.0, 720.0, 1.0, "degrees") var travel_to_target_angle_speed := 460.0
 ## Rotation speed used while the character is stopped and turning in place.

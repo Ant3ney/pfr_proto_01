@@ -166,8 +166,6 @@ shape = SubResource("CapsuleShape_npc")
 
 [node name="Camera" type="Camera3D" parent="."]
 position = Vector3(0, 10.5, 8.5)
-projection = 1
-size = 11.5
 near = 0.2
 far = 60.0
 current = true
