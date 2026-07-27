@@ -1,4 +1,4 @@
-class_name PlayerController
+class_name PlayerCharacter
 extends PFRCharacter
 
 ## The player is a PFRCharacter that supplies keyboard and gamepad input.

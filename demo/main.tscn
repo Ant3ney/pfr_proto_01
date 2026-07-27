@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
-[ext_resource type="Script" path="res://overworld/player/playerCamera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://core/PlayerCamera.gd" id="2_camera"]
 
 [sub_resource type="Shader" id="Shader_checker"]
 code = "shader_type spatial;

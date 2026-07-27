@@ -1,3 +1,4 @@
+class_name PlayerCamera
 extends Camera3D
 
 @export_node_path("Node3D") var target_path: NodePath
