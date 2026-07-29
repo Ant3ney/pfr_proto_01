@@ -6,9 +6,9 @@ extends Camera3D
 
 @export_group("Camera")
 @export var offset := Vector3(0.0, 10.5, 8.5)
-@export_range(1.0, 40.0, 0.1, "suffix:m") var camera_distance := 7.5
+@export_range(1.0, 40.0, 0.1, "suffix:m") var camera_distance := 4.5
 @export_range(-89.0, 89.0, 1.0, "degrees") var camera_pitch_degrees := 12
-@export_range(10.0, 120.0, 1.0, "degrees") var camera_fov_degrees := 75.0:
+@export_range(10.0, 120.0, 1.0, "degrees") var camera_fov_degrees := 55.0:
 	set(value):
 		camera_fov_degrees = value
 		fov = value

@@ -1,7 +1,13 @@
 class_name PlayerController
 extends NPCController
 
-## Creates camera-relative move targets from keyboard and gamepad input.
+## Creates camera-relative move targets from keyboard, gamepad, and touch input.
+
+static var _floating_joystick_input := Vector2.ZERO
+
+
+static func set_floating_joystick_input(input_vector: Vector2) -> void:
+	_floating_joystick_input = input_vector.limit_length(1.0)
 
 
 func get_move_target(character: CharacterBody3D) -> Vector3:
@@ -28,7 +34,11 @@ func _get_movement_input() -> Vector2:
 	if gamepad.length() < 0.18:
 		gamepad = Vector2.ZERO
 
-	var strongest_input := gamepad if gamepad.length() > keyboard.length() else keyboard
+	var strongest_input := keyboard
+	if gamepad.length() > strongest_input.length():
+		strongest_input = gamepad
+	if _floating_joystick_input.length() > strongest_input.length():
+		strongest_input = _floating_joystick_input
 	return strongest_input.limit_length(1.0)
 
 

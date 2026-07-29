@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Godot 4.7 shell adapted for plain-HTTP LAN development. -->
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -9,13 +10,17 @@ html, body, #canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
+	touch-action: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 body {
 	color: white;
 	background-color: black;
 	overflow: hidden;
-	touch-action: none;
+	overscroll-behavior: none;
 }
 
 #canvas {

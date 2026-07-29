@@ -1,10 +1,11 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://core/PlayerCamera.gd" id="2_camera"]
 [ext_resource type="Script" path="res://core/PFRCharacter.gd" id="3_character"]
 [ext_resource type="Resource" path="res://art/characters/zach/zach.tres" id="4_zach"]
 [ext_resource type="Script" path="res://core/NPCController.gd" id="5_npc_controller"]
+[ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="6_game_ui"]
 
 [sub_resource type="Shader" id="Shader_checker"]
 code = "shader_type spatial;
@@ -171,3 +172,5 @@ far = 60.0
 current = true
 script = ExtResource("2_camera")
 target_path = NodePath("../Player")
+
+[node name="GameUI" parent="." instance=ExtResource("6_game_ui")]
