@@ -1,0 +1,60 @@
+[gd_resource type="MeshLibrary" format=3 uid="uid://d1128263jisd6"]
+
+[ext_resource type="ArrayMesh" uid="uid://crfusfcqk12jd" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_a.tres" id="1_ng7gh"]
+[ext_resource type="ArrayMesh" uid="uid://yuc7noxjncj7" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_straight_a.tres" id="2_gyu28"]
+[ext_resource type="ArrayMesh" uid="uid://v0445l2yj6sm" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_l_intersection_a.tres" id="3_w17w8"]
+[ext_resource type="ArrayMesh" uid="uid://dpkmtw3h6pxa8" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_t_intersection_a.tres" id="4_os2rw"]
+[ext_resource type="ArrayMesh" uid="uid://cmtcgk6id0ify" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_junction_a.tres" id="5_ojpjy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3xiwh"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ntgxv"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d5ms6"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_47s7r"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65i5l"]
+size = Vector3(2, 0.25, 2)
+
+[resource]
+resource_name = "New Bouffalant City Ground Tiles"
+item/0/name = "City Cobble - Flat"
+item/0/mesh = ExtResource("1_ng7gh")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = [SubResource("BoxShape3D_3xiwh"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = "City Cobble - Straight"
+item/1/mesh = ExtResource("2_gyu28")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = [SubResource("BoxShape3D_ntgxv"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = "City Cobble - L Intersection"
+item/2/mesh = ExtResource("3_w17w8")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/mesh_cast_shadow = 1
+item/2/shapes = [SubResource("BoxShape3D_d5ms6"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = "City Cobble - T Intersection"
+item/3/mesh = ExtResource("4_os2rw")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/mesh_cast_shadow = 1
+item/3/shapes = [SubResource("BoxShape3D_47s7r"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = "City Cobble - Junction"
+item/4/mesh = ExtResource("5_ojpjy")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/mesh_cast_shadow = 1
+item/4/shapes = [SubResource("BoxShape3D_65i5l"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1

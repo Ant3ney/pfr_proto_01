@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dc8anhj0g400v"]
+
+[ext_resource type="Texture2D" uid="uid://b04rx6tvjrbll" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_albedo.jpg" id="1_nyn3d"]
+[ext_resource type="Texture2D" uid="uid://daac050312ybd" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_roughness.png" id="2_xgyft"]
+[ext_resource type="Texture2D" uid="uid://dxvxtv5k3pcp7" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_normal.jpg" id="3_kqq0i"]
+
+[resource]
+resource_name = "Mossy Cobblestone Ground"
+cull_mode = 2
+albedo_color = Color(0.791185, 0.688609, 0.588157, 1)
+albedo_texture = ExtResource("1_nyn3d")
+metallic_texture = ExtResource("2_xgyft")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_xgyft")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_kqq0i")
+uv1_scale = Vector3(2, 2, 1)
+uv1_offset = Vector3(0, -1, 0)
+metadata/_gltf_primary_texture_coord = 1

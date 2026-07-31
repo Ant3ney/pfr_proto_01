@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://7tfbpce3grux"]
+
+[ext_resource type="MeshLibrary" uid="uid://d1128263jisd6" path="res://art/environments/new_bouffalant_city/ground_tile/ground_tile_mesh_library.tres" id="1_ground_tiles"]
+
+[node name="ModularGroundGrid" type="GridMap" unique_id=1781286088]
+editor_description = "New Bouffalant City modular ground workspace. Five 2 x 2 meter tile variants are available in the MeshLibrary palette."
+mesh_library = ExtResource("1_ground_tiles")
+cell_size = Vector3(2, 0.25, 2)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(0, 0, 0, 1, 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1, 65535, 655361, 3, 65534, 2, 1, 65534, 1441795, 0, 65534, 4, 0, 65535, 1441794, 65535, 65535, 1048578, 65535, 65534, 655362, 65535, 65533, 2, 65534, 65533, 1441793, 65533, 65533, 1441793, 65532, 65533, 1441793, 65531, 65533, 1441793, 1, 65531, 1, 1, 65532, 1, 1, 65533, 1, 0, 65531, 1, 0, 65532, 1, 0, 65533, 1)
+}

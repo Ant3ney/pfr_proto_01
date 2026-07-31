@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bxna8jkvuqe1"]
+
+[ext_resource type="Texture2D" uid="uid://b04rx6tvjrbll" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_albedo.jpg" id="1_r4jsx"]
+[ext_resource type="Texture2D" uid="uid://daac050312ybd" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_roughness.png" id="2_nrubh"]
+[ext_resource type="Texture2D" uid="uid://dxvxtv5k3pcp7" path="res://art/environments/new_bouffalant_city/ground_tile/textures/mossy_cobblestone_normal.jpg" id="3_gh7o3"]
+
+[resource]
+resource_name = "Mossy Cobblestone Rails"
+cull_mode = 2
+albedo_texture = ExtResource("1_r4jsx")
+metallic_texture = ExtResource("2_nrubh")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_nrubh")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_gh7o3")
+uv1_scale = Vector3(4, 0.45, 1)
+uv1_offset = Vector3(-1.65, 1, 0)
+metadata/_gltf_primary_texture_coord = 0
