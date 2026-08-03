@@ -71,18 +71,21 @@ func _load_character_art_asset_pack() -> bool:
 		visual.name = "Visual"
 		add_child(visual)
 
-	var art_instance := character_art_asset_pack.character_scene.instantiate()
-	if not art_instance is Node3D:
-		push_error("%s's character art scene must have a Node3D root." % name)
-		art_instance.free()
-		return false
+	character_art = visual.get_node_or_null(^"CharacterArt") as Node3D
+	if not character_art:
+		var art_instance := character_art_asset_pack.character_scene.instantiate()
+		if not art_instance is Node3D:
+			push_error("%s's character art scene must have a Node3D root." % name)
+			art_instance.free()
+			return false
 
-	character_art = art_instance as Node3D
+		character_art = art_instance as Node3D
+		visual.add_child(character_art)
+
 	character_art.name = "CharacterArt"
 	character_art.rotation_degrees = (
 		character_art_asset_pack.character_scene_rotation_degrees
 	)
-	visual.add_child(character_art)
 
 	animation_player = character_art.get_node_or_null(
 		character_art_asset_pack.animation_player_path

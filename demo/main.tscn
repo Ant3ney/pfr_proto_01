@@ -1,11 +1,26 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene format=3 uid="uid://qw7g3ypkn2pu"]
 
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
-[ext_resource type="Script" path="res://core/PlayerCamera.gd" id="2_camera"]
-[ext_resource type="Script" path="res://core/PFRCharacter.gd" id="3_character"]
-[ext_resource type="Resource" path="res://art/characters/zach/zach.tres" id="4_zach"]
-[ext_resource type="Script" path="res://core/NPCController.gd" id="5_npc_controller"]
+[ext_resource type="Script" uid="uid://blrikxuvft36v" path="res://core/PlayerCamera.gd" id="2_camera"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerKyle.tscn" id="3_trainer_kyle"]
 [ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="6_game_ui"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.25, 0.56, 0.78, 1)
+sky_horizon_color = Color(0.78, 0.9, 0.93, 1)
+ground_bottom_color = Color(0.2, 0.32, 0.31, 1)
+ground_horizon_color = Color(0.75, 0.86, 0.85, 1)
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.84, 0.9, 1)
+ambient_light_energy = 0.42
+reflected_light_source = 1
 
 [sub_resource type="Shader" id="Shader_checker"]
 code = "shader_type spatial;
@@ -24,6 +39,9 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_checker"]
 render_priority = 0
 shader = SubResource("Shader_checker")
+shader_parameter/color_a = Color(0.18, 0.48, 0.29, 1)
+shader_parameter/color_b = Color(0.25, 0.58, 0.36, 1)
+shader_parameter/squares = 16.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 material = SubResource("ShaderMaterial_checker")
@@ -64,113 +82,78 @@ top_radius = 0.4
 bottom_radius = 0.4
 height = 0.08
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape_npc"]
-radius = 0.32
-height = 1.6
+[node name="LocomotionPrototype" type="Node3D" unique_id=459046969]
 
-[sub_resource type="Resource" id="Resource_npc_controller"]
-script = ExtResource("5_npc_controller")
-map_coordinates = Vector3(8, 0, -6)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
-sky_top_color = Color(0.25, 0.56, 0.78, 1)
-sky_horizon_color = Color(0.78, 0.9, 0.93, 1)
-ground_bottom_color = Color(0.2, 0.32, 0.31, 1)
-ground_horizon_color = Color(0.75, 0.86, 0.85, 1)
-
-[sub_resource type="Sky" id="Sky_main"]
-sky_material = SubResource("ProceduralSkyMaterial_main")
-
-[sub_resource type="Environment" id="Environment_main"]
-background_mode = 2
-sky = SubResource("Sky_main")
-ambient_light_source = 2
-ambient_light_color = Color(0.78, 0.84, 0.9, 1)
-ambient_light_energy = 0.42
-reflected_light_source = 1
-tonemap_mode = 0
-
-[node name="LocomotionPrototype" type="Node3D"]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=799556587]
 environment = SubResource("Environment_main")
 
-[node name="Sun" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-52, -28, 0)
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1135824370]
+transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
 light_color = Color(1, 0.94, 0.82, 1)
 light_energy = 0.9
 shadow_enabled = true
 directional_shadow_max_distance = 35.0
 
-[node name="Ground" type="MeshInstance3D" parent="."]
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=996973598]
 mesh = SubResource("PlaneMesh_ground")
 
-[node name="GroundBody" type="StaticBody3D" parent="."]
+[node name="GroundBody" type="StaticBody3D" parent="." unique_id=1905004775]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundBody"]
-position = Vector3(0, -0.1, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundBody" unique_id=754648267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 shape = SubResource("BoxShape_ground")
 
-[node name="NorthLimit" type="StaticBody3D" parent="."]
-position = Vector3(0, 1, -12.25)
+[node name="NorthLimit" type="StaticBody3D" parent="." unique_id=622761272]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -12.25)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthLimit"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthLimit" unique_id=1097257536]
 shape = SubResource("BoxShape_horizontal_limit")
 
-[node name="SouthLimit" type="StaticBody3D" parent="."]
-position = Vector3(0, 1, 12.25)
+[node name="SouthLimit" type="StaticBody3D" parent="." unique_id=773073135]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 12.25)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthLimit"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthLimit" unique_id=896111236]
 shape = SubResource("BoxShape_horizontal_limit")
 
-[node name="WestLimit" type="StaticBody3D" parent="."]
-position = Vector3(-12.25, 1, 0)
+[node name="WestLimit" type="StaticBody3D" parent="." unique_id=1578308672]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.25, 1, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WestLimit"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestLimit" unique_id=1904194319]
 shape = SubResource("BoxShape_vertical_limit")
 
-[node name="EastLimit" type="StaticBody3D" parent="."]
-position = Vector3(12.25, 1, 0)
+[node name="EastLimit" type="StaticBody3D" parent="." unique_id=472277962]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, 1, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="EastLimit"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EastLimit" unique_id=1589577146]
 shape = SubResource("BoxShape_vertical_limit")
 
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1757693872]
 navigation_mesh = SubResource("NavigationMesh_main")
 
-[node name="NavigationWall" type="StaticBody3D" parent="."]
-position = Vector3(0, 1, -6)
+[node name="NavigationWall" type="StaticBody3D" parent="." unique_id=1148015545]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -6)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationWall"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationWall" unique_id=101759597]
 mesh = SubResource("BoxMesh_navigation_wall")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationWall"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationWall" unique_id=876708750]
 shape = SubResource("BoxShape_navigation_wall")
 
-[node name="NPCDestination" type="MeshInstance3D" parent="."]
-position = Vector3(8, 0.04, -6)
+[node name="NPCDestination" type="MeshInstance3D" parent="." unique_id=2058174504]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.04, -6)
 mesh = SubResource("CylinderMesh_destination")
 
-[node name="NPC" type="CharacterBody3D" parent="."]
-position = Vector3(-8, 0, -6)
-script = ExtResource("3_character")
-controller = SubResource("Resource_npc_controller")
-character_art_asset_pack = ExtResource("4_zach")
+[node name="Player" parent="." unique_id=1402740587 instance=ExtResource("1_player")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NPC"]
-position = Vector3(0, 0.8, 0)
-shape = SubResource("CapsuleShape_npc")
-
-[node name="Visual" type="Node3D" parent="NPC"]
-
-[node name="Player" parent="." instance=ExtResource("1_player")]
-
-[node name="Camera" type="Camera3D" parent="."]
-position = Vector3(0, 10.5, 8.5)
+[node name="Camera" type="Camera3D" parent="." unique_id=1440839287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.5, 8.5)
+current = true
 near = 0.2
 far = 60.0
-current = true
 script = ExtResource("2_camera")
 target_path = NodePath("../Player")
 
-[node name="GameUI" parent="." instance=ExtResource("6_game_ui")]
+[node name="GameUI" parent="." unique_id=581396812 instance=ExtResource("6_game_ui")]
+
+[node name="TrainerKyle" parent="." unique_id=45351473 instance=ExtResource("3_trainer_kyle")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -5, 0, -2)

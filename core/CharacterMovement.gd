@@ -59,7 +59,20 @@ func _steer_toward(
 	input_strength: float,
 	delta: float
 ) -> void:
-	var target_angle := atan2(-target_direction.x, -target_direction.z)
+	var local_target_direction := target_direction
+	var visual_parent := visual.get_parent_node_3d()
+	if visual_parent:
+		local_target_direction = (
+			visual_parent.global_basis.orthonormalized().inverse()
+			* target_direction
+		)
+	local_target_direction.y = 0.0
+	local_target_direction = local_target_direction.normalized()
+
+	var target_angle := atan2(
+		-local_target_direction.x,
+		-local_target_direction.z
+	)
 	var angle_to_target := absf(
 		wrapf(target_angle - visual.rotation.y, -PI, PI)
 	)

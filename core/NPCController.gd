@@ -52,6 +52,12 @@ func get_move_target(character: CharacterBody3D) -> Vector3:
 
 
 func move_to(target_map_coordinates: Vector3) -> void:
+	if (
+		_has_move_target
+		and map_coordinates.is_equal_approx(target_map_coordinates)
+	):
+		return
+
 	map_coordinates = target_map_coordinates
 
 
