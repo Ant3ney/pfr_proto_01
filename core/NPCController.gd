@@ -3,6 +3,11 @@ extends Resource
 
 ## Supplies a persistent map-coordinate target to a PFRCharacter.
 
+@export_group("Behavior")
+## NPC-specific behavior. Accepts NPCBehavior resources and their subclasses.
+@export var npc_behavior: NPCBehavior
+
+@export_group("Navigation")
 @export var map_coordinates := Vector3.ZERO:
 	set(value):
 		map_coordinates = value
@@ -20,6 +25,9 @@ func _init() -> void:
 
 
 func get_move_target(character: CharacterBody3D) -> Vector3:
+	if npc_behavior:
+		npc_behavior.process_behavior(character, self)
+
 	if not _has_move_target:
 		map_coordinates = character.global_position
 		return map_coordinates
