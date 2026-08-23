@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialog" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/Dialog.gd" id="1_dialog"]
+
+[resource]
+resource_name = "Trainer Mira Dialog"
+script = ExtResource("1_dialog")
+character_name = "Trainer Mira"
+dialog_lines = Array[String](["The lake is calm today.", "Let's see whether your team can keep its balance.", "A good battle should make some waves!"])

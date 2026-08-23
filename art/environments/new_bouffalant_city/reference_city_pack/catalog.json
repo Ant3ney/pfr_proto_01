@@ -3,6 +3,8 @@
   "style_id": "hopeful_civic_adventure_v1",
   "source_note": "Pokemon ZA field geometry with decoded UV-mapped source albedo and PBR detail, presented with Pokemon Fracture/Revolt hopeful civic-adventure lighting and semantic fallback materials where a source map is absent. Exact 4 m project route tiles use decoded Pokemon ZA grass/soil maps and exact 2 m city cobble tiles use shared UV-mapped PBR textures. Both are explicitly separated from complete source-authored map sections.",
   "runtime_pack_note": "All 147 GLBs contain embedded image data. Godot's Extract Textures import mode materializes 1,831 equivalent companion PNGs beside the models; keep those PNGs and their import metadata with this directory. The only textures outside the model directory are the four files used by the six route-tile scenes. The five city-cobble entries reuse the canonical ground_tile resources in this environment pack.",
+  "runtime_import_scale": 0.75,
+  "dimensions_note": "GLB dimensions are source-space bounds and use runtime_import_scale at runtime. Authored scene dimensions are already runtime dimensions.",
   "asset_count": 158,
   "assets": [
     {

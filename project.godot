@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameInstance="*res://core/GameInstance.gd"
+UIManager="*res://core/UIManager.gd"
 
 [display]
 
@@ -30,7 +31,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/plain_http_lan_web/plugin.cfg")
+enabled=PackedStringArray("res://addons/plain_http_lan_web/plugin.cfg", "res://addons/new_bouffalant_city_asset_palette/plugin.cfg")
 
 [physics]
 

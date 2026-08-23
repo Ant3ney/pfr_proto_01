@@ -2,7 +2,17 @@ extends Node
 
 const CATALOG_PATH := "res://art/environments/new_bouffalant_city/reference_city_pack/catalog.json"
 const SHOWCASE_SCENE := preload("res://art/environments/new_bouffalant_city/reference_city_pack/showcase/building_ground_metric_showcase.tscn")
+const CollisionProfiles := preload("res://art/environments/new_bouffalant_city/reference_city_pack/collision/collision_profiles.gd")
+const RuntimeContract := preload("res://art/environments/new_bouffalant_city/reference_city_pack/runtime_contract.gd")
+const THUMBNAIL_DIRECTORY := "res://addons/new_bouffalant_city_asset_palette/thumbnails"
 const MAX_MODULAR_ARCHITECTURE_HORIZONTAL_EXTENT_M := 16.0
+const IMPORTED_COLLISION_NODE := "GameplayCollision"
+const EXPECTED_COLLISION_PROFILE_COUNTS := {
+	CollisionProfiles.Profile.NONE: 13,
+	CollisionProfiles.Profile.MESH: 119,
+	CollisionProfiles.Profile.BOX: 8,
+	CollisionProfiles.Profile.TRUNK: 7,
+}
 const CATEGORY_NODES := {
 	"Landmarks": "Landmarks",
 	"Shops & Hospitality": "ShopsAndHospitality",
@@ -13,6 +23,8 @@ const CATEGORY_NODES := {
 	"Complete Environment Sections": "CompleteEnvironmentSections",
 }
 const SNAP_METERS := 0.5
+const EXPECTED_PERFORMANCE_SENSITIVE_ASSET_COUNT := 44
+const EXPECTED_INTEL_VULKAN_TRIGGER_COUNT := 2
 
 
 func _ready() -> void:
@@ -24,9 +36,23 @@ func _ready() -> void:
 	var showcase := SHOWCASE_SCENE.instantiate()
 	add_child(showcase)
 	await get_tree().process_frame
+	if not is_equal_approx(
+		float(showcase.get_meta("imported_glb_baked_scale", -1.0)),
+		RuntimeContract.IMPORTED_MODEL_SCALE
+	):
+		_fail("Metric showcase does not declare the GLB baked scale contract.")
+		return
 
 	var expected_ids_by_node := _catalog_ids_by_scene_node(catalog)
+	var catalog_assets_by_id := _catalog_assets_by_id(catalog)
 	var seen_ids := {}
+	var collision_profile_counts := {
+		CollisionProfiles.Profile.NONE: 0,
+		CollisionProfiles.Profile.MESH: 0,
+		CollisionProfiles.Profile.BOX: 0,
+		CollisionProfiles.Profile.TRUNK: 0,
+	}
+	var physics_representatives := {}
 	var asset_count := 0
 	for catalog_category: String in CATEGORY_NODES:
 		var category_name := str(CATEGORY_NODES[catalog_category])
@@ -62,9 +88,24 @@ func _ready() -> void:
 			if model == null or not model.scale.is_equal_approx(Vector3.ONE):
 				_fail("Imported model is missing or not at scale 1,1,1: %s" % slot.name)
 				return
+			var asset_id := str(slot.get_meta("asset_id", ""))
 			if catalog_category == "Modular Ground" and not _validate_ground_collision(model, slot.name):
 				return
-			var asset_id := str(slot.get_meta("asset_id", ""))
+			if catalog_category != "Modular Ground":
+				var catalog_asset: Dictionary = catalog_assets_by_id.get(asset_id, {})
+				if not _validate_imported_runtime_scale(model, catalog_asset, asset_id):
+					return
+				var profile: CollisionProfiles.Profile = CollisionProfiles.profile_for_asset(asset_id)
+				collision_profile_counts[profile] = int(collision_profile_counts[profile]) + 1
+				if not _validate_imported_collision(model, asset_id, profile):
+					return
+				if (
+					RuntimeContract.is_confirmed_intel_vulkan_trigger(asset_id)
+					and not _validate_textured_materials_retained(model, asset_id)
+				):
+					return
+				if asset_id in ["t1_ar301", "t1_pl011", "t1_pl024"]:
+					physics_representatives[asset_id] = model
 			if asset_id.is_empty() or seen_ids.has(asset_id):
 				_fail("Metric showcase has a missing or duplicate asset ID: %s" % asset_id)
 				return
@@ -75,6 +116,24 @@ func _ready() -> void:
 	if asset_count != int(catalog.get("asset_count", -1)):
 		_fail("Metric showcase asset total does not match the catalog.")
 		return
+	for profile: CollisionProfiles.Profile in EXPECTED_COLLISION_PROFILE_COUNTS:
+		if int(collision_profile_counts[profile]) != int(EXPECTED_COLLISION_PROFILE_COUNTS[profile]):
+			_fail(
+				"Collision profile %s has %d assets; expected %d."
+				% [
+					CollisionProfiles.profile_name(profile),
+					collision_profile_counts[profile],
+					EXPECTED_COLLISION_PROFILE_COUNTS[profile],
+				]
+			)
+			return
+
+	await get_tree().physics_frame
+	for representative_id: String in physics_representatives:
+		if not _validate_collision_in_physics_space(
+			physics_representatives[representative_id], representative_id
+		):
+			return
 
 	var player_reference := showcase.get_node_or_null("MetricScaleReference/Player1_67m") as MeshInstance3D
 	if player_reference == null or not (player_reference.mesh is CapsuleMesh):
@@ -86,7 +145,13 @@ func _ready() -> void:
 		return
 
 	print(
-		"Metric environment showcase smoke test passed: %d assets at scale 1 on the %.1f m grid."
+		(
+			"Metric environment showcase smoke test passed: %d assets at scale 1 on the %.1f m grid; "
+			+ "147 GLBs baked to 0.75 at node scale 1; 44 high-load entries classified; "
+			+ "2 confirmed Intel Vulkan triggers scoped; "
+			+ "119 mesh, 8 box, 7 trunk, "
+			+ "13 pass-through, and 11 ground collisions validated."
+		)
 		% [asset_count, SNAP_METERS]
 	)
 	get_tree().quit(0)
@@ -113,12 +178,20 @@ func _load_and_validate_catalog() -> Dictionary:
 	if catalog_asset_count <= 0 or catalog_asset_count != raw_assets.size():
 		_fail("Catalog asset_count does not match its non-empty assets array.")
 		return {}
+	if not is_equal_approx(
+		float(catalog.get("runtime_import_scale", -1.0)),
+		RuntimeContract.IMPORTED_MODEL_SCALE
+	):
+		_fail("Catalog runtime_import_scale does not match the runtime contract.")
+		return {}
 	var failures: Variant = catalog.get("failures", [])
 	if not (failures is Array) or not failures.is_empty():
 		_fail("Catalog contains conversion failures.")
 		return {}
 
 	var seen_catalog_ids := {}
+	var performance_sensitive_count := 0
+	var intel_vulkan_trigger_count := 0
 	for raw_asset: Variant in raw_assets:
 		if not (raw_asset is Dictionary):
 			_fail("Catalog contains a non-dictionary asset entry.")
@@ -129,9 +202,20 @@ func _load_and_validate_catalog() -> Dictionary:
 			_fail("Catalog contains a missing or duplicate asset ID: %s" % asset_id)
 			return {}
 		seen_catalog_ids[asset_id] = true
+		if RuntimeContract.is_performance_sensitive(entry):
+			performance_sensitive_count += 1
+		if RuntimeContract.is_confirmed_intel_vulkan_trigger(entry):
+			intel_vulkan_trigger_count += 1
 		var model_path := str(entry.get("model_path", ""))
 		if model_path.is_empty() or not FileAccess.file_exists(model_path):
 			_fail("Converted model is missing: %s" % model_path)
+			return {}
+		var thumbnail_path := THUMBNAIL_DIRECTORY.path_join("%s.png" % asset_id)
+		if not ResourceLoader.exists(thumbnail_path, "Texture2D"):
+			_fail("Asset thumbnail is missing or not imported: %s" % thumbnail_path)
+			return {}
+		if model_path.ends_with(".glb") and not _uses_runtime_import_settings(model_path):
+			_fail("GLB is not configured for baked scale and collision: %s" % model_path)
 			return {}
 		var category := str(entry.get("category", ""))
 		if not CATEGORY_NODES.has(category):
@@ -162,7 +246,55 @@ func _load_and_validate_catalog() -> Dictionary:
 			if not _is_supported_ground_extent(float(dimensions[0])) or not _is_supported_ground_extent(float(dimensions[2])):
 				_fail("Metric Modular Ground asset is not on the 2/4/8 m system: %s" % asset_id)
 				return {}
+	if performance_sensitive_count != EXPECTED_PERFORMANCE_SENSITIVE_ASSET_COUNT:
+		_fail(
+			"Performance-sensitive asset classification has %d entries; expected %d."
+			% [
+				performance_sensitive_count,
+				EXPECTED_PERFORMANCE_SENSITIVE_ASSET_COUNT,
+			]
+		)
+		return {}
+	if intel_vulkan_trigger_count != EXPECTED_INTEL_VULKAN_TRIGGER_COUNT:
+		_fail(
+			"Intel Vulkan trigger scope has %d entries; expected %d."
+			% [intel_vulkan_trigger_count, EXPECTED_INTEL_VULKAN_TRIGGER_COUNT]
+		)
+		return {}
+	for expected_heavy_id: String in ["t3_road_line_e", "t1_g17_1", "t1_b_school"]:
+		var expected_heavy: Dictionary = _catalog_assets_by_id(catalog).get(expected_heavy_id, {})
+		if not RuntimeContract.is_performance_sensitive(expected_heavy):
+			_fail("Known high-load asset is not classified: %s" % expected_heavy_id)
+			return {}
+	var catalog_assets_by_id := _catalog_assets_by_id(catalog)
+	for trigger_id: String in ["t1_b_museum", "t1_b_gate_building"]:
+		if not RuntimeContract.is_confirmed_intel_vulkan_trigger(
+			catalog_assets_by_id.get(trigger_id, {})
+		):
+			_fail("Confirmed Intel Vulkan trigger is not scoped: %s" % trigger_id)
+			return {}
+	for safe_control_id: String in ["t1_b_cityhall", "t1_b_rouge_tower", "t1_b_miare_station"]:
+		if RuntimeContract.is_confirmed_intel_vulkan_trigger(
+			catalog_assets_by_id.get(safe_control_id, {})
+		):
+			_fail("Known renderer control is incorrectly blocked: %s" % safe_control_id)
+			return {}
 	return catalog
+
+
+func _uses_runtime_import_settings(model_path: String) -> bool:
+	var import_path := model_path + ".import"
+	if not FileAccess.file_exists(import_path):
+		return false
+	var settings := FileAccess.get_file_as_string(import_path)
+	var expected_script := (
+		'import_script/path="%s"' % RuntimeContract.COLLISION_POST_IMPORT_SCRIPT
+	)
+	return (
+		settings.contains("nodes/apply_root_scale=true")
+		and settings.contains("nodes/root_scale=%s" % RuntimeContract.IMPORTED_MODEL_SCALE)
+		and settings.contains(expected_script)
+	)
 
 
 func _is_supported_ground_extent(value: float) -> bool:
@@ -188,6 +320,189 @@ func _validate_ground_collision(model: Node3D, asset_name: String) -> bool:
 	return true
 
 
+func _validate_imported_collision(
+	model: Node3D, asset_id: String, profile: CollisionProfiles.Profile
+) -> bool:
+	var expected_name := CollisionProfiles.profile_name(profile)
+	if str(model.get_meta("new_bouffalant_city_collision_profile", "")) != expected_name:
+		_fail("Imported collision profile metadata is missing or stale: %s" % asset_id)
+		return false
+
+	var body := model.get_node_or_null(IMPORTED_COLLISION_NODE) as StaticBody3D
+	if profile == CollisionProfiles.Profile.NONE:
+		if body != null:
+			_fail("Pass-through decoration unexpectedly has collision: %s" % asset_id)
+			return false
+		return true
+	if body == null or body.get_child_count() == 0:
+		_fail("Imported asset has no generated static collision: %s" % asset_id)
+		return false
+	if body.collision_layer != 1 or body.collision_mask != 1:
+		_fail("Imported asset collision is not on the gameplay layer: %s" % asset_id)
+		return false
+
+	for child: Node in body.get_children():
+		var collision_shape := child as CollisionShape3D
+		if collision_shape == null or collision_shape.shape == null:
+			_fail("Imported asset contains an invalid collision shape: %s" % asset_id)
+			return false
+		match profile:
+			CollisionProfiles.Profile.MESH:
+				if not (collision_shape.shape is ConcavePolygonShape3D):
+					_fail("Hard-surface asset does not use mesh collision: %s" % asset_id)
+					return false
+				if not (collision_shape.shape as ConcavePolygonShape3D).backface_collision:
+					_fail("Mesh collision is not double-sided: %s" % asset_id)
+					return false
+			CollisionProfiles.Profile.BOX:
+				if not (collision_shape.shape is BoxShape3D):
+					_fail("Hedge/bush asset does not use box collision: %s" % asset_id)
+					return false
+			CollisionProfiles.Profile.TRUNK:
+				if not (collision_shape.shape is CylinderShape3D):
+					_fail("Tree/stump asset does not use trunk collision: %s" % asset_id)
+					return false
+	return true
+
+
+func _validate_imported_runtime_scale(
+	model: Node3D, asset: Dictionary, asset_id: String
+) -> bool:
+	if asset.is_empty():
+		_fail("Catalog data is missing while validating runtime scale: %s" % asset_id)
+		return false
+	if not model.scale.is_equal_approx(Vector3.ONE):
+		_fail("Imported model node is not scale 1 after baking: %s" % asset_id)
+		return false
+	var expected_dimensions := RuntimeContract.effective_dimensions(asset)
+	if expected_dimensions.size() != 3:
+		_fail("Catalog dimensions are invalid while validating runtime scale: %s" % asset_id)
+		return false
+	var actual_dimensions := _visual_bounds(model).size
+	for axis in range(3):
+		var expected := expected_dimensions[axis]
+		var actual := actual_dimensions[axis]
+		var tolerance := maxf(0.002, absf(expected) * 0.001)
+		if not is_equal_approx(actual, expected) and absf(actual - expected) > tolerance:
+			_fail(
+				(
+					"Baked runtime bounds differ from catalog × %.2f for %s on axis %d: "
+					+ "expected %.5f, got %.5f."
+				)
+				% [
+					RuntimeContract.IMPORTED_MODEL_SCALE,
+					asset_id,
+					axis,
+					expected,
+					actual,
+				]
+			)
+			return false
+	return true
+
+
+func _validate_textured_materials_retained(model: Node3D, asset_id: String) -> bool:
+	var mesh_instances: Array[Node] = model.find_children("*", "MeshInstance3D", true, false)
+	if model is MeshInstance3D:
+		mesh_instances.push_front(model)
+	for node: Node in mesh_instances:
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		for surface_index in range(mesh_instance.mesh.get_surface_count()):
+			var material := mesh_instance.get_active_material(surface_index)
+			if material == null:
+				continue
+			for property: Dictionary in material.get_property_list():
+				if material.get(property.name) is Texture2D:
+					return true
+	_fail("Original textured materials were not retained for: %s" % asset_id)
+	return false
+
+
+func _visual_bounds(model: Node3D) -> AABB:
+	var bounds := AABB()
+	var has_bounds := false
+	var model_inverse := model.global_transform.affine_inverse()
+	var visual_nodes := model.find_children("*", "VisualInstance3D", true, false)
+	if model is VisualInstance3D:
+		visual_nodes.push_front(model)
+	for value: Variant in visual_nodes:
+		var visual := value as VisualInstance3D
+		if visual == null or not visual.visible:
+			continue
+		var visual_bounds := visual.get_aabb()
+		var to_model := model_inverse * visual.global_transform
+		for endpoint_index in range(8):
+			var point := to_model * visual_bounds.get_endpoint(endpoint_index)
+			if has_bounds:
+				bounds = bounds.expand(point)
+			else:
+				bounds = AABB(point, Vector3.ZERO)
+				has_bounds = true
+	return bounds
+
+
+func _validate_collision_in_physics_space(model: Node3D, asset_id: String) -> bool:
+	var body := model.get_node_or_null(IMPORTED_COLLISION_NODE) as StaticBody3D
+	if body == null:
+		_fail("Physics representative has no collision body: %s" % asset_id)
+		return false
+	var collision_shape := body.get_child(0) as CollisionShape3D
+	if collision_shape == null or collision_shape.shape == null:
+		_fail("Physics representative has no collision shape: %s" % asset_id)
+		return false
+	var segment := _physics_probe_segment(collision_shape)
+	if segment.is_empty():
+		_fail("Could not build a physics probe for: %s" % asset_id)
+		return false
+	var query := PhysicsRayQueryParameters3D.create(segment.from, segment.to, 1)
+	query.collision_mask = 1
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.hit_back_faces = true
+	var hit := model.get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.get("collider") == body:
+		return true
+	_fail("Generated collision is not active in physics space: %s" % asset_id)
+	return false
+
+
+func _physics_probe_segment(collision_shape: CollisionShape3D) -> Dictionary:
+	var shape := collision_shape.shape
+	var shape_transform := collision_shape.global_transform
+	if shape is ConcavePolygonShape3D:
+		var faces := (shape as ConcavePolygonShape3D).get_faces()
+		for index in range(0, faces.size(), 3):
+			if index + 2 >= faces.size():
+				break
+			var first := shape_transform * faces[index]
+			var second := shape_transform * faces[index + 1]
+			var third := shape_transform * faces[index + 2]
+			var normal := (second - first).cross(third - first).normalized()
+			if normal.is_zero_approx():
+				continue
+			var center := (first + second + third) / 3.0
+			return {"from": center + normal * 0.25, "to": center - normal * 0.25}
+	elif shape is BoxShape3D:
+		var box := shape as BoxShape3D
+		var axis := shape_transform.basis.x.normalized()
+		var distance := maxf(box.size.x, 0.25)
+		return {
+			"from": shape_transform.origin + axis * distance,
+			"to": shape_transform.origin - axis * distance,
+		}
+	elif shape is CylinderShape3D:
+		var cylinder := shape as CylinderShape3D
+		var axis := shape_transform.basis.x.normalized()
+		var distance := maxf(cylinder.radius * 2.0, 0.25)
+		return {
+			"from": shape_transform.origin + axis * distance,
+			"to": shape_transform.origin - axis * distance,
+		}
+	return {}
+
+
 func _catalog_ids_by_scene_node(catalog: Dictionary) -> Dictionary:
 	var expected := {}
 	for catalog_category: String in CATEGORY_NODES:
@@ -200,6 +515,15 @@ func _catalog_ids_by_scene_node(catalog: Dictionary) -> Dictionary:
 		category_ids[str(asset.get("id", ""))] = true
 		expected[scene_node_name] = category_ids
 	return expected
+
+
+func _catalog_assets_by_id(catalog: Dictionary) -> Dictionary:
+	var result := {}
+	var raw_assets: Array = catalog.get("assets", [])
+	for value: Variant in raw_assets:
+		var asset: Dictionary = value
+		result[String(asset.get("id", ""))] = asset
+	return result
 
 
 func _vector_is_snapped(value: Vector3, step: float) -> bool:

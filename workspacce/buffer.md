@@ -13,3 +13,16 @@ O yeah, I forgot there already is a NPC behavior class. Good. Update trainer beh
 
 
 Make a new class in core called GameInstance. It controlls global things about the game. Add a function you can pass in true or false. It will preventt the player from being able to move if false. It will allow the player to move if true. Then make it so that on trainer detection of the player, the player can't move anymore
+
+
+
+
+
+Lets build a basic dialog system. As you know, the UI works via calling the template class to display a UI template, you then get back an object that controlls that template. Dialog is simple, the caller that opened up the dialog template controlls the dialog system. Right now we are working on the trainer dialog. Yes, make it so that when a trainer reaches it's location target, it opens the dialog menu and dialog starts. In a Trainer character, ensure if trainer is selected, you can also pass in a dialog object. The dialog object has the character name and an array of strings that is what gets displayed to the dialog UI.
+
+
+
+
+See this poject. This is the project came before this. It has lots of issues but one thing it does right is it's battle system. I want you to make a battle sccene in this project. To look just like how it does in that project. Don't port / import the UI. That is already in this project. Import the actual 3D scene and the camera and the spawn placements. Dont import scrips and logic. We are going to take this slowly. For now, just give me the scene and it's art.
+
+

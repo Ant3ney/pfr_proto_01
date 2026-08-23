@@ -42,6 +42,11 @@ func get_move_target(character: CharacterBody3D) -> Vector3:
 		_target_changed = true
 
 	if _target_changed:
+		_align_path_height_with_character(
+			character,
+			navigation_agent,
+			navigation_map
+		)
 		navigation_agent.target_position = map_coordinates
 		_target_changed = false
 	elif navigation_agent.is_navigation_finished():
@@ -79,3 +84,20 @@ func _get_navigation_agent(character: CharacterBody3D) -> NavigationAgent3D:
 	character.add_child(_navigation_agent)
 	_target_changed = true
 	return _navigation_agent
+
+
+## Navigation baking can place returned path points above the visible floor.
+## Align those points with the character's foot-level pivot so planar locomotion
+## can advance through the path without moving the character vertically.
+func _align_path_height_with_character(
+	character: CharacterBody3D,
+	navigation_agent: NavigationAgent3D,
+	navigation_map: RID
+) -> void:
+	var closest_path_point := NavigationServer3D.map_get_closest_point(
+		navigation_map,
+		character.global_position
+	)
+	navigation_agent.path_height_offset = (
+		closest_path_point.y - character.global_position.y
+	)

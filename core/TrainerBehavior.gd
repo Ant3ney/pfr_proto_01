@@ -24,8 +24,12 @@ var stopping_buffer := 0.15
 @export_range(0.01, 1.0, 0.01, "or_greater", "suffix:m")
 var arrival_distance := 0.15
 
+var dialog: Dialog
+
 var _approach_state := ApproachState.WAITING
 var _approach_target := Vector3.ZERO
+var _dialog_template: UITemplate
+var _dialog_line_index := -1
 
 
 func process_behavior(
@@ -167,3 +171,41 @@ func _complete_approach(
 ) -> void:
 	_approach_state = ApproachState.COMPLETE
 	controller.stop_moving(character)
+	_start_dialog()
+
+
+func _start_dialog() -> void:
+	if not dialog or dialog.is_empty():
+		_finish_dialog()
+		return
+
+	GameInstance.set_player_movement_enabled(false)
+	_dialog_line_index = 0
+	_dialog_template = UIManager.show_ui(dialog.dialog_lines[_dialog_line_index])
+	if not _dialog_template:
+		_finish_dialog()
+		return
+
+	_dialog_template.set_speaker_name(dialog.character_name)
+	_dialog_template.set_action_text("Next")
+	_dialog_template.set_action_callback(_advance_dialog)
+	_dialog_template.set_dismiss_callback(_finish_dialog)
+
+
+func _advance_dialog() -> void:
+	if not is_instance_valid(_dialog_template):
+		_finish_dialog()
+		return
+
+	_dialog_line_index += 1
+	if _dialog_line_index >= dialog.dialog_lines.size():
+		_dialog_template.close()
+		return
+
+	_dialog_template.set_text(dialog.dialog_lines[_dialog_line_index])
+
+
+func _finish_dialog() -> void:
+	_dialog_template = null
+	_dialog_line_index = -1
+	GameInstance.set_player_movement_enabled(true)
