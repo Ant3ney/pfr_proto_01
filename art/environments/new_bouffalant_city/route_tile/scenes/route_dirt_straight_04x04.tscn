@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Material" path="res://art/environments/new_bouffalant_city/route_tile/materials/route_grass_material.tres" id="1_grass"]
+[ext_resource type="Material" path="res://art/environments/new_bouffalant_city/route_tile/materials/route_soil_material.tres" id="2_soil"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = ExtResource("1_grass")
+size = Vector3(4, 0.25, 4)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_path"]
+material = ExtResource("2_soil")
+size = Vector2(2, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(4, 0.25, 4)
+
+[node name="RouteDirtStraight04x04" type="Node3D"]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.125, 0)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="Path" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.003, 0)
+mesh = SubResource("PlaneMesh_path")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.125, 0)
+shape = SubResource("BoxShape3D_ground")

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://art/environments/new_bouffalant_city/ground_tile/meshes/gnd_flat_02x02_city_cobble_a.tres" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(2, 0.25, 2)
+
+[node name="CityCobbleFlat02x02" type="Node3D"]
+editor_description = "Exact 2 x 2 meter cobblestone module. Pivot is centered on the walkable surface; slab extends to Y = -0.25."
+
+[node name="Model" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.125, 0)
+shape = SubResource("BoxShape3D_ground")

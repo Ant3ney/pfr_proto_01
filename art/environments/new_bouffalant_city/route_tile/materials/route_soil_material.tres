@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://art/environments/new_bouffalant_city/route_tile/textures/route_soil_albedo.png" id="1_albedo"]
+[ext_resource type="Texture2D" path="res://art/environments/new_bouffalant_city/route_tile/textures/route_soil_normal.png" id="2_normal"]
+
+[resource]
+resource_name = "New Bouffalant City Route Soil"
+albedo_texture = ExtResource("1_albedo")
+albedo_color = Color(0.92, 0.88, 0.82, 1)
+roughness = 0.94
+normal_enabled = true
+normal_scale = 0.58
+normal_texture = ExtResource("2_normal")
+uv1_scale = Vector3(1.5, 1.5, 1.5)

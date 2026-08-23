@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Material" path="res://art/environments/new_bouffalant_city/route_tile/materials/route_grass_material.tres" id="1_grass"]
+[ext_resource type="Material" path="res://art/environments/new_bouffalant_city/route_tile/materials/route_soil_material.tres" id="2_soil"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = ExtResource("1_grass")
+size = Vector3(4, 0.25, 4)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_center"]
+material = ExtResource("2_soil")
+size = Vector2(2, 2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_arm"]
+material = ExtResource("2_soil")
+size = Vector2(2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(4, 0.25, 4)
+
+[node name="RouteDirtEnd04x04" type="Node3D"]
+editor_description = "Exact 4 x 4 meter dirt-path end. The two-meter exit matches the straight path module."
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.125, 0)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="PathCenter" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.003, 0)
+mesh = SubResource("PlaneMesh_center")
+
+[node name="PathNorth" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.003, -1.5)
+mesh = SubResource("PlaneMesh_arm")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.125, 0)
+shape = SubResource("BoxShape3D_ground")

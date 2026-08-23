@@ -11,6 +11,9 @@ static func set_floating_joystick_input(input_vector: Vector2) -> void:
 
 
 func get_move_target(character: CharacterBody3D) -> Vector3:
+	if not GameInstance.is_player_movement_enabled():
+		return character.global_position
+
 	var input_vector := _get_movement_input()
 	if input_vector.is_zero_approx():
 		return character.global_position

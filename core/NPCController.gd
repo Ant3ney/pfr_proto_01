@@ -29,8 +29,7 @@ func get_move_target(character: CharacterBody3D) -> Vector3:
 		npc_behavior.process_behavior(character, self)
 
 	if not _has_move_target:
-		map_coordinates = character.global_position
-		return map_coordinates
+		return character.global_position
 
 	var navigation_agent := _get_navigation_agent(character)
 	var navigation_map := navigation_agent.get_navigation_map()
@@ -59,6 +58,14 @@ func move_to(target_map_coordinates: Vector3) -> void:
 		return
 
 	map_coordinates = target_map_coordinates
+
+
+func stop_moving(character: CharacterBody3D) -> void:
+	_has_move_target = false
+	_target_changed = false
+
+	if is_instance_valid(_navigation_agent):
+		_navigation_agent.target_position = character.global_position
 
 
 func _get_navigation_agent(character: CharacterBody3D) -> NavigationAgent3D:
