@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameInstance="*res://core/GameInstance.gd"
+CreatureSystem="*res://core/CreatureSystem.gd"
+CollectionSystem="*res://core/CollectionSystem.gd"
 UIManager="*res://core/UIManager.gd"
 
 [display]

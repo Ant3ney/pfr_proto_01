@@ -12,6 +12,8 @@ The `ai_context/` directory contains durable, project-specific knowledge for fut
 4. Do not automatically load the entire directory. If several subjects genuinely apply, follow each route through its index.
 5. Inspect the current code, configuration, tests, and runtime behavior before acting. Verified current behavior overrides stale documentation.
 
+Every `ai_context/` index must contain a descriptive heading, a short read-first instruction, a `Task | Read next | Purpose` routing table with relative links, task-oriented route descriptions, and a short scope or maintenance note.
+
 ## Adding and maintaining AI Context
 
 Store information in `ai_context/` only when it is verified, reusable, project-specific, and expensive or difficult to rediscover.

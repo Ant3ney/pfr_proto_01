@@ -26,3 +26,10 @@ Lets build a basic dialog system. As you know, the UI works via calling the temp
 See this poject. This is the project came before this. It has lots of issues but one thing it does right is it's battle system. I want you to make a battle sccene in this project. To look just like how it does in that project. Don't port / import the UI. That is already in this project. Import the actual 3D scene and the camera and the spawn placements. Dont import scrips and logic. We are going to take this slowly. For now, just give me the scene and it's art.
 
 
+<!-- AI Agents should not read this file -->
+› Good. See this project /home/anthony/Desktop/AnthonysFolder/Games/pokémon-fracture-and-revolt-00p02/pokémon-fracture-and-revolt-00p-02. It hass issues but it has a working battle system.
+  Impliment that here. Copy over the battle server to this project and have battling work on this project. The collection system alreaady has the defaults needed to start a battle. There is a
+  transition function that transition the player into the battle and takes in the data needed to start the battle. Use that function to pass in the pokemon battling.
+
+
+

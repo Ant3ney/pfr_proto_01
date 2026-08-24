@@ -2,7 +2,6 @@
 extends EditorPlugin
 
 const AssetPaletteDock := preload("res://addons/new_bouffalant_city_asset_palette/asset_palette_dock.gd")
-const RuntimeContract := preload("res://art/environments/new_bouffalant_city/reference_city_pack/runtime_contract.gd")
 const CATALOG_PATH := (
 	"res://art/environments/new_bouffalant_city/reference_city_pack/catalog.json"
 )
@@ -15,33 +14,17 @@ const ASSET_CONTAINER_NAME := "NewBouffalantCityAssets"
 const ASSET_CONTAINER_META := "new_bouffalant_city_asset_container"
 const ASSET_ID_META := "new_bouffalant_city_asset_id"
 const MAX_RAY_DISTANCE := 100000.0
-const COMPATIBILITY_LAUNCHER_PATH := (
-	"addons/new_bouffalant_city_asset_palette/open_editor_compatibility.sh"
-)
-const NVIDIA_LAUNCHER_PATH := (
-	"addons/new_bouffalant_city_asset_palette/open_editor_nvidia.sh"
-)
 
 var _editor_dock: EditorDock
 var _scroll_container: ScrollContainer
 var _palette: VBoxContainer
 var _last_hover_position: Variant = null
-var _assets_by_id := {}
-var _assets_by_path := {}
-var _video_adapter_name := "Unknown adapter"
-var _rendering_method := "unknown renderer"
-var _unsafe_intel_vulkan_renderer := false
 
 
 func _enter_tree() -> void:
 	var assets := _load_assets()
-	_video_adapter_name = String(RenderingServer.get_video_adapter_name())
-	_rendering_method = String(RenderingServer.get_current_rendering_method())
-	_unsafe_intel_vulkan_renderer = (
-		OS.get_name() == "Linux"
-		and _video_adapter_name.to_lower().contains("intel")
-		and _rendering_method != "gl_compatibility"
-	)
+	var video_adapter_name := String(RenderingServer.get_video_adapter_name())
+	var rendering_method := String(RenderingServer.get_current_rendering_method())
 	var editor_theme := get_editor_interface().get_editor_theme()
 	var default_thumbnail: Texture2D = null
 	if editor_theme.has_icon(&"PackedScene", &"EditorIcons"):
@@ -51,9 +34,9 @@ func _enter_tree() -> void:
 		assets,
 		get_editor_interface().get_resource_previewer(),
 		default_thumbnail,
-		_video_adapter_name,
-		_rendering_method,
-		_unsafe_intel_vulkan_renderer
+		video_adapter_name,
+		rendering_method,
+		false
 	)
 	_palette.placement_toggled.connect(_on_placement_toggled)
 	_palette.place_at_origin_requested.connect(_place_at_origin)
@@ -80,27 +63,10 @@ func _enter_tree() -> void:
 	if assets.is_empty():
 		_palette.show_message("Could not load the environment catalog.", true)
 		_show_toast("New Bouffalant City catalog could not be loaded.", true)
-	elif _unsafe_intel_vulkan_renderer:
-		_palette.show_message(_renderer_safety_message(), true)
 
 
 func _build() -> bool:
-	if not _unsafe_intel_vulkan_renderer:
-		return true
-	var root := get_editor_interface().get_edited_scene_root()
-	if root == null:
-		return true
-	var blocked_asset := _find_confirmed_crash_instance(root)
-	if blocked_asset.is_empty():
-		return true
-	var title := String(blocked_asset.get("title", blocked_asset.get("id", "asset")))
-	var message := "Run paused because %s is unsafe on the current Intel Vulkan renderer. %s" % [
-		title,
-		_renderer_safety_message(),
-	]
-	_palette.show_message(message, true)
-	_show_toast(message, true)
-	return false
+	return true
 
 
 func _exit_tree() -> void:
@@ -180,8 +146,6 @@ func _forward_3d_force_draw_over_viewport(overlay: Control) -> void:
 
 func _load_assets() -> Array[Dictionary]:
 	var assets: Array[Dictionary] = []
-	_assets_by_id.clear()
-	_assets_by_path.clear()
 	var file := FileAccess.open(CATALOG_PATH, FileAccess.READ)
 	if file == null:
 		push_error("[Bouffalant Assets] Could not open %s." % CATALOG_PATH)
@@ -198,8 +162,6 @@ func _load_assets() -> Array[Dictionary]:
 		if value is Dictionary:
 			var asset: Dictionary = value
 			assets.append(asset)
-			_assets_by_id[String(asset.get("id", ""))] = asset
-			_assets_by_path[String(asset.get("model_path", ""))] = asset
 
 	if assets.size() != int(catalog.get("asset_count", -1)):
 		push_error(
@@ -207,8 +169,6 @@ func _load_assets() -> Array[Dictionary]:
 			% [int(catalog.get("asset_count", -1)), assets.size()]
 		)
 		assets.clear()
-		_assets_by_id.clear()
-		_assets_by_path.clear()
 	return assets
 
 
@@ -272,10 +232,6 @@ func _place_selected_asset(world_position: Vector3) -> void:
 	var asset: Dictionary = _palette.get_selected_asset()
 	if asset.is_empty():
 		_palette.show_message("Select a catalog asset first.", true)
-		return
-	if _asset_is_blocked(asset):
-		_palette.show_message(_renderer_safety_message(), true)
-		_show_toast(_renderer_safety_message(), true)
 		return
 
 	var resource_path := String(asset.get("model_path", ""))
@@ -353,43 +309,6 @@ func _find_asset_container(root: Node) -> Node3D:
 	return null
 
 
-func _find_confirmed_crash_instance(node: Node) -> Dictionary:
-	var asset_id := String(node.get_meta(ASSET_ID_META, ""))
-	if _assets_by_id.has(asset_id):
-		var metadata_asset: Dictionary = _assets_by_id[asset_id]
-		if RuntimeContract.is_confirmed_intel_vulkan_trigger(metadata_asset):
-			return metadata_asset
-	var scene_path := node.scene_file_path
-	if _assets_by_path.has(scene_path):
-		var scene_asset: Dictionary = _assets_by_path[scene_path]
-		if RuntimeContract.is_confirmed_intel_vulkan_trigger(scene_asset):
-			return scene_asset
-	for child: Node in node.get_children():
-		var nested := _find_confirmed_crash_instance(child)
-		if not nested.is_empty():
-			return nested
-	return {}
-
-
-func _asset_is_blocked(asset: Dictionary) -> bool:
-	return (
-		_unsafe_intel_vulkan_renderer
-		and RuntimeContract.is_confirmed_intel_vulkan_trigger(asset)
-	)
-
-
-func _renderer_safety_message() -> String:
-	return (
-		"Museum and Gate Building trigger the active %s %s driver. Close Godot, then "
-		+ "run ./%s (Intel Compatibility) or ./%s (NVIDIA Vulkan)."
-	) % [
-		_video_adapter_name,
-		_rendering_method,
-		COMPATIBILITY_LAUNCHER_PATH,
-		NVIDIA_LAUNCHER_PATH,
-	]
-
-
 func _on_placement_toggled(enabled: bool) -> void:
 	if not enabled:
 		_last_hover_position = null
@@ -408,10 +327,6 @@ func _stop_placement(message: String) -> void:
 
 
 func _open_showcase() -> void:
-	if _unsafe_intel_vulkan_renderer:
-		_palette.show_message(_renderer_safety_message(), true)
-		_show_toast(_renderer_safety_message(), true)
-		return
 	_stop_placement("Opening the metric browser…")
 	get_editor_interface().open_scene_from_path(SHOWCASE_PATH)
 

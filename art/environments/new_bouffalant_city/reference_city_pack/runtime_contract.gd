@@ -9,9 +9,13 @@ const COLLISION_POST_IMPORT_SCRIPT := (
 	"res://art/environments/new_bouffalant_city/reference_city_pack/collision/"
 	+ "city_asset_post_import.gd"
 )
-const CONFIRMED_INTEL_VULKAN_TRIGGER_IDS := {
+## These buildings use their original imported vertex/index buffers. Godot's generated
+## LOD and optimized shadow buffers repeatedly hang the Intel ADL Vulkan driver for
+## this workload; the original geometry renders normally and remains fully textured.
+const VULKAN_SAFE_MESH_IMPORT_IDS := {
 	"t1_b_gate_building": true,
 	"t1_b_museum": true,
+	"t1_b_tenant_building": true,
 }
 
 
@@ -19,13 +23,13 @@ static func is_imported_model(asset: Dictionary) -> bool:
 	return String(asset.get("model_path", "")).ends_with(".glb")
 
 
-static func is_confirmed_intel_vulkan_trigger(asset_or_id: Variant) -> bool:
+static func uses_vulkan_safe_mesh_import(asset_or_id: Variant) -> bool:
 	var asset_id := ""
 	if asset_or_id is Dictionary:
 		asset_id = String((asset_or_id as Dictionary).get("id", ""))
 	else:
 		asset_id = String(asset_or_id)
-	return CONFIRMED_INTEL_VULKAN_TRIGGER_IDS.has(asset_id)
+	return VULKAN_SAFE_MESH_IMPORT_IDS.has(asset_id)
 
 
 static func effective_dimensions(asset: Dictionary) -> Array[float]:

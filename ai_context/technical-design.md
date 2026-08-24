@@ -19,6 +19,10 @@ Can be a player or NPC. Takes a input represented as the player controller compo
 
 ### Controllers
 
+### Battle being
+
+To start a battle, you call a function on the game instance class. You pass in the data needed to pas into the battle there. Some data is implicit and you don't' have to pass it in. This function on the game istnace is called startBattle(...). It also handles the visual changes needed to start the battle intor sequence. Saves data to temportal properties that the battle scene will use to set up the battle.
+
 #### NPCController
 
 Specify a point on the map and the NPC will use it's  npc controller to manage the logic to go there.
@@ -41,36 +45,61 @@ Entities that impliment this interface will be have access to a lot of objects w
 
 A sequnce can be started via all kinds of things not limeted to an interaction or an event. A sequence, on start, will gather all of it's actors needed for the seqence. A entity needed for a sequence is called an actor. The sequence is simply the name of all the interactions and behavior used to make a squence. It's nothing really set in code. It just describes a set of interelated code.
 
-## GameIstance and game mode
+## GameInstance and game mode
 
-The game instance will be omipresent and will be what changes levels and what displays the UI.
+The implemented `GameInstance` autoload owns cross-scene gameplay state. It
+currently exposes the player-movement enable flag used by sequences and dialog
+callers.
+
+## UI Template System
+
+The implemented `UIManager` autoload displays the shared UI template and
+returns the live `UITemplate` instance to its caller. The caller owns content,
+callbacks, advancement, gameplay locks, and cleanup; `UIManager` does not own a
+dialog state machine or prevent overlapping templates. Use `UITemplate.close()`
+to run dismissal cleanup before the instance is freed.
+
+See the [UI Template System guide](../core/ui/README.md) for the complete API,
+copyable message, confirmation, and multi-line dialog recipes, editor setup,
+styling, lifecycle rules, and troubleshooting.
 
 ## Creature System
 
-The showdown project has all the pokemon stat data. It's best to use that for defining data about each creature. In this project, it is to be an API wrapper. You pass in an id and get what every data you need about that spcific pokemon ID
+The implemented Creature System is the `CreatureSystem` autoload backed by the local data snapshot in `data/creatures/`. `CreatureSystem.get_creature(pokemon_id)` is the canonical API; `get_pokemon(pokemon_id)` is an alias. A successful lookup returns the complete PokeAPI `pokemon` record at the root, plus its location encounters in `encounters_data` and complete `pokemon-species` and `evolution-chain` records under `species_data` and `evolution_chain_data`. It performs no network request.
+
+The snapshot contains 1,351 Pokemon records: 1,025 default National-Dex entries and 326 alternate or battle forms. Numeric IDs are PokeAPI Pokemon IDs, so default forms use National-Dex IDs `1` through `1025`, while alternate forms use PokeAPI's higher IDs such as `10001`. Call `has_pokemon(id)` before optional lookups when appropriate. Unknown IDs return an empty dictionary and set `get_last_error()`.
+
+Records are losslessly gzip-compressed and loaded lazily. The runtime keeps a bounded cache and returns deep copies so consumers cannot mutate cached source data. Source provenance and counts are in `data/creatures/manifest.json`; the deterministic sync and full integrity check are provided by `tools/sync_pokeapi_data.py`. The JSON retains PokeAPI's sprite and cry URLs, but those binary media assets are not part of the local stat-data snapshot.
 
 ## Collection system
 
-This is the management of the players stats about there pokemon. For now, we will just save the xp level and the lv of the pokemon
+The implemented `CollectionSystem` autoload owns the player's captured Pokemon and six-slot party. A specific captured instance is called a `pcl` (Pokemon collection instance). Pokemon IDs are the numeric PokeAPI IDs accepted by `CreatureSystem`; every PCL has a separately generated unique instance ID.
 
-We will also save the collection of the player. Apecific pokemon collected instance is called a `pcl` or pokemon collection instance. 
+On a fresh runtime, the collection starts with a full level-3 party in this slot order: Palkia, Mothim, Hoothoot, Vespiquen, Luxray, and Pelipper. Each starts at full health and zero XP progress. Loading collection save data replaces this starting collection.
 
-The object of a pcl is 
+The canonical PCL object is:
 
 ```
 {
-  pokemonId: 'picashu',
-  pclID: 'j34jd98wej',
+  pokemonId: 25,
+  pclID: "generated-unique-instance-id",
   party: {
-    inParty: true
-    slot: '3'
+    inParty: true,
+    slot: 3
   },
   instanceStats: {
-    health: '40%',
-    xp: '30%'
+    health: 0.4,
+    xp: 0.3,
+    level: 5
   }
 }
 ```
+
+Party slots are integers from `1` through `6`. A Pokemon outside the party has `inParty: false` and `slot: null`. Health and XP are normalized percentages from `0.0` through `1.0`; level is an integer from `1` through `100`.
+
+`add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance, and `get_pcl_by_party_slot(slot)` implements the battle lookup described below. `set_party_slot(...)` rejects an occupied destination instead of silently removing another Pokemon. `update_instance_stats(...)` atomically applies any subset of health, XP, and level. All returned objects are deep copies.
+
+`get_save_data()` returns the full collection in capture/import order. `load_save_data(...)` validates Pokemon IDs, PCL IDs, stats, and unique party slots before replacing any current data, so an invalid save cannot partially overwrite the active collection.
 
 ### An example use of the Collection System
 

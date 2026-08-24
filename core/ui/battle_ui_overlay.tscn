@@ -1,0 +1,498 @@
+[gd_scene load_steps=20 format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
+bg_color = Color(0.035, 0.145, 0.09, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.91, 0.73, 0.38, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+shadow_color = Color(0.01, 0.035, 0.02, 0.58)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_message"]
+bg_color = Color(0.025, 0.115, 0.072, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.12, 0.33, 0.36, 1)
+corner_radius_top_left = 17
+corner_radius_top_right = 17
+corner_radius_bottom_right = 17
+corner_radius_bottom_left = 17
+shadow_color = Color(0.01, 0.035, 0.02, 0.5)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tray"]
+bg_color = Color(0.035, 0.07, 0.065, 0.97)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.91, 0.73, 0.38, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0.005, 0.02, 0.012, 0.72)
+shadow_size = 13
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_background"]
+bg_color = Color(0.012, 0.035, 0.025, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.01, 0.025, 0.018, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.31, 0.87, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fight_normal"]
+bg_color = Color(0.72, 0.12, 0.075, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.96, 0.52, 0.27, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fight_hover"]
+bg_color = Color(0.88, 0.18, 0.09, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.79, 0.35, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(1, 0.55, 0.18, 0.34)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fight_pressed"]
+bg_color = Color(0.54, 0.07, 0.045, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.7, 0.28, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_normal"]
+bg_color = Color(0.8, 0.47, 0.07, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.73, 0.23, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_hover"]
+bg_color = Color(0.94, 0.58, 0.09, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.9, 0.45, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(1, 0.7, 0.14, 0.31)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag_pressed"]
+bg_color = Color(0.61, 0.31, 0.035, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.82, 0.35, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_party_normal"]
+bg_color = Color(0.23, 0.62, 0.16, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.58, 0.9, 0.28, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_party_hover"]
+bg_color = Color(0.32, 0.76, 0.2, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.78, 1, 0.42, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.4, 1, 0.28, 0.28)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_party_pressed"]
+bg_color = Color(0.14, 0.45, 0.09, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.7, 0.96, 0.34, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_run_normal"]
+bg_color = Color(0.07, 0.38, 0.62, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.31, 0.7, 0.94, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_run_hover"]
+bg_color = Color(0.09, 0.51, 0.78, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.58, 0.88, 1, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.25, 0.72, 1, 0.3)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_run_pressed"]
+bg_color = Color(0.035, 0.27, 0.48, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.46, 0.82, 1, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
+bg_color = Color(1, 1, 1, 0.04)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.86, 0.38, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(1, 0.72, 0.2, 0.42)
+shadow_size = 9
+
+[node name="BattleUIOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="OpponentStatus" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.67
+anchor_top = 0.035
+anchor_right = 0.97
+anchor_bottom = 0.245
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_status")
+
+[node name="Margin" type="MarginContainer" parent="OpponentStatus"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 13
+
+[node name="Content" type="VBoxContainer" parent="OpponentStatus/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Identity" type="HBoxContainer" parent="OpponentStatus/Margin/Content"]
+layout_mode = 2
+
+[node name="OpponentName" type="Label" parent="OpponentStatus/Margin/Content/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.97, 1, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0.005, 0.02, 0.012, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
+text = "OPPONENT"
+text_overrun_behavior = 3
+
+[node name="OpponentLevel" type="Label" parent="OpponentStatus/Margin/Content/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 18
+text = "LV. ?"
+vertical_alignment = 1
+
+[node name="Health" type="HBoxContainer" parent="OpponentStatus/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HPLabel" type="Label" parent="OpponentStatus/Margin/Content/Health"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "HP"
+
+[node name="OpponentHP" type="ProgressBar" parent="OpponentStatus/Margin/Content/Health"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+value = 1.0
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_background")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+
+[node name="PlayerStatus" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.025
+anchor_top = 0.57
+anchor_right = 0.325
+anchor_bottom = 0.755
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_status")
+
+[node name="Margin" type="MarginContainer" parent="PlayerStatus"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="PlayerStatus/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Identity" type="HBoxContainer" parent="PlayerStatus/Margin/Content"]
+layout_mode = 2
+
+[node name="PlayerName" type="Label" parent="PlayerStatus/Margin/Content/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.97, 1, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0.005, 0.02, 0.012, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
+text = "YOUR POKÉMON"
+text_overrun_behavior = 3
+
+[node name="PlayerLevel" type="Label" parent="PlayerStatus/Margin/Content/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 18
+text = "LV. ?"
+vertical_alignment = 1
+
+[node name="Health" type="HBoxContainer" parent="PlayerStatus/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HPLabel" type="Label" parent="PlayerStatus/Margin/Content/Health"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "HP"
+
+[node name="PlayerHP" type="ProgressBar" parent="PlayerStatus/Margin/Content/Health"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+value = 1.0
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_background")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+
+[node name="MessagePanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.35
+anchor_top = 0.625
+anchor_right = 0.97
+anchor_bottom = 0.755
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_message")
+
+[node name="Margin" type="MarginContainer" parent="MessagePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 10
+
+[node name="BattleMessage" type="Label" parent="MessagePanel/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "What will your Pokémon do?"
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ActionTray" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.025
+anchor_top = 0.775
+anchor_right = 0.975
+anchor_bottom = 0.97
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_tray")
+
+[node name="Margin" type="MarginContainer" parent="ActionTray"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 13
+
+[node name="Actions" type="GridContainer" parent="ActionTray/Margin"]
+layout_mode = 2
+theme_override_constants/h_separation = 13
+columns = 4
+
+[node name="FightButton" type="Button" parent="ActionTray/Margin/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_right = NodePath("../BagButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.16, 0.025, 0.015, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_fight_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fight_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fight_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "FIGHT"
+
+[node name="BagButton" type="Button" parent="ActionTray/Margin/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../FightButton")
+focus_neighbor_right = NodePath("../PartyButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.16, 0.08, 0.01, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_bag_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bag_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bag_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "BAG"
+
+[node name="PartyButton" type="Button" parent="ActionTray/Margin/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../BagButton")
+focus_neighbor_right = NodePath("../RunButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.025, 0.13, 0.015, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_party_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_party_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_party_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "POKÉMON"
+
+[node name="RunButton" type="Button" parent="ActionTray/Margin/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../PartyButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.01, 0.08, 0.16, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_run_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_run_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_run_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "RUN"

@@ -30,6 +30,7 @@ var _approach_state := ApproachState.WAITING
 var _approach_target := Vector3.ZERO
 var _dialog_template: UITemplate
 var _dialog_line_index := -1
+var _start_battle_after_dialog := false
 
 
 func process_behavior(
@@ -175,6 +176,7 @@ func _complete_approach(
 
 
 func _start_dialog() -> void:
+	_start_battle_after_dialog = false
 	if not dialog or dialog.is_empty():
 		_finish_dialog()
 		return
@@ -199,6 +201,7 @@ func _advance_dialog() -> void:
 
 	_dialog_line_index += 1
 	if _dialog_line_index >= dialog.dialog_lines.size():
+		_start_battle_after_dialog = true
 		_dialog_template.close()
 		return
 
@@ -206,6 +209,13 @@ func _advance_dialog() -> void:
 
 
 func _finish_dialog() -> void:
+	var should_start_battle := _start_battle_after_dialog
+	_start_battle_after_dialog = false
 	_dialog_template = null
 	_dialog_line_index = -1
 	GameInstance.set_player_movement_enabled(true)
+	if should_start_battle:
+		GameInstance.startBattle({
+			"encounter_type": "trainer",
+			"trainer_name": dialog.character_name if dialog else "",
+		})

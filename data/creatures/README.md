@@ -1,8 +1,8 @@
 # Local Creature Data
 
 This generated directory contains the local, losslessly compressed PokeAPI
-`pokemon`, `pokemon-species`, and `evolution-chain` JSON records consumed by
-`CreatureSystem`. Do not hand-edit generated records.
+`pokemon`, Pokemon encounter, `pokemon-species`, and `evolution-chain` JSON
+records consumed by `CreatureSystem`. Do not hand-edit generated records.
 
 From the repository root:
 

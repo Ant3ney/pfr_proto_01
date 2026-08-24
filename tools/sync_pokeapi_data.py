@@ -80,9 +80,8 @@ def clone_source(destination: Path, git_ref: str) -> Path:
             str(destination),
         ]
     )
-    if git_ref != "master":
-        run(["git", "fetch", "--depth", "1", "origin", git_ref], destination)
-        run(["git", "checkout", "--detach", "FETCH_HEAD"], destination)
+    run(["git", "fetch", "--depth", "1", "origin", git_ref], destination)
+    run(["git", "checkout", "--detach", "FETCH_HEAD"], destination)
     run(
         [
             "git",
@@ -171,6 +170,7 @@ def dataset_digest(root: Path) -> str:
     digest = hashlib.sha256()
     included_paths = sorted(
         [root / "index.json"]
+        + list((root / "encounters").glob("*.json.gz"))
         + list((root / "pokemon").glob("*.json.gz"))
         + list((root / "species").glob("*.json.gz"))
         + list((root / "evolution_chains").glob("*.json.gz")),
@@ -227,6 +227,7 @@ def import_dataset(source: Path, staging_root: Path) -> dict[str, int]:
     entries: list[dict[str, Any]] = []
     seen_names: set[str] = set()
     default_count = 0
+    encounter_count = 0
     for path in pokemon_paths:
         pokemon = read_json(path)
         pokemon_id = int(pokemon["id"])
@@ -268,6 +269,21 @@ def import_dataset(source: Path, staging_root: Path) -> dict[str, int]:
             staging_root / "pokemon" / f"{pokemon_id}.json.gz",
             pokemon,
         )
+        encounters_path = path.parent / "encounters" / "index.json"
+        if not encounters_path.is_file():
+            raise FileNotFoundError(
+                f"Pokemon {pokemon_id} is missing its encounters record"
+            )
+        encounters = read_json(encounters_path)
+        if not isinstance(encounters, list):
+            raise ValueError(
+                f"Pokemon {pokemon_id} encounters record is not a JSON array"
+            )
+        write_compressed_json(
+            staging_root / "encounters" / f"{pokemon_id}.json.gz",
+            encounters,
+        )
+        encounter_count += 1
 
     source_index = read_json(endpoint_roots["pokemon"] / "index.json")
     if int(source_index.get("count", -1)) != len(entries):
@@ -285,6 +301,7 @@ def import_dataset(source: Path, staging_root: Path) -> dict[str, int]:
 
     return {
         "default_pokemon": default_count,
+        "encounters": encounter_count,
         "evolution_chains": len(evolution_ids),
         "pokemon": len(entries),
         "species": len(species_by_id),
@@ -313,6 +330,7 @@ def verify_dataset(root: Path) -> dict[str, int]:
     species_ids: set[int] = set()
     evolution_ids: set[int] = set()
     default_count = 0
+    encounter_count = 0
     for entry in entries:
         pokemon_id = int(entry["id"])
         pokemon_name = str(entry["name"])
@@ -331,6 +349,12 @@ def verify_dataset(root: Path) -> dict[str, int]:
             raise ValueError(f"Pokemon record does not match index entry {pokemon_id}")
         if resource_id(pokemon.get("species"), "pokemon.species") != species_id:
             raise ValueError(f"Pokemon/species mismatch for {pokemon_id}")
+        encounters = read_compressed_json(
+            root / "encounters" / f"{pokemon_id}.json.gz"
+        )
+        if not isinstance(encounters, list):
+            raise ValueError(f"Pokemon encounters are not an array for {pokemon_id}")
+        encounter_count += 1
 
     for species_id in species_ids:
         species = read_compressed_json(root / "species" / f"{species_id}.json.gz")
@@ -354,6 +378,7 @@ def verify_dataset(root: Path) -> dict[str, int]:
 
     counts = {
         "default_pokemon": default_count,
+        "encounters": encounter_count,
         "evolution_chains": len(evolution_ids),
         "pokemon": len(seen_ids),
         "species": len(species_ids),
@@ -386,8 +411,8 @@ def write_support_files(
     readme = """# Local Creature Data
 
 This generated directory contains the local, losslessly compressed PokeAPI
-`pokemon`, `pokemon-species`, and `evolution-chain` JSON records consumed by
-`CreatureSystem`. Do not hand-edit generated records.
+`pokemon`, Pokemon encounter, `pokemon-species`, and `evolution-chain` JSON
+records consumed by `CreatureSystem`. Do not hand-edit generated records.
 
 From the repository root:
 
@@ -417,8 +442,8 @@ not part of this stat-data snapshot.
 
 def replace_output(staging_root: Path, output: Path) -> None:
     output = output.resolve()
-    if output == Path(output.anchor):
-        raise ValueError("Refusing to replace a filesystem root")
+    if output == Path(output.anchor) or output == Path.cwd().resolve():
+        raise ValueError("Refusing to replace a filesystem or working-directory root")
     output.parent.mkdir(parents=True, exist_ok=True)
     backup = output.parent / f".{output.name}.previous"
     if backup.exists():
@@ -455,6 +480,7 @@ def main() -> int:
         staging_root = Path(
             tempfile.mkdtemp(prefix=f".{output.name}-", dir=output.parent)
         )
+        staging_root.chmod(0o755)
         try:
             counts = import_dataset(source, staging_root)
             write_support_files(source, staging_root, counts)

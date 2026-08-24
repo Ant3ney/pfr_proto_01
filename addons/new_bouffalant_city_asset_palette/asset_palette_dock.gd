@@ -26,7 +26,6 @@ var _thumbnail_failures := {}
 var _thumbnail_requests := {}
 var _video_adapter_name := "Unknown adapter"
 var _rendering_method := "unknown renderer"
-var _unsafe_intel_vulkan_renderer := false
 
 var _search: LineEdit
 var _category: OptionButton
@@ -50,14 +49,13 @@ func initialize(
 	default_thumbnail: Texture2D,
 	video_adapter_name: String,
 	rendering_method: String,
-	unsafe_intel_vulkan_renderer: bool
+	_unsafe_intel_vulkan_renderer: bool
 ) -> void:
 	_assets = assets
 	_resource_previewer = resource_previewer
 	_default_thumbnail = default_thumbnail
 	_video_adapter_name = video_adapter_name
 	_rendering_method = rendering_method
-	_unsafe_intel_vulkan_renderer = unsafe_intel_vulkan_renderer
 	if (
 		_resource_previewer != null
 		and not _resource_previewer.preview_invalidated.is_connected(_on_preview_invalidated)
@@ -96,13 +94,6 @@ func is_placement_active() -> bool:
 	return _place_toggle.button_pressed
 
 
-func is_selected_asset_blocked() -> bool:
-	return (
-		_unsafe_intel_vulkan_renderer
-		and RuntimeContract.is_confirmed_intel_vulkan_trigger(_selected_asset)
-	)
-
-
 func get_thumbnail_status() -> Dictionary:
 	var status := _visible_thumbnail_status()
 	status["queued"] = _thumbnail_requests.size()
@@ -112,6 +103,20 @@ func get_thumbnail_status() -> Dictionary:
 func set_placement_active(enabled: bool) -> void:
 	_place_toggle.set_pressed_no_signal(enabled)
 	_update_place_button()
+
+
+func start_placement_for_asset(asset_id: String) -> bool:
+	for index in range(_asset_list.item_count):
+		var asset: Dictionary = _asset_list.get_item_metadata(index)
+		if String(asset.get("id", "")) != asset_id:
+			continue
+		_asset_list.select(index)
+		_asset_list.ensure_current_is_visible()
+		_select_list_index(index)
+		set_placement_active(true)
+		placement_toggled.emit(true)
+		return true
+	return false
 
 
 func set_rotation_degrees(degrees: float) -> void:
@@ -157,16 +162,9 @@ func _build_interface() -> void:
 
 	_renderer_status = Label.new()
 	_renderer_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	if _unsafe_intel_vulkan_renderer:
-		_renderer_status.text = (
-			"Museum and Gate Building paused on %s (%s). Use a bundled safe launcher."
-			% [_video_adapter_name, _rendering_method]
-		)
-		_renderer_status.add_theme_color_override("font_color", Color(1.0, 0.55, 0.32))
-	else:
-		_renderer_status.text = "Renderer: %s (%s)" % [
-			_video_adapter_name, _rendering_method
-		]
+	_renderer_status.text = "Renderer: %s (%s)" % [
+		_video_adapter_name, _rendering_method
+	]
 	add_child(_renderer_status)
 
 	_search = LineEdit.new()
@@ -537,21 +535,19 @@ func _select_list_index(index: int) -> void:
 		note = "Large source-authored section with %s; use as an assembly, not a GridMap tile." % _collision_summary(_selected_asset).to_lower()
 	if RuntimeContract.is_performance_sensitive(_selected_asset):
 		note += " High-load asset: %s." % RuntimeContract.performance_summary(_selected_asset)
-	if RuntimeContract.is_confirmed_intel_vulkan_trigger(_selected_asset):
-		note += " Confirmed Intel Vulkan trigger; Compatibility and NVIDIA Vulkan are validated."
-	if is_selected_asset_blocked():
-		note += " Placement is paused on this renderer; reopen with a bundled safe launcher."
+	if RuntimeContract.uses_vulkan_safe_mesh_import(_selected_asset):
+		note += (
+			" Uses original mesh buffers for Vulkan stability; textures, collision, and "
+			+ "normal shadow casting are retained."
+		)
 	_details.text = "%s\n%s • %s\n%s" % [
 		_selected_asset.get("id", ""),
 		_selected_asset.get("category", ""),
 		_dimensions_text(_selected_asset),
 		note,
 	]
-	if is_selected_asset_blocked():
-		show_message("This asset is paused on the current Intel Vulkan renderer.", true)
-	else:
-		_status.text = "Ready. Enable placement or add at the scene origin."
-		_status.remove_theme_color_override("font_color")
+	_status.text = "Ready. Enable placement or add at the scene origin."
+	_status.remove_theme_color_override("font_color")
 	_update_action_availability()
 
 
@@ -563,12 +559,13 @@ func _collision_summary(asset: Dictionary) -> String:
 
 func _update_action_availability() -> void:
 	var has_asset := not _selected_asset.is_empty()
-	var blocked := is_selected_asset_blocked()
-	_place_toggle.disabled = not has_asset or blocked
-	_place_origin.disabled = not has_asset or blocked
-	if (not has_asset or blocked) and _place_toggle.button_pressed:
+	_place_toggle.disabled = not has_asset
+	_place_origin.disabled = not has_asset
+	if not has_asset and _place_toggle.button_pressed:
 		set_placement_active(false)
 		placement_toggled.emit(false)
+	_place_origin.text = "Add at Scene Origin"
+	_update_place_button()
 
 
 func _update_place_button() -> void:
@@ -596,19 +593,11 @@ func _on_asset_selected(index: int) -> void:
 
 func _on_asset_activated(index: int) -> void:
 	_select_list_index(index)
-	if is_selected_asset_blocked():
-		show_message("Asset paused. Reopen this project with a bundled safe launcher.", true)
-		return
 	set_placement_active(true)
 	placement_toggled.emit(true)
 
 
 func _on_placement_toggled(enabled: bool) -> void:
-	if enabled and is_selected_asset_blocked():
-		set_placement_active(false)
-		show_message("Asset paused. Reopen this project with a bundled safe launcher.", true)
-		placement_toggled.emit(false)
-		return
 	_update_place_button()
 	if enabled:
 		_status.text = "Left-click to place. Q/E rotates; Escape or right-click stops."
@@ -616,7 +605,4 @@ func _on_placement_toggled(enabled: bool) -> void:
 
 
 func _on_place_origin_pressed() -> void:
-	if is_selected_asset_blocked():
-		show_message("Asset paused. Reopen this project with a bundled safe launcher.", true)
-		return
 	place_at_origin_requested.emit()

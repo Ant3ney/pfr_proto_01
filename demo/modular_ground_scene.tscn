@@ -10,6 +10,10 @@
 [ext_resource type="PackedScene" uid="uid://cajjgm0sbklba" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_pokemon_center_out.glb" id="6_tuh08"]
 [ext_resource type="PackedScene" uid="uid://dpl43vpfe4ba4" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_garage.glb" id="7_fk01r"]
 [ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerKyle.tscn" id="7_ychl5"]
+[ext_resource type="PackedScene" uid="uid://c3e7mjmlovekr" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_gate_building.glb" id="8_81ntd"]
+[ext_resource type="PackedScene" uid="uid://betnscnkl3kvc" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_tenant_building.glb" id="9_qw6eg"]
+[ext_resource type="PackedScene" uid="uid://dliltl0h6uu1m" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_museum.glb" id="10_7auug"]
+[ext_resource type="PackedScene" uid="uid://el74326i5kir" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl012.glb" id="11_qw6eg"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_d5sq5"]
 vertices = PackedVector3Array(-40.5, 0.5, -40.5, -40.5, 0.5, 18.5, 30.5, 0.5, 18.5, 30.5, 0.5, -40.5)
@@ -39,7 +43,7 @@ transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 20, 
 metadata/new_bouffalant_city_asset_id = "t1_b_cityhall"
 
 [node name="T1BRougeTower" parent="NewBouffalantCityAssets2" unique_id=6623939 instance=ExtResource("5_s2551")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -1)
 metadata/new_bouffalant_city_asset_id = "t1_b_rouge_tower"
 
 [node name="T1BMiareStation" parent="NewBouffalantCityAssets2" unique_id=97565464 instance=ExtResource("6_0n3ur")]
@@ -49,6 +53,62 @@ metadata/new_bouffalant_city_asset_id = "t1_b_miare_station"
 [node name="T1BGarage" parent="NewBouffalantCityAssets2" unique_id=1377187823 instance=ExtResource("7_fk01r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -18.5)
 metadata/new_bouffalant_city_asset_id = "t1_b_garage"
+
+[node name="T1BGateBuilding" parent="NewBouffalantCityAssets2" unique_id=2092443404 instance=ExtResource("8_81ntd")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -25, 0, -8.5)
+metadata/new_bouffalant_city_asset_id = "t1_b_gate_building"
+
+[node name="T1BTenantBuilding" parent="NewBouffalantCityAssets2" unique_id=657705444 instance=ExtResource("9_qw6eg")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -18, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_b_tenant_building"
+
+[node name="T1BMuseum" parent="NewBouffalantCityAssets2" unique_id=739276518 instance=ExtResource("10_7auug")]
+transform = Transform3D(-1.0000001, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, -1.0000001, 10, 0, 17.5)
+metadata/new_bouffalant_city_asset_id = "t1_b_museum"
+
+[node name="T1BTenantBuilding2" parent="NewBouffalantCityAssets2" unique_id=1420520610 instance=ExtResource("9_qw6eg")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.5, 0, 8)
+metadata/new_bouffalant_city_asset_id = "t1_b_tenant_building"
+
+[node name="T1Pl013" parent="NewBouffalantCityAssets2" unique_id=1402282345 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl013" unique_id=664804040 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -1, 1, 0, 4.3711392e-08)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl013/T1Pl012" unique_id=213458037 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, -1, 0, -2.1855692e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl013/T1Pl012/T1Pl012" unique_id=163505547 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, 1, 0, 2.1855695e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl013/T1Pl012/T1Pl012/T1Pl012" unique_id=1104573418 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, -1, 0, -3.9340233e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2" unique_id=292243295 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 1)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl012" unique_id=1275133747 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -1, 1, 0, 4.3711392e-08)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl012/T1Pl012" unique_id=2144376097 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, -1, 0, -2.1855692e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl012/T1Pl012/T1Pl012" unique_id=1246964054 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, 1, 0, 2.1855695e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NewBouffalantCityAssets2/T1Pl012/T1Pl012/T1Pl012/T1Pl012" unique_id=667467621 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742276e-08, 0, 1, 0, 8.742276e-08, 0, -1, -1, 0, -3.9340233e-07)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
 
 [node name="NewBouffalantCityAssets" type="Node3D" parent="." unique_id=1906562664]
 editor_description = "Instances placed by the New Bouffalant City Asset Palette. Keep instances at unit scale; normal placement uses 0.5 m snapping and 90° rotations."

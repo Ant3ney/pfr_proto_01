@@ -17,13 +17,17 @@ The enabled editor plugin at [`../addons/new_bouffalant_city_asset_palette/`](..
 
 This dock complements rather than replaces `ModularGroundGrid`: use the GridMap MeshLibrary to paint strict 2 × 2 m cobble cells, and use the dock for 4 × 4 m route scenes and irregular or unique assets. Do not make one GridMap library from the full catalog.
 
-### Renderer compatibility and scoped guard
+### Vulkan-safe targeted mesh imports
 
-`runtime_contract.gd` classifies complete environment sections, assets with at least 25,000 triangles, and assets with a runtime horizontal extent of at least 60 m as performance-sensitive. There are currently 44; this classification is advisory and does not block them. Repeated losses were verified as Linux Intel `i915` Vulkan hangs followed by Godot `SIGABRT`, not GDScript, physics, corrupt GLB data, or general asset size. A launcher outside the project forced Intel Vulkan/Forward+ even though `project.godot` declares GL Compatibility.
+`runtime_contract.gd` classifies complete environment sections, assets with at least 25,000 triangles, and assets with a runtime horizontal extent of at least 60 m as performance-sensitive. There are currently 44; this classification is advisory and does not block placement or play.
 
-Museum (`t1_b_museum`) and Gate Building (`t1_b_gate_building`) are the two confirmed workload triggers. Their source mesh data, generated tangents, base indices, and LOD indices validate, and larger control assets remain valid. An isolated five-asset render completed 600 animated, shadowed frames on Intel OpenGL Compatibility and 600 on NVIDIA Vulkan. The palette therefore blocks only these two entries, a scene containing one, and the all-assets metric browser while Intel Vulkan is active. Other high-load entries remain available.
+Museum (`t1_b_museum`) and Gate Building (`t1_b_gate_building`) previously reproduced a Linux Intel `i915` GPU hang and context reset under Vulkan/Forward+, followed by Godot aborting after device loss. This was not a GDScript exception, physics crash, corrupt source GLB, general polygon-count limit, or texture/material failure: source positions, normals, UVs, tangents, base indices, generated LOD indices, and textures validated; flat materials did not eliminate the reset; and larger City Hall, Rouge Tower, and Miare Station controls rendered normally.
 
-Close existing project editors before changing renderer. `addons/new_bouffalant_city_asset_palette/open_editor_compatibility.sh` forces the project's validated Intel OpenGL Compatibility path; `open_editor_nvidia.sh` selects the validated NVIDIA Vulkan device. Do not run multiple graphical editor instances against the same project cache.
+The asset-level solution is to keep the original imported mesh buffers for Gate Building, Museum, and Tenant Building (`t1_b_tenant_building`). For only these three IDs, `meshes/generate_lods=false` and `meshes/create_shadow_meshes=false`. Removing both optional Godot-generated buffer types avoids the Intel Vulkan driver path that hung while retaining the source geometry, UV-separated textured materials, baked `0.75` scale, generated gameplay collision, and normal shadow casting through the original mesh. Gate and Museum were the reproduced failures; Tenant uses the same targeted profile preventively, not because a Tenant-only hang was independently confirmed.
+
+[`../art/environments/new_bouffalant_city/reference_city_pack/runtime_contract.gd`](../art/environments/new_bouffalant_city/reference_city_pack/runtime_contract.gd) owns the three-ID `VULKAN_SAFE_MESH_IMPORT_IDS` set. [`../art/environments/new_bouffalant_city/reference_city_pack/collision/apply_model_import_settings.gd`](../art/environments/new_bouffalant_city/reference_city_pack/collision/apply_model_import_settings.gd) enforces both settings as `false` for that set and `true` for every other GLB. Keep the exception centralized there; do not hand-edit an imported cache, globally disable the optimizations, flatten these assets' materials, or restore the old Compatibility-restart/placement guard. The palette now permits ordinary double-click placement and ordinary play on Forward+.
+
+After the targeted reimport, an animated directional-shadow stress scene containing all three affected imports plus the three controls completed 600 frames on Intel ADL GT2 Vulkan/Forward+. The real [`../demo/modular_ground_scene.tscn`](../demo/modular_ground_scene.tscn) also completed 600 iterations on the same Intel Forward+ path. These successful runs are the current regression baseline. The two importer options were disabled together, so documentation must not claim that either LOD generation or shadow-mesh generation was individually isolated as the sole trigger.
 
 ## Placement And Classification
 
@@ -31,7 +35,7 @@ Keep runtime instances at unit scale. The 147 GLB imports bake the source geomet
 
 Catalog entries under `Complete Environment Sections` are large source-authored assemblies, not modular tiles. Only `Modular Ground` entries follow the strict 2/4/8 m ground system.
 
-Imported GLBs generate layer-1 static collision at import time, after the baked scale is applied. Hard-surface assets use double-sided concave mesh shapes; shrubs and hedges use boxes; trees, bamboo, and stumps use central cylinders. Grass, flowers, loose soil, the fissure decal, and water-only entries intentionally have no collision. The 11 modular ground scenes retain authored slabs. This collision is for static prototype environment use and does not replace per-level navigation, occlusion, or interaction authoring. When adding models or changing profiles, run `collision/apply_model_import_settings.gd`, then refresh imports.
+Imported GLBs generate layer-1 static collision at import time, after the baked scale is applied. Hard-surface assets use double-sided concave mesh shapes; shrubs and hedges use boxes; trees, bamboo, and stumps use central cylinders. Grass, flowers, loose soil, the fissure decal, and water-only entries intentionally have no collision. The 11 modular ground scenes retain authored slabs. This collision is for static prototype environment use and does not replace per-level navigation, occlusion, or interaction authoring. When adding models, changing profiles, or regenerating `.glb.import` files, run `collision/apply_model_import_settings.gd`, then refresh imports. This step also preserves the three Vulkan-safe mesh exceptions.
 
 ## Storage And Provenance
 
@@ -44,9 +48,13 @@ The reference-city GLBs are derived from Pokémon Z-A field assets. The catalog 
 After changing paths or contents, refresh imports and run:
 
 ```sh
+godot --headless --rendering-method gl_compatibility --path . --script res://art/environments/new_bouffalant_city/reference_city_pack/collision/apply_model_import_settings.gd
 godot --headless --path . --import
 godot --headless --path . --editor --quit
+godot --headless --path . --script res://addons/new_bouffalant_city_asset_palette/validation/asset_palette_activation_smoke_test.gd
 godot --headless --path . --scene res://art/environments/new_bouffalant_city/reference_city_pack/validation/metric_environment_pack_smoke_test.tscn
 ```
 
-The editor startup check parses and initializes the placement plugin. The environment test checks catalog and thumbnail completeness, category membership, unique IDs, the 44-entry performance-sensitive classification, the two-entry Intel Vulkan trigger scope and three known controls, unit node transforms, baked `0.75` GLB bounds, 0.5 m placement snapping, configured GLB collision imports, every collision profile and shape, representative live physics queries, and modular-ground dimensions and slabs.
+The import-settings tool must report three targeted updates after first applying this change, then zero on an idempotence rerun. The palette activation test verifies that Gate Building, Museum, and Tenant Building double-click directly into normal viewport placement even when the dock is initialized as Intel Forward+. The environment test checks catalog and thumbnail completeness, category membership, unique IDs, the 44-entry advisory performance classification, all three targeted `.glb.import` settings, absence of generated LOD and optimized shadow buffers in the loaded meshes, retained textured materials, unit node transforms, baked `0.75` GLB bounds, configured collisions, representative live physics queries, and modular-ground dimensions and slabs. The editor startup check parses and initializes the placement plugin.
+
+For a renderer-level regression check, run the real modular ground scene for a bounded frame count on the intended Vulkan device and inspect the kernel log for a new `i915` hang or context reset. GPU indices are workstation-specific; verify the selected adapter instead of assuming an index. Do not run a potentially hanging Vulkan regression while another editor has unsaved work.

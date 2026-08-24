@@ -1,0 +1,273 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://art/battle/forest/forest_battlefield.tscn" id="1_battlefield"]
+[ext_resource type="Script" path="res://battle/BattleScene.gd" id="2_battle_scene"]
+
+[sub_resource type="Environment" id="Environment_battle"]
+background_mode = 1
+background_color = Color(0.5, 0.77, 0.98, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.7, 0.86, 0.74, 1)
+ambient_light_energy = 0.95
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_actor_shadow"]
+albedo_color = Color(0.05, 0.15, 0.06, 1)
+roughness = 0.78
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_actor_shadow"]
+top_radius = 0.88
+bottom_radius = 0.88
+height = 0.025
+radial_segments = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_intro_ring"]
+bg_color = Color(0.04, 0.18, 0.09, 0.08)
+border_width_left = 7
+border_width_top = 7
+border_width_right = 7
+border_width_bottom = 7
+border_color = Color(0.92, 0.76, 0.34, 0.95)
+corner_radius_top_left = 150
+corner_radius_top_right = 150
+corner_radius_bottom_right = 150
+corner_radius_bottom_left = 150
+shadow_color = Color(0.16, 1, 0.4, 0.56)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_intro_banner"]
+bg_color = Color(0.025, 0.16, 0.095, 0.94)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.92, 0.76, 0.34, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.08, 0.8, 0.28, 0.5)
+shadow_size = 20
+
+[node name="Battlefield3D" type="Node3D"]
+editor_description = "Battle presentation scene with the predecessor forest art, exact camera/spawn transforms, and a scene-side intro effect. Battle rules and creature spawning are intentionally not implemented here."
+script = ExtResource("2_battle_scene")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_battle")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.83775804, -0.4886922, -0.17453292)
+light_color = Color(1, 0.95, 0.82, 1)
+light_energy = 2.2
+
+[node name="FillLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.31415927, 2.5307274, 0)
+light_color = Color(0.45, 0.72, 1, 1)
+light_energy = 0.55
+
+[node name="BattleCamera" type="Camera3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 4.7, 8.7)
+rotation = Vector3(-0.5061455, 0, 0)
+current = true
+fov = 42.0
+
+[node name="BattlefieldArt" parent="." instance=ExtResource("1_battlefield")]
+unique_name_in_owner = true
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+editor_description = "Stable visual anchors for future battle actors. These preserve the predecessor scene's exact actor transforms."
+
+[node name="PlayerSpawn" type="Marker3D" parent="SpawnPoints"]
+unique_name_in_owner = true
+position = Vector3(-2.35, 0, 1.45)
+rotation = Vector3(0, 3.1415927, 0)
+gizmo_extents = 0.8
+editor_description = "Player-side actor origin. Faces toward the opponent."
+
+[node name="OpponentSpawn" type="Marker3D" parent="SpawnPoints"]
+unique_name_in_owner = true
+position = Vector3(2.25, 0, -1.85)
+gizmo_extents = 0.8
+editor_description = "Opponent-side actor origin."
+
+[node name="ActorShadows" type="Node3D" parent="."]
+
+[node name="PlayerShadow" type="MeshInstance3D" parent="ActorShadows"]
+position = Vector3(-2.35, 0.035, 1.45)
+scale = Vector3(1.15, 1, 0.55)
+material_override = SubResource("StandardMaterial_actor_shadow")
+mesh = SubResource("CylinderMesh_actor_shadow")
+
+[node name="OpponentShadow" type="MeshInstance3D" parent="ActorShadows"]
+position = Vector3(2.25, 0.04, -1.85)
+scale = Vector3(1.22, 1, 0.58)
+material_override = SubResource("StandardMaterial_actor_shadow")
+mesh = SubResource("CylinderMesh_actor_shadow")
+
+[node name="BattleIntroUI" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="IntroOverlay" type="Control" parent="BattleIntroUI"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorWash" type="ColorRect" parent="BattleIntroUI/IntroOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.25, 1, 0.43, 1)
+
+[node name="IntroStreaks" type="Control" parent="BattleIntroUI/IntroOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Left01" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = -0.06
+anchor_top = 0.18
+anchor_right = 0.38
+anchor_bottom = 0.195
+rotation = 0.139626
+mouse_filter = 2
+color = Color(0.95, 0.78, 0.35, 0.88)
+
+[node name="Left02" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = -0.1
+anchor_top = 0.72
+anchor_right = 0.31
+anchor_bottom = 0.733
+rotation = -0.139626
+mouse_filter = 2
+color = Color(0.45, 1, 0.56, 0.78)
+
+[node name="Left03" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = -0.02
+anchor_top = 0.82
+anchor_right = 0.22
+anchor_bottom = 0.83
+rotation = -0.139626
+mouse_filter = 2
+color = Color(0.95, 0.78, 0.35, 0.7)
+
+[node name="Right01" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = 0.62
+anchor_top = 0.2
+anchor_right = 1.06
+anchor_bottom = 0.215
+rotation = -0.139626
+mouse_filter = 2
+color = Color(0.95, 0.78, 0.35, 0.88)
+
+[node name="Right02" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = 0.69
+anchor_top = 0.7
+anchor_right = 1.1
+anchor_bottom = 0.713
+rotation = 0.139626
+mouse_filter = 2
+color = Color(0.45, 1, 0.56, 0.78)
+
+[node name="Right03" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroStreaks"]
+layout_mode = 1
+anchor_left = 0.78
+anchor_top = 0.8
+anchor_right = 1.02
+anchor_bottom = 0.81
+rotation = 0.139626
+mouse_filter = 2
+color = Color(0.95, 0.78, 0.35, 0.7)
+
+[node name="HorizonFlash" type="ColorRect" parent="BattleIntroUI/IntroOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.08
+anchor_top = 0.492
+anchor_right = 0.92
+anchor_bottom = 0.508
+mouse_filter = 2
+color = Color(0.9, 1, 0.76, 0.95)
+
+[node name="ImpactRing" type="Panel" parent="BattleIntroUI/IntroOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -120.0
+offset_right = 120.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(120, 120)
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_intro_ring")
+
+[node name="IntroBanner" type="Panel" parent="BattleIntroUI/IntroOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.22
+anchor_top = 0.405
+anchor_right = 0.78
+anchor_bottom = 0.595
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_intro_banner")
+
+[node name="TopAccent" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroBanner"]
+layout_mode = 1
+anchor_left = 0.06
+anchor_top = 0.12
+anchor_right = 0.94
+anchor_bottom = 0.16
+mouse_filter = 2
+color = Color(0.46, 1, 0.56, 0.78)
+
+[node name="BottomAccent" type="ColorRect" parent="BattleIntroUI/IntroOverlay/IntroBanner"]
+layout_mode = 1
+anchor_left = 0.06
+anchor_top = 0.84
+anchor_right = 0.94
+anchor_bottom = 0.88
+mouse_filter = 2
+color = Color(0.95, 0.78, 0.35, 0.88)
+
+[node name="IntroTitle" type="Label" parent="BattleIntroUI/IntroOverlay/IntroBanner"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 1, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0.005, 0.025, 0.015, 0.95)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 43
+text = "BATTLE START!"
+horizontal_alignment = 1
+vertical_alignment = 1

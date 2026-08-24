@@ -3,9 +3,9 @@ extends Node
 ## Offline Creature System backed by the vendored PokeAPI snapshot.
 ##
 ## `get_creature()` preserves every field from PokeAPI's Pokemon record and
-## adds `species_data` and `evolution_chain_data` dictionaries containing the
-## complete associated records. Returned dictionaries are deep copies, so a
-## caller cannot mutate the cached source data.
+## adds `encounters_data`, `species_data`, and `evolution_chain_data` containing
+## the complete associated records. Returned dictionaries are deep copies, so
+## a caller cannot mutate the cached source data.
 
 const DATA_ROOT := "res://data/creatures"
 const INDEX_PATH := DATA_ROOT + "/index.json"
@@ -64,7 +64,14 @@ func get_creature(pokemon_id: int) -> Dictionary:
 	if evolution_chain_data.is_empty():
 		return {}
 
+	var encounters_data := _read_compressed_json_array(
+		DATA_ROOT + "/encounters/%d.json.gz" % pokemon_id
+	)
+	if not _last_error.is_empty():
+		return {}
+
 	var complete_data := pokemon_data.duplicate(true)
+	complete_data["encounters_data"] = encounters_data
 	complete_data["species_data"] = species_data
 	complete_data["evolution_chain_data"] = evolution_chain_data
 	_store_cache_entry(pokemon_id, complete_data)
@@ -207,20 +214,40 @@ func _ensure_index_loaded() -> bool:
 
 
 func _read_compressed_json(path: String) -> Dictionary:
+	var parsed: Variant = _read_compressed_json_value(path)
+	if parsed == null:
+		return {}
+	if typeof(parsed) != TYPE_DICTIONARY:
+		_fail("Creature data record is not a JSON object: %s" % path)
+		return {}
+	return parsed
+
+
+func _read_compressed_json_array(path: String) -> Array:
+	var parsed: Variant = _read_compressed_json_value(path)
+	if parsed == null:
+		return []
+	if typeof(parsed) != TYPE_ARRAY:
+		_fail("Creature data record is not a JSON array: %s" % path)
+		return []
+	return parsed
+
+
+func _read_compressed_json_value(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
 		_fail("Creature data record is missing: %s" % path)
-		return {}
+		return null
 	var compressed := FileAccess.get_file_as_bytes(path)
 	if compressed.is_empty():
 		_fail("Creature data record is empty or unreadable: %s" % path)
-		return {}
+		return null
 	var decompressed := compressed.decompress_dynamic(
 		MAX_DECOMPRESSED_RECORD_BYTES,
 		FileAccess.COMPRESSION_GZIP
 	)
 	if decompressed.is_empty():
 		_fail("Creature data record could not be decompressed: %s" % path)
-		return {}
+		return null
 
 	var parser := JSON.new()
 	var parse_error := parser.parse(decompressed.get_string_from_utf8())
@@ -232,10 +259,7 @@ func _read_compressed_json(path: String) -> Dictionary:
 				parser.get_error_message(),
 			]
 		)
-		return {}
-	if typeof(parser.data) != TYPE_DICTIONARY:
-		_fail("Creature data record is not a JSON object: %s" % path)
-		return {}
+		return null
 	return parser.data
 
 
@@ -245,7 +269,7 @@ func _store_cache_entry(pokemon_id: int, creature_data: Dictionary) -> void:
 	_creature_cache[pokemon_id] = creature_data
 	_cache_order.append(pokemon_id)
 	while _cache_order.size() > CACHE_CAPACITY:
-		var evicted_id := _cache_order.pop_front()
+		var evicted_id: int = _cache_order.pop_front()
 		_creature_cache.erase(evicted_id)
 
 

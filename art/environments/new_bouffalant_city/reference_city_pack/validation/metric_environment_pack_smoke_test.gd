@@ -24,7 +24,7 @@ const CATEGORY_NODES := {
 }
 const SNAP_METERS := 0.5
 const EXPECTED_PERFORMANCE_SENSITIVE_ASSET_COUNT := 44
-const EXPECTED_INTEL_VULKAN_TRIGGER_COUNT := 2
+const EXPECTED_VULKAN_SAFE_MESH_IMPORT_COUNT := 3
 
 
 func _ready() -> void:
@@ -99,11 +99,11 @@ func _ready() -> void:
 				collision_profile_counts[profile] = int(collision_profile_counts[profile]) + 1
 				if not _validate_imported_collision(model, asset_id, profile):
 					return
-				if (
-					RuntimeContract.is_confirmed_intel_vulkan_trigger(asset_id)
-					and not _validate_textured_materials_retained(model, asset_id)
-				):
-					return
+				if RuntimeContract.uses_vulkan_safe_mesh_import(asset_id):
+					if not _validate_vulkan_safe_mesh_import(model, asset_id):
+						return
+					if not _validate_textured_materials_retained(model, asset_id):
+						return
 				if asset_id in ["t1_ar301", "t1_pl011", "t1_pl024"]:
 					physics_representatives[asset_id] = model
 			if asset_id.is_empty() or seen_ids.has(asset_id):
@@ -148,7 +148,7 @@ func _ready() -> void:
 		(
 			"Metric environment showcase smoke test passed: %d assets at scale 1 on the %.1f m grid; "
 			+ "147 GLBs baked to 0.75 at node scale 1; 44 high-load entries classified; "
-			+ "2 confirmed Intel Vulkan triggers scoped; "
+			+ "3 buildings use Vulkan-safe original mesh buffers; "
 			+ "119 mesh, 8 box, 7 trunk, "
 			+ "13 pass-through, and 11 ground collisions validated."
 		)
@@ -191,7 +191,7 @@ func _load_and_validate_catalog() -> Dictionary:
 
 	var seen_catalog_ids := {}
 	var performance_sensitive_count := 0
-	var intel_vulkan_trigger_count := 0
+	var vulkan_safe_mesh_import_count := 0
 	for raw_asset: Variant in raw_assets:
 		if not (raw_asset is Dictionary):
 			_fail("Catalog contains a non-dictionary asset entry.")
@@ -204,8 +204,8 @@ func _load_and_validate_catalog() -> Dictionary:
 		seen_catalog_ids[asset_id] = true
 		if RuntimeContract.is_performance_sensitive(entry):
 			performance_sensitive_count += 1
-		if RuntimeContract.is_confirmed_intel_vulkan_trigger(entry):
-			intel_vulkan_trigger_count += 1
+		if RuntimeContract.uses_vulkan_safe_mesh_import(entry):
+			vulkan_safe_mesh_import_count += 1
 		var model_path := str(entry.get("model_path", ""))
 		if model_path.is_empty() or not FileAccess.file_exists(model_path):
 			_fail("Converted model is missing: %s" % model_path)
@@ -255,10 +255,10 @@ func _load_and_validate_catalog() -> Dictionary:
 			]
 		)
 		return {}
-	if intel_vulkan_trigger_count != EXPECTED_INTEL_VULKAN_TRIGGER_COUNT:
+	if vulkan_safe_mesh_import_count != EXPECTED_VULKAN_SAFE_MESH_IMPORT_COUNT:
 		_fail(
-			"Intel Vulkan trigger scope has %d entries; expected %d."
-			% [intel_vulkan_trigger_count, EXPECTED_INTEL_VULKAN_TRIGGER_COUNT]
+			"Vulkan-safe mesh import scope has %d entries; expected %d."
+			% [vulkan_safe_mesh_import_count, EXPECTED_VULKAN_SAFE_MESH_IMPORT_COUNT]
 		)
 		return {}
 	for expected_heavy_id: String in ["t3_road_line_e", "t1_g17_1", "t1_b_school"]:
@@ -267,17 +267,21 @@ func _load_and_validate_catalog() -> Dictionary:
 			_fail("Known high-load asset is not classified: %s" % expected_heavy_id)
 			return {}
 	var catalog_assets_by_id := _catalog_assets_by_id(catalog)
-	for trigger_id: String in ["t1_b_museum", "t1_b_gate_building"]:
-		if not RuntimeContract.is_confirmed_intel_vulkan_trigger(
-			catalog_assets_by_id.get(trigger_id, {})
+	for safe_import_id: String in [
+		"t1_b_gate_building",
+		"t1_b_museum",
+		"t1_b_tenant_building",
+	]:
+		if not RuntimeContract.uses_vulkan_safe_mesh_import(
+			catalog_assets_by_id.get(safe_import_id, {})
 		):
-			_fail("Confirmed Intel Vulkan trigger is not scoped: %s" % trigger_id)
+			_fail("Vulkan-safe mesh import is not scoped: %s" % safe_import_id)
 			return {}
 	for safe_control_id: String in ["t1_b_cityhall", "t1_b_rouge_tower", "t1_b_miare_station"]:
-		if RuntimeContract.is_confirmed_intel_vulkan_trigger(
+		if RuntimeContract.uses_vulkan_safe_mesh_import(
 			catalog_assets_by_id.get(safe_control_id, {})
 		):
-			_fail("Known renderer control is incorrectly blocked: %s" % safe_control_id)
+			_fail("Known renderer control has the targeted import override: %s" % safe_control_id)
 			return {}
 	return catalog
 
@@ -290,9 +294,14 @@ func _uses_runtime_import_settings(model_path: String) -> bool:
 	var expected_script := (
 		'import_script/path="%s"' % RuntimeContract.COLLISION_POST_IMPORT_SCRIPT
 	)
+	var asset_id := model_path.get_file().trim_suffix(".glb")
+	var uses_original_buffers := RuntimeContract.uses_vulkan_safe_mesh_import(asset_id)
+	var expected_generated_buffers := "false" if uses_original_buffers else "true"
 	return (
 		settings.contains("nodes/apply_root_scale=true")
 		and settings.contains("nodes/root_scale=%s" % RuntimeContract.IMPORTED_MODEL_SCALE)
+		and settings.contains("meshes/generate_lods=%s" % expected_generated_buffers)
+		and settings.contains("meshes/create_shadow_meshes=%s" % expected_generated_buffers)
 		and settings.contains(expected_script)
 	)
 
@@ -398,6 +407,34 @@ func _validate_imported_runtime_scale(
 				]
 			)
 			return false
+	return true
+
+
+func _validate_vulkan_safe_mesh_import(model: Node3D, asset_id: String) -> bool:
+	var mesh_instances: Array[Node] = model.find_children("*", "MeshInstance3D", true, false)
+	if model is MeshInstance3D:
+		mesh_instances.push_front(model)
+	var mesh_count := 0
+	for node: Node in mesh_instances:
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		var mesh := mesh_instance.mesh as ArrayMesh
+		if mesh == null:
+			_fail("Vulkan-safe import did not produce an ArrayMesh: %s" % asset_id)
+			return false
+		mesh_count += 1
+		if mesh.get("shadow_mesh") != null:
+			_fail("Vulkan-safe import still has an optimized shadow mesh: %s" % asset_id)
+			return false
+		var serialized_surfaces: Array = mesh.call("_get_surfaces")
+		for surface: Variant in serialized_surfaces:
+			if surface is Dictionary and not (surface as Dictionary).get("lods", []).is_empty():
+				_fail("Vulkan-safe import still has generated LOD indices: %s" % asset_id)
+				return false
+	if mesh_count == 0:
+		_fail("Vulkan-safe import has no visual meshes: %s" % asset_id)
+		return false
 	return true
 
 

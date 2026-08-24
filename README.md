@@ -2,6 +2,69 @@
 
 A Godot prototype for reusable 3D character locomotion, player controls, camera behavior, and NPC navigation.
 
+## Query Local Creature Data
+
+`CreatureSystem` is a global, offline API for the complete PokeAPI creature snapshot bundled with the project. Pass a numeric PokeAPI ID to get the original Pokemon record plus its full encounter, species, and evolution-chain records:
+
+```gdscript
+var pikachu := CreatureSystem.get_creature(25)
+print(pikachu["name"])                              # pikachu
+print(pikachu["stats"])                             # Base stats
+print(pikachu["encounters_data"])                   # Location encounters
+print(pikachu["species_data"]["capture_rate"])      # Species metadata
+print(pikachu["evolution_chain_data"]["chain"])     # Full evolution tree
+```
+
+The API includes all 1,351 current PokeAPI Pokemon records: 1,025 default National-Dex entries plus 326 alternate and battle forms. `get_pokemon(id)` is an alias, `has_pokemon(id)` checks an ID without loading its record, and invalid lookups return an empty dictionary with details available from `get_last_error()`. Returned objects are deep copies and are safe for callers to modify.
+
+The losslessly compressed local snapshot lives in [`data/creatures`](data/creatures/README.md). It retains every JSON field from PokeAPI's `pokemon`, per-Pokemon encounter, `pokemon-species`, and `evolution-chain` endpoints; sprite and cry URL fields are retained, while the binary media itself is not vendored. To verify or intentionally refresh the snapshot:
+
+```sh
+python3 tools/sync_pokeapi_data.py --verify
+python3 tools/sync_pokeapi_data.py
+godot --headless --path . --scene res://tests/creature_system_smoke_test.tscn
+```
+
+## Manage the Player's Collection
+
+`CollectionSystem` is the global owner of captured Pokemon and the six-slot party. Each captured instance is a PCL (Pokemon collection instance) with its own ID, party assignment, health/XP percentages, and level:
+
+A fresh game starts with Palkia, Mothim, Hoothoot, Vespiquen, Luxray, and Pelipper in party slots 1–6. All six start at level 3, full health, and zero XP progress.
+
+```gdscript
+var pcl := CollectionSystem.add_pokemon(25, 5, 1.0, 0.0, 1)
+var battle_pcl := CollectionSystem.get_pcl_by_party_slot(1)
+CollectionSystem.update_instance_stats(pcl["pclID"], {
+	"health": 0.4,
+	"xp": 0.3,
+	"level": 6,
+})
+```
+
+Party slots are integers `1–6`; passing slot `0` stores the Pokemon outside the party. Health and XP use normalized percentages from `0.0` to `1.0`. Use `get_save_data()` and `load_save_data()` to hand the complete collection to the future Save System. Returned PCL objects are deep copies and can be safely modified by callers.
+
+Run the collection verification with:
+
+```sh
+godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
+```
+
+## Show UI with the UI Template System
+
+Call `UIManager.show_ui(text)` to display the shared template, then configure and retain the returned `UITemplate`:
+
+```gdscript
+var template := UIManager.show_ui("The door is locked.")
+if template:
+	template.set_speaker_name("System")
+	template.set_action_text("Okay")
+	template.set_action_callback(template.close)
+```
+
+The caller owns the template's state and lifecycle. Actions do not close automatically, the dismiss button is hidden by default, and `UIManager` does not prevent overlapping templates. Use `close()` rather than `queue_free()` when dismissal must run cleanup.
+
+See the complete [UI Template System guide](core/ui/README.md) for single messages, confirm/cancel UI, multi-line `Dialog` resources, movement locks, callbacks and signals, styling, lifecycle rules, and troubleshooting.
+
 ## Place the Player in a Traversable Scene
 
 [`demo/main.tscn`](demo/main.tscn) is the complete working example. The reusable player is [`demo/player.tscn`](demo/player.tscn); instance that scene instead of rebuilding its character body, collision capsule, controller, art, and animation setup in every level.
@@ -72,7 +135,8 @@ Level (Node3D)
 2. Rotate the trainer root around the Y axis to face its detection lane. [`core/TrainerBehavior.gd`](core/TrainerBehavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
 3. Keep the player's collision body on physics layer 1, or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
 4. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
-5. Run the scene and walk into the trainer's forward sightline. The trainer should lock player movement, create its `NavigationAgent3D` at runtime, navigate around baked obstacles, and stop beside the player. Do not add a `NavigationAgent3D` manually.
+5. Assign a non-empty [`Dialog`](core/Dialog.gd) resource to the trainer's **Dialog** property. The bundled Kyle scene already uses [`trainer_kyle.tres`](overworld/dialogs/trainer_kyle.tres); create another resource with a speaker name and ordered lines for a different trainer.
+6. Run the scene and walk into the trainer's forward sightline. The trainer should lock player movement, create its `NavigationAgent3D` at runtime, navigate around baked obstacles, stop beside the player, and open its dialog. Advancing the last line closes the template and restores player movement. Do not add a `NavigationAgent3D` manually.
 
 Trainer navigation and physical collision are separate. The `NavigationMesh` supplies a path, while `StaticBody3D`, `GridMap`, and other collision shapes keep the characters out of walls and scenery. A trainer needs both systems to behave correctly.
 
@@ -98,7 +162,7 @@ godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.
 
 ### Current Encounter Limits
 
-The existing behavior is an approach test, not a complete trainer encounter. After detecting the player, it approaches only once and remains complete. It does not currently start dialogue or a battle, and it does not restore player control. Follow-up encounter logic must call `GameInstance.set_player_movement_enabled(true)` when movement should resume. Avoid overlapping trainer sightlines for now because there is no encounter manager arbitrating between multiple simultaneous detections.
+The existing behavior implements a one-time approach and linear dialog, but not a complete trainer encounter. After detecting the player, it approaches only once, remains complete, displays its assigned dialog through the UI Template System, and restores player movement when that template closes. It does not start a battle. Avoid overlapping trainer sightlines for now because there is no encounter manager arbitrating between multiple simultaneous detections or UI templates.
 
 To make another trainer type, duplicate the Kyle scene and give it a descriptive name. Keep the `PFRCharacter` root structure, collision capsule, `Visual` node, and character art pack. Duplicate [`overworld/trainer_lake/TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) when that trainer needs different detection distance, ray height, collision mask, stopping buffer, or arrival distance; the controller should continue to extend [`core/NPCController.gd`](core/NPCController.gd) and assign a `TrainerBehavior` resource.
 
@@ -108,13 +172,13 @@ To make another trainer type, duplicate the Kyle scene and give it a descriptive
 | The trainer reacts but does not move | Confirm a baked navigation map exists, both endpoints are on its reachable surface, and run the navigation height smoke test above |
 | The trainer walks through or catches on scenery | Check physical collision separately from the navigation mesh and leave enough clearance for the 0.32-meter capsule radius |
 | The trainer stops too early or too late | Adjust `stopping_buffer` and `arrival_distance` in that trainer's controller configuration |
-| The player remains frozen afterward | This is current behavior; the future dialogue or battle flow must explicitly re-enable movement |
+| The player remains frozen afterward | Confirm the trainer has a non-empty `Dialog` and that the final action reaches `UITemplate.close()`; cleanup and movement restoration run through its dismiss callback |
 
 ## AI Context
 
 [`ai_context/`](ai_context/) holds durable, project-specific knowledge that would otherwise be costly for future contributors and AI agents to rediscover. Start at [`ai_context/index.md`](ai_context/index.md), use its task-oriented routing table, and read only the narrowest document relevant to the work. When a route leads to a subject directory, read that directory's `index.md` before selecting a leaf document.
 
-When a verified lesson remains useful beyond the current task, update the closest existing context document and its immediate index. Create a focused leaf only when existing documents do not cover the subject. Introduce a new subject directory only when multiple related documents or a distinct routing layer justify it, and give the directory its own routing `index.md`.
+When a verified lesson remains useful beyond the current task, update the closest existing context document and its immediate index. Create a focused leaf only when existing documents do not cover the subject. Keep the root index broad; introduce a new subject directory only when multiple related documents or a distinct routing layer justify it, and give that directory its own `Task | Read next | Purpose` routing index.
 
 Current code, configuration, tests, and verified runtime behavior take precedence over the documentation. Never put credentials, keys, passwords, cookies, tokens, nonces, private keys, or other secrets in `ai_context/`. See [`AGENTS.md`](AGENTS.md) for the complete agent-facing rules.
 
