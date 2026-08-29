@@ -33,7 +33,7 @@ export class ServiceError extends Error {
     this.status = status;
     this.code = code;
     this.details = options.details;
-    this.expose = options.expose ?? status < 500;
+    this.expose = status < 500 && (options.expose ?? true);
   }
 }
 

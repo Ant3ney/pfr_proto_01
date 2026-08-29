@@ -1,7 +1,12 @@
 import { MAX_REQUEST_BODY_BYTES } from "@/src/battle/constants";
-import { ServiceError, serviceErrorBody } from "@/src/battle/errors";
+import {
+  normalizeServiceError,
+  ServiceError,
+  serviceErrorBody,
+} from "@/src/battle/errors";
 
 type ApiMethod = "GET" | "POST" | "OPTIONS";
+type ApiRoute = "/api/v1/battles" | "/api/v1/battles/actions";
 
 class RequestBodyError extends Error {
   constructor(
@@ -31,6 +36,29 @@ function tooLargeError(): RequestBodyError {
     "request_too_large",
     "Request body exceeds 128 KiB.",
   );
+}
+
+function safeStackFrames(error: unknown): string {
+  if (!(error instanceof Error) || error.stack === undefined) {
+    return "Stack unavailable";
+  }
+
+  const frames = error.stack
+    .split("\n")
+    .filter((line) => /^\s+at\s/u.test(line))
+    .join("\n");
+
+  return frames || "Stack unavailable";
+}
+
+function logInternalError(error: unknown, route: ApiRoute): void {
+  const normalized = normalizeServiceError(error);
+  console.error({
+    route,
+    status: normalized.status,
+    code: normalized.code,
+    stack: safeStackFrames(error),
+  });
 }
 
 export async function readJsonBody(request: Request): Promise<unknown> {
@@ -123,6 +151,7 @@ export function optionsResponse(
 export function errorResponse(
   error: unknown,
   allowedMethods: readonly ApiMethod[],
+  route: ApiRoute,
 ): Response {
   if (error instanceof RequestBodyError) {
     return jsonResponse(
@@ -139,8 +168,13 @@ export function errorResponse(
 
   if (error instanceof ServiceError) {
     const normalized = serviceErrorBody(error);
+    if (normalized.status === 500) {
+      logInternalError(error, route);
+    }
     return jsonResponse(normalized.body, allowedMethods, normalized.status);
   }
+
+  logInternalError(error, route);
 
   return jsonResponse(
     {

@@ -162,11 +162,49 @@ snapshots, and an optional result. A new `stateToken` is returned only while
 the phase is `awaiting_player`. Clients select moves and switches from the
 structured request and never send raw Pokemon Showdown commands or logs.
 
+## Godot client integration
+
+The Godot game uses the same production base URL in development and release
+builds:
+
+```text
+https://pfr-locomotion-prototype.vercel.app/api/v1
+```
+
+Send JSON with `Content-Type: application/json`. The v1 API uses no cookies,
+credentials, authentication headers, or caller-supplied Showdown commands.
+Keep `stateToken` opaque and memory-only: it must not enter save data, logs,
+presentation state, or scene-owned DTOs.
+
+Only one battle request should be in flight. Retain the exact submitted body
+until it succeeds or the session is abandoned. A transport failure, timeout,
+or `5xx` is retried with the byte-identical token/action payload; a retry must
+not select a new action. After an accepted response, first apply its complete
+party snapshots and then replace the current token with the returned token, or
+clear it when the phase is `ended`. Although the trusted PvE service can
+deterministically replay or fork an older valid token, the Godot client must
+never intentionally use that behavior.
+
+Drive choices only from `request`: one-based `moveIndex` values come from
+`moves`, and switch actions use only the returned `memberId` options. Response
+snapshots—not protocol event text—are authoritative for health, active members,
+status, the next request, and the result. Events are a presentation delta and
+may be animated before exposing the next request.
+
+Client error handling for v1 is:
+
+| Response | Client behavior |
+| --- | --- |
+| Network failure, timeout, or `5xx` | Offer Retry with the retained byte-identical request, or Return |
+| `422 invalid_action` | Restore the last valid structured choice request |
+| Invalid/incompatible token, version mismatch, battle limit, malformed response, or size failure | End the local session and offer Return |
+
 ## Extensive battle examples
 
 The examples below use `curl`, Bash, and
-[`jq`](https://jqlang.github.io/jq/). Start the server, then define these
-helpers once:
+[`jq`](https://jqlang.github.io/jq/). Install `jq` with your operating system's
+package manager if `jq --version` is not available. Start the server, then
+define these helpers once:
 
 ```bash
 API_BASE="${API_BASE:-http://localhost:3000/api/v1}"
@@ -204,6 +242,20 @@ created battles. They are deterministic after creation because both simulator
 state and AI state travel in the token. The transcripts below were captured
 with fixed test seeds, and their teams use guaranteed outcomes where the exact
 result matters.
+
+| Example | What it demonstrates |
+| --- | --- |
+| 1 | Fully expanded start and ended responses |
+| 2 | A complete multi-member opponent battle and automatic AI replacement |
+| 3 | Voluntary switching by caller `memberId` |
+| 4 | A forced player replacement after a knockout |
+| 5 | Simultaneous player and AI replacements |
+| 6 | Zero-health filtering and reduced-health rounding |
+| 7 | Deterministic retry and old-token battle forks |
+| 8 | Forfeit and ended-result semantics |
+| 9 | A happy-path request-driven client loop |
+| 10 | Multi-option deterministic AI choices and a natural opponent win |
+| 11 | Invalid team, token, and action responses |
 
 ### Example 1: complete one-turn battle, with full responses
 
@@ -454,11 +506,21 @@ DRIVER_TOKEN_R0="$(printf '%s' "$DRIVER_START" | jq -r '.stateToken')"
 DRIVER_R1="$(
   post_action "$DRIVER_TOKEN_R0" '{"type":"move","moveIndex":1}'
 )"
-printf '%s\n' "$DRIVER_R1" | jq
+printf '%s\n' "$DRIVER_R1" | jq '{
+  revision,
+  phase,
+  stateToken,
+  events,
+  request,
+  opponentParty: [
+    .parties.opponent[] | {memberId, hp, fainted, active}
+  ]
+}'
 ```
 
-The first action returns another player decision at revision 1. Its event delta
-contains both the knockout and the AI-only replacement:
+This focused projection shows the first action returning another player
+decision at revision 1. Its event delta contains both the knockout and the
+AI-only replacement:
 
 ```json
 {
@@ -508,9 +570,8 @@ contains both the knockout and the AI-only replacement:
 }
 ```
 
-That block is a focused projection of the normal response; the actual response
-also contains all version, battle, player-party, and opponent-party fields.
-Use its new token for turn 2:
+The actual response also contains all version, battle, player-party, and full
+opponent-party fields. Use its new token for turn 2:
 
 ```bash
 DRIVER_TOKEN_R1="$(printf '%s' "$DRIVER_R1" | jq -r '.stateToken')"
@@ -1402,12 +1463,13 @@ printf '%s\n' "$FORFEIT_R1" | jq
 As with every ended response, there is no new state token. A Godot client can
 map a Run control to this action without adding escape mechanics to the server.
 
-### Example 9: a complete request-driven client loop
+### Example 9: a happy-path request-driven client loop
 
-A client should branch on `request.type`, choose only from the options in that
-request, and replace its token after every successful action. This Bash example
-plays any compatible response forward by selecting the first enabled move or
-the first required replacement. The supplied team finishes in two moves.
+A client should branch on `request.type` and choose only from the options in
+that request. While the phase remains `awaiting_player`, it replaces its token
+with the one in the newest successful response; it stops when the phase is
+`ended`. This Bash example plays the supplied battle forward by selecting the
+first enabled move or first required replacement, and finishes in two moves.
 
 ```bash
 AUTO_RESPONSE="$(start_battle <<'JSON'
@@ -1449,6 +1511,11 @@ for ((action_count = 0; action_count < 600; action_count += 1)); do
   printf '%s\n' "$AUTO_RESPONSE" |
     jq '{revision, phase, events, request, result}'
 
+  if printf '%s' "$AUTO_RESPONSE" | jq -e 'has("error")' >/dev/null; then
+    printf 'battle request failed: %s\n' "$AUTO_RESPONSE" >&2
+    exit 1
+  fi
+
   if [[ "$(printf '%s' "$AUTO_RESPONSE" | jq -r '.phase')" == "ended" ]]; then
     break
   fi
@@ -1478,9 +1545,245 @@ The loop observes revisions `0`, `1`, and `2`. Revision 1 already includes the
 AI's forced switch to Feebas, as shown in Example 2. A real UI pauses where this
 sample selects an action, renders `events`, and lets the player choose from the
 structured request. It should never parse protocol lines to decide which move
-or switch payload to send.
+or switch payload to send. Production clients should also inspect every HTTP
+status before parsing a success response; this compact helper prints response
+bodies but does not expose curl's status code.
 
-### Example 10: representative invalid requests and actions
+### Example 10: deterministic AI choices and a natural opponent win
+
+The opponent may have several enabled moves. The AI samples them uniformly
+using the independent PRNG stored in the token. Both opponent moves below are
+guaranteed to knock out the level-1 Magikarp, but the captured fixed-seed run
+selected Psychic:
+
+```bash
+AI_MOVE_START="$(start_battle <<'JSON'
+{
+  "player": {
+    "name": "Aster",
+    "team": [{
+      "memberId": "aster-magikarp",
+      "species": "Magikarp",
+      "level": 1,
+      "health": 1,
+      "moves": ["Splash"]
+    }]
+  },
+  "opponent": {
+    "name": "Champion Nova",
+    "team": [{
+      "memberId": "nova-mewtwo",
+      "species": "Mewtwo",
+      "level": 100,
+      "health": 1,
+      "moves": ["Psychic", "Psystrike"]
+    }]
+  }
+}
+JSON
+)"
+
+AI_MOVE_TOKEN_R0="$(printf '%s' "$AI_MOVE_START" | jq -r '.stateToken')"
+AI_MOVE_R1="$(
+  post_action "$AI_MOVE_TOKEN_R0" '{"type":"move","moveIndex":1}'
+)"
+AI_MOVE_RETRY="$(
+  post_action "$AI_MOVE_TOKEN_R0" '{"type":"move","moveIndex":1}'
+)"
+
+diff -u \
+  <(printf '%s' "$AI_MOVE_R1" | jq -S 'del(.stateToken)') \
+  <(printf '%s' "$AI_MOVE_RETRY" | jq -S 'del(.stateToken)')
+printf '%s\n' "$AI_MOVE_R1" | jq
+```
+
+```json
+{
+  "apiVersion": "v1",
+  "engineVersion": "0.11.11",
+  "formatVersion": "pfr-gen9-singles-v1",
+  "battleId": "00000000-0000-4000-8000-000000000110",
+  "revision": 1,
+  "phase": "ended",
+  "events": [
+    "|",
+    "|move|p2a: Mewtwo|Psychic|p1a: Magikarp",
+    "|-damage|p1a: Magikarp|0 fnt",
+    "|faint|p1a: Magikarp",
+    "|",
+    "|win|Champion Nova"
+  ],
+  "request": null,
+  "parties": {
+    "player": [
+      {
+        "memberId": "aster-magikarp",
+        "species": "Magikarp",
+        "nickname": "Magikarp",
+        "level": 1,
+        "hp": 0,
+        "maxHp": 11,
+        "normalizedHealth": 0,
+        "fainted": true,
+        "active": true,
+        "status": null,
+        "moves": [
+          {
+            "moveIndex": 1,
+            "id": "splash",
+            "name": "Splash",
+            "pp": 64,
+            "maxPp": 64
+          }
+        ]
+      }
+    ],
+    "opponent": [
+      {
+        "memberId": "nova-mewtwo",
+        "species": "Mewtwo",
+        "nickname": "Mewtwo",
+        "level": 100,
+        "hp": 353,
+        "maxHp": 353,
+        "normalizedHealth": 1,
+        "fainted": false,
+        "active": true,
+        "status": null
+      }
+    ]
+  },
+  "result": {
+    "winner": "opponent",
+    "reason": "all_pokemon_fainted"
+  }
+}
+```
+
+The player-selected Splash never executes because Mewtwo is faster. Retrying
+the same token/action selects the same AI move and returns the same semantic
+response, as demonstrated by the empty `diff`. A separately created battle can
+select Psystrike instead.
+
+Forced AI replacements use the same rule. This opponent has two living bench
+members after its lead faints:
+
+```bash
+AI_SWITCH_START="$(start_battle <<'JSON'
+{
+  "player": {
+    "name": "Aster",
+    "team": [{
+      "memberId": "aster-mewtwo",
+      "species": "Mewtwo",
+      "level": 100,
+      "health": 1,
+      "moves": ["Psychic"]
+    }]
+  },
+  "opponent": {
+    "name": "Collector Rowan",
+    "team": [
+      {
+        "memberId": "rowan-magikarp",
+        "species": "Magikarp",
+        "level": 1,
+        "health": 1,
+        "moves": ["Splash"]
+      },
+      {
+        "memberId": "rowan-feebas",
+        "species": "Feebas",
+        "level": 1,
+        "health": 1,
+        "moves": ["Splash"]
+      },
+      {
+        "memberId": "rowan-caterpie",
+        "species": "Caterpie",
+        "level": 1,
+        "health": 1,
+        "moves": ["Tackle"]
+      }
+    ]
+  }
+}
+JSON
+)"
+
+AI_SWITCH_TOKEN_R0="$(printf '%s' "$AI_SWITCH_START" | jq -r '.stateToken')"
+AI_SWITCH_R1="$(
+  post_action "$AI_SWITCH_TOKEN_R0" '{"type":"move","moveIndex":1}'
+)"
+AI_SWITCH_RETRY="$(
+  post_action "$AI_SWITCH_TOKEN_R0" '{"type":"move","moveIndex":1}'
+)"
+
+diff -u \
+  <(printf '%s' "$AI_SWITCH_R1" | jq -S 'del(.stateToken)') \
+  <(printf '%s' "$AI_SWITCH_RETRY" | jq -S 'del(.stateToken)')
+printf '%s\n' "$AI_SWITCH_R1" | jq '{
+  revision,
+  phase,
+  events,
+  opponent: [
+    .parties.opponent[] | {memberId, hp, maxHp, fainted, active}
+  ]
+}'
+```
+
+```json
+{
+  "revision": 1,
+  "phase": "awaiting_player",
+  "events": [
+    "|",
+    "|move|p1a: Mewtwo|Psychic|p2a: Magikarp",
+    "|-damage|p2a: Magikarp|0 fnt",
+    "|faint|p2a: Magikarp",
+    "|",
+    "|upkeep",
+    "|",
+    "|switch|p2a: Feebas|Feebas, L1|100/100",
+    "|turn|2"
+  ],
+  "opponent": [
+    {
+      "memberId": "rowan-magikarp",
+      "hp": 0,
+      "maxHp": 11,
+      "fainted": true,
+      "active": false
+    },
+    {
+      "memberId": "rowan-feebas",
+      "hp": 11,
+      "maxHp": 11,
+      "fainted": false,
+      "active": true
+    },
+    {
+      "memberId": "rowan-caterpie",
+      "hp": 12,
+      "maxHp": 12,
+      "fainted": false,
+      "active": false
+    }
+  ]
+}
+```
+
+The captured seed selects Feebas; a fresh battle can select Caterpie. A retry
+from `AI_SWITCH_TOKEN_R0` repeats the original selection. The AI never makes a
+voluntary switch.
+
+`result.winner` is the closed union `"player" | "opponent" | "tie"`. The
+`"tie"` value is reserved for a tie reported by the Showdown engine and must be
+handled as an ended result. Do not infer a tie merely because both final party
+snapshots have zero HP: Showdown's self-KO rules can award the battle to one
+side.
+
+### Example 11: representative invalid requests and actions
 
 An action must match the current token's structured request. For example,
 submitting a move with the forced-switch token from Example 4 returns:
@@ -1544,13 +1847,17 @@ That response has status `422`. Other common cases are:
 | `409` | `battle_turn_limit_exceeded` | Reconstructed battle is beyond turn 500 |
 | `409` | `battle_limit_exceeded` | Internal per-action AI decision guard or revision limit was exceeded |
 | `413` | `request_too_large` | HTTP request body is larger than 128 KiB |
-| `413` | `state_token_too_large` | Encoded or decoded token state is larger than 128 KiB |
+| `413` | `state_token_too_large` | A compact token expands past the decoded-state cap, or new state cannot be sealed within the cap |
 | `422` | `invalid_team` | Invalid identifiers, limits, duplicate member IDs, or no living members |
 | `422` | `invalid_action` | Action is unavailable at the token's current decision |
 | `500` | `internal_error` | Sanitized unexpected server or simulator failure |
 
 Validation errors can include safe `details`. A `500` response never exposes
 configuration, token-key, stack, or simulator internals.
+
+An action body containing an encoded token that is itself larger than 128 KiB
+is rejected earlier as `request_too_large`, because the enclosing HTTP body has
+already crossed the same 128 KiB limit.
 
 ## Format and operational limits
 
@@ -1574,17 +1881,56 @@ API schema, format, or engine-version change invalidates active tokens.
 ## Vercel deployment
 
 Create a Vercel project with **Root Directory** set to `battle_server`. Add
-`BATTLE_STATE_KEY` as a Production and Preview environment variable and leave
-framework detection set to Next.js. `package.json` pins the runtime to Node
-`24.x`; see Vercel's [supported Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions).
+separate random base64-encoded 32-byte `BATTLE_STATE_KEY` values for Production
+and Preview, using the platform's secret-entry workflow so neither value is
+printed, written to a repository file, or copied into logs. Redeploy after the
+variables are set. Leave framework detection set to Next.js. `package.json`
+pins the runtime to Node `24.x`; see Vercel's
+[supported Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions).
+
+Deploy through the repository's Git integration rather than a CLI source
+upload of the whole game repository. Git deployment honors the configured Root
+Directory and avoids the Hobby plan's source-upload ceiling; see
+[Vercel limits](https://vercel.com/docs/limits).
 
 Pokemon Showdown is externalized from the Next server bundle. The battle route
 traces explicitly include its compiled `dist/sim`, `dist/lib`,
 `dist/config/formats.js`, and `dist/data` runtime files. The current lockfile's
-local production trace is 100.88 MiB per battle route, below Vercel's 250 MiB
-uncompressed [Node.js function limit](https://vercel.com/docs/functions/runtimes/node-js).
-The generated trace and preview deployment must still be rechecked after every
+local production trace is 100.88 MiB uncompressed per battle route. That
+conservative measurement is below Vercel's 250 MB
+[Node.js function limit](https://vercel.com/docs/functions/limitations). The
+generated trace and preview deployment must still be rechecked after every
 engine or dependency change.
+
+### Production diagnostics and troubleshooting
+
+Unexpected `500` responses remain sanitized for callers. The server emits one
+diagnostic object containing exactly `route`, `status`, internal `code`, and a
+frame-only `stack`. It never logs request bodies, state tokens, teams,
+environment values, or encryption keys. In particular, a missing or malformed
+`BATTLE_STATE_KEY` is logged only as the internal code
+`server_configuration_error`; the response remains the generic
+`500 internal_error` shape.
+
+The Next.js header policy applies wildcard CORS and `Cache-Control: no-store`
+across `/api/v1/**`, including framework-generated responses such as
+`405 Method Not Allowed`. Known routes override the global method list with
+their exact `GET` or `POST` plus `OPTIONS` policy. No response sends
+`Access-Control-Allow-Credentials`.
+
+For an unexpected production failure:
+
+1. Check `/api/v1/health` and record its public version fields.
+2. Filter runtime logs by route, status, and internal code. Do not add body or
+   token logging while investigating.
+3. For `server_configuration_error`, verify that the affected Vercel
+   environment has its own 32-byte key and that it was redeployed after the
+   variable changed.
+4. For `simulator_error` or `invalid_battle_state`, reproduce with safe local
+   fixtures; never copy a live token or team into an issue or log.
+5. After a Git-backed deployment becomes ready, repeat health, CORS, battle,
+   retry, forfeit, and natural-completion smoke tests and confirm that no new
+   `500` diagnostics appeared.
 
 ## Verification
 
@@ -1595,12 +1941,19 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run verify:build
 ```
 
-After the build, inspect the battle route `.nft.json` files under
-`.next/server/app/api/v1/battles/` and confirm that the required Showdown files
-are present. On a Vercel preview, confirm the reported uncompressed function
-size remains below 250 MiB and measure cold-start memory, then smoke-test
-health, battle creation, a move, a voluntary switch, a forced replacement,
-forfeit, and play-through to an ended response. Repeat the same token/action
-once to verify deterministic replay.
+The Vitest suite starts an actual local Next.js server to cover successful,
+application-error, `OPTIONS`, and framework-generated `405` responses. This is
+separate from direct Route Handler tests so the `next.config.ts` header layer is
+also exercised.
+
+`npm run verify:build` inspects both battle-route `.nft.json` files, resolves
+and deduplicates their traced paths, confirms required Showdown runtime trees
+are present, rejects server/tool/translation trees, and applies a conservative
+250 MiB uncompressed local ceiling. On a Vercel preview, confirm the platform's
+reported function size and measure cold-start memory, then smoke-test health,
+battle creation, a move, a voluntary switch, a forced replacement, forfeit,
+and play-through to an ended response. Repeat the same token/action once to
+verify deterministic replay.

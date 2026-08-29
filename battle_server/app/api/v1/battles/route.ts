@@ -9,6 +9,7 @@ import {
 export const runtime = "nodejs";
 
 const ALLOWED_METHODS = ["POST", "OPTIONS"] as const;
+const ROUTE = "/api/v1/battles" as const;
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -16,7 +17,7 @@ export async function POST(request: Request): Promise<Response> {
     const result = await startBattle(input);
     return jsonResponse(result, ALLOWED_METHODS);
   } catch (error) {
-    return errorResponse(error, ALLOWED_METHODS);
+    return errorResponse(error, ALLOWED_METHODS, ROUTE);
   }
 }
 

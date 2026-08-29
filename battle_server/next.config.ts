@@ -18,6 +18,13 @@ const excludedShowdownFiles = [
   "./node_modules/pokemon-showdown/dist/sim/tools/**/*",
 ];
 
+const apiHeaders = [
+  { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+  { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
+  { key: "Access-Control-Allow-Origin", value: "*" },
+  { key: "Cache-Control", value: "no-store" },
+];
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pokemon-showdown"],
   outputFileTracingIncludes: {
@@ -32,11 +39,19 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/v1/:path*",
-        headers: [
-          { key: "Access-Control-Allow-Headers", value: "Content-Type" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Cache-Control", value: "no-store" },
-        ],
+        headers: apiHeaders,
+      },
+      {
+        source: "/api/v1/health",
+        headers: [{ key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" }],
+      },
+      {
+        source: "/api/v1/battles",
+        headers: [{ key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }],
+      },
+      {
+        source: "/api/v1/battles/actions",
+        headers: [{ key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }],
       },
     ];
   },

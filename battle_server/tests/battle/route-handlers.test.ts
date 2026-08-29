@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import nextConfig from "../../next.config";
 import {
@@ -73,10 +73,23 @@ describe("Route Handlers", () => {
           source: "/api/v1/:path*",
           headers: expect.arrayContaining([
             { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+            { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
             { key: "Access-Control-Allow-Origin", value: "*" },
             { key: "Cache-Control", value: "no-store" },
           ]),
         }),
+        {
+          source: "/api/v1/health",
+          headers: [{ key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" }],
+        },
+        {
+          source: "/api/v1/battles",
+          headers: [{ key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }],
+        },
+        {
+          source: "/api/v1/battles/actions",
+          headers: [{ key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }],
+        },
       ]),
     );
   });
@@ -255,15 +268,37 @@ describe("Route Handlers", () => {
   });
 
   it("sanitizes internal service errors", async () => {
-    delete process.env[BATTLE_STATE_KEY_ENV];
-    const response = await postBattle(
-      requestWithJson("http://localhost/api/v1/battles", battleBody()),
-    );
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    expect(response.status).toBe(500);
-    expectCommonHeaders(response, "POST, OPTIONS");
-    await expect(response.json()).resolves.toEqual({
-      error: { code: "internal_error", message: "Internal server error" },
-    });
+    try {
+      delete process.env[BATTLE_STATE_KEY_ENV];
+      const response = await postBattle(
+        requestWithJson("http://localhost/api/v1/battles", battleBody()),
+      );
+
+      expect(response.status).toBe(500);
+      expectCommonHeaders(response, "POST, OPTIONS");
+      await expect(response.json()).resolves.toEqual({
+        error: { code: "internal_error", message: "Internal server error" },
+      });
+
+      expect(log).toHaveBeenCalledOnce();
+      const diagnostic = log.mock.calls[0][0] as Record<string, unknown>;
+      expect(diagnostic).toEqual({
+        route: "/api/v1/battles",
+        status: 500,
+        code: "server_configuration_error",
+        stack: expect.any(String),
+      });
+      expect(Object.keys(diagnostic).sort()).toEqual(["code", "route", "stack", "status"]);
+      expect(diagnostic.stack).not.toBe("Stack unavailable");
+
+      const serialized = JSON.stringify(log.mock.calls);
+      expect(serialized).not.toContain(BATTLE_STATE_KEY_ENV);
+      expect(serialized).not.toContain("player-1");
+      expect(serialized).not.toContain("opponent-1");
+    } finally {
+      log.mockRestore();
+    }
   });
 });
