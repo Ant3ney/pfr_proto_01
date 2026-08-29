@@ -5,7 +5,7 @@ extends RefCounted
 ## the battle server's Pokemon Showdown runtime.
 
 const MAPPING_PATH := "res://battle/data/pokeapi_showdown_mapping.json"
-const SCHEMA_VERSION := 1
+const SCHEMA_VERSION := 2
 const SHOWDOWN_VERSION := "0.11.11"
 const CANONICAL_MOVE_TYPES := {
 	"Bug": true,
@@ -63,6 +63,19 @@ static func get_move_type(move_id: String) -> String:
 	return str(_move_types.get(move_id, ""))
 
 
+static func get_pokedex_dimensions(pokemon_id: int) -> Dictionary:
+	if not _ensure_loaded():
+		return {}
+	var key := str(pokemon_id)
+	if not _mappings.has(key):
+		return {}
+	var entry: Dictionary = _mappings[key]
+	return {
+		"height_dm": int(entry["pokedexHeightDm"]),
+		"weight_hg": int(entry["pokedexWeightHg"]),
+	}
+
+
 static func get_supported_count() -> int:
 	return _mappings.size() if _ensure_loaded() else 0
 
@@ -100,6 +113,10 @@ static func _ensure_loaded() -> bool:
 		return false
 	if str(document.get("pokemonShowdownVersion", "")) != SHOWDOWN_VERSION:
 		_last_error = "Battle mapping Pokemon Showdown version is incompatible"
+		return false
+	var dataset_sha256 := str(document.get("pokeapiDatasetSha256", ""))
+	if dataset_sha256.length() != 64 or not dataset_sha256.is_valid_hex_number(false):
+		_last_error = "Battle mapping PokeAPI dataset provenance is invalid"
 		return false
 	var mappings_value: Variant = document.get("mappings")
 	var unsupported_value: Variant = document.get("unsupportedPokemonIds")
@@ -203,6 +220,13 @@ static func _valid_entry(entry: Dictionary, valid_move_ids: Dictionary) -> bool:
 	if typeof(entry.get("spriteId")) != TYPE_STRING:
 		return false
 	if not _is_identifier(str(entry["spriteId"])):
+		return false
+	if (
+		not _is_integer_value(entry.get("pokedexHeightDm"))
+		or int(entry["pokedexHeightDm"]) <= 0
+		or not _is_integer_value(entry.get("pokedexWeightHg"))
+		or int(entry["pokedexWeightHg"]) <= 0
+	):
 		return false
 	var moves_value: Variant = entry.get("defaultMoves")
 	if typeof(moves_value) != TYPE_ARRAY or moves_value.is_empty() or moves_value.size() > 4:

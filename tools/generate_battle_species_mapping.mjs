@@ -12,11 +12,14 @@ import { createRequire } from "node:module";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gunzipSync } from "node:zlib";
 
 const EXPECTED_SHOWDOWN_VERSION = "0.11.11";
 const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, "..");
 const POKEAPI_INDEX_PATH = resolve(REPOSITORY_ROOT, "data/creatures/index.json");
+const POKEAPI_MANIFEST_PATH = resolve(REPOSITORY_ROOT, "data/creatures/manifest.json");
+const POKEAPI_POKEMON_ROOT = resolve(REPOSITORY_ROOT, "data/creatures/pokemon");
 const SHOWDOWN_PACKAGE_PATH = resolve(
   REPOSITORY_ROOT,
   "battle_server/node_modules/pokemon-showdown/package.json",
@@ -111,6 +114,25 @@ function generatedDefaultMoves(dex, species) {
   return [firstKnownMove?.id ?? "tackle"];
 }
 
+function pokedexDimensions(pokemon) {
+  const recordPath = resolve(POKEAPI_POKEMON_ROOT, `${pokemon.id}.json.gz`);
+  const record = JSON.parse(gunzipSync(readFileSync(recordPath)).toString("utf8"));
+  if (
+    record.id !== pokemon.id
+    || record.name !== pokemon.name
+    || !Number.isInteger(record.height)
+    || record.height <= 0
+    || !Number.isInteger(record.weight)
+    || record.weight <= 0
+  ) {
+    throw new Error(`PokeAPI dimensions are invalid for Pokemon ${pokemon.id}`);
+  }
+  return {
+    pokedexHeightDm: record.height,
+    pokedexWeightHg: record.weight,
+  };
+}
+
 function buildOutput() {
   const packageJson = JSON.parse(readFileSync(SHOWDOWN_PACKAGE_PATH, "utf8"));
   if (packageJson.version !== EXPECTED_SHOWDOWN_VERSION) {
@@ -124,6 +146,10 @@ function buildOutput() {
   const dex = Dex.forGen(9);
   const indexBytes = readFileSync(POKEAPI_INDEX_PATH);
   const index = JSON.parse(indexBytes.toString("utf8"));
+  const pokeapiManifest = JSON.parse(readFileSync(POKEAPI_MANIFEST_PATH, "utf8"));
+  if (!/^[a-f0-9]{64}$/u.test(pokeapiManifest.dataset_sha256 ?? "")) {
+    throw new Error("PokeAPI dataset manifest has no valid SHA-256");
+  }
   const validMoveIds = [
     ...new Set(
       dex.moves
@@ -154,15 +180,17 @@ function buildOutput() {
     mappings[String(pokemon.id)] = {
       species: species.name,
       spriteId: species.spriteid || species.id,
+      ...pokedexDimensions(pokemon),
       defaultMoves:
         STARTING_MOVE_OVERRIDES.get(pokemon.id) ?? generatedDefaultMoves(dex, species),
     };
   }
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     pokemonShowdownVersion: packageJson.version,
     pokeapiIndexSha256: sha256(indexBytes),
+    pokeapiDatasetSha256: pokeapiManifest.dataset_sha256,
     sourcePokemonCount: index.pokemon.length,
     supportedPokemonCount: Object.keys(mappings).length,
     unsupportedPokemonIds,
