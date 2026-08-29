@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "pfr-battle-sprite-pipeline",
+    "version": 1,
+    "gifuctJs": "2.1.2",
+    "pngjs": "7.0.0"
+  },
+  "id": "ferroseed",
+  "style": "ani",
+  "source": {
+    "path": "ani/ferroseed.gif",
+    "sha256": "01beafc1404b6c7e7d79c58a5503cc3158f6f30822cf231300c7ec5e24522b1e"
+  },
+  "atlas": {
+    "path": "res://art/battle/sprites/generated/ani/ferroseed.png",
+    "sha256": "cdc65eb64eda44972843b5a341551b5304ba0cd91714ccaa839ac190f45e0207",
+    "bytes": 4221,
+    "width": 59,
+    "height": 72,
+    "columns": 1,
+    "rows": 1,
+    "padding": 4
+  },
+  "canvas": {
+    "width": 51,
+    "height": 64
+  },
+  "contentBounds": {
+    "x": 0,
+    "y": 0,
+    "width": 51,
+    "height": 64
+  },
+  "contentHeight": 64,
+  "frameCount": 1,
+  "durationMs": 100,
+  "sourceFeatures": {
+    "interlacedFrames": 0,
+    "offsetFrames": 0,
+    "disposalModes": [
+      1
+    ],
+    "variableDuration": false
+  },
+  "frames": [
+    {
+      "index": 0,
+      "region": {
+        "x": 4,
+        "y": 4,
+        "width": 51,
+        "height": 64
+      },
+      "durationMs": 100,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 51,
+        "height": 64
+      }
+    }
+  ]
+}

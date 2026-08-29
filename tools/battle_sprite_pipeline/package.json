@@ -1,0 +1,17 @@
+{
+  "name": "pfr-battle-sprite-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pinned offline GIF-to-PNG-atlas pipeline for the Godot battle sprite catalog.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test sprite_pipeline.test.cjs",
+    "verify": "node sprite_pipeline.cjs verify",
+    "update-export": "node update_export_preset.cjs",
+    "verify-export": "node verify_export_pack.cjs"
+  },
+  "dependencies": {
+    "gifuct-js": "2.1.2",
+    "pngjs": "7.0.0"
+  }
+}
