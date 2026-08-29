@@ -50,7 +50,7 @@ shadow_color = Color(0.08, 0.8, 0.28, 0.5)
 shadow_size = 20
 
 [node name="Battlefield3D" type="Node3D"]
-editor_description = "Battle presentation scene with the predecessor forest art, exact camera/spawn transforms, and a scene-side intro effect. Battle rules and creature spawning are intentionally not implemented here."
+editor_description = "Battle presentation scene with the authored forest art, compact HUD framing, and scene-side intro. BattleSystem owns rules and member data; the runtime presenter binds proportionally sized animated battlers to these anchors."
 script = ExtResource("2_battle_scene")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -77,7 +77,7 @@ fov = 42.0
 unique_name_in_owner = true
 
 [node name="SpawnPoints" type="Node3D" parent="."]
-editor_description = "Stable visual anchors for future battle actors. These preserve the predecessor scene's exact actor transforms."
+editor_description = "Stable visual anchors for runtime battle actors. Keep these aligned with the authored camera and proportional-sprite framing bounds."
 
 [node name="PlayerSpawn" type="Marker3D" parent="SpawnPoints"]
 unique_name_in_owner = true
@@ -98,12 +98,14 @@ unique_name_in_owner = true
 [node name="ActorShadows" type="Node3D" parent="."]
 
 [node name="PlayerShadow" type="MeshInstance3D" parent="ActorShadows"]
+unique_name_in_owner = true
 position = Vector3(-2.35, 0.035, 1.45)
 scale = Vector3(1.15, 1, 0.55)
 material_override = SubResource("StandardMaterial_actor_shadow")
 mesh = SubResource("CylinderMesh_actor_shadow")
 
 [node name="OpponentShadow" type="MeshInstance3D" parent="ActorShadows"]
+unique_name_in_owner = true
 position = Vector3(2.25, 0.04, -1.85)
 scale = Vector3(1.22, 1, 0.58)
 material_override = SubResource("StandardMaterial_actor_shadow")

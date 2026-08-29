@@ -73,10 +73,39 @@ class LifecycleWatcher:
 		transport.complete(_response(start_request, 0, false))
 		await get_tree().process_frame
 		_check(BattleSystem.get_state() == BattleSystem.State.PRESENTING, "Initial events should enter PRESENTING.")
+		var covered_player_sprite := battle_scene.get_node_or_null(
+			^"SpawnPoints/PlayerSpawn/PlayerBattleSpriteActor/MotionRoot/AnimatedPokemon"
+		) as AnimatedSprite3D
+		var covered_player_height := (
+			float(covered_player_sprite.get_meta("battle_sprite_visible_height_m", 0.0))
+			if covered_player_sprite != null
+			else 0.0
+		)
 
 		await _wait_for_hud(battle_scene)
 		var battle_ui := battle_scene.get_battle_ui()
 		_check(battle_ui != null, "A valid initial response should reveal the battlefield and HUD.")
+		var player_sprite := battle_scene.get_node_or_null(
+			^"SpawnPoints/PlayerSpawn/PlayerBattleSpriteActor/MotionRoot/AnimatedPokemon"
+		) as AnimatedSprite3D
+		var opponent_sprite := battle_scene.get_node_or_null(
+			^"SpawnPoints/OpponentSpawn/OpponentBattleSpriteActor/MotionRoot/AnimatedPokemon"
+		) as AnimatedSprite3D
+		_check(
+			player_sprite != null
+			and opponent_sprite != null
+			and int(player_sprite.get_meta("battle_pokemon_id", 0)) == 484
+			and int(opponent_sprite.get_meta("battle_pokemon_id", 0)) == 194
+			and player_sprite.get_meta("battle_sprite_scale_source", "") == "pokedex"
+			and opponent_sprite.get_meta("battle_sprite_scale_source", "") == "pokedex",
+			"The revealed scene should present exact Pokédex-driven Palkia and Wooper proportions."
+		)
+		_check(
+			player_sprite != null
+			and float(player_sprite.get_meta("battle_sprite_visible_height_m", 0.0))
+			>= covered_player_height - 0.0001,
+			"Settling the intro camera should refresh rather than further shrink the covered battler."
+		)
 		if battle_ui:
 			var fight_button := _battle_button(battle_ui, "FightButton")
 			_check(fight_button != null and fight_button.disabled, "Choices should remain locked during event presentation.")

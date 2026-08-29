@@ -51,6 +51,35 @@ func _test_generated_species_mapping() -> void:
 		== ["scaryface", "waterpulse", "dragonbreath", "ancientpower"],
 		"Palkia's seeded moves should remain exact."
 	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(484)
+		== {"height_dm": 42, "weight_hg": 3360},
+		"Palkia should retain its exact form-specific Pokédex dimensions."
+	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(194)
+		== {"height_dm": 4, "weight_hg": 85},
+		"Wooper should retain its exact form-specific Pokédex dimensions."
+	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(321)
+		== {"height_dm": 145, "weight_hg": 3980},
+		"Wailord should retain the large-species Pokédex extreme."
+	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(595)
+		== {"height_dm": 1, "weight_hg": 6},
+		"Joltik should retain the tiny-species Pokédex extreme."
+	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(10190)
+		== {"height_dm": 1000, "weight_hg": 0},
+		"An unknown Pokédex weight should remain explicit instead of being invented."
+	)
+	_check(
+		SpeciesMapping.get_pokedex_dimensions(10118).is_empty(),
+		"Unsupported forms should not acquire guessed Pokédex dimensions."
+	)
 	_check(SpeciesMapping.get_move_type("tackle") == "Normal", "Tackle should expose its Showdown type.")
 	_check(SpeciesMapping.get_move_type("watergun") == "Water", "Water Gun should expose its Showdown type.")
 	_check(

@@ -600,7 +600,9 @@ func _capture_presentation_metadata(
 		var member_id := String(member.get("memberId", ""))
 		var profile: Dictionary = CollectionSystem.get_battle_profile(member_id)
 		if not profile.is_empty():
+			var pcl: Dictionary = CollectionSystem.get_pcl(member_id)
 			_presentation_metadata_by_id[member_id] = {
+				"pokemonId": int(pcl.get("pokemonId", 0)),
 				"spriteId": String(profile.get("spriteId", "")),
 			}
 	if encounter.has_method("to_presentation_data"):

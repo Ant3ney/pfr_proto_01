@@ -76,6 +76,7 @@ for (const required of [
   'battle/system/BattleEventTranslator.gd.remap',
   'battle/system/BattleSpeciesMapping.gd.remap',
   'battle/system/BattleSpriteCatalog.gd.remap',
+  'battle/system/BattleSpriteScale.gd.remap',
   'battle/system/BattleSpritePresenter.gd.remap',
   'battle/data/BattleEncounterDefinition.gd.remap',
   'battle/data/BattleEncounterMember.gd.remap',

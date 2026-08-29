@@ -225,7 +225,7 @@ static func _valid_entry(entry: Dictionary, valid_move_ids: Dictionary) -> bool:
 		not _is_integer_value(entry.get("pokedexHeightDm"))
 		or int(entry["pokedexHeightDm"]) <= 0
 		or not _is_integer_value(entry.get("pokedexWeightHg"))
-		or int(entry["pokedexWeightHg"]) <= 0
+		or int(entry["pokedexWeightHg"]) < 0
 	):
 		return false
 	var moves_value: Variant = entry.get("defaultMoves")

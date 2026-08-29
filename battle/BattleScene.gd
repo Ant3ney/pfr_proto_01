@@ -20,6 +20,8 @@ signal battle_action_selected(action: StringName)
 @onready var intro_streaks: Control = %IntroStreaks
 @onready var player_spawn: Marker3D = %PlayerSpawn
 @onready var opponent_spawn: Marker3D = %OpponentSpawn
+@onready var player_shadow: MeshInstance3D = %PlayerShadow
+@onready var opponent_shadow: MeshInstance3D = %OpponentShadow
 @onready var battle_actors: Node3D = %BattleActors
 @onready var choice_overlay: BattleChoiceOverlay = %BattleChoiceOverlay
 
@@ -39,9 +41,12 @@ var _pending_presentation_revision := -1
 var _snapshot: Dictionary = {}
 var _choice_request: Dictionary = {}
 var _sprite_presenter: Node
+var _sprite_layout_refresh_pending := false
 
 
 func _ready() -> void:
+	if not get_viewport().size_changed.is_connected(_on_battle_viewport_size_changed):
+		get_viewport().size_changed.connect(_on_battle_viewport_size_changed)
 	_battle_start_handoff_pending = GameInstance.is_battle_start_in_progress()
 	if not GameInstance.battle_start_finished.is_connected(
 		_on_battle_start_finished
@@ -74,6 +79,8 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_stop_intro_tweens()
+	if get_viewport().size_changed.is_connected(_on_battle_viewport_size_changed):
+		get_viewport().size_changed.disconnect(_on_battle_viewport_size_changed)
 	if GameInstance.battle_start_finished.is_connected(
 		_on_battle_start_finished
 	):
@@ -221,6 +228,8 @@ func _finish_intro_presentation() -> void:
 	battlefield_art.scale = Vector3.ONE
 	intro_overlay.visible = false
 	_intro_has_finished = true
+	_sprite_layout_refresh_pending = true
+	_refresh_sprite_layout_if_safe()
 	GameInstance.notify_battle_intro_finished()
 	intro_finished.emit()
 	if not _battle_start_handoff_pending:
@@ -373,7 +382,13 @@ func _create_sprite_presenter() -> void:
 	_sprite_presenter.name = "BattleSpritePresenter"
 	battle_actors.add_child(_sprite_presenter)
 	if _sprite_presenter.has_method("configure"):
-		_sprite_presenter.call("configure", player_spawn, opponent_spawn)
+		_sprite_presenter.call(
+			"configure",
+			player_spawn,
+			opponent_spawn,
+			player_shadow,
+			opponent_shadow
+		)
 
 
 func _on_system_state_changed(_next_state: int) -> void:
@@ -452,7 +467,25 @@ func _present_pending_events() -> void:
 			await get_tree().create_timer(_event_duration(event)).timeout
 	_presentation_running = false
 	if is_inside_tree():
+		_refresh_sprite_layout_if_safe()
 		BattleSystem.acknowledge_events_presented(revision)
+
+
+func _on_battle_viewport_size_changed() -> void:
+	_sprite_layout_refresh_pending = true
+	_refresh_sprite_layout_if_safe.call_deferred()
+
+
+func _refresh_sprite_layout_if_safe() -> void:
+	if (
+		not _sprite_layout_refresh_pending
+		or not _intro_has_finished
+		or _presentation_running
+	):
+		return
+	_sprite_layout_refresh_pending = false
+	if is_instance_valid(_sprite_presenter) and _sprite_presenter.has_method("refresh_layout"):
+		_sprite_presenter.call("refresh_layout")
 
 
 func _on_choice_request_changed(request: Dictionary) -> void:

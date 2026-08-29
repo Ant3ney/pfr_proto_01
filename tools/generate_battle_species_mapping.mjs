@@ -123,7 +123,7 @@ function pokedexDimensions(pokemon) {
     || !Number.isInteger(record.height)
     || record.height <= 0
     || !Number.isInteger(record.weight)
-    || record.weight <= 0
+    || record.weight < 0
   ) {
     throw new Error(`PokeAPI dimensions are invalid for Pokemon ${pokemon.id}`);
   }

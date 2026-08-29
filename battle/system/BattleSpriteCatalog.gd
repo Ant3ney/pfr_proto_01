@@ -180,6 +180,9 @@ func _asset_from_manifest(
 	# A 1000 FPS base makes each duration multiplier equal one millisecond.
 	sprite_frames.set_animation_speed(ANIMATION_NAME, 1000.0)
 	var frame_metadata: Array[Dictionary] = []
+	var content_width := 1.0
+	var minimum_alpha_x := INF
+	var maximum_alpha_right := -INF
 	for value: Variant in frames_value as Array:
 		if typeof(value) != TYPE_DICTIONARY:
 			_fail("Battle sprite frame metadata contains a non-object entry.")
@@ -191,6 +194,16 @@ func _asset_from_manifest(
 			_fail("Battle sprite frame bounds are invalid.")
 			return {}
 		var region := region_value as Dictionary
+		var alpha_bounds := bounds_value as Dictionary
+		content_width = maxf(
+			content_width,
+			maxf(1.0, float(alpha_bounds.get("width", 1.0)))
+		)
+		minimum_alpha_x = minf(minimum_alpha_x, float(alpha_bounds.get("x", 0.0)))
+		maximum_alpha_right = maxf(
+			maximum_alpha_right,
+			float(alpha_bounds.get("x", 0.0)) + float(alpha_bounds.get("width", 1.0))
+		)
 		var atlas_texture := AtlasTexture.new()
 		atlas_texture.atlas = atlas
 		atlas_texture.region = Rect2(
@@ -204,7 +217,7 @@ func _asset_from_manifest(
 		sprite_frames.add_frame(ANIMATION_NAME, atlas_texture, duration_ms)
 		frame_metadata.append({
 			"duration_ms": duration_ms,
-			"alpha_bounds": (bounds_value as Dictionary).duplicate(true),
+			"alpha_bounds": alpha_bounds.duplicate(true),
 		})
 	var canvas_value: Variant = manifest.get("canvas", {})
 	var canvas: Dictionary = (
@@ -212,12 +225,16 @@ func _asset_from_manifest(
 		if typeof(canvas_value) == TYPE_DICTIONARY
 		else {"width": 1, "height": 1}
 	)
+	var canvas_width := maxf(1.0, float(canvas.get("width", 1.0)))
 	return {
 		"sprite_id": String(manifest.get("id", "")),
 		"style": String(manifest.get("style", "")),
 		"sprite_frames": sprite_frames,
 		"frame_metadata": frame_metadata,
 		"canvas": canvas,
+		"content_width": content_width,
+		"content_left_extent": maxf(0.0, canvas_width * 0.5 - minimum_alpha_x),
+		"content_right_extent": maxf(0.0, maximum_alpha_right - canvas_width * 0.5),
 		"content_height": maxf(1.0, float(manifest.get("contentHeight", 1.0))),
 		"atlas_path": atlas_path,
 		"is_placeholder": is_placeholder,

@@ -43,6 +43,7 @@ const required = [
   'res://battle/system/BattleEventTranslator.gd',
   'res://battle/system/BattleSpeciesMapping.gd',
   'res://battle/system/BattleSpriteCatalog.gd',
+  'res://battle/system/BattleSpriteScale.gd',
   'res://battle/system/BattleSpritePresenter.gd',
   'res://battle/data/BattleEncounterDefinition.gd',
   'res://battle/data/BattleEncounterMember.gd',

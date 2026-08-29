@@ -137,8 +137,19 @@ func _verify_start_and_exact_retry() -> void:
 	_check(BattleSystem.get_state() == BattleSystem.State.PRESENTING, "A valid start should enter PRESENTING.")
 	_check(not _captured_snapshots.is_empty(), "A valid start should emit a snapshot.")
 	if not _captured_snapshots.is_empty():
+		var presentation_snapshot: Dictionary = _captured_snapshots.back()
+		var player_members: Array = presentation_snapshot.parties.player
+		var opponent_members: Array = presentation_snapshot.parties.opponent
 		_check(
-			not _contains_sensitive_key(_captured_snapshots.back()),
+			int((player_members[0] as Dictionary).get("pokemonId", 0)) == 484,
+			"Player presentation metadata should retain Palkia's local Pokédex ID."
+		)
+		_check(
+			int((opponent_members[0] as Dictionary).get("pokemonId", 0)) == 194,
+			"Opponent presentation metadata should retain Wooper's authored Pokédex ID."
+		)
+		_check(
+			not _contains_sensitive_key(presentation_snapshot),
 			"Presentation snapshots must not expose the state token."
 		)
 		_captured_snapshots.back()["revision"] = 999
