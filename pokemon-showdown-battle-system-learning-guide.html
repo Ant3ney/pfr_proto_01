@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning the Pokémon Showdown Battle System</title>
+<style>
+  @page { size: Letter; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e8edf3; color: #18212b; }
+  body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .page {
+    position: relative;
+    width: 8.5in;
+    height: 11in;
+    margin: 0 auto 18px;
+    padding: 0.54in 0.62in 0.48in;
+    overflow: hidden;
+    background: white;
+    break-after: page;
+    page-break-after: always;
+  }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  .eyebrow { margin: 0 0 5px; color: #637184; font-size: 8.5pt; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+  h1 { margin: 0 0 5px; color: #103a63; font-size: 23pt; line-height: 1.04; letter-spacing: -.025em; }
+  h2 { margin: 0 0 8px; color: #103a63; font-size: 17pt; line-height: 1.08; letter-spacing: -.015em; }
+  h3 { margin: 8px 0 4px; color: #1f5a85; font-size: 10.8pt; line-height: 1.15; }
+  p, li, td, th { font-size: 9.25pt; line-height: 1.27; }
+  p { margin: 4px 0 6px; }
+  ul, ol { margin: 4px 0 7px 18px; padding: 0; }
+  li { margin: 1px 0 3px; }
+  code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: .93em; color: #7a294c; }
+  pre {
+    margin: 5px 0 8px;
+    padding: 7px 9px;
+    border-left: 3px solid #3e7ba6;
+    background: #f2f6fa;
+    color: #17212b;
+    font: 8.2pt/1.28 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    white-space: pre-wrap;
+  }
+  a { color: #145f94; text-decoration: none; }
+  table { width: 100%; border-collapse: collapse; margin: 5px 0 8px; }
+  th { background: #eaf1f6; color: #244359; text-align: left; font-weight: 700; }
+  th, td { padding: 3px 5px; border: 1px solid #ccd7e0; vertical-align: top; }
+  .lede { margin: 6px 0 10px; color: #354657; font-size: 10.3pt; line-height: 1.32; }
+  .callout { margin: 7px 0 9px; padding: 7px 9px; border: 1px solid #b9d2e4; border-radius: 5px; background: #f3f8fb; }
+  .callout strong { color: #134f78; }
+  .flow { margin: 6px 0 9px; padding: 8px 9px; border-radius: 5px; background: #153b5b; color: white; font: 8.6pt/1.4 "SFMono-Regular", Consolas, monospace; text-align: center; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .compact p, .compact li, .compact td, .compact th { font-size: 8.65pt; line-height: 1.2; }
+  .compact h3 { margin-top: 7px; }
+  .footer { position: absolute; left: .62in; right: .62in; bottom: .21in; display: flex; justify-content: space-between; color: #788592; font-size: 7.7pt; }
+  .tag { display: inline-block; margin-right: 4px; padding: 1px 5px; border-radius: 9px; background: #dceaf4; color: #245777; font-size: 7.8pt; font-weight: 700; }
+  .checklist { list-style: none; margin-left: 0; }
+  .checklist li::before { content: "□"; display: inline-block; width: 15px; color: #1d648f; font-weight: 700; }
+  @media print {
+    html, body { background: white; }
+    .page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<section class="page">
+  <p class="eyebrow">Page 1 · Orientation and setup</p>
+  <h1>Learning the Pokémon Showdown Battle System</h1>
+  <p class="lede">A self-study guide to the simulator, battle mechanics, and the fastest way to navigate them. Scope: <code>sim/</code>, mechanics data, formats/rules, and simulator tests—no UI, chat, matchmaking, ladders, or multiplayer session code.</p>
+
+  <div class="callout"><strong>Snapshot used:</strong> <code>smogon/pokemon-showdown</code> commit <code>bb179fbf</code> (2026-08-27), matching your local <code>battle_server/core</code> checkout. Paths below are relative to that directory. Current launch/build scripts enforce Node.js 22 or newer.</div>
+
+  <h3>The one-sentence mental model</h3>
+  <p>A format selects a generation and rules; the <code>Dex</code> assembles the correct data; a <code>Battle</code> owns mutable state; each <code>Side</code> turns text choices into actions; <code>BattleQueue</code> orders them; <code>BattleActions</code> executes them; and event handlers on moves, abilities, items, conditions, and rules modify the result.</p>
+
+  <div class="flow">Format → Modded Dex → Battle state → Side choice → Action queue → BattleActions → Events/effects → State + battle log</div>
+
+  <h3>Your working map</h3>
+  <table>
+    <tr><th>Path</th><th>Question it answers</th></tr>
+    <tr><td><code>sim/battle.ts</code></td><td>Who owns the battle, requests choices, runs the turn loop, dispatches actions, processes events, damage/healing/fainting, and emits the log?</td></tr>
+    <tr><td><code>sim/side.ts</code></td><td>How is one player's team represented, and how are <code>move</code>, <code>switch</code>, <code>team</code>, and <code>pass</code> choices parsed and validated?</td></tr>
+    <tr><td><code>sim/battle-queue.ts</code></td><td>How do incomplete choices become full actions, and how are switch order, move priority, speed, and ties resolved?</td></tr>
+    <tr><td><code>sim/battle-actions.ts</code></td><td>What actually happens when a Pokémon switches or uses a move—including targeting, accuracy, immunity, damage, secondaries, and recoil?</td></tr>
+    <tr><td><code>sim/pokemon.ts</code>, <code>field.ts</code>, <code>dex*.ts</code></td><td>Where do Pokémon/field state live, and how is the correct generation's data exposed?</td></tr>
+    <tr><td><code>data/*.ts</code>, <code>data/mods/*</code></td><td>Where is each mechanic declared, and how does it differ by generation or custom mod?</td></tr>
+    <tr><td><code>config/formats.ts</code>, <code>data/rulesets.ts</code></td><td>Which mod and battle rules does a named format activate?</td></tr>
+    <tr><td><code>test/sim/**</code>, <code>test/common.js</code></td><td>What behavior is promised, and how can I reproduce a mechanic in a tiny deterministic battle?</td></tr>
+  </table>
+
+  <h3>Set up a tight feedback loop</h3>
+  <pre>cd battle_server/core
+node --version                 # use 22+
+npm ci                         # only when dependencies are missing/stale
+node build                     # compiles TypeScript into dist/
+npx mocha -g "Thunder Wave"   # focused mechanics test
+npm test                       # lint + normal tests + TypeScript check</pre>
+  <p>Start with <code>test/sim/moves/thunderwave.js</code>. Find <code>thunderwave</code> in <code>data/moves.ts</code>, then follow the generic pipeline only as far as that test requires. One behavior per trace is faster than reading the giant core files top to bottom.</p>
+
+  <div class="footer"><span>Pokémon Showdown battle-system learning guide</span><span>1 / 4</span></div>
+</section>
+
+<section class="page compact">
+  <p class="eyebrow">Page 2 · Follow one turn end to end</p>
+  <h2>The Runtime Path You Should Memorize</h2>
+  <p class="lede">Most battle questions become manageable once you can place them on this path. Read the named functions in this order; ignore adjacent helpers until a concrete behavior leads you there.</p>
+
+  <h3>1. Construction selects the mechanics universe</h3>
+  <p><code>new Battle(options)</code> resolves the format, calls <code>Dex.forFormat</code>, derives the generation/rules, and creates <code>Field</code>, side slots, seeded <code>PRNG</code>, <code>BattleQueue</code>, and <code>BattleActions</code>. It mixes in mod scripts, so the same public methods can run different generation algorithms.</p>
+
+  <h3>2. Players become sides; the battle starts when all required sides exist</h3>
+  <p><code>Battle.setPlayer</code> creates a <code>Side</code> and its <code>Pokemon</code>. When all slots are filled, <code>Battle.start</code> establishes rules, preview, and switch-in setup before the first move request. Supplied teams are assumed valid; legality belongs to <code>sim/team-validator.ts</code>.</p>
+
+  <h3>3. Requests define what a side may choose</h3>
+  <p><code>Battle.makeRequest('teampreview' | 'move' | 'switch')</code> clears choices and creates each <code>activeRequest</code> through <code>getRequests</code>. Request state is authoritative: moves are rejected during forced switching, and choices are rejected between requests.</p>
+
+  <h3>4. A choice becomes one or more actions</h3>
+  <p><code>Battle.choose('p1', input)</code> delegates to <code>Side.choose</code>, which parses <code>move thunderwave</code>, <code>switch 3</code>, and comma-separated doubles choices. Specialized methods reject illegal/incomplete input and append partial actions. When all sides finish, <code>Battle.commitChoices</code> feeds them to the queue.</p>
+
+  <h3>5. The queue resolves and sorts</h3>
+  <p><code>resolveAction</code> fills in moves, targets, action order, priority, fractional priority, and speed; one choice may expand (Terastallization plus a move). Sorting uses lower order bucket, then higher priority, higher speed, and seeded tie-breaking. Mid-turn switches are inserted without rebuilding the remaining turn.</p>
+
+  <h3>6. The turn loop dispatches one action at a time</h3>
+  <pre>Battle.commitChoices()
+  → Side.commitChoices()
+  → BattleQueue.addChoice() / sort()
+  → Battle.turnLoop()
+  → Battle.runAction(action)
+  → BattleActions.runMove(...)
+  → BattleActions.useMove(...)
+  → tryMoveHit / trySpreadMoveHit
+  → ordered hit steps → spreadMoveHit → getDamage</pre>
+  <p><code>turnLoop</code> shifts actions until empty, ended, or paused for a mid-turn request (U-turn or faint replacement). <code>runAction</code> dispatches action types; <code>endTurn</code> cleans up, increments the turn, and makes the next request.</p>
+
+  <h3>7. Events let every active effect intervene</h3>
+  <p><code>Battle.runEvent</code> finds matching handlers across targets/sources, allies/foes, statuses, volatiles, abilities, items, conditions, formats, and rules; orders them by event priority/speed; then calls them. <code>singleEvent</code> invokes one named effect directly.</p>
+  <table>
+    <tr><th>Handler return</th><th>Meaning in the common relay pattern</th></tr>
+    <tr><td><code>undefined</code></td><td>Leave the relay value unchanged and continue.</td></tr>
+    <tr><td>a number/object</td><td>Replace the relay value—for example, alter base power, a stat, or damage.</td></tr>
+    <tr><td><code>false</code></td><td>Stop/fail, normally allowing the generic failure message.</td></tr>
+    <tr><td><code>null</code></td><td>Stop/fail silently, commonly because the handler emitted its own message.</td></tr>
+  </table>
+  <div class="callout"><strong>Reading rule:</strong> for <code>runEvent('X')</code>, search <code>onX</code>, <code>onSourceX</code>, <code>onAllyX</code>, and <code>onFoeX</code>. For <code>singleEvent('X', effect)</code>, inspect that effect's <code>onX</code>.</div>
+
+  <div class="footer"><span>Runtime path: request → choice → queue → action → events</span><span>2 / 4</span></div>
+</section>
+
+<section class="page compact">
+  <p class="eyebrow">Page 3 · Find the code for any mechanic</p>
+  <h2>Navigate by Behavior, Not by File Size</h2>
+  <p class="lede">The engine is deliberately data-driven. A mechanic may be a plain data field, an event callback, a reusable condition, an engine algorithm, or a generation override. Locate its category before changing or deeply reading anything.</p>
+
+  <h3>The five places mechanics live</h3>
+  <table>
+    <tr><th>Kind</th><th>Examples</th><th>Start here</th></tr>
+    <tr><td>Declarative effect</td><td>Power, type, accuracy, status, boosts, target, flags</td><td><code>data/moves.ts</code>, <code>abilities.ts</code>, <code>items.ts</code></td></tr>
+    <tr><td>Effect callback</td><td><code>onHit</code>, <code>onDamagingHit</code>, <code>onResidual</code>, <code>onSwitchIn</code></td><td>The effect entry in <code>data/</code> or <code>data/mods/</code></td></tr>
+    <tr><td>Shared condition</td><td>paralysis, weather, terrain, volatile or side conditions</td><td><code>data/conditions.ts</code> or a move's nested <code>condition</code></td></tr>
+    <tr><td>Core algorithm</td><td>choice parsing, action order, accuracy, damage formula, switching, fainting</td><td><code>sim/side.ts</code>, <code>battle-queue.ts</code>, <code>battle-actions.ts</code>, <code>battle.ts</code></td></tr>
+    <tr><td>Ruleset/mod override</td><td>generation math, clauses, metagame-specific behavior</td><td><code>config/formats.ts</code>, <code>data/rulesets.ts</code>, <code>data/mods/&lt;mod&gt;/</code></td></tr>
+  </table>
+
+  <h3>Three traces that teach the architecture</h3>
+  <p><span class="tag">Simple data</span><strong>Thunder Wave.</strong> Its test is <code>test/sim/moves/thunderwave.js</code>. The base move declares accuracy, Electric type, <code>status: 'par'</code>, and <code>ignoreImmunity: false</code>; generic hit/status machinery does the rest. There is no “ThunderWave class.”</p>
+  <p><span class="tag">Condition</span><strong>Stealth Rock.</strong> The move declares a <code>sideCondition</code> with <code>onSideStart</code>/<code>onSwitchIn</code>. The switch hook checks Boots, calculates Rock effectiveness, and deals fractional max-HP damage—persistent state implemented through events.</p>
+  <p><span class="tag">Ability hook</span><strong>Aftermath.</strong> Its <code>onDamagingHit</code> checks fainting/contact and calls <code>this.damage</code>. <code>BattleActions</code> raises the event; the ability subscribes. The engine has no Aftermath branch.</p>
+
+  <h3>How generations and formats change the answer</h3>
+  <p><code>config/formats.ts</code> maps a format to a <code>mod</code>/<code>ruleset</code>. <code>Dex.forFormat</code> follows <code>Scripts.inherit</code> and merges entries marked <code>inherit: true</code>. Mods can patch data/callbacks or replace whole battle, Pokémon, or action methods. Gen 1, for example, inherits Gen 2 while overriding both scripts and individual moves. Always check the active mod.</p>
+
+  <h3>A repeatable search recipe</h3>
+  <pre># 1. Find tests and data entries (IDs are lowercase and punctuation-free)
+rg -n "Thunder Wave|thunderwave" test/sim data config/formats.ts
+
+# 2. Find callbacks and the engine event that raises them
+rg -n "onDamagingHit|runEvent\('DamagingHit'" data sim
+
+# 3. Check generation overrides
+rg -n "thunderwave:|runMove\(" data/mods
+
+# 4. Run only the behavior you are tracing
+npx mocha -g "Thunder Wave"</pre>
+
+  <h3>Route common questions quickly</h3>
+  <table>
+    <tr><th>If you are asking…</th><th>Inspect…</th></tr>
+    <tr><td>Why did this move fail or miss?</td><td><code>BattleActions.runMove/useMove</code>, hit-step methods, then relevant <code>Try*</code>, immunity, and accuracy handlers.</td></tr>
+    <tr><td>Why this damage number?</td><td><code>BattleActions.getDamage</code> plus <code>BasePower</code>, offensive/defensive stat, effectiveness, critical, and <code>ModifyDamage</code> events.</td></tr>
+    <tr><td>Why did this act first?</td><td><code>BattleQueue.resolveAction/sort</code>, <code>Battle.getActionSpeed</code>, and priority/speed event handlers.</td></tr>
+    <tr><td>Where is this persistent state?</td><td><code>Pokemon.volatiles/status</code>, <code>Side.sideConditions</code>, or <code>Field.weather/terrain/pseudoWeather</code>.</td></tr>
+  </table>
+
+  <div class="footer"><span>Trace tests → data → event raiser → mod override</span><span>3 / 4</span></div>
+</section>
+
+<section class="page compact">
+  <p class="eyebrow">Page 4 · Learn by experiments</p>
+  <h2>A Practical Study Plan and Debugging Method</h2>
+  <p class="lede">Do these labs in order. Each should end with a sentence you can prove from code and a focused test you can run. That turns familiarity into a durable model.</p>
+
+  <div class="two-col">
+    <div>
+      <h3>Lab 1 — Declarative move (30–45 min)</h3>
+      <ol>
+        <li>Read <code>test/sim/moves/thunderwave.js</code>.</li>
+        <li>Inspect <code>thunderwave</code> in <code>data/moves.ts</code>.</li>
+        <li>Follow type immunity, accuracy, and status application in <code>battle-actions.ts</code>/<code>pokemon.ts</code>.</li>
+        <li>Run <code>npx mocha -g "Thunder Wave"</code>.</li>
+      </ol>
+      <p><strong>Goal:</strong> explain why a Ground target stays un-paralyzed without finding any Thunder Wave-specific engine branch.</p>
+
+      <h3>Lab 2 — Event ability (45–60 min)</h3>
+      <ol>
+        <li>Read <code>test/sim/abilities/aftermath.js</code>.</li>
+        <li>Read the ability's <code>onDamagingHit</code>.</li>
+        <li>Find where <code>DamagingHit</code> is raised and how contact flags are tested.</li>
+        <li>Change only the test teams in a scratch branch: compare a contact move, non-contact move, and a protected source.</li>
+      </ol>
+      <p><strong>Goal:</strong> distinguish an event publisher from an effect subscriber.</p>
+
+      <h3>Lab 3 — Persistent condition (45–60 min)</h3>
+      <ol>
+        <li>Read the Stealth Rock move and nested condition.</li>
+        <li>Find how <code>Side.addSideCondition</code> stores its state.</li>
+        <li>Trace the next switch through queue → switch action → <code>SwitchIn</code>.</li>
+        <li>Run its tests with <code>npx mocha -g "Stealth Rock"</code>.</li>
+      </ol>
+      <p><strong>Goal:</strong> identify the owner, lifetime, start hook, trigger hook, and removal path of a condition.</p>
+    </div>
+    <div>
+      <h3>Lab 4 — Turn order (60 min)</h3>
+      <ol>
+        <li>Use <code>test/sim/misc/turn-order.js</code> as the entry point.</li>
+        <li>Trace <code>Side.commitChoices</code> → <code>BattleQueue.resolveAction</code> → <code>sort</code>.</li>
+        <li>Compare a switch, normal-priority move, priority move, and speed tie.</li>
+        <li>Record the fixed seed; repeat the test to prove determinism.</li>
+      </ol>
+      <p><strong>Goal:</strong> predict queue order before running the test.</p>
+
+      <h3>Lab 5 — Cross-generation behavior (60–90 min)</h3>
+      <ol>
+        <li>Choose one move changed in Gen 1 (Bite is a compact example).</li>
+        <li>Compare base <code>data/moves.ts</code> with <code>data/mods/gen1/moves.ts</code>.</li>
+        <li>Use <code>common.gen(1)</code> and the base test tools to run the same scenario twice.</li>
+        <li>Explain the <code>inherit: true</code> merge and which Dex each battle owns.</li>
+      </ol>
+      <p><strong>Goal:</strong> stop treating the latest-generation data as universal.</p>
+
+      <h3>Lab 6 — Your own regression (60 min)</h3>
+      <ol>
+        <li>Pick one interaction you care about.</li>
+        <li>Copy the nearest small test; use minimal teams and deterministic moves.</li>
+        <li>Assert state, not prose: HP, status, boosts, item, queue, or log line.</li>
+        <li>Use <code>battle.getDebugLog()</code> only while diagnosing; call <code>battle.destroy()</code> in cleanup.</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Debugging discipline</h3>
+  <ul>
+    <li><strong>Start from an observable.</strong> State the exact wrong HP/status/order/log output, then reduce to the smallest battle.</li>
+    <li><strong>Control randomness.</strong> Use the deterministic test seed, avoid speed ties, or explicitly use <code>forceRandomChance</code>. Never add <code>Math.random()</code> to mechanics.</li>
+    <li><strong>Respect event pathways.</strong> Direct state mutation can bypass immunity, suppression, messages, and downstream hooks. Prefer the established battle/Pokémon methods.</li>
+    <li><strong>Check the mod.</strong> Reproduce in the same format/generation before editing base logic.</li>
+    <li><strong>Test narrow, then broad.</strong> Run <code>npx mocha -g "exact title"</code>, then the relevant test file/group, then <code>npm test</code>; use <code>npm run full-test</code> before a substantial upstream contribution.</li>
+  </ul>
+
+  <h3>You understand the engine when you can…</h3>
+  <ul class="checklist">
+    <li>trace a choice from <code>Side.choose</code> to its final state/log changes;</li>
+    <li>name which object owns a status, volatile, side condition, weather, or queue action;</li>
+    <li>find both an event handler and the engine site that raises its event;</li>
+    <li>explain how a format selects a mod and how inherited data changes a mechanic;</li>
+    <li>write a deterministic regression test that proves one interaction.</li>
+  </ul>
+
+  <p><strong>Primary references:</strong> <a href="https://github.com/smogon/pokemon-showdown/blob/bb179fbf8449e3c31632bd56f671ffb4404fa6e7/sim/SIMULATOR.md">sim/SIMULATOR.md</a>, <a href="https://github.com/smogon/pokemon-showdown/blob/bb179fbf8449e3c31632bd56f671ffb4404fa6e7/sim/DEX.md">sim/DEX.md</a>, <a href="https://github.com/smogon/pokemon-showdown/blob/bb179fbf8449e3c31632bd56f671ffb4404fa6e7/test/TESTS.md">test/TESTS.md</a>, and the source files named throughout this guide.</p>
+
+  <div class="footer"><span>Learn one behavior at a time; prove each model with a test</span><span>4 / 4</span></div>
+</section>
+
+</body>
+</html>

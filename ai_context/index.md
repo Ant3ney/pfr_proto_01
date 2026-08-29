@@ -6,7 +6,7 @@ Read this index first. Use the table to load only the context needed for the cur
 | --- | --- | --- |
 | Define or review the overall game vision, audience, gameplay, audio, story, or art goals | [`game-design.md`](game-design.md) | High-level game design direction for Pokémon Fracture and Revolt |
 | Review the planned battle, overworld, interaction, collection, progression, or save architecture | [`technical-design.md`](technical-design.md) | Technical design intentions that must be checked against the current implementation |
-| Implement or change battle starts, dialogs, UI template callbacks, sequences, or player movement locks | [`runtime/index.md`](runtime/index.md) | Verified runtime ownership and lifecycle contracts for battle launch, dialog/UI, and sequences |
+| Implement or change battle starts, the battle REST service, dialogs, UI template callbacks, sequences, or player movement locks | [`runtime/index.md`](runtime/index.md) | Verified runtime ownership and lifecycle contracts for battle launch, the stateless battle API, dialog/UI, and sequences |
 | Work on the central narrative, player journey, rival, or Team Bastion conflict | [`story-overview.md`](story-overview.md) | Focused synopsis of the game's main story |
 | Choose the region's visual mood, civic imagery, version colors, environment style, or presentation tone | [`art-direction.md`](art-direction.md) | Project-specific art direction and visual identity |
 | Set overworld geometry, texture, material, lighting, composition, character-art, or asset-budget constraints | [`overworld-art-framework.md`](overworld-art-framework.md) | Handheld-era visual and technical production envelope for overworld assets |

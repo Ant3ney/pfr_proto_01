@@ -6,9 +6,20 @@ extends Control
 const BATTLE_TRANSITION_OVERLAY_SCENE: PackedScene = preload(
 	"res://core/ui/battle_transition_overlay.tscn"
 )
+const BATTLE_UI_OVERLAY_SCENE: PackedScene = preload(
+	"res://core/ui/battle_ui_overlay.tscn"
+)
+const BATTLE_ACTIONS: Array[StringName] = [
+	&"fight",
+	&"bag",
+	&"party",
+	&"run",
+]
 
 signal action_pressed
 signal dismissed
+signal battle_action_pressed(action: StringName)
+signal battle_ui_shown
 
 @onready var dialog_panel: PanelContainer = $DialogPanel
 @onready var message_label: Label = %Message
@@ -30,6 +41,9 @@ var _is_closing := false
 var _battle_transition_overlay: Control
 var _battle_transition_tweens: Array[Tween] = []
 var _battle_transition_phase := ""
+var _battle_ui_overlay: Control
+var _battle_ui_tweens: Array[Tween] = []
+var _battle_action_callbacks: Dictionary = {}
 
 
 func _ready() -> void:
@@ -47,6 +61,7 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_stop_battle_transition_tweens()
+	_stop_battle_ui_tweens()
 
 
 func set_text(text: String) -> UITemplate:
@@ -101,6 +116,68 @@ func set_dismiss_visible(is_visible: bool) -> UITemplate:
 	if is_instance_valid(dismiss_button):
 		dismiss_button.visible = _dismiss_visible
 	return self
+
+
+## Re-presents this template as the persistent battle HUD. The caller retains
+## ownership and can bind each command independently without putting battle
+## rules in the template.
+func play_battle_ui_in(battle_data: Dictionary = {}) -> UITemplate:
+	if _is_closing:
+		return self
+
+	_stop_battle_ui_tweens()
+	_set_dialog_presentation_visible(false)
+	if not _ensure_battle_ui_overlay():
+		push_error("UITemplate could not create the battle UI overlay.")
+		return self
+
+	_configure_battle_ui(battle_data)
+	_prepare_battle_ui_in()
+	_animate_battle_ui_in()
+	return self
+
+
+func set_battle_message(message: String) -> UITemplate:
+	if is_instance_valid(_battle_ui_overlay):
+		var message_label := _battle_ui_overlay.get_node(
+			^"MessagePanel/Margin/BattleMessage"
+		) as Label
+		message_label.text = message
+	return self
+
+
+## Battle command callbacks are zero-argument callables, matching the ordinary
+## template callbacks. Bind any required values at the call site.
+func set_battle_action_callback(
+	action: StringName,
+	callback: Callable
+) -> UITemplate:
+	var normalized_action := StringName(String(action).to_lower())
+	if normalized_action not in BATTLE_ACTIONS:
+		push_warning("UITemplate ignored unknown battle action: %s" % action)
+		return self
+	if callback.is_valid():
+		_battle_action_callbacks[normalized_action] = callback
+	else:
+		_battle_action_callbacks.erase(normalized_action)
+	return self
+
+
+func set_battle_action_enabled(
+	action: StringName,
+	is_enabled: bool
+) -> UITemplate:
+	var button := _battle_action_button(StringName(String(action).to_lower()))
+	if button:
+		button.disabled = not is_enabled
+	return self
+
+
+func is_battle_ui_visible() -> bool:
+	return (
+		is_instance_valid(_battle_ui_overlay)
+		and _battle_ui_overlay.visible
+	)
 
 
 ## Re-presents this template as a full-screen battle transition. The caller
@@ -161,6 +238,7 @@ func close() -> void:
 
 	_is_closing = true
 	_stop_battle_transition_tweens()
+	_stop_battle_ui_tweens()
 	dismissed.emit()
 	if _dismiss_callback.is_valid():
 		_dismiss_callback.call()
@@ -171,6 +249,16 @@ func _on_action_pressed() -> void:
 	action_pressed.emit()
 	if _action_callback.is_valid():
 		_action_callback.call()
+
+
+func _on_battle_action_pressed(action: StringName) -> void:
+	battle_action_pressed.emit(action)
+	var callback: Callable = _battle_action_callbacks.get(
+		action,
+		Callable()
+	)
+	if callback.is_valid():
+		callback.call()
 
 
 func _get_action_button_text() -> String:
@@ -199,6 +287,244 @@ func _ensure_battle_transition_overlay() -> bool:
 	add_child(_battle_transition_overlay)
 	move_child(_battle_transition_overlay, get_child_count() - 1)
 	return true
+
+
+func _ensure_battle_ui_overlay() -> bool:
+	if is_instance_valid(_battle_ui_overlay):
+		return true
+
+	_battle_ui_overlay = BATTLE_UI_OVERLAY_SCENE.instantiate() as Control
+	if not _battle_ui_overlay:
+		return false
+
+	add_child(_battle_ui_overlay)
+	move_child(_battle_ui_overlay, get_child_count() - 1)
+	for action in BATTLE_ACTIONS:
+		var button := _battle_action_button(action)
+		if button:
+			button.pressed.connect(_on_battle_action_pressed.bind(action))
+	return true
+
+
+func _configure_battle_ui(battle_data: Dictionary) -> void:
+	var player_name := String(
+		battle_data.get(
+			"player_pokemon_name",
+			battle_data.get("player_name", "YOUR POKÉMON")
+		)
+	).strip_edges()
+	var opponent_name := String(
+		battle_data.get(
+			"opponent_pokemon_name",
+			battle_data.get(
+				"opponent_name",
+				battle_data.get("trainer_name", "OPPONENT")
+			)
+		)
+	).strip_edges()
+	if player_name.is_empty():
+		player_name = "YOUR POKÉMON"
+	if opponent_name.is_empty():
+		opponent_name = "OPPONENT"
+
+	var player_name_label := _battle_ui_overlay.get_node(
+		^"PlayerStatus/Margin/Content/Identity/PlayerName"
+	) as Label
+	var player_level_label := _battle_ui_overlay.get_node(
+		^"PlayerStatus/Margin/Content/Identity/PlayerLevel"
+	) as Label
+	var player_hp := _battle_ui_overlay.get_node(
+		^"PlayerStatus/Margin/Content/Health/PlayerHP"
+	) as ProgressBar
+	var opponent_name_label := _battle_ui_overlay.get_node(
+		^"OpponentStatus/Margin/Content/Identity/OpponentName"
+	) as Label
+	var opponent_level_label := _battle_ui_overlay.get_node(
+		^"OpponentStatus/Margin/Content/Identity/OpponentLevel"
+	) as Label
+	var opponent_hp := _battle_ui_overlay.get_node(
+		^"OpponentStatus/Margin/Content/Health/OpponentHP"
+	) as ProgressBar
+
+	player_name_label.text = _format_battle_name(player_name)
+	player_level_label.text = _battle_level_text(
+		battle_data.get("player_level", 0)
+	)
+	player_hp.value = _battle_health_value(
+		battle_data.get("player_health", 1.0)
+	)
+	opponent_name_label.text = _format_battle_name(opponent_name)
+	opponent_level_label.text = _battle_level_text(
+		battle_data.get("opponent_level", 0)
+	)
+	opponent_hp.value = _battle_health_value(
+		battle_data.get("opponent_health", 1.0)
+	)
+
+	var message := String(battle_data.get("battle_message", "")).strip_edges()
+	if message.is_empty():
+		message = "What will %s do?" % _format_battle_name(player_name)
+	set_battle_message(message)
+
+	set_battle_action_enabled(
+		&"fight",
+		bool(battle_data.get("can_fight", true))
+	)
+	set_battle_action_enabled(
+		&"bag",
+		bool(battle_data.get("can_bag", true))
+	)
+	set_battle_action_enabled(
+		&"party",
+		bool(battle_data.get("can_party", true))
+	)
+	set_battle_action_enabled(
+		&"run",
+		bool(battle_data.get("can_run", true))
+	)
+
+
+func _prepare_battle_ui_in() -> void:
+	var viewport_size := get_viewport_rect().size
+	var opponent_status := _battle_ui_control(^"OpponentStatus")
+	var player_status := _battle_ui_control(^"PlayerStatus")
+	var message_panel := _battle_ui_control(^"MessagePanel")
+	var action_tray := _battle_ui_control(^"ActionTray")
+
+	_battle_ui_overlay.visible = true
+	_battle_ui_overlay.modulate = Color.WHITE
+	for control in [opponent_status, player_status, message_panel, action_tray]:
+		_remember_battle_ui_position(control)
+		control.modulate.a = 0.0
+
+	opponent_status.position = (
+		_battle_ui_position(opponent_status)
+		+ Vector2(maxf(viewport_size.x * 0.2, 160.0), 0.0)
+	)
+	player_status.position = (
+		_battle_ui_position(player_status)
+		- Vector2(maxf(viewport_size.x * 0.2, 160.0), 0.0)
+	)
+	message_panel.position = (
+		_battle_ui_position(message_panel) + Vector2(0.0, 34.0)
+	)
+	action_tray.position = (
+		_battle_ui_position(action_tray)
+		+ Vector2(0.0, maxf(viewport_size.y * 0.24, 100.0))
+	)
+
+
+func _animate_battle_ui_in() -> void:
+	var opponent_status := _battle_ui_control(^"OpponentStatus")
+	var player_status := _battle_ui_control(^"PlayerStatus")
+	var message_panel := _battle_ui_control(^"MessagePanel")
+	var action_tray := _battle_ui_control(^"ActionTray")
+	var motion := _new_battle_ui_tween(true)
+
+	motion.tween_property(
+		opponent_status,
+		^"position",
+		_battle_ui_position(opponent_status),
+		0.46
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	motion.tween_property(
+		player_status,
+		^"position",
+		_battle_ui_position(player_status),
+		0.46
+	).set_delay(0.06).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	motion.tween_property(
+		message_panel,
+		^"position",
+		_battle_ui_position(message_panel),
+		0.34
+	).set_delay(0.12).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	motion.tween_property(
+		action_tray,
+		^"position",
+		_battle_ui_position(action_tray),
+		0.48
+	).set_delay(0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	motion.tween_property(opponent_status, ^"modulate:a", 1.0, 0.22)
+	motion.tween_property(player_status, ^"modulate:a", 1.0, 0.22).set_delay(0.06)
+	motion.tween_property(message_panel, ^"modulate:a", 1.0, 0.2).set_delay(0.12)
+	motion.tween_property(action_tray, ^"modulate:a", 1.0, 0.22).set_delay(0.16)
+
+	var finish_timeline := _new_battle_ui_tween()
+	finish_timeline.tween_interval(0.66)
+	finish_timeline.tween_callback(_finish_battle_ui_in)
+
+
+func _finish_battle_ui_in() -> void:
+	if _is_closing or not is_instance_valid(_battle_ui_overlay):
+		return
+	var fight_button := _battle_action_button(&"fight")
+	if fight_button and not fight_button.disabled:
+		fight_button.grab_focus()
+	battle_ui_shown.emit()
+
+
+func _format_battle_name(name: String) -> String:
+	return name.replace("-", " ").capitalize().to_upper()
+
+
+func _battle_level_text(level_value: Variant) -> String:
+	var level := int(level_value) if level_value != null else 0
+	return "LV. %d" % level if level > 0 else "LV. ?"
+
+
+func _battle_health_value(health_value: Variant) -> float:
+	if typeof(health_value) not in [TYPE_INT, TYPE_FLOAT]:
+		return 1.0
+	return clampf(float(health_value), 0.0, 1.0)
+
+
+func _battle_action_button(action: StringName) -> Button:
+	if not is_instance_valid(_battle_ui_overlay):
+		return null
+	var button_name := ""
+	match action:
+		&"fight":
+			button_name = "FightButton"
+		&"bag":
+			button_name = "BagButton"
+		&"party":
+			button_name = "PartyButton"
+		&"run":
+			button_name = "RunButton"
+		_:
+			return null
+	return _battle_ui_overlay.get_node(
+		"ActionTray/Margin/Actions/%s" % button_name
+	) as Button
+
+
+func _battle_ui_control(path: NodePath) -> Control:
+	return _battle_ui_overlay.get_node(path) as Control
+
+
+func _remember_battle_ui_position(control: Control) -> void:
+	if not control.has_meta("battle_ui_position"):
+		control.set_meta("battle_ui_position", control.position)
+
+
+func _battle_ui_position(control: Control) -> Vector2:
+	return control.get_meta("battle_ui_position", control.position) as Vector2
+
+
+func _new_battle_ui_tween(is_parallel := false) -> Tween:
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_parallel(is_parallel)
+	_battle_ui_tweens.append(tween)
+	return tween
+
+
+func _stop_battle_ui_tweens() -> void:
+	for tween in _battle_ui_tweens:
+		if tween and tween.is_valid():
+			tween.kill()
+	_battle_ui_tweens.clear()
 
 
 func _configure_battle_transition_text(battle_data: Dictionary) -> void:

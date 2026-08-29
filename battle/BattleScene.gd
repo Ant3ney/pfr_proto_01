@@ -1,11 +1,13 @@
 class_name BattleScene
 extends Node3D
 
-## Presentation shell for the battle field. Battle rules and creature spawning
-## are intentionally outside this class; it only receives launch data and plays
-## the scene-side half of the battle intro.
+## Presentation shell for the battle field. It receives launch data, plays the
+## scene-side intro, and owns the template-driven battle HUD. Battle rules and
+## creature spawning are intentionally outside this class.
 
 signal intro_finished
+signal battle_ui_shown
+signal battle_action_selected(action: StringName)
 
 @onready var battle_camera: Camera3D = %BattleCamera
 @onready var battlefield_art: Node3D = %BattlefieldArt
@@ -21,9 +23,16 @@ var battle_data: Dictionary = {}
 var _intro_tweens: Array[Tween] = []
 var _camera_target_position := Vector3.ZERO
 var _camera_target_fov := 42.0
+var _battle_ui_template: UITemplate
+var _battle_start_handoff_pending := false
 
 
 func _ready() -> void:
+	_battle_start_handoff_pending = GameInstance.is_battle_start_in_progress()
+	if not GameInstance.battle_start_finished.is_connected(
+		_on_battle_start_finished
+	):
+		GameInstance.battle_start_finished.connect(_on_battle_start_finished)
 	_prepare_intro_presentation()
 	battle_data = GameInstance.enter_battle_scene()
 	intro_title.text = String(
@@ -36,10 +45,21 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_stop_intro_tweens()
+	if GameInstance.battle_start_finished.is_connected(
+		_on_battle_start_finished
+	):
+		GameInstance.battle_start_finished.disconnect(_on_battle_start_finished)
+	if is_instance_valid(_battle_ui_template):
+		_battle_ui_template.close()
+	_battle_ui_template = null
 
 
 func get_battle_data() -> Dictionary:
 	return battle_data.duplicate(true)
+
+
+func get_battle_ui() -> UITemplate:
+	return _battle_ui_template if is_instance_valid(_battle_ui_template) else null
 
 
 func _prepare_intro_presentation() -> void:
@@ -163,6 +183,149 @@ func _finish_intro_presentation() -> void:
 	intro_overlay.visible = false
 	GameInstance.notify_battle_intro_finished()
 	intro_finished.emit()
+	if not _battle_start_handoff_pending:
+		_show_battle_ui()
+
+
+func _on_battle_start_finished(finished_data: Dictionary) -> void:
+	_battle_start_handoff_pending = false
+	battle_data = finished_data.duplicate(true)
+	_show_battle_ui()
+
+
+func _show_battle_ui() -> void:
+	if is_instance_valid(_battle_ui_template):
+		return
+
+	_battle_ui_template = UIManager.show_ui("")
+	if not is_instance_valid(_battle_ui_template):
+		push_error("BattleScene could not create its battle UI template.")
+		_battle_ui_template = null
+		return
+
+	_battle_ui_template.set_dismiss_callback(_on_battle_ui_dismissed)
+	_battle_ui_template.set_battle_action_callback(
+		&"fight",
+		_on_battle_action_selected.bind(&"fight")
+	)
+	_battle_ui_template.set_battle_action_callback(
+		&"bag",
+		_on_battle_action_selected.bind(&"bag")
+	)
+	_battle_ui_template.set_battle_action_callback(
+		&"party",
+		_on_battle_action_selected.bind(&"party")
+	)
+	_battle_ui_template.set_battle_action_callback(
+		&"run",
+		_on_battle_action_selected.bind(&"run")
+	)
+	_battle_ui_template.battle_ui_shown.connect(_on_battle_ui_shown)
+	_battle_ui_template.play_battle_ui_in(_build_battle_ui_data())
+
+
+func _on_battle_ui_shown() -> void:
+	battle_ui_shown.emit()
+
+
+func _on_battle_action_selected(action: StringName) -> void:
+	battle_action_selected.emit(action)
+
+
+func _on_battle_ui_dismissed() -> void:
+	_battle_ui_template = null
+
+
+func _build_battle_ui_data() -> Dictionary:
+	var ui_data := battle_data.duplicate(true)
+	var player_member := _first_battle_member(ui_data.get("player_party", []))
+	_apply_battle_member_to_ui(ui_data, "player", player_member)
+	if not _has_battle_member_name(ui_data, "player"):
+		_apply_battle_member_to_ui(
+			ui_data,
+			"player",
+			CollectionSystem.get_pcl_by_party_slot(1)
+		)
+
+	var opponent_member := _first_battle_member(
+		ui_data.get("opponent_party", [])
+	)
+	_apply_battle_member_to_ui(ui_data, "opponent", opponent_member)
+	return ui_data
+
+
+func _first_battle_member(value: Variant) -> Dictionary:
+	if typeof(value) == TYPE_DICTIONARY:
+		return (value as Dictionary).duplicate(true)
+	if typeof(value) != TYPE_ARRAY:
+		return {}
+	for member_value: Variant in value as Array:
+		if typeof(member_value) == TYPE_DICTIONARY:
+			return (member_value as Dictionary).duplicate(true)
+	return {}
+
+
+func _apply_battle_member_to_ui(
+	ui_data: Dictionary,
+	prefix: String,
+	member: Dictionary
+) -> void:
+	if member.is_empty():
+		return
+
+	var name_key := "%s_pokemon_name" % prefix
+	if not _has_battle_member_name(ui_data, prefix):
+		var member_name := String(
+			member.get("pokemon_name", member.get("name", ""))
+		).strip_edges()
+		var pokemon_id := _battle_member_pokemon_id(member)
+		if member_name.is_empty() and pokemon_id > 0:
+			var creature := CreatureSystem.get_creature(pokemon_id)
+			member_name = String(creature.get("name", "")).strip_edges()
+		if not member_name.is_empty():
+			ui_data[name_key] = member_name
+
+	var stats_value: Variant = member.get("instanceStats", {})
+	var stats: Dictionary = (
+		stats_value as Dictionary
+		if typeof(stats_value) == TYPE_DICTIONARY
+		else {}
+	)
+	var level_key := "%s_level" % prefix
+	if not ui_data.has(level_key):
+		var level_value: Variant = stats.get(
+			"level",
+			member.get("level", null)
+		)
+		if (
+			typeof(level_value) in [TYPE_INT, TYPE_FLOAT]
+			and int(level_value) > 0
+		):
+			ui_data[level_key] = int(level_value)
+
+	var health_key := "%s_health" % prefix
+	if not ui_data.has(health_key):
+		var health_value: Variant = stats.get(
+			"health",
+			member.get("health", null)
+		)
+		if typeof(health_value) in [TYPE_INT, TYPE_FLOAT]:
+			ui_data[health_key] = clampf(float(health_value), 0.0, 1.0)
+
+
+func _has_battle_member_name(ui_data: Dictionary, prefix: String) -> bool:
+	return (
+		not String(ui_data.get("%s_pokemon_name" % prefix, "")).strip_edges().is_empty()
+		or not String(ui_data.get("%s_name" % prefix, "")).strip_edges().is_empty()
+	)
+
+
+func _battle_member_pokemon_id(member: Dictionary) -> int:
+	for key in ["pokemonId", "pokemon_id", "id"]:
+		var value: Variant = member.get(key)
+		if typeof(value) in [TYPE_INT, TYPE_FLOAT]:
+			return int(value)
+	return 0
 
 
 func _remember_intro_position(control: Control) -> void:
