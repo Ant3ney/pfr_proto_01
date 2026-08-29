@@ -7,8 +7,15 @@ extends Node
 ##   "pokemonId": int,
 ##   "pclID": String,
 ##   "party": {"inParty": bool, "slot": int or null},
-##   "instanceStats": {"health": float, "xp": float, "level": int}
+##   "instanceStats": {"health": float, "xp": float, "level": int},
+##   "battleProfile": {
+##     "species": String, "spriteId": String, "moves": Array[String]
+##   }
 ## }
+##
+## `battleProfile` is present only when the PokeAPI Pokemon ID has an explicit
+## mapping to the pinned battle engine. It is persisted so equipped moves are
+## never recalculated when a battle starts.
 ##
 ## Health and XP are normalized percentages from 0.0 through 1.0. Returned
 ## dictionaries are deep copies so callers cannot bypass collection invariants.
@@ -21,6 +28,7 @@ const MIN_LEVEL := 1
 const MAX_LEVEL := 100
 const STARTING_LEVEL := 3
 const STARTING_PARTY_POKEMON_IDS: Array[int] = [484, 414, 163, 416, 405, 279]
+const SpeciesMapping := preload("res://battle/system/BattleSpeciesMapping.gd")
 
 var _collection_by_id: Dictionary = {}
 var _collection_order: Array[String] = []
@@ -73,13 +81,15 @@ func add_pokemon(
 		return {}
 
 	var pcl_id := _generate_pcl_id()
+	var battle_profile := _create_default_battle_profile(pokemon_id)
 	var pcl := _create_pcl(
 		pokemon_id,
 		pcl_id,
 		level,
 		health,
 		xp,
-		party_slot
+		party_slot,
+		battle_profile
 	)
 	_collection_by_id[pcl_id] = pcl
 	_collection_order.append(pcl_id)
@@ -130,6 +140,141 @@ func get_party() -> Array[Dictionary]:
 		var pcl: Dictionary = _collection_by_id[pcl_id]
 		party.append(pcl.duplicate(true))
 	return party
+
+
+## Returns the current party in the exact strict member shape accepted by the
+## battle REST API. Fainted members remain in the result. An empty result means
+## local preflight failed; inspect `get_last_error()` for the reason.
+func get_battle_party_members() -> Array[Dictionary]:
+	_last_error = ""
+	var members: Array[Dictionary] = []
+	var has_living_member := false
+	for pcl_id in _party_slots:
+		if pcl_id.is_empty():
+			continue
+		var pcl: Dictionary = _collection_by_id[pcl_id]
+		var battle_profile_value: Variant = pcl.get("battleProfile")
+		if typeof(battle_profile_value) != TYPE_DICTIONARY:
+			_set_error(
+				"Pokemon ID %d is not supported for battle" % int(pcl["pokemonId"])
+			)
+			return []
+		var battle_profile: Dictionary = battle_profile_value
+		if not _validate_battle_profile(
+			int(pcl["pokemonId"]),
+			battle_profile,
+			"PCL %s" % pcl_id
+		):
+			return []
+		var stats: Dictionary = pcl["instanceStats"]
+		var health := float(stats["health"])
+		has_living_member = has_living_member or health > 0.0
+		members.append({
+			"memberId": pcl_id,
+			"species": str(battle_profile["species"]),
+			"level": int(stats["level"]),
+			"health": health,
+			"moves": battle_profile["moves"].duplicate(),
+		})
+
+	if members.is_empty():
+		_set_error("Player party is empty")
+		return []
+	if not has_living_member:
+		_set_error("Player party has no living members")
+		return []
+	return members
+
+
+## Returns the persisted presentation/battle identifiers for one PCL.
+func get_battle_profile(pcl_id: String) -> Dictionary:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_last_error = "Unknown PCL ID: %s" % pcl_id
+		return {}
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var profile_value: Variant = pcl.get("battleProfile")
+	if typeof(profile_value) != TYPE_DICTIONARY:
+		_last_error = "PCL %s is not supported for battle" % pcl_id
+		return {}
+	var profile: Dictionary = profile_value
+	return profile.duplicate(true)
+
+
+## Replaces the one-to-four persisted Showdown move IDs used by later battles.
+func set_equipped_moves(pcl_id: String, moves: Array) -> bool:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return false
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var battle_profile_value: Variant = pcl.get("battleProfile")
+	if typeof(battle_profile_value) != TYPE_DICTIONARY:
+		_set_error("PCL %s is not supported for battle" % pcl_id)
+		return false
+	var validated_moves := _validated_move_ids(moves, "Equipped moves")
+	if validated_moves.is_empty():
+		return false
+	var battle_profile: Dictionary = battle_profile_value
+	battle_profile["moves"] = validated_moves
+	collection_changed.emit()
+	return true
+
+
+## Atomically applies a complete server `parties.player` health snapshot.
+## Every current party member must appear exactly once and no other member may
+## appear. Validation completes before any collection state is changed.
+func apply_battle_health_snapshot(snapshot: Array) -> bool:
+	_last_error = ""
+	var party_ids: Array[String] = []
+	for pcl_id in _party_slots:
+		if not pcl_id.is_empty():
+			party_ids.append(pcl_id)
+	if party_ids.is_empty():
+		_set_error("Cannot apply battle health to an empty party")
+		return false
+	if snapshot.size() != party_ids.size():
+		_set_error("Battle health snapshot does not contain the complete player party")
+		return false
+
+	var health_by_id: Dictionary = {}
+	for value: Variant in snapshot:
+		if typeof(value) != TYPE_DICTIONARY:
+			_set_error("Battle health snapshot contains a non-object member")
+			return false
+		var member: Dictionary = value
+		var member_id_value: Variant = member.get("memberId")
+		var health_value: Variant = member.get("normalizedHealth")
+		if typeof(member_id_value) != TYPE_STRING:
+			_set_error("Battle health snapshot has an invalid memberId")
+			return false
+		var member_id: String = member_id_value
+		if member_id not in party_ids:
+			_set_error("Battle health snapshot contains unknown memberId: %s" % member_id)
+			return false
+		if health_by_id.has(member_id):
+			_set_error("Battle health snapshot repeats memberId: %s" % member_id)
+			return false
+		if not _is_numeric(health_value):
+			_set_error("Battle health snapshot has non-numeric normalizedHealth")
+			return false
+		var health := float(health_value)
+		if not _validate_percentage(health, "normalizedHealth"):
+			return false
+		health_by_id[member_id] = health
+
+	for party_id in party_ids:
+		if not health_by_id.has(party_id):
+			_set_error("Battle health snapshot is missing memberId: %s" % party_id)
+			return false
+
+	for party_id in party_ids:
+		var pcl: Dictionary = _collection_by_id[party_id]
+		var updated_stats: Dictionary = pcl["instanceStats"].duplicate(true)
+		updated_stats["health"] = health_by_id[party_id]
+		pcl["instanceStats"] = updated_stats
+	collection_changed.emit()
+	return true
 
 
 func get_collection_size() -> int:
@@ -335,13 +480,42 @@ func load_save_data(collection_data: Array) -> bool:
 		if not _validate_percentage(xp, "xp"):
 			return false
 
+		var battle_profile: Dictionary = {}
+		var mapped_profile := _create_default_battle_profile(pokemon_id)
+		if source_pcl.has("battleProfile"):
+			var battle_profile_value: Variant = source_pcl["battleProfile"]
+			if typeof(battle_profile_value) != TYPE_DICTIONARY:
+				_set_error("PCL %s has invalid battleProfile data" % pcl_id)
+				return false
+			if mapped_profile.is_empty():
+				_set_error(
+					"PCL %s has a battleProfile for an unsupported Pokemon ID" % pcl_id
+				)
+				return false
+			battle_profile = battle_profile_value.duplicate(true)
+			if not _validate_battle_profile(
+				pokemon_id,
+				battle_profile,
+				"PCL %s" % pcl_id
+			):
+				return false
+			battle_profile = {
+				"species": str(battle_profile["species"]),
+				"spriteId": str(battle_profile["spriteId"]),
+				"moves": battle_profile["moves"].duplicate(),
+			}
+		elif not mapped_profile.is_empty():
+			# One-time migration for saves created before battle profiles existed.
+			battle_profile = mapped_profile
+
 		var normalized_pcl := _create_pcl(
 			pokemon_id,
 			pcl_id,
 			level,
 			health,
 			xp,
-			party_slot
+			party_slot,
+			battle_profile
 		)
 		loaded_by_id[pcl_id] = normalized_pcl
 		loaded_order.append(pcl_id)
@@ -379,9 +553,10 @@ func _create_pcl(
 	level: int,
 	health: float,
 	xp: float,
-	party_slot: int
+	party_slot: int,
+	battle_profile: Dictionary = {}
 ) -> Dictionary:
-	return {
+	var pcl := {
 		"pokemonId": pokemon_id,
 		"pclID": pcl_id,
 		"party": {
@@ -394,6 +569,72 @@ func _create_pcl(
 			"level": level,
 		},
 	}
+	if not battle_profile.is_empty():
+		pcl["battleProfile"] = battle_profile.duplicate(true)
+	return pcl
+
+
+func _create_default_battle_profile(pokemon_id: int) -> Dictionary:
+	var mapping: Dictionary = SpeciesMapping.get_entry(pokemon_id)
+	if mapping.is_empty():
+		return {}
+	return {
+		"species": str(mapping["species"]),
+		"spriteId": str(mapping["spriteId"]),
+		"moves": mapping["defaultMoves"].duplicate(),
+	}
+
+
+func _validate_battle_profile(
+	pokemon_id: int,
+	profile: Dictionary,
+	context: String
+) -> bool:
+	var mapping: Dictionary = SpeciesMapping.get_entry(pokemon_id)
+	if mapping.is_empty():
+		_set_error("%s uses an unsupported Pokemon ID" % context)
+		return false
+	if typeof(profile.get("species")) != TYPE_STRING:
+		_set_error("%s has an invalid battle species" % context)
+		return false
+	if str(profile["species"]) != str(mapping["species"]):
+		_set_error("%s battle species does not match its Pokemon ID" % context)
+		return false
+	if typeof(profile.get("spriteId")) != TYPE_STRING:
+		_set_error("%s has an invalid battle spriteId" % context)
+		return false
+	if str(profile["spriteId"]) != str(mapping["spriteId"]):
+		_set_error("%s battle spriteId does not match its Pokemon ID" % context)
+		return false
+	var moves_value: Variant = profile.get("moves")
+	if typeof(moves_value) != TYPE_ARRAY:
+		_set_error("%s has invalid equipped moves" % context)
+		return false
+	var moves: Array = moves_value
+	return not _validated_move_ids(moves, "%s equipped moves" % context).is_empty()
+
+
+func _validated_move_ids(moves: Array, context: String) -> Array[String]:
+	if moves.is_empty() or moves.size() > 4:
+		_set_error("%s must contain between 1 and 4 move IDs" % context)
+		return []
+	var validated: Array[String] = []
+	for move_value: Variant in moves:
+		if typeof(move_value) != TYPE_STRING:
+			_set_error("%s contains a non-string move ID" % context)
+			return []
+		var move_id: String = move_value
+		if not _is_showdown_id(move_id):
+			_set_error("%s contains an invalid Showdown move ID: %s" % [context, move_id])
+			return []
+		if not SpeciesMapping.has_move_id(move_id):
+			_set_error("%s contains an unknown Showdown move ID: %s" % [context, move_id])
+			return []
+		if move_id in validated:
+			_set_error("%s contains duplicate move ID: %s" % [context, move_id])
+			return []
+		validated.append(move_id)
+	return validated
 
 
 func _generate_pcl_id() -> String:
@@ -421,6 +662,19 @@ func _is_integer_value(value: Variant) -> bool:
 	if typeof(value) != TYPE_FLOAT or not is_finite(float(value)):
 		return false
 	return is_equal_approx(float(value), float(int(value)))
+
+
+func _is_showdown_id(value: String) -> bool:
+	if value.is_empty() or value.length() > 128 or value != value.to_lower():
+		return false
+	for character_index in value.length():
+		var codepoint := value.unicode_at(character_index)
+		if not (
+			(codepoint >= 48 and codepoint <= 57)
+			or (codepoint >= 97 and codepoint <= 122)
+		):
+			return false
+	return true
 
 
 func _validate_level(level: int) -> bool:

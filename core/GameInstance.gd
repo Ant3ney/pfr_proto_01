@@ -6,8 +6,12 @@ signal battle_starting(battle_data: Dictionary)
 signal battle_scene_entered(battle_data: Dictionary)
 signal battle_start_finished(battle_data: Dictionary)
 signal battle_start_failed(message: String)
+signal battle_return_started(encounter_id: String)
+signal battle_return_finished
+signal battle_return_failed(message: String)
 
-const BATTLE_SCENE_PATH := "res://battle/battle_scene.tscn"
+const DEFAULT_BATTLE_SCENE_PATH := "res://battle/battle_scene.tscn"
+const DEFAULT_RETURN_SCENE_PATH := "res://demo/modular_ground_scene.tscn"
 
 var _player_movement_enabled := true
 var _pending_battle_data: Dictionary = {}
@@ -19,6 +23,15 @@ var _battle_scene_has_entered := false
 var _battle_template_reveal_finished := false
 var _battle_local_intro_finished := false
 var _movement_enabled_before_battle := true
+var _battle_scene_path := DEFAULT_BATTLE_SCENE_PATH
+var _battle_return_in_progress := false
+var _battle_return_scene_path := DEFAULT_RETURN_SCENE_PATH
+var _one_scene_suppression_id := ""
+var _suppression_scene_instance_id := 0
+
+
+func _ready() -> void:
+	get_tree().scene_changed.connect(_on_any_scene_changed)
 
 
 func set_player_movement_enabled(is_enabled: bool) -> void:
@@ -37,10 +50,16 @@ func startBattle(battle_data: Dictionary = {}) -> bool:
 		push_warning("GameInstance rejected startBattle: a battle start is already active.")
 		return false
 	_movement_enabled_before_battle = _player_movement_enabled
-	if not ResourceLoader.exists(BATTLE_SCENE_PATH):
+	var requested_scene_path := String(
+		battle_data.get("battle_scene_path", DEFAULT_BATTLE_SCENE_PATH)
+	).strip_edges()
+	if requested_scene_path.is_empty():
+		requested_scene_path = DEFAULT_BATTLE_SCENE_PATH
+	if not ResourceLoader.exists(requested_scene_path):
 		return _fail_battle_start(
-			"Battle scene is missing: %s" % BATTLE_SCENE_PATH
+			"Battle scene is missing: %s" % requested_scene_path
 		)
+	_battle_scene_path = requested_scene_path
 
 	set_player_movement_enabled(false)
 	_pending_battle_data = _build_battle_start_data(battle_data)
@@ -82,13 +101,22 @@ func enter_battle_scene() -> Dictionary:
 	_battle_scene_has_entered = true
 	battle_scene_entered.emit(get_active_battle_data())
 
+	return get_active_battle_data()
+
+
+## Called only after BattleSystem has accepted and written back the initial
+## server response (or by the network-free shared-scene preview path).
+func reveal_battle_scene() -> void:
+	if not _battle_start_in_progress or not _battle_scene_has_entered:
+		return
+	if _battle_template_reveal_finished:
+		return
 	if is_instance_valid(_battle_transition_ui):
 		_battle_transition_ui.play_battle_transition_in(
 			_on_battle_reveal_finished
 		)
 	else:
 		_complete_battle_start_without_template()
-	return get_active_battle_data()
 
 
 func get_pending_battle_data() -> Dictionary:
@@ -103,6 +131,71 @@ func is_battle_start_in_progress() -> bool:
 	return _battle_start_in_progress
 
 
+func is_battle_return_in_progress() -> bool:
+	return _battle_return_in_progress
+
+
+func is_encounter_suppressed(encounter_id: String) -> bool:
+	var normalized_id := encounter_id.strip_edges()
+	if normalized_id.is_empty() or normalized_id != _one_scene_suppression_id:
+		return false
+	if _battle_return_in_progress:
+		return true
+	var current_scene := get_tree().current_scene
+	return (
+		current_scene != null
+		and current_scene.get_instance_id() == _suppression_scene_instance_id
+	)
+
+
+## Covers the battlefield, clears launch data during the scene change, and
+## reveals the authored overworld scene only after it reports ready.
+func return_from_battle(
+	return_scene_path := DEFAULT_RETURN_SCENE_PATH,
+	suppression_id := ""
+) -> bool:
+	if _battle_return_in_progress:
+		return false
+	var normalized_path := return_scene_path.strip_edges()
+	if normalized_path.is_empty():
+		normalized_path = DEFAULT_RETURN_SCENE_PATH
+	if not ResourceLoader.exists(normalized_path):
+		return false
+
+	_battle_return_in_progress = true
+	_battle_return_scene_path = normalized_path
+	_one_scene_suppression_id = suppression_id.strip_edges()
+	_suppression_scene_instance_id = 0
+	set_player_movement_enabled(false)
+	battle_return_started.emit(_one_scene_suppression_id)
+
+	if is_instance_valid(_battle_transition_ui):
+		_battle_transition_ui.set_dismiss_callback(
+			_on_battle_return_transition_dismissed
+		)
+		if _battle_transition_ui.is_battle_transition_active():
+			_change_to_return_scene()
+		else:
+			_battle_transition_ui.play_battle_transition_out(
+				{"transition_title": "BATTLE COMPLETE", "transition_subtitle": "RETURNING"},
+				_change_to_return_scene
+			)
+		return true
+
+	_battle_transition_ui = UIManager.show_ui("")
+	if not is_instance_valid(_battle_transition_ui):
+		_battle_return_in_progress = false
+		return false
+	_battle_transition_ui.set_dismiss_callback(
+		_on_battle_return_transition_dismissed
+	)
+	_battle_transition_ui.play_battle_transition_out(
+		{"transition_title": "BATTLE COMPLETE", "transition_subtitle": "RETURNING"},
+		_change_to_return_scene
+	)
+	return true
+
+
 ## Called by BattleScene after its scene-local flash, ring, banner, and camera
 ## motion are complete. The launch is finished only after this and the global
 ## UITemplate reveal have both completed.
@@ -115,6 +208,7 @@ func notify_battle_intro_finished() -> void:
 
 func _build_battle_start_data(battle_data: Dictionary) -> Dictionary:
 	var prepared := battle_data.duplicate(true)
+	prepared["battle_scene_path"] = _battle_scene_path
 	var source_scene_path := ""
 	var current_scene := get_tree().current_scene
 	if current_scene:
@@ -164,7 +258,7 @@ func _change_to_battle_scene() -> void:
 	if not _battle_start_in_progress or _battle_scene_change_requested:
 		return
 	_battle_scene_change_requested = true
-	var error := get_tree().change_scene_to_file(BATTLE_SCENE_PATH)
+	var error := get_tree().change_scene_to_file(_battle_scene_path)
 	if error != OK:
 		_fail_battle_start(
 			"Unable to open the battle scene: %s" % error_string(error)
@@ -233,3 +327,72 @@ func _fail_battle_start(message: String) -> bool:
 	push_error("GameInstance could not start battle: %s" % message)
 	battle_start_failed.emit(message)
 	return false
+
+
+func _change_to_return_scene() -> void:
+	if not _battle_return_in_progress:
+		return
+	var callback := Callable(self, "_on_return_scene_changed")
+	if not get_tree().scene_changed.is_connected(callback):
+		get_tree().scene_changed.connect(callback, CONNECT_ONE_SHOT)
+	var error := get_tree().change_scene_to_file(_battle_return_scene_path)
+	if error != OK:
+		if get_tree().scene_changed.is_connected(callback):
+			get_tree().scene_changed.disconnect(callback)
+		_fail_battle_return(
+			"Unable to open the overworld scene: %s" % error_string(error)
+		)
+
+
+func _on_return_scene_changed() -> void:
+	if not _battle_return_in_progress:
+		return
+	var scene := get_tree().current_scene
+	_pending_battle_data.clear()
+	_active_battle_data.clear()
+	_battle_start_in_progress = false
+	_battle_scene_change_requested = false
+	_battle_scene_has_entered = false
+	_battle_template_reveal_finished = false
+	_battle_local_intro_finished = false
+	_suppression_scene_instance_id = scene.get_instance_id() if scene else 0
+	set_player_movement_enabled(true)
+	if is_instance_valid(_battle_transition_ui):
+		_battle_transition_ui.play_battle_transition_in()
+	else:
+		_finish_battle_return()
+
+
+func _on_battle_return_transition_dismissed() -> void:
+	_battle_transition_ui = null
+	_finish_battle_return()
+
+
+func _finish_battle_return() -> void:
+	if not _battle_return_in_progress:
+		return
+	_battle_return_in_progress = false
+	_battle_return_scene_path = DEFAULT_RETURN_SCENE_PATH
+	battle_return_finished.emit()
+
+
+func _fail_battle_return(message: String) -> void:
+	var transition := _battle_transition_ui
+	_battle_transition_ui = null
+	_battle_return_in_progress = false
+	_one_scene_suppression_id = ""
+	_suppression_scene_instance_id = 0
+	if is_instance_valid(transition):
+		transition.set_dismiss_callback(Callable())
+		transition.close()
+	push_error("GameInstance could not return from battle: %s" % message)
+	battle_return_failed.emit(message)
+
+
+func _on_any_scene_changed() -> void:
+	if _one_scene_suppression_id.is_empty() or _battle_return_in_progress:
+		return
+	var scene := get_tree().current_scene
+	if scene == null or scene.get_instance_id() != _suppression_scene_instance_id:
+		_one_scene_suppression_id = ""
+		_suppression_scene_instance_id = 0

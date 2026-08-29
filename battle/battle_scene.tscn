@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://art/battle/forest/forest_battlefield.tscn" id="1_battlefield"]
 [ext_resource type="Script" path="res://battle/BattleScene.gd" id="2_battle_scene"]
+[ext_resource type="PackedScene" path="res://battle/ui/battle_choice_overlay.tscn" id="3_choice_overlay"]
 
 [sub_resource type="Environment" id="Environment_battle"]
 background_mode = 1
@@ -91,6 +92,9 @@ position = Vector3(2.25, 0, -1.85)
 gizmo_extents = 0.8
 editor_description = "Opponent-side actor origin."
 
+[node name="BattleActors" type="Node3D" parent="."]
+unique_name_in_owner = true
+
 [node name="ActorShadows" type="Node3D" parent="."]
 
 [node name="PlayerShadow" type="MeshInstance3D" parent="ActorShadows"]
@@ -107,6 +111,12 @@ mesh = SubResource("CylinderMesh_actor_shadow")
 
 [node name="BattleIntroUI" type="CanvasLayer" parent="."]
 layer = 50
+
+[node name="BattleInteractionUI" type="CanvasLayer" parent="."]
+layer = 200
+
+[node name="BattleChoiceOverlay" parent="BattleInteractionUI" instance=ExtResource("3_choice_overlay")]
+unique_name_in_owner = true
 
 [node name="IntroOverlay" type="Control" parent="BattleIntroUI"]
 unique_name_in_owner = true

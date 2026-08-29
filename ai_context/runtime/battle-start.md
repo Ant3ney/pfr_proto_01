@@ -1,203 +1,107 @@
-# Battle Start and Transition Contract
+# Battle Start, Reveal, and Return Contract
 
-Use this document when launching a battle, adding fields to battle launch data,
-changing the transition presentation, or consuming the temporary data in the
-battle scene. The contributor-facing UI Template System guide is maintained
-separately; this document covers only the battle-specific relationship with
-that system.
+Read this document when changing trainer launch data, cross-scene transition
+timing, battle-scene entry, failure presentation, return-to-world ordering, or
+one-scene encounter suppression. Verify the current scripts and lifecycle tests
+before changing this contract.
 
-## Entry point
+## Launch boundary
 
 [`GameInstance.startBattle(battle_data := {})`](../../core/GameInstance.gd) is
-the single battle-launch entry point. It returns `true` when the launch request
-is accepted and `false` when it cannot start. A `true` result means the visual
-sequence has begun; the scene change completes asynchronously.
+the single transition entry point. Callers identify an authored battle scene and
+encounter; they never pass player or opponent team DTOs:
 
 ```gdscript
-var accepted := GameInstance.startBattle({
+GameInstance.startBattle({
 	"encounter_type": "trainer",
-	"trainer_name": "Ranger Mira",
-	"player_party": player_party,
-	"opponent_party": opponent_party,
+	"trainer_name": "Trainer Kyle",
+	"battle_scene_path": "res://battle/kyle_battle_scene.tscn",
+	"encounter_id": "trainer-kyle-lake-v1",
 })
 ```
 
-The function does not run battle rules, spawn creatures, or construct the
-battle HUD itself. It owns the transition, movement lock, scene swap, and
-temporary launch-data handoff. `BattleScene` constructs the HUD presentation
-after that handoff completes.
+`TrainerBehavior` closes its dialog through the normal `UITemplate.close()`
+lifecycle, releases its dialog lock, and transfers control to `startBattle()`.
+Kyle's controller supplies only the stable ID and concrete scene path.
 
-## Launch data
+`GameInstance` deep-copies launch data, captures `source_scene_path`, fills the
+transition title/subtitle, locks movement, and covers the old scene before
+loading `battle_scene_path`. `return_scene_path` remains launch metadata for
+legacy callers; completed networked battles always return through
+`BattleSystem` to `res://demo/modular_ground_scene.tscn`.
 
-All caller-provided fields are preserved in a deep copy. Callers can therefore
-pass the party, trainer, encounter, or later server data needed by battle code
-without allowing later mutations of the caller's dictionary to alter the
-pending launch.
+## Covered connection and reveal
 
-The presentation recognizes these optional fields:
+The same autoload-owned transition template stays fully covered while the new
+scene connects:
 
-| Field | Effect |
+| Stage | Owner and verified action |
 | --- | --- |
-| `encounter_type` | Selects the default title; currently `wild`, `trainer`, `rival`, or a custom value |
-| `transition_title` | Overrides the large transition heading |
-| `transition_subtitle` | Overrides the opposing-side transition label |
-| `opponent_name` | First fallback for the transition subtitle |
-| `trainer_name` | Second fallback for the transition subtitle |
-| `encounter_name` | Third fallback for the transition subtitle |
-| `intro_title` | Overrides the short banner shown inside the battle scene |
-| `return_scene_path` | Explicit scene to return to after a future battle-end flow |
+| Launch accepted | `GameInstance` locks movement, stores defensive launch data, and begins the cover |
+| Cover complete | `GameInstance` loads the requested concrete battle scene |
+| Scene ready | `BattleScene` calls `enter_battle_scene()`, which promotes pending data but does not reveal |
+| Session preflight | `BattleSystem` discovers exactly one `battle_encounter_provider`, validates its resource, reads `CollectionSystem.get_battle_party_members()`, and sends the start DTO |
+| Valid response | `BattleSystem` validates versions/identity/revision/schema, atomically writes player HP, then emits the presentation snapshot/events |
+| Reveal | The adapter calls `GameInstance.reveal_battle_scene()` and starts its local intro only after that accepted response |
+| Intro complete | `GameInstance` waits for both transition reveal and local intro, retires the transition template, and emits `battle_start_finished` |
+| HUD | `BattleScene` creates a second template for the persistent request-driven HUD and presents queued events before acknowledging the revision |
 
-Once the intro is complete, the battle HUD also recognizes these optional
-presentation fields:
+A start transport failure leaves the cover and movement lock in place. The
+battle interaction layer renders Retry and Return above the cover. Retrying
+reuses the exact pending bytes. A valid initial response is the only networked
+path that reveals the battlefield.
 
-| Field | Effect |
-| --- | --- |
-| `player_pokemon_name`, `opponent_pokemon_name` | Names shown in the two status cards |
-| `player_level`, `opponent_level` | Levels shown in the two status cards |
-| `player_health`, `opponent_health` | Normalized HP values from `0.0` to `1.0` |
-| `battle_message` | Overrides the default `What will ... do?` prompt |
-| `can_fight`, `can_bag`, `can_party`, `can_run` | Enables or disables each command |
-| `player_party`, `opponent_party` | First dictionary member supplies missing name, level, and HP display data |
+## Direct visual preview
 
-When explicit player display data is absent, `BattleScene` uses collection
-party slot one as an implicit presentation fallback. This lookup only fills
-the HUD; it does not spawn a creature or establish battle state.
+Opening `res://battle/battle_scene.tscn` directly remains network-free. With no
+active launch handoff it plays its local intro and shows presentation defaults.
+The legacy default-scene transition path without an encounter ID is also kept
+offline for focused transition smoke tests. Production trainer entry uses the
+concrete Kyle scene and therefore always goes through `BattleSystem`.
 
-`GameInstance` supplies these fields when the caller omits them:
+## Completion and return
 
-- `source_scene_path` is captured from the current scene.
-- `return_scene_path` defaults to that source scene.
-- `encounter_type` defaults to `wild`.
-- `transition_title` defaults to `WILD ENCOUNTER`, `TRAINER BATTLE`,
-  `RIVAL BATTLE`, or `BATTLE START` according to the encounter type.
-- `transition_subtitle` defaults to the first available opposing name, then
-  `A NEW CHALLENGER APPROACHES`.
+After all response events are acknowledged, `BattleSystem` emits the server
+result and waits for `continue_after_result()`. Win, loss, tie, forfeit, and
+unrecoverable-error returns all use this ordering:
 
-`get_pending_battle_data()` returns a defensive copy while the old scene is
-being covered. When the battle scene enters, that pending dictionary is moved
-to active state. `get_active_battle_data()` then returns a defensive copy for
-future battle setup. The active dictionary is not a save format.
+1. Enter `RETURNING`, cancel callbacks, and clear token/session data.
+2. Ask `GameInstance.return_from_battle()` to cover the battlefield.
+3. Change to `res://demo/modular_ground_scene.tscn` without restoring a saved
+   transform, so the scene's authored player spawn is used.
+4. Clear active launch data and enable movement only from `scene_changed`, after
+   the modular scene is ready.
+5. Reveal the overworld and emit `battle_return_finished`; `BattleSystem` then
+   returns to `IDLE`.
 
-## Transition and UI-template handoff
+The completed encounter ID is retained only for that returned scene instance.
+`TrainerBehavior` checks `GameInstance.is_encounter_suppressed()` before any
+detection and starts Kyle in `COMPLETE`. Loading another scene clears the ID.
+This is trigger suppression, not persistent trainer progression or a rematch
+system.
 
-The transition uses one `UITemplate` instance owned by `GameInstance` across
-both scenes:
+## Ownership boundaries
 
-| Stage | Owner and action |
-| --- | --- |
-| Launch accepted | `GameInstance` disables overworld movement and stores the prepared launch data |
-| Old-scene cover | `GameInstance` calls `UIManager.show_ui("")`, retains the returned template, installs its dismiss cleanup, and calls `play_battle_transition_out(data, covered_callback)` |
-| Fully covered | The template invokes the supplied callback; only then does `GameInstance` call `change_scene_to_file()` |
-| Battle scene ready | [`BattleScene`](../../battle/BattleScene.gd) prepares its local intro visuals and calls `GameInstance.enter_battle_scene()` |
-| Data promotion | `GameInstance` moves pending data to active data and emits `battle_scene_entered` |
-| New-scene reveal | `GameInstance` calls `play_battle_transition_in(completed_callback)` on the same template |
-| Template completion | The template closes itself through `UITemplate.close()`, so its dismiss callback clears `GameInstance`'s transition reference |
-| Launch completion | The duplicate-start guard is released and `battle_start_finished` is emitted only after both the template reveal and the battle scene's local intro finish |
-| Battle HUD | `BattleScene` requests a new template from `UIManager` and calls `play_battle_ui_in(data)` in response to `battle_start_finished` |
+- `GameInstance`: scene changes, transition template, movement lock, one-scene
+  suppression.
+- `BattleSystem`: encounter/party DTOs, REST session, tokens, revisions,
+  validation, retries, snapshots, event ordering, HP writeback, outcome.
+- `BattleScene`: thin signal-to-visual and UI-intent adapter.
+- `UITemplate` and `BattleChoiceOverlay`: input/presentation surfaces only.
 
-Keeping the cover and reveal on the same autoload-owned template prevents a
-visible blank frame between scenes. The template runs at `UIManager` layer
-`100`; the battle scene's short flash, ring, streak, banner, and camera snap-in
-run locally at layer `50`, becoming visible as the global cover opens.
-`BattleScene` reports its completion through
-`GameInstance.notify_battle_intro_finished()`; later battle setup can wait for
-`battle_start_finished` when it must not appear underneath the intro.
+Every dictionary emitted from the battle coordinator or returned by a public
+getter is a deep copy. The state token never enters launch data, presentation
+state, logs, save data, or scene scripts.
 
-The persistent battle HUD is deliberately a second `UITemplate` instance. The
-first belongs to `GameInstance` and exists only for the cross-scene transition;
-the second belongs to `BattleScene` and remains visible during the battle. This
-keeps the HUD hidden until the global reveal and local intro have both retired,
-with no overlap between the two templates. On a direct battle-scene launch,
-where no `startBattle()` handoff exists, `BattleScene` shows the HUD as soon as
-its local intro ends.
-
-`BattleScene` registers callbacks for `fight`, `bag`, `party`, and `run` through
-`UITemplate.set_battle_action_callback()`. A press emits
-`BattleScene.battle_action_selected(action)` for future battle code. The
-template owns presentation and input surfaces only; it does not choose moves,
-mutate parties, or execute any battle rule. `BattleScene` closes its owned
-template when leaving the tree.
-
-## UI ownership at the call site
-
-`GameInstance` owns only the transition template it creates. It does not close
-a dialog or other template owned by another caller. If a battle begins from an
-existing dialog, that dialog's owner must close it normally and launch the
-battle from its completion path:
-
-```gdscript
-func _finish_dialog() -> void:
-	_dialog_template = null
-	GameInstance.startBattle(_prepared_battle_data)
-
-
-func _accept_final_line() -> void:
-	_dialog_template.set_dismiss_callback(_finish_dialog)
-	_dialog_template.close()
-```
-
-Do not call `queue_free()` on the old template; that bypasses its dismiss
-lifecycle. Do not call `startBattle` twice while
-`is_battle_start_in_progress()` is true. A repeated request is rejected rather
-than creating overlapping transition templates.
-
-[`TrainerBehavior`](../../core/TrainerBehavior.gd) performs this handoff after
-the player advances past the assigned dialog's final line. It marks only that
-normal completion path for battle, closes its dialog through `close()`,
-releases the trainer sequence's movement lock, and calls `startBattle()` with
-`encounter_type = "trainer"` and the dialog's `character_name` as
-`trainer_name`. Missing dialog data, an invalid template, and other early
-finish paths restore movement without starting a battle.
-
-## Movement and failure behavior
-
-The launch captures the previous player-movement state and immediately locks
-movement. Any failure before the battle scene enters clears pending data,
-closes the owned template through its lifecycle, and restores the captured
-movement state.
-
-A successful launch deliberately leaves overworld movement disabled after the
-intro. The future battle-end/return flow owns restoring movement when it returns
-to an overworld scene. That return flow is not implemented yet.
-
-The following signals expose milestones without transferring ownership:
-
-- `battle_starting(battle_data)`
-- `battle_scene_entered(battle_data)`
-- `battle_start_finished(battle_data)`
-- `battle_start_failed(message)`
-
-Signal dictionaries are defensive copies produced by the public data getters.
-
-## Battle-scene boundary
-
-[`battle_scene.tscn`](../../battle/battle_scene.tscn) retains the established
-camera and spawn transforms. Its [`BattleScene`](../../battle/BattleScene.gd)
-script only consumes launch data and plays presentation effects. Creature
-spawning, battle rules, server communication, command consequences, mutable
-battle state, and battle completion remain intentionally unimplemented. The
-scene does own the template-driven HUD presentation and forwards its command
-presses through `battle_action_selected`.
-
-Running the scene directly is supported for visual preview. With no active
-`startBattle` request, it receives an empty launch dictionary and still plays
-its local intro, then displays the HUD; no global transition or data promotion
-occurs.
-
-## Regression check
-
-Run the end-to-end smoke test with:
+## Regression checks
 
 ```bash
 godot --headless --path . --scene res://tests/battle_start_smoke_test.tscn
 godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
 ```
 
-It verifies deep-copy isolation, implicit launch fields, duplicate-start
-rejection, movement locking, one-template ownership, scene change, data
-promotion, transition cleanup, local intro completion, and the preserved camera
-and spawn transforms. It also verifies that the transition template is replaced
-by exactly one battle-HUD template only after the local intro, implicit and
-explicit display data, and the command callback path. The focused
-trainer-dialog check verifies that only normal final-line completion hands the
-trainer name into `startBattle()`.
+These cover the offline preview path, concrete provider discovery, covered
+connection, deep-copy boundaries, request-driven locking, event acknowledgement,
+confirmed forfeit, ordered return, movement restoration, and Kyle suppression.

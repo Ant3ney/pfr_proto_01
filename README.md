@@ -49,6 +49,48 @@ Run the collection verification with:
 godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
 ```
 
+## Author and Run PvE Battles
+
+`BattleSystem` is the global coordinator for networked PvE battles. It reads
+the six-slot party from `CollectionSystem`, discovers the encounter resource in
+the active concrete battle scene, and calls the production API at
+`https://pfr-locomotion-prototype.vercel.app/api/v1`. Scene scripts handle only
+input and presentation; they do not construct REST commands, retain state
+tokens, calculate results, or write collection health.
+
+The included Kyle battle is the reference authoring setup:
+
+- [`battle/kyle_battle_scene.tscn`](battle/kyle_battle_scene.tscn) inherits the
+  shared battlefield and contains exactly one encounter provider.
+- [`trainer_kyle_lake_v1.tres`](battle/encounters/trainer_kyle_lake_v1.tres)
+  defines stable encounter and member IDs, canonical species, exact sprites,
+  levels, normalized health, and equipped moves.
+- [`TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) passes only the
+  concrete scene path and stable encounter ID to `GameInstance.startBattle()`.
+
+To author another encounter, duplicate the concrete scene and encounter
+resource, keep one provider in group `battle_encounter_provider`, and validate
+one to six members with unique IDs. Player instances persist a `battleProfile`
+containing canonical Showdown species, exact sprite ID, and one to four equipped
+moves. `pclID` remains the REST `memberId`; unsupported PokeAPI forms stay
+collectible but fail battle preflight until explicitly mapped.
+
+Run the focused battle gates with:
+
+```sh
+node tools/generate_battle_species_mapping.mjs --check
+godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
+```
+
+See the [Godot battle client contract](ai_context/runtime/battle-client.md),
+[battle start/return lifecycle](ai_context/runtime/battle-start.md),
+[server operations guide](battle_server/README.md), and
+[sprite regeneration guide](ai_context/runtime/battle-sprites.md) for the
+request-driven UI, exact retry behavior, encounter schema, production setup,
+and offline animated-atlas pipeline.
+
 ## Show UI with the UI Template System
 
 Call `UIManager.show_ui(text)` to display the shared template, then configure and retain the returned `UITemplate`:
@@ -162,7 +204,15 @@ godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.
 
 ### Current Encounter Limits
 
-The existing behavior implements a one-time approach and linear dialog, but not a complete trainer encounter. After detecting the player, it approaches only once, remains complete, displays its assigned dialog through the UI Template System, and restores player movement when that template closes. It does not start a battle. Avoid overlapping trainer sightlines for now because there is no encounter manager arbitrating between multiple simultaneous detections or UI templates.
+The existing Kyle behavior implements a complete one-time approach, linear
+dialog, and networked battle. After the result or an unrecoverable failure, it
+returns to the authored spawn in `demo/modular_ground_scene.tscn`. A one-scene
+suppression ID prevents the just-finished Kyle encounter from immediately
+retriggering; it is not persistent trainer progression. Rematches,
+checkpoints, rewards, capture, XP, Bag behavior, post-loss world state, and
+persistent trainer completion remain outside this implementation. Avoid
+overlapping trainer sightlines because there is no encounter arbiter for
+simultaneous detections or UI templates.
 
 To make another trainer type, duplicate the Kyle scene and give it a descriptive name. Keep the `PFRCharacter` root structure, collision capsule, `Visual` node, and character art pack. Duplicate [`overworld/trainer_lake/TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) when that trainer needs different detection distance, ray height, collision mask, stopping buffer, or arrival distance; the controller should continue to extend [`core/NPCController.gd`](core/NPCController.gd) and assign a `TrainerBehavior` resource.
 

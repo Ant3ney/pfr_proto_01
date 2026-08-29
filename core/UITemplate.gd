@@ -146,6 +146,18 @@ func set_battle_message(message: String) -> UITemplate:
 	return self
 
 
+func update_battle_ui(battle_data: Dictionary) -> UITemplate:
+	if is_instance_valid(_battle_ui_overlay):
+		_configure_battle_ui(battle_data)
+	return self
+
+
+func set_battle_actions_locked(is_locked: bool) -> UITemplate:
+	for action in BATTLE_ACTIONS:
+		set_battle_action_enabled(action, not is_locked)
+	return self
+
+
 ## Battle command callbacks are zero-argument callables, matching the ordinary
 ## template callbacks. Bind any required values at the call site.
 func set_battle_action_callback(

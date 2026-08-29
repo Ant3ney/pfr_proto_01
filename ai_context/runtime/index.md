@@ -9,6 +9,8 @@ check the linked implementation before changing its contract.
 | Display a UI template, author dialog data, or implement dialog playback | [`dialog-ui.md`](dialog-ui.md) | Caller ownership, data and template APIs, lifecycle, and current trainer usage |
 | Implement a gameplay sequence, disable player movement, or clean up control state | [`sequences.md`](sequences.md) | Current sequence model, movement-control authority, ownership rules, and limitations |
 | Start a battle, pass launch data, change to the battle scene, or adjust battle transition presentation | [`battle-start.md`](battle-start.md) | Verified `startBattle` contract, temporary data handoff, template ownership, scene reveal, and failure behavior |
+| Change the Godot battle session, REST validation/retry behavior, collection writeback, request UI, or event sequencing | [`battle-client.md`](battle-client.md) | Central coordinator ownership, transport/token boundaries, typed inputs, copied presentation state, error policy, party migration, and encounter authoring |
 | Build, deploy, upgrade, or diagnose the stateless PvE battle REST service | [`battle-server.md`](battle-server.md) | API boundaries, token replay contract, pinned Showdown integration, HP lifecycle, and deployment checks |
+| Regenerate, verify, load, ground, animate, or export battle sprites | [`battle-sprites.md`](battle-sprites.md) | Verified GIF provenance, offline atlas pipeline, exact catalog lookup, lazy loading, presenter motion, and export boundaries |
 
 This directory is limited to verified runtime ownership and lifecycle contracts. Check linked implementation and regression tests before changing a contract, update the narrowest leaf when behavior changes, and add every new runtime leaf to this index.

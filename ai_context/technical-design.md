@@ -2,7 +2,13 @@
 
 ## Battle System
 
-Black box that talks to a modified pokemon server project. That project facilitates the whole battle system. This game gives hooks, callbacks, and reacts to the events of the pokemon showdown server
+The `BattleSystem` autoload is the single gameplay coordinator for PvE battles.
+It talks to the stateless production REST service backed by pinned Pokémon
+Showdown, owns the token/revision/retry and validation lifecycle, writes
+authoritative health snapshots to `CollectionSystem`, and exposes only copied
+presentation state and typed UI intents. Battle scenes remain presentation and
+input adapters; they do not construct REST commands or calculate results. See
+[`runtime/battle-client.md`](runtime/battle-client.md) for the verified contract.
 
 ## Overworld and traversal.
 
@@ -91,19 +97,35 @@ The canonical PCL object is:
     health: 0.4,
     xp: 0.3,
     level: 5
+  },
+  battleProfile: {
+    species: "Pikachu",
+    spriteId: "pikachu",
+    moves: ["thundershock", "growl"]
   }
 }
 ```
 
 Party slots are integers from `1` through `6`. A Pokemon outside the party has `inParty: false` and `slot: null`. Health and XP are normalized percentages from `0.0` through `1.0`; level is an integer from `1` through `100`.
 
-`add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance, and `get_pcl_by_party_slot(slot)` implements the battle lookup described below. `set_party_slot(...)` rejects an occupied destination instead of silently removing another Pokemon. `update_instance_stats(...)` atomically applies any subset of health, XP, and level. All returned objects are deep copies.
+`add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance,
+and `get_pcl_by_party_slot(slot)` queries by party position. `set_party_slot(...)`
+rejects an occupied destination instead of silently removing another Pokemon.
+`update_instance_stats(...)` atomically applies any subset of health, XP, and
+level. All returned objects are deep copies.
+
+Supported instances persist a `battleProfile` with canonical Showdown species,
+exact sprite ID, and one to four equipped move IDs. Migration generates its
+defaults once; battle start never recomputes them. Use
+`get_battle_party_members()` for strict server-ready member DTOs,
+`set_equipped_moves()` for a validated future loadout change, and
+`apply_battle_health_snapshot()` for complete atomic health writeback.
 
 `get_save_data()` returns the full collection in capture/import order. `load_save_data(...)` validates Pokemon IDs, PCL IDs, stats, and unique party slots before replacing any current data, so an invalid save cannot partially overwrite the active collection.
 
-### An example use of the Collection System
-
-Battle start --> Get slot number from party --> query pcl obj from collection via slot number of party --> pcl obj --> Run battle, pass in stats
+Battle callers do not assemble a party one slot at a time. `BattleSystem` reads
+the complete validated party through `get_battle_party_members()` and keeps
+collection dictionaries out of scene code.
 
 ## Progression System
 

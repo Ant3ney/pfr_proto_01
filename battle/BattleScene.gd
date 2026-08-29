@@ -1,9 +1,9 @@
 class_name BattleScene
 extends Node3D
 
-## Presentation shell for the battle field. It receives launch data, plays the
-## scene-side intro, and owns the template-driven battle HUD. Battle rules and
-## creature spawning are intentionally outside this class.
+## Thin presentation/input adapter. BattleSystem owns every rule, REST command,
+## snapshot, retry, and outcome; this scene only renders state and emits typed
+## UI intents through BattleSystem's public methods.
 
 signal intro_finished
 signal battle_ui_shown
@@ -18,6 +18,10 @@ signal battle_action_selected(action: StringName)
 @onready var intro_banner: Panel = %IntroBanner
 @onready var intro_title: Label = %IntroTitle
 @onready var intro_streaks: Control = %IntroStreaks
+@onready var player_spawn: Marker3D = %PlayerSpawn
+@onready var opponent_spawn: Marker3D = %OpponentSpawn
+@onready var battle_actors: Node3D = %BattleActors
+@onready var choice_overlay: BattleChoiceOverlay = %BattleChoiceOverlay
 
 var battle_data: Dictionary = {}
 var _intro_tweens: Array[Tween] = []
@@ -25,6 +29,16 @@ var _camera_target_position := Vector3.ZERO
 var _camera_target_fov := 42.0
 var _battle_ui_template: UITemplate
 var _battle_start_handoff_pending := false
+var _networked_battle := false
+var _initial_snapshot_received := false
+var _intro_has_started := false
+var _intro_has_finished := false
+var _presentation_running := false
+var _pending_presentation_events: Array[Dictionary] = []
+var _pending_presentation_revision := -1
+var _snapshot: Dictionary = {}
+var _choice_request: Dictionary = {}
+var _sprite_presenter: Node
 
 
 func _ready() -> void:
@@ -33,6 +47,9 @@ func _ready() -> void:
 		_on_battle_start_finished
 	):
 		GameInstance.battle_start_finished.connect(_on_battle_start_finished)
+	_connect_battle_system()
+	_connect_choice_overlay()
+	_create_sprite_presenter()
 	_prepare_intro_presentation()
 	battle_data = GameInstance.enter_battle_scene()
 	intro_title.text = String(
@@ -40,7 +57,19 @@ func _ready() -> void:
 	).strip_edges().to_upper()
 	if intro_title.text.is_empty():
 		intro_title.text = "BATTLE START!"
-	_play_intro_presentation()
+
+	_networked_battle = (
+		_battle_start_handoff_pending
+		and not String(battle_data.get("encounter_id", "")).is_empty()
+	)
+	if _networked_battle:
+		BattleSystem.begin_current_battle_scene()
+	else:
+		# Directly opening the shared scene (and legacy transition smoke tests)
+		# remains intentionally network-free.
+		if _battle_start_handoff_pending:
+			GameInstance.reveal_battle_scene()
+		_start_intro_once()
 
 
 func _exit_tree() -> void:
@@ -49,9 +78,12 @@ func _exit_tree() -> void:
 		_on_battle_start_finished
 	):
 		GameInstance.battle_start_finished.disconnect(_on_battle_start_finished)
+	_disconnect_battle_system()
 	if is_instance_valid(_battle_ui_template):
 		_battle_ui_template.close()
 	_battle_ui_template = null
+	if is_instance_valid(_sprite_presenter) and _sprite_presenter.has_method("clear"):
+		_sprite_presenter.call("clear")
 
 
 func get_battle_data() -> Dictionary:
@@ -176,21 +208,31 @@ func _play_intro_presentation() -> void:
 	finish_tween.tween_callback(_finish_intro_presentation)
 
 
+func _start_intro_once() -> void:
+	if _intro_has_started:
+		return
+	_intro_has_started = true
+	_play_intro_presentation()
+
+
 func _finish_intro_presentation() -> void:
 	battle_camera.position = _camera_target_position
 	battle_camera.fov = _camera_target_fov
 	battlefield_art.scale = Vector3.ONE
 	intro_overlay.visible = false
+	_intro_has_finished = true
 	GameInstance.notify_battle_intro_finished()
 	intro_finished.emit()
 	if not _battle_start_handoff_pending:
 		_show_battle_ui()
+		_try_present_pending_events()
 
 
 func _on_battle_start_finished(finished_data: Dictionary) -> void:
 	_battle_start_handoff_pending = false
 	battle_data = finished_data.duplicate(true)
 	_show_battle_ui()
+	_try_present_pending_events()
 
 
 func _show_battle_ui() -> void:
@@ -222,6 +264,7 @@ func _show_battle_ui() -> void:
 	)
 	_battle_ui_template.battle_ui_shown.connect(_on_battle_ui_shown)
 	_battle_ui_template.play_battle_ui_in(_build_battle_ui_data())
+	_update_command_availability()
 
 
 func _on_battle_ui_shown() -> void:
@@ -230,6 +273,25 @@ func _on_battle_ui_shown() -> void:
 
 func _on_battle_action_selected(action: StringName) -> void:
 	battle_action_selected.emit(action)
+	if not _networked_battle or BattleSystem.get_state() != BattleSystem.State.AWAITING_PLAYER:
+		return
+	match action:
+		&"fight":
+			if String(_choice_request.get("type", "")) == "move":
+				choice_overlay.show_moves(_choice_request)
+		&"party":
+			var switch_options: Variant = _choice_request.get("switchOptions", [])
+			if typeof(switch_options) == TYPE_ARRAY and not (switch_options as Array).is_empty():
+				choice_overlay.show_switches(
+					_choice_request,
+					_snapshot,
+					String(_choice_request.get("type", "")) == "switch"
+				)
+		&"run":
+			if BattleSystem.is_forfeit_allowed():
+				choice_overlay.show_forfeit_confirmation()
+		&"bag":
+			_battle_ui_template.set_battle_message("The Bag is unavailable in battle v1.")
 
 
 func _on_battle_ui_dismissed() -> void:
@@ -238,6 +300,10 @@ func _on_battle_ui_dismissed() -> void:
 
 func _build_battle_ui_data() -> Dictionary:
 	var ui_data := battle_data.duplicate(true)
+	if not _snapshot.is_empty():
+		_apply_snapshot_to_ui_data(ui_data, _snapshot)
+		ui_data["can_bag"] = false
+		return ui_data
 	var player_member := _first_battle_member(ui_data.get("player_party", []))
 	_apply_battle_member_to_ui(ui_data, "player", player_member)
 	if not _has_battle_member_name(ui_data, "player"):
@@ -251,7 +317,281 @@ func _build_battle_ui_data() -> Dictionary:
 		ui_data.get("opponent_party", [])
 	)
 	_apply_battle_member_to_ui(ui_data, "opponent", opponent_member)
+	ui_data["can_bag"] = false
 	return ui_data
+
+
+func _connect_battle_system() -> void:
+	var connections := {
+		"state_changed": Callable(self, "_on_system_state_changed"),
+		"snapshot_changed": Callable(self, "_on_system_snapshot_changed"),
+		"presentation_events_ready": Callable(self, "_on_presentation_events_ready"),
+		"choice_request_changed": Callable(self, "_on_choice_request_changed"),
+		"battle_ended": Callable(self, "_on_battle_ended"),
+		"battle_error_changed": Callable(self, "_on_battle_error_changed"),
+	}
+	for signal_name: String in connections:
+		var callback: Callable = connections[signal_name]
+		if not BattleSystem.is_connected(signal_name, callback):
+			BattleSystem.connect(signal_name, callback)
+
+
+func _disconnect_battle_system() -> void:
+	var connections := {
+		"state_changed": Callable(self, "_on_system_state_changed"),
+		"snapshot_changed": Callable(self, "_on_system_snapshot_changed"),
+		"presentation_events_ready": Callable(self, "_on_presentation_events_ready"),
+		"choice_request_changed": Callable(self, "_on_choice_request_changed"),
+		"battle_ended": Callable(self, "_on_battle_ended"),
+		"battle_error_changed": Callable(self, "_on_battle_error_changed"),
+	}
+	for signal_name: String in connections:
+		var callback: Callable = connections[signal_name]
+		if BattleSystem.is_connected(signal_name, callback):
+			BattleSystem.disconnect(signal_name, callback)
+
+
+func _connect_choice_overlay() -> void:
+	choice_overlay.move_chosen.connect(_on_move_chosen)
+	choice_overlay.switch_chosen.connect(_on_switch_chosen)
+	choice_overlay.forfeit_confirmed.connect(_on_forfeit_confirmed)
+	choice_overlay.retry_requested.connect(_on_retry_requested)
+	choice_overlay.return_requested.connect(_on_return_requested)
+	choice_overlay.continue_requested.connect(_on_continue_requested)
+
+
+func _create_sprite_presenter() -> void:
+	var script_path := "res://battle/system/BattleSpritePresenter.gd"
+	if not ResourceLoader.exists(script_path):
+		return
+	var presenter_script := load(script_path) as Script
+	if not presenter_script:
+		return
+	_sprite_presenter = presenter_script.new() as Node
+	if not _sprite_presenter:
+		return
+	_sprite_presenter.name = "BattleSpritePresenter"
+	battle_actors.add_child(_sprite_presenter)
+	if _sprite_presenter.has_method("configure"):
+		_sprite_presenter.call("configure", player_spawn, opponent_spawn)
+
+
+func _on_system_state_changed(_next_state: int) -> void:
+	if not _networked_battle:
+		return
+	if BattleSystem.get_state() in [
+		BattleSystem.State.CONNECTING,
+		BattleSystem.State.PRESENTING,
+		BattleSystem.State.SUBMITTING,
+		BattleSystem.State.RETURNING,
+	]:
+		choice_overlay.force_hide()
+	_update_command_availability()
+
+
+func _on_system_snapshot_changed(snapshot: Dictionary) -> void:
+	if not _networked_battle or snapshot.is_empty():
+		return
+	_snapshot = snapshot.duplicate(true)
+	if is_instance_valid(_sprite_presenter) and _sprite_presenter.has_method("present_snapshot"):
+		_sprite_presenter.call("present_snapshot", _snapshot.duplicate(true))
+	if is_instance_valid(_battle_ui_template):
+		_battle_ui_template.update_battle_ui(_build_battle_ui_data())
+		_update_command_availability()
+
+	if not _initial_snapshot_received:
+		_initial_snapshot_received = true
+		GameInstance.reveal_battle_scene()
+		_start_intro_once()
+
+
+func _on_presentation_events_ready(events: Array, revision: int) -> void:
+	if not _networked_battle:
+		return
+	_pending_presentation_events.clear()
+	for value: Variant in events:
+		if typeof(value) == TYPE_DICTIONARY:
+			_pending_presentation_events.append((value as Dictionary).duplicate(true))
+	_pending_presentation_revision = revision
+	_try_present_pending_events()
+
+
+func _try_present_pending_events() -> void:
+	if (
+		_presentation_running
+		or _pending_presentation_revision < 0
+		or not _intro_has_finished
+		or not is_instance_valid(_battle_ui_template)
+	):
+		return
+	_present_pending_events.call_deferred()
+
+
+func _present_pending_events() -> void:
+	if _presentation_running or _pending_presentation_revision < 0:
+		return
+	_presentation_running = true
+	var events := _pending_presentation_events.duplicate(true)
+	var revision := _pending_presentation_revision
+	_pending_presentation_events.clear()
+	_pending_presentation_revision = -1
+	for event_value: Variant in events:
+		if not is_inside_tree() or typeof(event_value) != TYPE_DICTIONARY:
+			break
+		var event := event_value as Dictionary
+		var message := String(event.get("message", "")).strip_edges()
+		if not message.is_empty() and is_instance_valid(_battle_ui_template):
+			_battle_ui_template.set_battle_message(message)
+		var waited_for_presenter := false
+		if is_instance_valid(_sprite_presenter) and _sprite_presenter.has_method("play_event"):
+			var completion: Variant = _sprite_presenter.call("play_event", event.duplicate(true))
+			if typeof(completion) == TYPE_SIGNAL:
+				waited_for_presenter = true
+				await completion
+		if not waited_for_presenter and is_inside_tree():
+			await get_tree().create_timer(_event_duration(event)).timeout
+	_presentation_running = false
+	if is_inside_tree():
+		BattleSystem.acknowledge_events_presented(revision)
+
+
+func _on_choice_request_changed(request: Dictionary) -> void:
+	if not _networked_battle:
+		return
+	_choice_request = request.duplicate(true)
+	_update_command_availability()
+	if (
+		String(_choice_request.get("type", "")) == "switch"
+		and is_instance_valid(_battle_ui_template)
+	):
+		choice_overlay.show_switches(_choice_request, _snapshot, true)
+
+
+func _on_battle_ended(result: Dictionary) -> void:
+	if not _networked_battle:
+		return
+	_update_command_availability()
+	choice_overlay.show_result(result)
+
+
+func _on_battle_error_changed(error: Dictionary) -> void:
+	if not _networked_battle:
+		return
+	if error.is_empty():
+		choice_overlay.force_hide()
+		return
+	if not bool(error.get("can_return", true)):
+		if is_instance_valid(_battle_ui_template):
+			_battle_ui_template.set_battle_message(String(error.get("message", "Invalid action.")))
+		return
+	choice_overlay.show_error(error)
+	_update_command_availability()
+
+
+func _on_move_chosen(move_index: int) -> void:
+	BattleSystem.choose_move(move_index)
+
+
+func _on_switch_chosen(member_id: String) -> void:
+	BattleSystem.choose_switch(member_id)
+
+
+func _on_forfeit_confirmed() -> void:
+	BattleSystem.forfeit()
+
+
+func _on_retry_requested() -> void:
+	BattleSystem.retry_pending_request()
+
+
+func _on_return_requested() -> void:
+	BattleSystem.continue_after_result()
+
+
+func _on_continue_requested() -> void:
+	BattleSystem.continue_after_result()
+
+
+func _update_command_availability() -> void:
+	if not is_instance_valid(_battle_ui_template):
+		return
+	if not _networked_battle:
+		_battle_ui_template.set_battle_action_enabled(&"bag", false)
+		return
+
+	for action in [&"fight", &"bag", &"party", &"run"]:
+		_battle_ui_template.set_battle_action_enabled(action, false)
+	if BattleSystem.get_state() != BattleSystem.State.AWAITING_PLAYER:
+		return
+	var request_type := String(_choice_request.get("type", ""))
+	var switch_options: Variant = _choice_request.get("switchOptions", [])
+	var has_switches := (
+		typeof(switch_options) == TYPE_ARRAY
+		and not (switch_options as Array).is_empty()
+	)
+	if request_type == "move":
+		_battle_ui_template.set_battle_action_enabled(&"fight", true)
+		_battle_ui_template.set_battle_action_enabled(&"party", has_switches)
+		_battle_ui_template.set_battle_action_enabled(
+			&"run",
+			BattleSystem.is_forfeit_allowed()
+		)
+	elif request_type == "switch":
+		_battle_ui_template.set_battle_action_enabled(&"party", has_switches)
+
+
+func _apply_snapshot_to_ui_data(ui_data: Dictionary, snapshot: Dictionary) -> void:
+	var parties_value: Variant = snapshot.get("parties")
+	if typeof(parties_value) != TYPE_DICTIONARY:
+		return
+	var parties := parties_value as Dictionary
+	var player_member := _active_snapshot_member(parties.get("player", []))
+	var opponent_member := _active_snapshot_member(parties.get("opponent", []))
+	_apply_snapshot_member(ui_data, "player", player_member)
+	_apply_snapshot_member(ui_data, "opponent", opponent_member)
+
+
+func _active_snapshot_member(value: Variant) -> Dictionary:
+	if typeof(value) != TYPE_ARRAY:
+		return {}
+	var first_member: Dictionary = {}
+	for member_value: Variant in value as Array:
+		if typeof(member_value) != TYPE_DICTIONARY:
+			continue
+		var member := member_value as Dictionary
+		if first_member.is_empty():
+			first_member = member
+		if bool(member.get("active", false)):
+			return member
+	return first_member
+
+
+func _apply_snapshot_member(
+	ui_data: Dictionary,
+	prefix: String,
+	member: Dictionary
+) -> void:
+	if member.is_empty():
+		return
+	ui_data["%s_pokemon_name" % prefix] = String(
+		member.get("nickname", member.get("species", "Pokémon"))
+	)
+	ui_data["%s_level" % prefix] = int(member.get("level", 0))
+	ui_data["%s_health" % prefix] = float(member.get("normalizedHealth", 0.0))
+
+
+func _event_duration(event: Dictionary) -> float:
+	match String(event.get("type", "message")):
+		"attack", "switch":
+			return 0.45
+		"damage", "heal", "status", "status_cleared":
+			return 0.32
+		"knockout", "result":
+			return 0.6
+		"turn":
+			return 0.2
+		_:
+			return 0.3
 
 
 func _first_battle_member(value: Variant) -> Dictionary:

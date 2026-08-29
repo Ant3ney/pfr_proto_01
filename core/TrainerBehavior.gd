@@ -25,18 +25,27 @@ var stopping_buffer := 0.15
 var arrival_distance := 0.15
 
 var dialog: Dialog
+var battle_scene_path := ""
+var encounter_id := ""
 
 var _approach_state := ApproachState.WAITING
 var _approach_target := Vector3.ZERO
 var _dialog_template: UITemplate
 var _dialog_line_index := -1
 var _start_battle_after_dialog := false
+var _suppression_checked := false
 
 
 func process_behavior(
 	character: CharacterBody3D,
 	controller: NPCController
 ) -> void:
+	if not _suppression_checked:
+		_suppression_checked = true
+		if GameInstance.is_encounter_suppressed(encounter_id):
+			_approach_state = ApproachState.COMPLETE
+			controller.stop_moving(character)
+			return
 	if _approach_state == ApproachState.COMPLETE:
 		return
 
@@ -218,4 +227,6 @@ func _finish_dialog() -> void:
 		GameInstance.startBattle({
 			"encounter_type": "trainer",
 			"trainer_name": dialog.character_name if dialog else "",
+			"battle_scene_path": battle_scene_path,
+			"encounter_id": encounter_id,
 		})

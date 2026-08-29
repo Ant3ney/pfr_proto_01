@@ -1,7 +1,7 @@
 # Stateless PvE Battle Server
 
 Read this document for work inside [`battle_server/`](../../battle_server/) or
-when reasoning about the future Godot HTTP boundary. It records verified server
+when reasoning about the Godot HTTP boundary. It records verified server
 contracts; inspect the current implementation and tests before changing them.
 
 ## Ownership and state boundary
@@ -17,7 +17,9 @@ compressed AES-256-GCM token. The token contains canonical teams, versions,
 battle ID and revision, resolved starting HP, external member mappings, the
 canonical Showdown input log, and the independent AI PRNG state. A token is
 issued only at a stable player decision boundary and is omitted after battle
-end. Old valid tokens may intentionally be retried or forked.
+end. The stateless service can reconstruct any valid token, but the Godot
+client retains only its current token, retries only the byte-identical pending
+action, and never intentionally creates an old-token fork.
 
 `BATTLE_STATE_KEY` must decode to exactly 32 bytes. Changing that key, the token
 schema, API version, format version, or engine version invalidates active
@@ -112,6 +114,6 @@ Engine upgrades are explicit changes and require replay fixtures to be
 regenerated and reverified; copying behavior from the local newer checkout is
 not a valid upgrade path.
 
-Godot collection/trainer schemas and battle UI networking do not yet implement
-this REST contract. Keep client schema, retry/UI behavior, and return-to-world
-work as a separate change.
+The implemented Godot client contract, including exact retry bytes, response
+validation, health writeback, request-driven UI, and return behavior, is routed
+through [`battle-client.md`](battle-client.md).
