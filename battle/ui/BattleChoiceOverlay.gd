@@ -161,9 +161,9 @@ func show_switches(
 		if member_id.is_empty() or not member_by_id.has(member_id):
 			continue
 		var member: Dictionary = member_by_id[member_id]
-		var display_name := String(
+		var display_name := _format_member_name(String(
 			member.get("nickname", member.get("species", "Pokémon"))
-		).replace("-", " ").capitalize()
+		))
 		var button := _new_option_button(
 			"%s\nHP %d/%d" % [
 				display_name,
@@ -494,6 +494,15 @@ func _player_member_map(snapshot: Dictionary) -> Dictionary:
 			var member := value as Dictionary
 			result[String(member.get("memberId", ""))] = member
 	return result
+
+
+func _format_member_name(value: String) -> String:
+	var formatted := value.replace("-", " ").strip_edges()
+	if formatted.is_empty():
+		return "Pokémon"
+	if formatted == formatted.to_lower():
+		formatted = formatted.capitalize()
+	return formatted
 
 
 func _on_move_chosen(move_index: int) -> void:

@@ -94,7 +94,7 @@ func _test_switches_are_request_driven_and_forced_safe() -> void:
 			"player": [
 				_member("member-a", "Palkia", 90, 100),
 				_member("member-b", "Hoothoot", 18, 24),
-				_member("member-c", "Vespiquen", 7, 31, "Bee Queen"),
+				_member("member-c", "Vespiquen", 7, 31, "BeeQueen"),
 				_member("not-returned", "Luxray", 30, 30),
 			],
 		},
@@ -110,7 +110,7 @@ func _test_switches_are_request_driven_and_forced_safe() -> void:
 				and String(buttons[1].get_meta("battle_switch_member_id", "")) == "member-b",
 			"Switch choices should preserve the server's memberId order."
 		)
-		_check("Bee Queen" in buttons[0].text and "HP 7/31" in buttons[0].text, "Switch labels should show nickname and authoritative HP.")
+		_check("BeeQueen" in buttons[0].text and "HP 7/31" in buttons[0].text, "Switch labels should preserve nickname casing and show authoritative HP.")
 		_check("Hoothoot" in buttons[1].text and "HP 18/24" in buttons[1].text, "Each switch label should show name and HP.")
 	_check(_overlay.cancel_button.visible, "A voluntary switch should expose Back.")
 	_overlay.hide_overlay()

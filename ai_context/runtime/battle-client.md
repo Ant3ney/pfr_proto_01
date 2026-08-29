@@ -86,6 +86,38 @@ events. Unknown events safely become a message or no-op. The adapter must
 acknowledge a revision only after its complete event sequence finishes; the
 next choice request is not exposed before that acknowledgement.
 
+## Compact battle HUD
+
+[`battle_ui_overlay.tscn`](../../core/ui/battle_ui_overlay.tscn) defines the
+persistent status, message, and command HUD. [`UITemplate`](../../core/UITemplate.gd)
+binds copied battle presentation data to it, while
+[`BattleUIOverlay`](../../core/ui/BattleUIOverlay.gd) owns presentation-only
+responsive layout and layered command materials. At the 960-by-540 design
+viewport, each status card and the message panel is 58 px tall, the command
+tray is 56 px tall, the lower rows have a 4 px gap, and the tray ends 4 px above
+the usable bottom. Command buttons retain 40 px touch targets. Horizontal
+gutters are `max(16 px, 1.5% of viewport width)`; status cards use 26% of the
+width clamped to 236 to 288 px, with a 10 px player-card/message gap, so wider
+landscape viewports give their extra width to the message panel rather than
+making the compact cards taller.
+
+Ordinary choices use [`battle_choice_overlay.tscn`](../../battle/ui/battle_choice_overlay.tscn)
+and [`BattleChoiceOverlay`](../../battle/ui/BattleChoiceOverlay.gd) as a bottom
+tray with the same 56 px geometry and no battlefield dim. Move buttons preserve
+the returned order and `moveIndex`, show the returned PP and disabled state,
+and include Back; voluntary switches show only returned `memberId` options
+joined to snapshot names and HP, while forced switches omit Back and cannot be
+cancelled. Forfeit confirmation, retry/return errors, and final results instead
+use the compact centered modal mode with a dim layer.
+
+The request remains authoritative for available move and switch choices, and
+the snapshot remains authoritative for names and HP. Move color and type text
+are cosmetic only: the tray looks up the returned canonical move `id` through
+[`BattleSpeciesMapping.get_move_type()`](../../battle/system/BattleSpeciesMapping.gd).
+The generated [`pokeapi_showdown_mapping.json`](../../battle/data/pokeapi_showdown_mapping.json)
+contains a validated type for every pinned Showdown move ID; an unknown ID has
+no inferred gameplay meaning and falls back to the neutral presentation style.
+
 ## Error policy
 
 | Failure | Local behavior |
@@ -127,11 +159,14 @@ inside [`kyle_battle_scene.tscn`](../../battle/kyle_battle_scene.tscn).
 ```bash
 node tools/generate_battle_species_mapping.mjs --check
 godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/battle_ui_layout_smoke_test.tscn
+godot --headless --path . --scene res://tests/battle_choice_overlay_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
 ```
 
 These cover migration and mapping, exact Kyle authoring, start/action/retry,
 voluntary and forced choices, results, forfeit, malformed/version failures,
-stale and duplicate callbacks, request locking, event acknowledgement, return
+stale and duplicate callbacks, compact and wide-phone HUD geometry, typed move
+and switch trays, modal modes, request locking, event acknowledgement, return
 ordering, and suppression.
