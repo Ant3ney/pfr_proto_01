@@ -132,6 +132,15 @@ function buildOutput() {
         .map((move) => move.id),
     ),
   ].sort();
+  const moveTypes = Object.fromEntries(
+    validMoveIds.map((moveId) => {
+      const moveType = dex.moves.get(moveId).type;
+      if (!moveType) {
+        throw new Error(`Showdown move ${moveId} has no presentation type`);
+      }
+      return [moveId, moveType];
+    }),
+  );
   const mappings = {};
   const unsupportedPokemonIds = [];
 
@@ -158,6 +167,7 @@ function buildOutput() {
     supportedPokemonCount: Object.keys(mappings).length,
     unsupportedPokemonIds,
     validMoveIds,
+    moveTypes,
     mappings,
   };
 }

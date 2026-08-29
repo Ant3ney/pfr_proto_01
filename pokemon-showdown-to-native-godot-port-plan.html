@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Native Godot Battle Engine Port Plan</title>
+  <style>
+    @page { size: Letter; margin: 0; }
+    * { box-sizing: border-box; }
+    :root {
+      --ink: #16202a;
+      --muted: #536170;
+      --navy: #17324d;
+      --blue: #2473a8;
+      --blue-soft: #eaf4fb;
+      --green: #24755a;
+      --green-soft: #eaf7f1;
+      --gold: #b97913;
+      --gold-soft: #fff4dc;
+      --red: #a33a39;
+      --line: #cad6df;
+      --paper: #ffffff;
+    }
+    html, body { margin: 0; padding: 0; background: #dfe5ea; color: var(--ink); }
+    body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.1pt; line-height: 1.28; }
+    .page {
+      position: relative;
+      width: 8.5in;
+      height: 11in;
+      margin: 0 auto;
+      padding: 0.42in 0.48in 0.42in;
+      overflow: hidden;
+      background: var(--paper);
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .top-rule { height: 0.08in; margin: -0.42in -0.48in 0.22in; background: linear-gradient(90deg, var(--navy) 0 58%, var(--blue) 58% 86%, var(--green) 86%); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { color: var(--navy); font-size: 23pt; line-height: 1.05; margin-bottom: 0.08in; letter-spacing: -0.3pt; }
+    h2 { color: var(--navy); font-size: 14pt; line-height: 1.12; margin: 0 0 0.09in; }
+    h3 { color: var(--blue); font-size: 10.4pt; line-height: 1.15; margin: 0 0 0.045in; }
+    p { margin-bottom: 0.075in; }
+    ul, ol { margin: 0.035in 0 0.08in 0.19in; padding-left: 0.08in; }
+    li { margin: 0 0 0.028in; }
+    code, .mono { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; }
+    .eyebrow { color: var(--blue); font-size: 8.2pt; font-weight: 700; letter-spacing: 0.9pt; text-transform: uppercase; margin-bottom: 0.07in; }
+    .subtitle { color: var(--muted); font-size: 10pt; margin-bottom: 0.16in; }
+    .callout { border-left: 4px solid var(--blue); background: var(--blue-soft); padding: 0.09in 0.12in; margin-bottom: 0.12in; }
+    .callout strong { color: var(--navy); }
+    .callout.green { border-color: var(--green); background: var(--green-soft); }
+    .callout.gold { border-color: var(--gold); background: var(--gold-soft); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.12in; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.09in; }
+    .card { border: 1px solid var(--line); border-radius: 5px; padding: 0.09in 0.11in; background: #fff; }
+    .card.tint { background: #f7fafc; }
+    .mini { color: var(--muted); font-size: 8.15pt; }
+    .tight p { margin-bottom: 0.045in; }
+    .tight ul { margin-bottom: 0.045in; }
+    .section { margin-bottom: 0.12in; }
+    .flow { display: grid; grid-template-columns: 1fr 0.2in 1.1fr 0.2in 1.1fr 0.2in 1fr; align-items: stretch; margin: 0.07in 0 0.12in; }
+    .flow .box { border: 1px solid #9db4c5; background: #f7fbfe; border-radius: 5px; padding: 0.07in; text-align: center; font-size: 8.2pt; }
+    .flow .arrow { align-self: center; text-align: center; color: var(--blue); font-size: 13pt; font-weight: 700; }
+    .codebox { background: #132433; color: #eaf5fb; padding: 0.09in 0.11in; border-radius: 5px; white-space: pre-wrap; line-height: 1.28; margin-bottom: 0.11in; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 0.11in; font-size: 8.25pt; }
+    th { background: var(--navy); color: #fff; text-align: left; padding: 0.052in 0.065in; }
+    td { border: 1px solid var(--line); padding: 0.052in 0.065in; vertical-align: top; }
+    tr:nth-child(even) td { background: #f7fafc; }
+    .stage { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 0.11in; }
+    .stage-head { display: grid; grid-template-columns: 0.54in 1fr auto; align-items: center; padding: 0.065in 0.1in; background: var(--navy); color: #fff; }
+    .stage-num { font-size: 14pt; font-weight: 800; }
+    .stage-title { font-size: 10.5pt; font-weight: 700; }
+    .gate { font-size: 7.5pt; border: 1px solid rgba(255,255,255,.55); border-radius: 10px; padding: 0.02in 0.07in; letter-spacing: .4pt; }
+    .stage-body { display: grid; grid-template-columns: 1.16fr 1fr 0.92fr; }
+    .stage-body > div { padding: 0.07in 0.09in 0.075in; border-right: 1px solid var(--line); }
+    .stage-body > div:last-child { border-right: 0; background: var(--green-soft); }
+    .stage-body h3 { font-size: 8.6pt; text-transform: uppercase; letter-spacing: .45pt; }
+    .stage-body ul { margin-left: 0.14in; padding-left: 0.06in; margin-bottom: 0; }
+    .stage-body li { font-size: 8pt; line-height: 1.23; }
+    .scene-tree { background: #f6f8fa; border: 1px solid var(--line); border-radius: 5px; padding: 0.08in 0.1in; white-space: pre; font-family: "DejaVu Sans Mono", monospace; font-size: 7.55pt; line-height: 1.28; }
+    .check { color: var(--green); font-weight: 700; }
+    .stop { color: var(--red); font-weight: 700; }
+    .footer { position: absolute; left: 0.48in; right: 0.48in; bottom: 0.18in; border-top: 1px solid var(--line); padding-top: 0.05in; display: flex; justify-content: space-between; color: var(--muted); font-size: 7.4pt; }
+    .nowrap { white-space: nowrap; }
+    .dense h1 { font-size: 21pt; margin-bottom: 0.055in; }
+    .dense .subtitle { font-size: 9.1pt; margin-bottom: 0.095in; }
+    .dense .stage { margin-bottom: 0.065in; }
+    .dense .stage-head { grid-template-columns: 0.5in 1fr auto; padding: 0.043in 0.08in; }
+    .dense .stage-num { font-size: 12.5pt; }
+    .dense .stage-title { font-size: 9.4pt; }
+    .dense .gate { font-size: 6.8pt; padding: 0.012in 0.06in; }
+    .dense .stage-body > div { padding: 0.045in 0.07in 0.05in; }
+    .dense .stage-body h3 { font-size: 7.55pt; margin-bottom: 0.025in; }
+    .dense .stage-body ul { margin: 0.02in 0 0 0.125in; padding-left: 0.05in; }
+    .dense .stage-body li { font-size: 7.05pt; line-height: 1.14; margin-bottom: 0.014in; }
+    .labpage h1 { font-size: 21pt; margin-bottom: 0.045in; }
+    .labpage h2 { font-size: 12.2pt; margin-bottom: 0.055in; }
+    .labpage .subtitle { font-size: 9.1pt; margin-bottom: 0.09in; }
+    .labpage .section { margin-bottom: 0.08in; }
+    .labpage .scene-tree { font-size: 6.55pt; line-height: 1.15; padding: 0.065in 0.08in; }
+    .labpage .callout { font-size: 7.55pt; line-height: 1.2; padding: 0.065in 0.085in; }
+    .verify-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 0.13in; align-items: start; }
+    .verify-grid ol { font-size: 7.45pt; line-height: 1.18; margin: 0.02in 0 0 0.17in; padding-left: 0.065in; }
+    .verify-grid li { margin-bottom: 0.022in; }
+    .circuit-table { font-size: 6.8pt; line-height: 1.16; margin-bottom: 0; }
+    .circuit-table th, .circuit-table td { padding: 0.037in 0.045in; }
+    .labpage > .grid2:last-of-type { gap: 0.09in; }
+    .labpage > .grid2:last-of-type .card { padding: 0.07in 0.085in; }
+    .labpage > .grid2:last-of-type li { font-size: 7.25pt; line-height: 1.17; margin-bottom: 0.018in; }
+    .labpage > .grid2:last-of-type .codebox { font-size: 6.55pt; line-height: 1.18; padding: 0.06in 0.075in; }
+  </style>
+</head>
+<body>
+
+  <section class="page">
+    <div class="top-rule"></div>
+    <div class="eyebrow">Implementation map • test-first • Godot 4.7</div>
+    <h1>Native Godot Battle Engine Port Plan</h1>
+    <p class="subtitle">A focused path from the existing Pokémon Showdown REST behavior to a local, callable GDScript API—without porting the frontend, networking, or multiplayer session layer.</p>
+
+    <div class="callout">
+      <strong>Decision:</strong> build a synchronous <span class="mono">BattleEngine</span> that extends <span class="mono">RefCounted</span>, owns one isolated battle session, accepts typed Dictionaries, and returns deep-copied battle responses. The current REST server is the development oracle only; the shipped game runs no JavaScript, Node server, HTTP call, token, WASM, or native extension.
+    </div>
+
+    <div class="section">
+      <h2>What “done” means</h2>
+      <div class="grid2 tight">
+        <div class="card">
+          <h3>First playable target</h3>
+          <ul>
+            <li>Generation 9, one-on-one singles, teams of 1–6.</li>
+            <li>Start, move, voluntary switch, forced switch, forfeit, win/tie.</li>
+            <li>Stable member IDs, HP/max HP, status, move PP, active/fainted flags.</li>
+            <li>Seeded battle RNG and separate deterministic AI RNG.</li>
+            <li>A deliberately small, declared move/type/status subset first.</li>
+          </ul>
+        </div>
+        <div class="card tint">
+          <h3>Explicit non-goals</h3>
+          <ul>
+            <li>No browser UI, REST routes, CORS, encryption, replay tokens, or remote sessions.</li>
+            <li>No Team Preview, doubles, competitive legality checker, or every generation in the MVP.</li>
+            <li>No silent approximation: an unported mechanic returns <span class="mono">unsupported_mechanic</span>.</li>
+            <li>No battle math inside <span class="mono">BattleScene.gd</span> or the verification GUI.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>The API the game calls</h2>
+      <div class="codebox mono">var engine := BattleEngine.new()
+var opened := engine.start_battle(start_input, {
+  "battle_seed": 1234, "ai_seed": 5678
+})
+var advanced := engine.apply_action({"type": "move", "moveIndex": 1})
+
+# Both calls return:
+{"ok": true, "response": {
+  "revision": 1, "phase": "awaiting_player", "events": [...],
+  "request": {...}, "parties": {"player": [...], "opponent": [...]},
+  "result": null
+}}</div>
+      <p class="mini">Keep the current REST input/action field names so fixtures and adapters stay simple. Use GDScript-style method names. The engine advances the chosen player action plus all required AI decisions, then stops at the next player decision or battle end.</p>
+    </div>
+
+    <div class="section">
+      <h2>Port the contract, replace the transport</h2>
+      <table>
+        <thead><tr><th>Keep from <span class="mono">battle_server</span></th><th>Replace for native Godot</th><th>Do not port</th></tr></thead>
+        <tbody>
+          <tr><td>Team/action validation, canonical defaults, stable IDs</td><td>One <span class="mono">BattleSession</span> held in memory</td><td>Next.js routes and Request/Response handling</td></tr>
+          <tr><td>Decision requests, party snapshots, result semantics</td><td><span class="mono">export_snapshot()</span> / <span class="mono">import_snapshot()</span></td><td>Encrypted <span class="mono">stateToken</span>, CORS, body limits</td></tr>
+          <tr><td>Deterministic turn flow and separate AI randomness</td><td>Godot Resources/JSON plus pure GDScript rules</td><td>Showdown protocol privacy and multiplayer concerns</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Dependency direction</h2>
+      <div class="flow">
+        <div class="box"><strong>BattleScene<br>or Engine Lab</strong><br><span class="mini">consumer only</span></div><div class="arrow">→</div>
+        <div class="box"><strong>BattleEngine</strong><br><span class="mini">public façade</span></div><div class="arrow">→</div>
+        <div class="box"><strong>BattleSession</strong><br><span class="mini">state + turn loop</span></div><div class="arrow">→</div>
+        <div class="box"><strong>Rules • Dex • RNG<br>Effects • Snapshot</strong><br><span class="mini">pure services/data</span></div>
+      </div>
+      <div class="callout green"><strong>Architecture gate:</strong> two engine instances can run simultaneously with no shared state, the engine can run headless with no scene tree, and every returned Dictionary is safe for the caller to mutate.</div>
+    </div>
+
+    <div class="footer"><span>Native Godot Battle Engine Port Plan</span><span>Page 1 of 4 • Sheet 1 front</span></div>
+  </section>
+
+  <section class="page">
+    <div class="top-rule"></div>
+    <div class="eyebrow">Build order • foundations before combat</div>
+    <h1>Milestones 0–2: Contract, Data, Session</h1>
+    <p class="subtitle">Each milestone ends with both a headless test gate and a visible button-driven check. Do not start the next milestone while either gate is red.</p>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">0</div><div class="stage-title">Freeze semantic parity fixtures + build the lab shell</div><div class="gate">GATE: ORACLE LOCKED</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li>Add <span class="mono">tests/fixtures/battle_engine/</span> with fixed inputs, actions, seeds, and expected semantic outputs.</li>
+          <li>Generate them once from the server’s lower-level Showdown adapter/test seam. Exclude token, HTTP status, API version, and random battle ID.</li>
+          <li>Document a normalizer for event text and field-name differences; never hand-edit expected battle math.</li>
+          <li>Create a test runner and empty <span class="mono">BattleEngineLab</span> scene that can load a preset.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Fixture JSON parses and its action sequence is complete.</li>
+          <li>Every expected player decision boundary has a request.</li>
+          <li>Golden cases cover reduced HP, switch, knockout, simultaneous replacement, forfeit, and natural completion.</li>
+          <li>Baseline remains green: 89 server tests and the two current Godot battle smoke tests.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Open the lab, choose <strong>Fixture Viewer</strong>, click <strong>Load</strong>.</li>
+          <li>Input, expected actions, and expected final winner appear.</li>
+          <li>The checker says <strong>FIXTURE VALID</strong>; engine controls remain disabled at this stage.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">1</div><div class="stage-title">Canonical data, validation, stats, and deterministic RNG</div><div class="gate">GATE: CORRECT NUMBERS</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li><span class="mono">BattleDex</span> loads a small audited species/move/type dataset from Godot Resources or JSON.</li>
+          <li><span class="mono">BattleValidator</span> enforces 1–6 members, 1–4 moves, level 1–100, IDs, IV/EV bounds, and supported mechanics.</li>
+          <li>Fill current defaults: first ability, no item, Serious nature, IV 31, EV 0.</li>
+          <li><span class="mono">BattleStats</span> implements Gen 9 stat formulas, Shedinja HP = 1, and starting-health resolution.</li>
+          <li><span class="mono">BattleRng</span> has serializable state; battle and AI streams are separate.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Valid/invalid DTO table tests mirror schemas and team tests.</li>
+          <li>Known base stats produce exact HP/Attack/etc. at levels 1, 50, and 100.</li>
+          <li>Normalized health 0 stays on the roster but cannot become active; positive health rounds and clamps to 1…max HP.</li>
+          <li>Same seed gives the same sequence; exporting/restoring RNG continues at the same next value.</li>
+          <li>Unknown data fails loudly—never defaults to neutral behavior.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Select <strong>Reduced HP + Fainted Bench</strong> and click <strong>Start</strong>.</li>
+          <li>Roster cards show exact level, HP/max HP, percentage, and fainted flag.</li>
+          <li>Click <strong>Bad Input</strong>: see a stable error code/message, not a crash.</li>
+          <li>Reset with the same seeds: displayed values and RNG preview match.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">2</div><div class="stage-title">Session state, response builder, and legal decision requests</div><div class="gate">GATE: CALLABLE API</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li><span class="mono">BattleEngine</span> owns one <span class="mono">BattleSession</span>: two sides, field, turn, revision, phase, and result.</li>
+          <li>Start with the first living roster member. Preserve caller member IDs and original roster order.</li>
+          <li><span class="mono">BattleSnapshotBuilder</span> returns request, public party stats, PP, switches, events, and result.</li>
+          <li>Validate typed <span class="mono">move</span>, <span class="mono">switch</span>, and <span class="mono">forfeit</span> actions. Implement forfeit fully; moves may be a no-damage stub only in this gate.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Start returns revision 0, phase <span class="mono">awaiting_player</span>, correct active ID, move PP, and legal switch options.</li>
+          <li>Unavailable, mixed-shape, or stale-phase actions return stable errors.</li>
+          <li>Forfeit returns phase <span class="mono">ended</span>, opponent winner, and no next request.</li>
+          <li>Mutating a returned response cannot alter engine state.</li>
+          <li>Two sessions interleave actions without state leakage.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Click <strong>Start</strong>: move and switch buttons are built only from <span class="mono">response.request</span>.</li>
+          <li>Click an illegal injected action: error panel turns red but state does not change.</li>
+          <li>Click <strong>Forfeit</strong>: controls disable and result reads <strong>opponent / forfeit</strong>.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="callout gold"><strong>Scope rule:</strong> the first dataset should contain only the species, moves, types, natures, statuses, abilities, and items needed by the fixtures. Expand coverage through tests; do not bulk-port a catalog before the execution model is proven.</div>
+    <div class="footer"><span>Native Godot Battle Engine Port Plan</span><span>Page 2 of 4 • Sheet 1 back</span></div>
+  </section>
+
+  <section class="page dense">
+    <div class="top-rule"></div>
+    <div class="eyebrow">Build order • combat and lifecycle</div>
+    <h1>Milestones 3–6: Turns, Effects, Integration</h1>
+    <p class="subtitle">The goal is a vertical slice that is provably correct, then a repeatable way to add mechanics without turning the engine into one giant match statement.</p>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">3</div><div class="stage-title">Turn queue, damage pipeline, PP, and automatic AI</div><div class="gate">GATE: ONE REAL TURN</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li>Pipeline: validate → queue → priority → speed → seeded tie-break → execute → faint check → next request.</li>
+          <li>Port accuracy, damage roll, critical hit, STAB, type effectiveness/immunity, stat stages, and PP consumption in explicit functions.</li>
+          <li>After a player choice, run all required opponent decisions with a separate deterministic AI RNG until the next player boundary.</li>
+          <li>Initial vertical moves: normal damage, priority damage, type damage/immunity, status, and stat-lowering examples.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Priority beats speed; speed beats lower speed; tied order is seed-repeatable.</li>
+          <li>Golden seeds verify exact damage, accuracy, crit, STAB, effectiveness, immunity, PP, and no negative HP.</li>
+          <li>AI reaches the same decision and end state after reset/replay.</li>
+          <li>One action increments revision once even though the AI also acts.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Select <strong>Priority vs Speed</strong>; click the slower side’s priority move.</li>
+          <li>Event log shows the player acting first, both HP changes, and PP decrement.</li>
+          <li>Click <strong>Replay Same Seeds</strong>: state hash and every event match.</li>
+          <li>Select <strong>Type Immunity</strong>: HP remains unchanged and the reason is visible.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">4</div><div class="stage-title">Switching, fainting, replacements, and battle result</div><div class="gate">GATE: COMPLETE BATTLE</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li>Voluntary switch, forced player replacement, deterministic AI replacement, and simultaneous replacement boundary.</li>
+          <li>Retain fainted roster members, exclude them from switch options, and keep stable IDs through internal reordering.</li>
+          <li>Resolve player win, opponent win, tie, forfeit, simultaneous self-knockout, and the 500-turn safety stop.</li>
+          <li>Emit structured events with display text; the UI never infers lifecycle from HP alone.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Mirror current server regressions: voluntary reorder, forced replacement after AI KO, simultaneous replacements, forfeit, natural finish, and self-KO winner.</li>
+          <li>A forced-switch request rejects moves and offers only living bench IDs.</li>
+          <li>Ended responses have a result and no request; further actions fail without mutation.</li>
+          <li>Original roster order remains stable in every snapshot.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Run <strong>Voluntary Switch</strong>: click a bench ID; active badge moves and HP stays attached to the correct ID.</li>
+          <li>Run <strong>Forced Switch</strong>: after KO, only switch controls remain enabled.</li>
+          <li>Choose the final replacement and play to completion; winner/reason appear and all controls lock.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">5</div><div class="stage-title">Effect hooks, statuses, abilities, items, and field rules</div><div class="gate">GATE: SAFE TO EXPAND</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li>Add ordered hooks such as <span class="mono">before_action</span>, <span class="mono">modify_power</span>, <span class="mono">on_hit</span>, <span class="mono">after_damage</span>, <span class="mono">residual</span>, and <span class="mono">switch_in</span>.</li>
+          <li>Effects are small GDScript strategy objects/resources; session code owns ordering, not individual moves.</li>
+          <li>Add one family at a time: major status, volatile status, abilities, items, weather/terrain, then unusual move rules.</li>
+          <li>Maintain a coverage manifest with <strong>supported</strong>, <strong>blocked</strong>, or <strong>not started</strong>—never “probably works.”</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Every new effect gets a focused unit test plus at least one Showdown parity fixture.</li>
+          <li>Hook order is asserted explicitly, including switch-in and end-turn residuals.</li>
+          <li>Unsupported effects fail during validation before battle start.</li>
+          <li>A catalog test ensures every exposed move/ability/item maps to an implemented effect.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>Use <strong>Status + Residual</strong>; badges, turn log, HP ticks, and disabled moves update after each click.</li>
+          <li>Inspector shows the ordered hook trace for the selected turn.</li>
+          <li>Use <strong>Unsupported Data</strong>; Start is rejected with the exact missing mechanic ID.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><div class="stage-num">6</div><div class="stage-title">Save/restore and connect the real BattleScene</div><div class="gate">GATE: GAME READY</div></div>
+      <div class="stage-body">
+        <div><h3>Implement</h3><ul>
+          <li>Versioned, data-only snapshot includes session, battle RNG, AI RNG, revision, and coverage version.</li>
+          <li>Add <span class="mono">BattleController.gd</span>: adapts CollectionSystem launch data, owns the engine, and applies final HP/status back only when battle ends.</li>
+          <li>Bind Fight → request moves, Party → request switches, Run → forfeit. Keep Bag disabled until item-in-battle rules exist.</li>
+          <li>BattleScene continues to own presentation, timing, camera, and HUD only.</li>
+        </ul></div>
+        <div><h3>Automated proof</h3><ul>
+          <li>Save after any decision, restore, take the same action, and compare exact response/state hash.</li>
+          <li>Old/invalid snapshot versions return stable errors.</li>
+          <li>Existing battle start and UI layout smoke tests stay green.</li>
+          <li>Integration test proves CollectionSystem is untouched mid-battle and updated once at result.</li>
+        </ul></div>
+        <div><h3>Manual GUI proof</h3><ul>
+          <li>In the lab: play, <strong>Save Snapshot</strong>, act, restore, repeat action; result matches.</li>
+          <li>In BattleScene: select moves/switches through the real HUD and inspect returned stats.</li>
+          <li>Finish battle, return to overworld, and confirm roster HP/status match the final response.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="footer"><span>Native Godot Battle Engine Port Plan</span><span>Page 3 of 4 • Sheet 2 front</span></div>
+  </section>
+
+  <section class="page labpage">
+    <div class="top-rule"></div>
+    <div class="eyebrow">Hands-on verification • build this alongside milestone 0</div>
+    <h1>Manual Battle Engine Lab</h1>
+    <p class="subtitle">A small developer scene makes every gate observable without relying on the finished game UI. It must call the same public engine methods as production and contain zero battle rules.</p>
+
+    <div class="grid2 section">
+      <div>
+        <h2>Recommended files</h2>
+        <div class="scene-tree">battle/engine/
+  BattleEngine.gd          # public RefCounted façade
+  BattleSession.gd         # mutable battle state
+  BattleValidator.gd       # input/action checks
+  BattleStats.gd           # stat + damage calculations
+  BattleRng.gd             # serializable PRNG
+  BattleTurnQueue.gd       # ordering and execution
+  BattleEffects.gd         # ordered hook runner
+  BattleSnapshotBuilder.gd # caller-safe response
+  data/                    # Resources / JSON + manifest
+
+battle/dev/
+  BattleEngineLab.tscn
+  BattleEngineLab.gd
+
+tests/battle_engine/
+  battle_engine_suite.tscn
+  *_test.gd
+tests/fixtures/battle_engine/*.json</div>
+      </div>
+      <div>
+        <h2>Scene layout</h2>
+        <div class="scene-tree">BattleEngineLab (Control)
+└─ Margin / VBox
+   ├─ Header (HBox)
+   │  ├─ Preset (OptionButton)
+   │  ├─ BattleSeed / AiSeed
+   │  └─ Start / Reset / Replay
+   ├─ Main (HSplitContainer)
+   │  ├─ Parties (player + opponent tables)
+   │  └─ Actions
+   │     ├─ MoveGrid (buttons 1–4)
+   │     ├─ SwitchList (stable member IDs)
+   │     └─ Forfeit
+   ├─ RequestAndState (read-only JSON)
+   ├─ EventLog (RichTextLabel)
+   └─ ExpectedChecks (green/red rows)</div>
+        <div class="callout green" style="margin-top:.09in"><strong>One update path:</strong> every Start/action returns a response, then <span class="mono">render_response(response)</span> rebuilds cards, enabled controls, request view, events, result, and expected checks. Never update visible HP optimistically.</div>
+      </div>
+    </div>
+
+    <div class="verify-grid section">
+      <div>
+        <h2>GUI implementation instructions</h2>
+        <ol>
+        <li>Create the scene tree above with containers so it works at the project’s 1152×648 viewport. Give the party/event areas scroll containers.</li>
+        <li>In <span class="mono">_ready()</span>, instantiate one <span class="mono">BattleEngine</span>, load preset JSON, connect buttons, and leave action controls disabled until a valid request arrives.</li>
+        <li>Attach the complete action Dictionary as button metadata. A press calls only <span class="mono">engine.apply_action(button.get_meta("action"))</span>.</li>
+        <li>For each response, show revision/phase; member ID, species, level, HP/max HP/percent, status, active/fainted; moves and PP; request; result; and event text.</li>
+        <li>Each preset contains a short sequence of expected predicates (not screenshots): active ID, phase, legal action types, HP/PP deltas, event kinds, and winner. Re-evaluate after every click and show <span class="check">PASS</span> or <span class="stop">FAIL</span>.</li>
+        <li>Add <strong>Copy Response</strong>, <strong>Save Snapshot</strong>, <strong>Load Snapshot</strong>, and <strong>Replay Same Seeds</strong>. The lab may inspect data; it may not calculate damage, choose AI moves, or repair engine output.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>The seven-click verification circuit</h2>
+        <table class="circuit-table">
+        <thead><tr><th style="width:1.12in">Preset / click</th><th>Expected result → proof</th></tr></thead>
+        <tbody>
+          <tr><td>1. Bad Input → Start</td><td>Stable code; no state/revision → safe boundary</td></tr>
+          <tr><td>2. Reduced HP → Start</td><td>Exact HP; zero-HP bench retained → canonical stats</td></tr>
+          <tr><td>3. Priority → move 1</td><td>Actor first; exact HP/PP; AI; request → real turn loop</td></tr>
+          <tr><td>4. Same preset → Replay</td><td>Identical events and state hash → determinism</td></tr>
+          <tr><td>5. Voluntary Switch</td><td>Active badge moves; IDs/HP follow → switch semantics</td></tr>
+          <tr><td>6. Forced Switch</td><td>Moves disabled; living bench only → decision boundary</td></tr>
+          <tr><td>7. Finish / Forfeit</td><td>Winner/reason; no request; locked → result contract</td></tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid2 section">
+      <div class="card tight">
+        <h2>Run on every milestone</h2>
+        <div class="codebox mono" style="margin-bottom:.06in">godot --headless --path . --scene \
+  res://tests/battle_engine/battle_engine_suite.tscn
+
+godot --headless --path . --scene \
+  res://tests/battle_start_smoke_test.tscn
+
+godot --headless --path . --scene \
+  res://tests/battle_ui_layout_smoke_test.tscn</div>
+        <p class="mini">Launch the lab manually:</p>
+        <div class="codebox mono" style="margin-bottom:0">godot --path . --scene \
+  res://battle/dev/BattleEngineLab.tscn</div>
+      </div>
+      <div class="card tint tight">
+        <h2>MVP release gate</h2>
+        <ul>
+          <li class="check">All headless engine, parity, save/restore, and existing smoke tests pass.</li>
+          <li class="check">All seven manual circuits are green.</li>
+          <li class="check">No engine file imports UI, networking, Node.js, or CollectionSystem.</li>
+          <li class="check">Two sessions are independent; returned data is deep-copied.</li>
+          <li class="check">Supported-mechanics manifest matches exposed data.</li>
+          <li class="check">BattleScene consumes requests and final stats through BattleController only.</li>
+        </ul>
+        <div class="callout gold" style="margin: .07in 0 0"><strong>Expansion rule:</strong> one mechanic family per change, with a focused unit test, a parity fixture, and a lab preset when humans need to observe it.</div>
+      </div>
+    </div>
+
+    <div class="footer"><span>Native Godot Battle Engine Port Plan</span><span>Page 4 of 4 • Sheet 2 back</span></div>
+  </section>
+
+</body>
+</html>

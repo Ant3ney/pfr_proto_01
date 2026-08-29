@@ -362,16 +362,16 @@ func _configure_battle_ui(battle_data: Dictionary) -> void:
 	player_level_label.text = _battle_level_text(
 		battle_data.get("player_level", 0)
 	)
-	player_hp.value = _battle_health_value(
+	_set_battle_health(player_hp, _battle_health_value(
 		battle_data.get("player_health", 1.0)
-	)
+	))
 	opponent_name_label.text = _format_battle_name(opponent_name)
 	opponent_level_label.text = _battle_level_text(
 		battle_data.get("opponent_level", 0)
 	)
-	opponent_hp.value = _battle_health_value(
+	_set_battle_health(opponent_hp, _battle_health_value(
 		battle_data.get("opponent_health", 1.0)
-	)
+	))
 
 	var message := String(battle_data.get("battle_message", "")).strip_edges()
 	if message.is_empty():
@@ -477,18 +477,39 @@ func _finish_battle_ui_in() -> void:
 
 
 func _format_battle_name(name: String) -> String:
-	return name.replace("-", " ").capitalize().to_upper()
+	var formatted := name.replace("-", " ").strip_edges()
+	if formatted == formatted.to_lower():
+		formatted = formatted.capitalize()
+	return formatted
 
 
 func _battle_level_text(level_value: Variant) -> String:
 	var level := int(level_value) if level_value != null else 0
-	return "LV. %d" % level if level > 0 else "LV. ?"
+	return "Lv. %d" % level if level > 0 else "Lv. ?"
 
 
 func _battle_health_value(health_value: Variant) -> float:
 	if typeof(health_value) not in [TYPE_INT, TYPE_FLOAT]:
 		return 1.0
 	return clampf(float(health_value), 0.0, 1.0)
+
+
+func _set_battle_health(progress_bar: ProgressBar, value: float) -> void:
+	progress_bar.value = value
+	var current_fill := progress_bar.get_theme_stylebox(&"fill") as StyleBoxFlat
+	if not current_fill:
+		return
+	var fill := current_fill.duplicate() as StyleBoxFlat
+	if value > 0.5:
+		fill.bg_color = Color(0.38, 0.96, 0.24, 1.0)
+		fill.border_color = Color(0.72, 1.0, 0.54, 0.72)
+	elif value > 0.2:
+		fill.bg_color = Color(0.96, 0.72, 0.18, 1.0)
+		fill.border_color = Color(1.0, 0.9, 0.42, 0.72)
+	else:
+		fill.bg_color = Color(0.9, 0.18, 0.1, 1.0)
+		fill.border_color = Color(1.0, 0.49, 0.31, 0.72)
+	progress_bar.add_theme_stylebox_override(&"fill", fill)
 
 
 func _battle_action_button(action: StringName) -> Button:

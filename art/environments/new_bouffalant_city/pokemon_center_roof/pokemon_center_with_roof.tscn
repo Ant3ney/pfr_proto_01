@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_pokemon_center_out.glb" id="1_building"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_roof.glb" id="2_roof"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_doors.glb" id="3_doors"]
+
+[node name="PokemonCenterWithRoof" type="Node3D"]
+editor_description = "Fitted Pokemon Center assembly. The reference building retains its baked 0.75 import and collision; the lightweight custom roof and two street-facing automatic door sets are authored directly in runtime meters and intentionally have no added collision. Keep this wrapper at unit scale."
+
+[node name="Building" parent="." instance=ExtResource("1_building")]
+
+[node name="Roof" parent="." instance=ExtResource("2_roof")]
+metadata/mobile_web_asset = true
+metadata/collision_intentionally_omitted = true
+
+[node name="Doors" parent="." instance=ExtResource("3_doors")]
+metadata/mobile_web_asset = true
+metadata/measured_entrance_fit = true
+metadata/collision_intentionally_omitted = true

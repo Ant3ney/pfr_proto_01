@@ -1,0 +1,9 @@
+# Pokemon Center Fitted Assembly
+
+`pokemon_center_with_roof.tscn` combines the unchanged reference Pokemon Center import with a fitted custom roof and two street-facing automatic door sets. Instance the wrapper at unit scale. The building keeps its existing baked `0.75` import scale and generated collision; both additions are authored directly in runtime meters and intentionally add no collision.
+
+The roof uses one opaque material, a 64 × 16 color palette, and 201 triangles. Its five-sided eave overhangs the complete 7.69 m building envelope and sits at `Y = 4.552 m`, above the source building's `Y = 4.432 m` maximum, so it covers every side without intersecting the facade medallions. A recessed dark drum begins at `Y = 3.015 m`, and the tall tiered crown reaches about `Y = 6.139 m`. Tencent Hunyuan3D-2mv supplies a bounded upper-silhouette signature during offline authoring; generated noise cannot alter the measured coverage envelope, and no model/runtime dependency ships with the game.
+
+The two fitted storefronts share one 56-triangle mesh, one opaque 64 × 16 palette material, and opaque blue-glass styling to avoid mobile transparency cost. Each storefront fills one of the broad street-facing openings beneath a large red emblem, with fixed sidelights and paired center door leaves. Their planes and dimensions come directly from the source opening measurements, with the two outer frame layers enlarged slightly to tuck behind the side, sill, and upper trim. The door authoring check permits overlap only for those tagged frame layers and rejects building intersections from all glass and hardware geometry.
+
+Regenerate the fitted reference, Hunyuan donor, final roof, and doors with the scripts under `source_assets/pokemon_center_roof/`. Hunyuan runs in an isolated compatible Python environment outside the Godot project.

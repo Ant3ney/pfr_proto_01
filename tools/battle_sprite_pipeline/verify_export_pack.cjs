@@ -60,8 +60,13 @@ if (timingManifests.size !== 2106) {
   throw new Error(`Export contains ${timingManifests.size} timing manifests; expected 2106.`);
 }
 for (const required of [
+  'art/battle/ui/icons/bag_icon.png.import',
+  'art/battle/ui/icons/pokeball_icon.png.import',
+  'art/battle/ui/icons/run_icon.png.import',
+  'art/battle/ui/icons/sword_icon.png.import',
   'art/battle/sprites/generated/catalog.json',
   'art/battle/sprites/placeholder.svg.import',
+  'core/ui/BattleUIOverlay.gd.remap',
   'battle/kyle_battle_scene.tscn.remap',
   'battle/ui/BattleChoiceOverlay.gd.remap',
   'battle/ui/battle_choice_overlay.tscn.remap',

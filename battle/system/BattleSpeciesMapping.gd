@@ -7,10 +7,31 @@ extends RefCounted
 const MAPPING_PATH := "res://battle/data/pokeapi_showdown_mapping.json"
 const SCHEMA_VERSION := 1
 const SHOWDOWN_VERSION := "0.11.11"
+const CANONICAL_MOVE_TYPES := {
+	"Bug": true,
+	"Dark": true,
+	"Dragon": true,
+	"Electric": true,
+	"Fairy": true,
+	"Fighting": true,
+	"Fire": true,
+	"Flying": true,
+	"Ghost": true,
+	"Grass": true,
+	"Ground": true,
+	"Ice": true,
+	"Normal": true,
+	"Poison": true,
+	"Psychic": true,
+	"Rock": true,
+	"Steel": true,
+	"Water": true,
+}
 
 static var _load_attempted := false
 static var _mappings: Dictionary = {}
 static var _move_ids: Dictionary = {}
+static var _move_types: Dictionary = {}
 static var _unsupported_ids: Array[int] = []
 static var _source_pokemon_count := 0
 static var _last_error := ""
@@ -34,6 +55,12 @@ static func get_entry(pokemon_id: int) -> Dictionary:
 
 static func has_move_id(move_id: String) -> bool:
 	return _ensure_loaded() and _move_ids.has(move_id)
+
+
+static func get_move_type(move_id: String) -> String:
+	if not _ensure_loaded():
+		return ""
+	return str(_move_types.get(move_id, ""))
 
 
 static func get_supported_count() -> int:
@@ -77,10 +104,12 @@ static func _ensure_loaded() -> bool:
 	var mappings_value: Variant = document.get("mappings")
 	var unsupported_value: Variant = document.get("unsupportedPokemonIds")
 	var move_ids_value: Variant = document.get("validMoveIds")
+	var move_types_value: Variant = document.get("moveTypes")
 	if (
 		typeof(mappings_value) != TYPE_DICTIONARY
 		or typeof(unsupported_value) != TYPE_ARRAY
 		or typeof(move_ids_value) != TYPE_ARRAY
+		or typeof(move_types_value) != TYPE_DICTIONARY
 	):
 		_last_error = "Battle mapping has invalid entry collections"
 		return false
@@ -97,6 +126,28 @@ static func _ensure_loaded() -> bool:
 	if validated_move_ids.is_empty():
 		_last_error = "Battle mapping contains no move IDs"
 		return false
+
+	var validated_move_types: Dictionary = {}
+	if move_types_value.size() != validated_move_ids.size():
+		_last_error = "Battle mapping move type count is inconsistent"
+		return false
+	for move_id_value: Variant in move_types_value.keys():
+		if typeof(move_id_value) != TYPE_STRING:
+			_last_error = "Battle mapping contains a non-string move type key"
+			return false
+		var move_id: String = move_id_value
+		var move_type_value: Variant = move_types_value[move_id_value]
+		if not validated_move_ids.has(move_id):
+			_last_error = "Battle mapping contains a move type for an unknown move ID"
+			return false
+		if typeof(move_type_value) != TYPE_STRING or not CANONICAL_MOVE_TYPES.has(move_type_value):
+			_last_error = "Battle mapping contains an invalid type for move %s" % move_id
+			return false
+		validated_move_types[move_id] = move_type_value
+	for move_id: String in validated_move_ids.keys():
+		if not validated_move_types.has(move_id):
+			_last_error = "Battle mapping has no type for move %s" % move_id
+			return false
 
 	var validated_mappings: Dictionary = {}
 	for pokemon_id_value: Variant in mappings_value.keys():
@@ -138,6 +189,7 @@ static func _ensure_loaded() -> bool:
 
 	_mappings = validated_mappings
 	_move_ids = validated_move_ids
+	_move_types = validated_move_types
 	_unsupported_ids = validated_unsupported
 	_source_pokemon_count = int(source_count_value)
 	return true

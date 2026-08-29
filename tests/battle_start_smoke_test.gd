@@ -212,19 +212,19 @@ class BattleStartWatcher:
 			^"BattleUIOverlay/OpponentStatus/Margin/Content/Identity/OpponentLevel"
 		) as Label
 		_check(
-			player_name != null and player_name.text == "PALKIA",
+			player_name != null and player_name.text == "Palkia",
 			"The HUD should use party slot one as implicit player display data."
 		)
 		_check(
-			player_level != null and player_level.text == "LV. 3",
+			player_level != null and player_level.text == "Lv. 3",
 			"The HUD should display the player PCL level."
 		)
 		_check(
-			opponent_name != null and opponent_name.text == "PIKACHU",
+			opponent_name != null and opponent_name.text == "Pikachu",
 			"The HUD should display explicit opponent-party data."
 		)
 		_check(
-			opponent_level != null and opponent_level.text == "LV. 7",
+			opponent_level != null and opponent_level.text == "Lv. 7",
 			"The HUD should display the explicit opponent level."
 		)
 

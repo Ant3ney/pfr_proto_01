@@ -51,6 +51,14 @@ func _test_generated_species_mapping() -> void:
 		== ["scaryface", "waterpulse", "dragonbreath", "ancientpower"],
 		"Palkia's seeded moves should remain exact."
 	)
+	_check(SpeciesMapping.get_move_type("tackle") == "Normal", "Tackle should expose its Showdown type.")
+	_check(SpeciesMapping.get_move_type("watergun") == "Water", "Water Gun should expose its Showdown type.")
+	_check(
+		SpeciesMapping.get_move_type("thundershock") == "Electric",
+		"Thunder Shock should expose its Showdown type."
+	)
+	_check(SpeciesMapping.get_move_type("notamove").is_empty(), "Unknown moves should have no type.")
+	_check(SpeciesMapping.get_move_type("Tackle").is_empty(), "Move type lookup should require canonical IDs.")
 	_check(not SpeciesMapping.has_mapping(10118), "An unapproved PokeAPI form should remain unsupported.")
 	_check(10118 in SpeciesMapping.get_unsupported_pokemon_ids(), "Unsupported form IDs should be explicit.")
 

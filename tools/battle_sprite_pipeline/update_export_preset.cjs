@@ -28,7 +28,12 @@ if (!match) throw new Error('WebBuild export_files line was not found.');
 
 const existing = [...match[1].matchAll(/"([^"]+)"/g)].map((entry) => entry[1]);
 const required = [
+  'res://art/battle/ui/icons/bag_icon.png',
+  'res://art/battle/ui/icons/pokeball_icon.png',
+  'res://art/battle/ui/icons/run_icon.png',
+  'res://art/battle/ui/icons/sword_icon.png',
   'res://art/battle/sprites/placeholder.svg',
+  'res://core/ui/BattleUIOverlay.gd',
   'res://battle/kyle_battle_scene.tscn',
   'res://battle/ui/BattleChoiceOverlay.gd',
   'res://battle/ui/battle_choice_overlay.tscn',

@@ -11,6 +11,7 @@ This directory is the runtime-ready environment asset root for New Bouffalant Ci
 - `reference_city_pack/catalog.json` is the authoritative 158-entry index. It records display names, categories, source provenance, source dimensions for GLBs, runtime dimensions for authored scenes, mesh statistics, material metadata, and current `res://` paths.
 - `reference_city_pack/showcase/building_ground_metric_showcase.tscn` is the editor-visible asset browser. It includes all 147 GLBs and all 11 modular ground scenes, a 0.5 m grid, dimensions, and 1.67 m player references.
 - `reference_city_pack/validation/` contains the automated catalog/scene integrity check.
+- `pokemon_center_roof/` contains the fitted, mobile-safe tiered roof, two street-facing automatic door sets, and a unit-scale wrapper around the unchanged reference Pokemon Center. Use its wrapper instead of editing or rescaling the source GLB.
 
 ## Editor Placement Palette
 
@@ -63,6 +64,7 @@ From the repository root, run:
 godot --headless --path . --import
 godot --headless --path . --editor --quit
 godot --headless --path . --scene res://art/environments/new_bouffalant_city/reference_city_pack/validation/metric_environment_pack_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_roof/validation/pokemon_center_roof_smoke_test.tscn
 ```
 
 The editor startup check loads the placement plugin and its dock. The environment smoke test verifies all 158 catalog paths and thumbnails, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract.

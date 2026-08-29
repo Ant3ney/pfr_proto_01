@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dlp12it15aio2" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_cityhall.glb" id="4_tvn6g"]
 [ext_resource type="PackedScene" uid="uid://yhxovbwlx25a" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_rouge_tower.glb" id="5_s2551"]
 [ext_resource type="PackedScene" uid="uid://bqcmyjl4m05l7" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_miare_station.glb" id="6_0n3ur"]
-[ext_resource type="PackedScene" uid="uid://cajjgm0sbklba" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_pokemon_center_out.glb" id="6_tuh08"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_with_roof.tscn" id="6_tuh08"]
 [ext_resource type="PackedScene" uid="uid://dpl43vpfe4ba4" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_garage.glb" id="7_fk01r"]
 [ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerKyle.tscn" id="7_ychl5"]
 [ext_resource type="PackedScene" uid="uid://c3e7mjmlovekr" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_gate_building.glb" id="8_81ntd"]
@@ -24,8 +24,8 @@ sun_angle_max = 18.0
 sun_curve = 0.08
 
 [sub_resource type="Sky" id="Sky_modular_ground"]
-radiance_size = 0
 sky_material = SubResource("ProceduralSkyMaterial_modular_ground")
+radiance_size = 0
 
 [sub_resource type="Environment" id="Environment_modular_ground"]
 background_mode = 2
@@ -45,7 +45,7 @@ polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 
 [node name="Node" type="Node" parent="." unique_id=358121094]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1207756975]
 environment = SubResource("Environment_modular_ground")
 
 [node name="Player" parent="." unique_id=135216441 instance=ExtResource("2_nuo22")]
@@ -159,7 +159,7 @@ data = {
 }
 
 [node name="Sun" type="DirectionalLight3D" parent="." unique_id=802841057]
-rotation_degrees = Vector3(-48, -35, 0)
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 0, 0)
 light_color = Color(1, 0.93, 0.82, 1)
 light_energy = 0.72
 shadow_enabled = true
