@@ -1,0 +1,13 @@
+[build]
+  command = "bash tools/netlify_build_web.sh"
+  publish = "build/web/v1"
+
+[build.environment]
+  GODOT_VERSION = "4.7.2"
+
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
