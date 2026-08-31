@@ -30,7 +30,7 @@ download_file() {
 		"${url}"
 }
 
-if command -v godot >/dev/null 2>&1 && godot --version | grep -q "^${godot_version}\.stable"; then
+if command -v godot >/dev/null 2>&1 && godot --headless --version | grep -q "^${godot_version}\.stable"; then
 	godot_bin="$(command -v godot)"
 else
 	mkdir -p "${cache_root}"
