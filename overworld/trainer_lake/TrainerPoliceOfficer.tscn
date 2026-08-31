@@ -1,0 +1,32 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://core/PFRCharacter.gd" id="1_character"]
+[ext_resource type="Script" path="res://overworld/trainer_lake/TrainerKyle.gd" id="2_controller"]
+[ext_resource type="Resource" path="res://art/characters/za_city_police_officer/za_city_police_officer.tres" id="3_art_pack"]
+[ext_resource type="PackedScene" path="res://art/characters/za_city_police_officer/models/model.glb" id="4_model"]
+[ext_resource type="Resource" path="res://overworld/dialogs/trainer_police_officer.tres" id="5_dialog"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_trainer"]
+radius = 0.32
+height = 1.6
+
+[sub_resource type="Resource" id="Resource_trainer"]
+resource_local_to_scene = true
+script = ExtResource("2_controller")
+dialog = ExtResource("5_dialog")
+battle_scene_path = "res://battle/police_officer_battle_scene.tscn"
+encounter_id = "trainer-police-officer-city-v1"
+
+[node name="PoliceOfficer" type="CharacterBody3D"]
+script = ExtResource("1_character")
+controller = SubResource("Resource_trainer")
+character_art_asset_pack = ExtResource("3_art_pack")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("CapsuleShape_trainer")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="CharacterArt" parent="Visual" instance=ExtResource("4_model")]
+rotation = Vector3(0, 3.1415927, 0)

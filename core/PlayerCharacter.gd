@@ -4,7 +4,7 @@ extends PFRCharacter
 ## A PFRCharacter configured to use player input.
 
 const DEFAULT_ART_PACK: PFRCharacterArtAssetPack = preload(
-	"res://art/characters/zach/zach.tres"
+	"res://art/characters/za_city_driver/za_city_driver.tres"
 )
 
 

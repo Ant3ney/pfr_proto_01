@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://core/PlayerCharacter.gd" id="1_player"]
-[ext_resource type="Resource" path="res://art/characters/zach/zach.tres" id="2_zach"]
-[ext_resource type="PackedScene" path="res://art/characters/zach/models/model.glb" id="3_zach_model"]
+[ext_resource type="Resource" path="res://art/characters/za_city_driver/za_city_driver.tres" id="2_city_driver"]
+[ext_resource type="PackedScene" path="res://art/characters/za_city_driver/models/model.glb" id="3_city_driver_model"]
+[ext_resource type="Script" path="res://rnd/interaction/PlayerInteractionDetector.gd" id="4_interaction"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.32
@@ -10,7 +11,7 @@ height = 1.6
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_player")
-character_art_asset_pack = ExtResource("2_zach")
+character_art_asset_pack = ExtResource("2_city_driver")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.8, 0)
@@ -18,5 +19,8 @@ shape = SubResource("CapsuleShape_player")
 
 [node name="Visual" type="Node3D" parent="."]
 
-[node name="CharacterArt" parent="Visual" instance=ExtResource("3_zach_model")]
+[node name="LookInteraction" type="Node" parent="."]
+script = ExtResource("4_interaction")
+
+[node name="CharacterArt" parent="Visual" instance=ExtResource("3_city_driver_model")]
 rotation = Vector3(0, 3.1415927, 0)

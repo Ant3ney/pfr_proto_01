@@ -24,14 +24,15 @@ func _ready() -> void:
 
 	await _test_moves_are_request_ordered_typed_and_compact()
 	await _test_switches_are_request_driven_and_forced_safe()
+	await _test_full_bench_thumbnails_remain_compact()
 	await _test_phone_width_geometry()
 	await _test_compact_modal_ctas()
 
 	if _failures.is_empty():
 		print(
 			"Battle choice overlay smoke test passed: move and switch trays are "
-			+ "request-driven, typed, 56 px compact, forced-switch safe, and modal "
-			+ "CTAs remain centered and explicit."
+			+ "request-driven, typed, front-sprite illustrated, 56 px compact, "
+			+ "forced-switch safe, and modal CTAs remain centered and explicit."
 		)
 		get_tree().quit(0)
 		return
@@ -112,9 +113,38 @@ func _test_switches_are_request_driven_and_forced_safe() -> void:
 		)
 		_check("BeeQueen" in buttons[0].text and "HP 7/31" in buttons[0].text, "Switch labels should preserve nickname casing and show authoritative HP.")
 		_check("Hoothoot" in buttons[1].text and "HP 18/24" in buttons[1].text, "Each switch label should show name and HP.")
+		_check_switch_thumbnail(buttons[0], "vespiquen")
+		_check_switch_thumbnail(buttons[1], "hoothoot")
 	_check(_overlay.cancel_button.visible, "A voluntary switch should expose Back.")
+	var released_button: Button = buttons[0] if not buttons.is_empty() else null
 	_overlay.hide_overlay()
 	_check(not _overlay.visible, "A voluntary switch should be cancellable.")
+	if released_button != null:
+		_check(
+			released_button.icon == null,
+			"Closing the switch tray should release its thumbnail texture reference."
+		)
+
+	_overlay.show_switches(
+		{"switchOptions": [{"memberId": "missing-form"}]},
+		{"parties": {"player": [
+			_member("missing-form", "Missing Form", 12, 12, "", "definitely-missing-form"),
+		]}},
+		false
+	)
+	await _settle_layout()
+	var missing_buttons := _dynamic_buttons()
+	_check(missing_buttons.size() == 1, "A returned unsupported exact form should still have a switch card.")
+	if missing_buttons.size() == 1:
+		_check(missing_buttons[0].icon != null, "An unsupported exact form should show the neutral thumbnail.")
+		_check(
+			bool(missing_buttons[0].get_meta("battle_switch_thumbnail_placeholder", false))
+			and String(missing_buttons[0].get_meta(
+				"battle_switch_thumbnail_placeholder_reason", ""
+			)) == "exact_sprite_missing",
+			"Unsupported exact forms must use the neutral placeholder without substituting art."
+		)
+	_overlay.force_hide()
 
 	_overlay.show_switches(request, snapshot, true)
 	await _settle_layout()
@@ -126,6 +156,46 @@ func _test_switches_are_request_driven_and_forced_safe() -> void:
 		buttons[1].pressed.emit()
 	_check(_chosen_switches == ["member-b"], "Switch choice should emit the exact returned memberId; got %s." % [_chosen_switches])
 	_check(not _overlay.visible, "Choosing a forced replacement should close the tray.")
+
+
+func _test_full_bench_thumbnails_remain_compact() -> void:
+	var member_specs := [
+		["member-mothim", "Mothim", "mothim", 23, 23],
+		["member-hoothoot", "Hoothoot", "hoothoot", 18, 24],
+		["member-vespiquen", "Vespiquen", "vespiquen", 31, 31],
+		["member-luxray", "Luxray", "luxray", 28, 35],
+		["member-pelipper", "Pelipper", "pelipper", 29, 34],
+	]
+	var switch_options: Array[Dictionary] = []
+	var members: Array[Dictionary] = []
+	for spec: Array in member_specs:
+		switch_options.append({"memberId": String(spec[0])})
+		members.append(_member(
+			String(spec[0]),
+			String(spec[1]),
+			int(spec[3]),
+			int(spec[4]),
+			"",
+			String(spec[2])
+		))
+	_overlay.show_switches(
+		{"switchOptions": switch_options},
+		{"parties": {"player": members}},
+		false
+	)
+	await _settle_layout()
+	var buttons := _dynamic_buttons()
+	_check(buttons.size() == 5, "A full five-member bench should fit in the compact switch tray.")
+	for index in mini(buttons.size(), member_specs.size()):
+		var sprite_id := String(member_specs[index][2])
+		_check_switch_thumbnail(buttons[index], sprite_id)
+		_check(
+			buttons[index].position.x >= -0.01
+			and buttons[index].position.x + buttons[index].size.x <= _overlay.options.size.x + 0.01,
+			"%s switch card should remain inside the options row." % sprite_id
+		)
+	_check_tray_geometry(DESIGN_SIZE)
+	_overlay.force_hide()
 
 
 func _test_phone_width_geometry() -> void:
@@ -197,6 +267,38 @@ func _check_button_state_styles(button: Button, label: String) -> void:
 		_check(button.get_theme_stylebox(state) is StyleBoxFlat, "%s should have a deliberate StyleBoxFlat %s state." % [label, state])
 
 
+func _check_switch_thumbnail(button: Button, sprite_id: String) -> void:
+	_check(button.icon != null, "%s switch card should include a Pokémon thumbnail." % sprite_id)
+	if button.icon == null:
+		return
+	_check(
+		button.icon.get_size() == Vector2(32.0, 32.0),
+		"%s thumbnail should fit the compact 32 px image well; got %s."
+		% [sprite_id, str(button.icon.get_size())]
+	)
+	_check(
+		String(button.get_meta("battle_switch_sprite_id", "")) == sprite_id,
+		"%s switch card should retain its exact sprite identity." % sprite_id
+	)
+	_check(
+		String(button.get_meta("battle_switch_thumbnail_style", "")) == "ani",
+		"%s switch card should use the front-facing ani GIF style." % sprite_id
+	)
+	_check(
+		not bool(button.get_meta("battle_switch_thumbnail_placeholder", true)),
+		"Supported sprite %s should not use the neutral placeholder." % sprite_id
+	)
+	_check(
+		String(button.get_meta("battle_switch_thumbnail_atlas_path", ""))
+		== "res://art/battle/sprites/generated/ani/%s.png" % sprite_id,
+		"%s switch card should come from its exact generated front atlas." % sprite_id
+	)
+	_check(
+		button.icon.get_image().get_used_rect().has_area(),
+		"%s switch thumbnail should contain visible pixels." % sprite_id
+	)
+
+
 func _dynamic_buttons() -> Array[Button]:
 	var result: Array[Button] = []
 	for child in _overlay.options.get_children():
@@ -216,13 +318,21 @@ func _move(index: int, id: String, display_name: String, pp: int, max_pp: int, d
 	}
 
 
-func _member(id: String, species: String, hp: int, max_hp: int, nickname := "") -> Dictionary:
+func _member(
+	id: String,
+	species: String,
+	hp: int,
+	max_hp: int,
+	nickname := "",
+	sprite_id := ""
+) -> Dictionary:
 	return {
 		"memberId": id,
 		"species": species,
 		"nickname": nickname if not nickname.is_empty() else species,
 		"hp": hp,
 		"maxHp": max_hp,
+		"spriteId": sprite_id if not sprite_id.is_empty() else species.to_lower().replace(" ", "-"),
 	}
 
 

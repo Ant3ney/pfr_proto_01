@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://battle/data/BattleEncounterDefinition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://battle/data/BattleEncounterMember.gd" id="2_member"]
+
+[sub_resource type="Resource" id="BattleEncounterMember_butterfree"]
+script = ExtResource("2_member")
+member_id = "tourist-butterfree"
+pokemon_id = 12
+species = "Butterfree"
+sprite_id = "butterfree"
+level = 5
+health = 1.0
+moves = Array[String](["gust", "bugbite", "harden", "stringshot"])
+
+[sub_resource type="Resource" id="BattleEncounterMember_venomoth"]
+script = ExtResource("2_member")
+member_id = "tourist-venomoth"
+pokemon_id = 49
+species = "Venomoth"
+sprite_id = "venomoth"
+level = 5
+health = 1.0
+moves = Array[String](["airslash", "disable", "quiverdance", "supersonic"])
+
+[resource]
+script = ExtResource("1_definition")
+encounter_id = "trainer-tourist-city-v1"
+display_name = "Tourist"
+api_name = "Tourist"
+members = Array[ExtResource("2_member")]([SubResource("BattleEncounterMember_butterfree"), SubResource("BattleEncounterMember_venomoth")])
+sprite_override = ""
+forfeit_policy = 0

@@ -55,6 +55,10 @@ class LifecycleWatcher:
 			"trainer_name": "Trainer Kyle",
 			"battle_scene_path": "res://battle/kyle_battle_scene.tscn",
 			"encounter_id": "trainer-kyle-lake-v1",
+			# This lifecycle fixture has no overworld player. Keep its historical
+			# authored-world assertion while production calls return to the
+			# implicitly captured source scene and pose.
+			"return_scene_path": "res://demo/primary_development_enviroment.tscn",
 		})
 		_check(accepted, "Kyle's concrete battle scene should be accepted.")
 		_check(not GameInstance.is_player_movement_enabled(), "Battle launch should lock movement.")
@@ -150,10 +154,10 @@ class LifecycleWatcher:
 		battle_scene.choice_overlay.continue_button.pressed.emit()
 		_check(not GameInstance.is_player_movement_enabled(), "Movement should remain locked when return begins.")
 
-		await _wait_for_scene_path("res://demo/modular_ground_scene.tscn")
+		await _wait_for_scene_path("res://demo/primary_development_enviroment.tscn")
 		_check(
 			get_tree().current_scene != null
-			and get_tree().current_scene.scene_file_path == "res://demo/modular_ground_scene.tscn",
+			and get_tree().current_scene.scene_file_path == "res://demo/primary_development_enviroment.tscn",
 			"Every result should return to the authored modular overworld."
 		)
 		_check(GameInstance.is_player_movement_enabled(), "Movement should unlock only after the overworld is ready.")
@@ -167,13 +171,26 @@ class LifecycleWatcher:
 			var controller: Variant = trainer.get("controller")
 			var behavior: Variant = controller.get("npc_behavior") if controller != null else null
 			_check(
-				behavior != null and int(behavior.get("_approach_state")) == TrainerBehavior.ApproachState.COMPLETE,
-				"Kyle should initialize in the completed state after returning."
+				behavior != null
+				and int(behavior.get("_approach_state")) == TrainerBehavior.ApproachState.WAITING,
+				"Kyle should return waiting for an optional manual rematch."
+			)
+			_check(
+				GameInstance.has_consumed_standard_trainer_sight_encounter(
+					"trainer-kyle-lake-v1"
+				),
+				"Kyle's standard sight challenge should be consumed after one battle."
 			)
 		else:
 			_check(false, "The modular overworld should contain Trainer Kyle.")
 
 		await _wait_for_state(BattleSystem.State.IDLE)
+		if trainer:
+			var player := get_tree().current_scene.get_node_or_null(^"Player") as PlayerCharacter
+			_check(
+				player != null and trainer.can_interact(player),
+				"Kyle should remain interactable for a manual rematch."
+			)
 		await _finish()
 
 
@@ -185,7 +202,7 @@ class LifecycleWatcher:
 			print(
 				"Battle scene lifecycle test passed: covered connect, request-driven locked UI, "
 				+ "event sequencing, confirmed forfeit, result Continue, ordered return, and "
-				+ "one-scene Kyle suppression verified."
+					+ "one-time Kyle sight and manual rematch verified."
 			)
 			get_tree().quit(0)
 			return

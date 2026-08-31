@@ -176,6 +176,7 @@ func _check_configured_presentation() -> void:
 		"player_pokemon_name": "palkia",
 		"player_level": 100,
 		"player_health": 0.4,
+		"player_experience_progress": 0.37,
 		"opponent_pokemon_name": "CustomCase",
 		"opponent_level": 7,
 		"opponent_health": 0.15,
@@ -199,6 +200,9 @@ func _check_configured_presentation() -> void:
 	var player_hp := template.get_node(
 		^"BattleUIOverlay/PlayerStatus/Margin/Content/Health/PlayerHP"
 	) as ProgressBar
+	var player_xp := template.get_node(
+		^"BattleUIOverlay/PlayerStatus/Margin/Content/Experience/PlayerXP"
+	) as ProgressBar
 	var opponent_hp := template.get_node(
 		^"BattleUIOverlay/OpponentStatus/Margin/Content/Health/OpponentHP"
 	) as ProgressBar
@@ -211,6 +215,14 @@ func _check_configured_presentation() -> void:
 	_check(opponent_name.text == "CustomCase", "Nickname casing should be preserved.")
 	_check(opponent_level.text == "Lv. 7", "Opponent level should use mockup-style casing.")
 	_check(is_equal_approx(player_hp.value, 0.4), "Player HP should remain snapshot-authoritative.")
+	_check(
+		is_equal_approx(player_xp.value, 0.37),
+		"Player XP progress should remain collection-authoritative."
+	)
+	_check(
+		player_xp.size.y <= 3.0 and player_xp.custom_minimum_size.y <= 3.0,
+		"The player XP strip should remain barely 3 px tall."
+	)
 	_check(is_equal_approx(opponent_hp.value, 0.15), "Opponent HP should remain snapshot-authoritative.")
 	_check(
 		_color_near(

@@ -12,6 +12,9 @@ This directory is the runtime-ready environment asset root for New Bouffalant Ci
 - `reference_city_pack/showcase/building_ground_metric_showcase.tscn` is the editor-visible asset browser. It includes all 147 GLBs and all 11 modular ground scenes, a 0.5 m grid, dimensions, and 1.67 m player references.
 - `reference_city_pack/validation/` contains the automated catalog/scene integrity check.
 - `pokemon_center_roof/` contains the fitted, mobile-safe tiered roof, two street-facing automatic door sets, and a unit-scale wrapper around the unchanged reference Pokemon Center. Use its wrapper instead of editing or rescaling the source GLB.
+- `pokemon_center_interior/` contains the playable five-sided Pokemon Center level, its two-draw classical brick-and-limestone environment, simplified authored collision, bright restrained lighting, player/camera/UI composition, and gameplay markers.
+- `pokemon_center_annex/` contains the distinct east-storefront service interior, including its apothecary cabinet, consultation area, two-draw mobile environment, authored collision, and dedicated east return marker contract.
+- `city_interiors/` contains eight lightweight classical destinations for City Hall, Rouge Tower, Miare Station, the garage, Gate Building, both tenant buildings, and the museum. A shared brick room, door, lighting, and runtime keep the scenes compact while dedicated spawn/exit pairs preserve all exterior approaches.
 
 ## Editor Placement Palette
 
@@ -65,9 +68,13 @@ godot --headless --path . --import
 godot --headless --path . --editor --quit
 godot --headless --path . --scene res://art/environments/new_bouffalant_city/reference_city_pack/validation/metric_environment_pack_smoke_test.tscn
 godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_roof/validation/pokemon_center_roof_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_interior/validation/pokemon_center_interior_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_annex/validation/pokemon_center_annex_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/modular_city_scene_transfer_smoke_test.tscn
 ```
 
-The editor startup check loads the placement plugin and its dock. The environment smoke test verifies all 158 catalog paths and thumbnails, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract.
+The editor startup check loads the placement plugin and its dock. The environment smoke test verifies all 158 catalog paths and thumbnails, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract. The focused Pokemon Center tests protect the exterior roof/door fit; both interiors' two-draw geometry, collision, gameplay markers, cameras, and restrained shadow-light setups; and real bidirectional travel from the south storefront to the main clinic and from the east storefront to the service annex without an arrival loop. The modular-city transfer test additionally validates all 17 exterior openings against live physics, including the Miare Station doorway shown in the regression report.
 
 ## Provenance And Production Status
 

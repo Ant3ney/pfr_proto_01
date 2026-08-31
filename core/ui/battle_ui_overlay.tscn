@@ -115,6 +115,20 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_xp_background"]
+bg_color = Color(0.012, 0.035, 0.08, 0.9)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_xp_fill"]
+bg_color = Color(0.18, 0.72, 0.94, 0.82)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_fight_normal"]
 bg_color = Color(0.82, 0.13, 0.06, 1)
 border_width_left = 2
@@ -524,9 +538,9 @@ theme_override_styles/panel = SubResource("StyleBox_surface_gloss")
 [node name="Margin" type="MarginContainer" parent="PlayerStatus"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 4
+theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_bottom = 3
 
 [node name="Content" type="VBoxContainer" parent="PlayerStatus/Margin"]
 layout_mode = 2
@@ -589,6 +603,26 @@ value = 1.0
 show_percentage = false
 theme_override_styles/background = SubResource("StyleBox_hp_background")
 theme_override_styles/fill = SubResource("StyleBox_hp_fill")
+
+[node name="Experience" type="HBoxContainer" parent="PlayerStatus/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StatusIndent" type="Control" parent="PlayerStatus/Margin/Content/Experience"]
+custom_minimum_size = Vector2(38, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PlayerXP" type="ProgressBar" parent="PlayerStatus/Margin/Content/Experience"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBox_xp_background")
+theme_override_styles/fill = SubResource("StyleBox_xp_fill")
 
 [node name="MessagePanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true

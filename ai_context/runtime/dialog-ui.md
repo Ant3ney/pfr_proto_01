@@ -74,11 +74,11 @@ A dialog caller should:
 6. Put external-state cleanup in the dismiss callback or a shared finish path.
 
 [`TrainerBehavior`](../../core/TrainerBehavior.gd) is the current reference
-implementation. On arrival it opens the first assigned line, owns the line
-index, updates the returned template when `Next` is pressed, and closes it
-after the last line. Its dismiss callback restores player movement and, only
-after normal final-line completion, hands control to
-`GameInstance.startBattle()` for a trainer encounter. See
+implementation. On automatic arrival or accepted HUD interaction it opens the
+first assigned line, owns the line index, updates the returned template when
+`Next` is pressed, and closes it after the last line. Its dismiss callback
+restores player movement and, only after normal final-line completion, hands
+control to `GameInstance.startBattle()` for a trainer encounter. See
 [`sequences.md`](sequences.md) for the control-state contract.
 
 Trainer dialog data is assigned through the exported `dialog` property on
@@ -86,9 +86,20 @@ Trainer dialog data is assigned through the exported `dialog` property on
 scene demonstrates that resource assignment in
 [`TrainerKyle.tscn`](../../overworld/trainer_lake/TrainerKyle.tscn).
 
+[`PokemonCenterHealerBehavior`](../../core/PokemonCenterHealerBehavior.gd) is
+the current confirmation-and-result example. Its authored scene waits for the
+shared look-interaction HUD, then opens one template with **Heal** and **Not
+now**, applies the party mutation only from the primary callback, and reuses
+that same template for the full-health, already-healthy, or empty-party result.
+The behavior owns the movement lock, template reference, sequence state, and
+cleanup. It will not start while another sequence has movement disabled. Its
+optional legacy proximity mode still requires an exit before auto-prompting
+again.
+
 ## Current boundaries
 
-There is no global dialog state machine, conversation queue, branching,
-choices, localization layer, typewriter effect, or dialog history. Add those
-only when a feature requires them, and preserve caller ownership unless the
-project deliberately adopts a different architecture.
+There is no global dialog state machine, conversation queue, branching dialog
+graph, localization layer, typewriter effect, or dialog history. Individual
+callers can compose a confirmation from the template's action and dismiss
+callbacks, as the healer does. Preserve caller ownership unless the project
+deliberately adopts a different architecture.

@@ -465,6 +465,18 @@ func _present_pending_events() -> void:
 				await completion
 		if not waited_for_presenter and is_inside_tree():
 			await get_tree().create_timer(_event_duration(event)).timeout
+		if (
+			is_inside_tree()
+			and String(event.get("type", "")) == "experience"
+			and RNDMoveLearningSystem.has_pending_for_member(
+				String(event.get("memberId", ""))
+			)
+		):
+			# The R&D owner blocks this presentation revision until every move
+			# earned by the displayed level gain is learned, replaced, or declined.
+			await RNDMoveLearningSystem.present_pending_for_member(
+				String(event.get("memberId", ""))
+			)
 	_presentation_running = false
 	if is_inside_tree():
 		_refresh_sprite_layout_if_safe()
@@ -609,8 +621,14 @@ func _apply_snapshot_member(
 	ui_data["%s_pokemon_name" % prefix] = String(
 		member.get("nickname", member.get("species", "Pokémon"))
 	)
-	ui_data["%s_level" % prefix] = int(member.get("level", 0))
+	ui_data["%s_level" % prefix] = int(
+		member.get("collectionLevel", member.get("level", 0))
+	)
 	ui_data["%s_health" % prefix] = float(member.get("normalizedHealth", 0.0))
+	if prefix == "player":
+		ui_data["player_experience_progress"] = float(
+			member.get("experienceProgress", 0.0)
+		)
 
 
 func _event_duration(event: Dictionary) -> float:
@@ -684,6 +702,18 @@ func _apply_battle_member_to_ui(
 		)
 		if typeof(health_value) in [TYPE_INT, TYPE_FLOAT]:
 			ui_data[health_key] = clampf(float(health_value), 0.0, 1.0)
+
+	if prefix == "player" and not ui_data.has("player_experience_progress"):
+		var pokemon_id := _battle_member_pokemon_id(member)
+		var current_xp_value: Variant = stats.get("currentXp")
+		if pokemon_id > 0 and typeof(current_xp_value) == TYPE_INT:
+			var progress := CreatureSystem.get_experience_progress(
+				pokemon_id,
+				int(current_xp_value)
+			)
+			ui_data["player_experience_progress"] = float(
+				progress.get("normalizedProgress", 0.0)
+			)
 
 
 func _has_battle_member_name(ui_data: Dictionary, prefix: String) -> bool:

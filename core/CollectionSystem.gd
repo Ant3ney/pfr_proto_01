@@ -7,7 +7,7 @@ extends Node
 ##   "pokemonId": int,
 ##   "pclID": String,
 ##   "party": {"inParty": bool, "slot": int or null},
-##   "instanceStats": {"health": float, "xp": float, "level": int},
+##   "instanceStats": {"health": float, "currentXp": int, "level": int},
 ##   "battleProfile": {
 ##     "species": String, "spriteId": String, "moves": Array[String]
 ##   }
@@ -17,11 +17,13 @@ extends Node
 ## mapping to the pinned battle engine. It is persisted so equipped moves are
 ## never recalculated when a battle starts.
 ##
-## Health and XP are normalized percentages from 0.0 through 1.0. Returned
-## dictionaries are deep copies so callers cannot bypass collection invariants.
+## Health is normalized from 0.0 through 1.0. XP is a cumulative integer and
+## level is derived from the Pokemon's growth curve. Returned dictionaries are
+## deep copies so callers cannot bypass collection invariants.
 
 signal collection_changed
 signal party_changed
+signal pokemon_evolved(pcl_id: String, previous_pokemon_id: int, pokemon_id: int)
 
 const PARTY_SIZE := 6
 const MIN_LEVEL := 1
@@ -45,7 +47,7 @@ func _ready() -> void:
 			pokemon_id,
 			STARTING_LEVEL,
 			1.0,
-			0.0,
+			-1,
 			party_index + 1
 		)
 		if pcl.is_empty():
@@ -61,7 +63,7 @@ func add_pokemon(
 	pokemon_id: int,
 	level := 1,
 	health := 1.0,
-	xp := 0.0,
+	current_xp := -1,
 	party_slot := 0
 ) -> Dictionary:
 	_last_error = ""
@@ -72,7 +74,13 @@ func add_pokemon(
 		return {}
 	if not _validate_percentage(health, "health"):
 		return {}
-	if not _validate_percentage(xp, "xp"):
+	if not _is_integer_value(current_xp):
+		_set_error("currentXp must be a whole number")
+		return {}
+	var resolved_xp := int(current_xp)
+	if resolved_xp < 0:
+		resolved_xp = CreatureSystem.get_experience_for_level(pokemon_id, level)
+	if not _validate_current_xp(pokemon_id, level, resolved_xp):
 		return {}
 	if not _validate_optional_party_slot(party_slot):
 		return {}
@@ -87,7 +95,7 @@ func add_pokemon(
 		pcl_id,
 		level,
 		health,
-		xp,
+		resolved_xp,
 		party_slot,
 		battle_profile
 	)
@@ -140,6 +148,32 @@ func get_party() -> Array[Dictionary]:
 		var pcl: Dictionary = _collection_by_id[pcl_id]
 		party.append(pcl.duplicate(true))
 	return party
+
+
+## Restores every current party member to full health in one collection update.
+## Stored Pokemon are intentionally untouched. Returns the number of party
+## members whose health changed.
+func heal_party() -> int:
+	_last_error = ""
+	var healed_stats_by_id: Dictionary = {}
+	for pcl_id in _party_slots:
+		if pcl_id.is_empty():
+			continue
+		var pcl: Dictionary = _collection_by_id[pcl_id]
+		var stats: Dictionary = pcl["instanceStats"]
+		if float(stats["health"]) >= 1.0:
+			continue
+		var healed_stats := stats.duplicate(true)
+		healed_stats["health"] = 1.0
+		healed_stats_by_id[pcl_id] = healed_stats
+
+	for pcl_id: String in healed_stats_by_id:
+		var pcl: Dictionary = _collection_by_id[pcl_id]
+		pcl["instanceStats"] = healed_stats_by_id[pcl_id]
+
+	if not healed_stats_by_id.is_empty():
+		collection_changed.emit()
+	return healed_stats_by_id.size()
 
 
 ## Returns the current party in the exact strict member shape accepted by the
@@ -225,6 +259,13 @@ func set_equipped_moves(pcl_id: String, moves: Array) -> bool:
 ## Every current party member must appear exactly once and no other member may
 ## appear. Validation completes before any collection state is changed.
 func apply_battle_health_snapshot(snapshot: Array) -> bool:
+	return bool(apply_battle_health_and_experience(snapshot, []).get("ok", false))
+
+
+## Atomically applies the complete player health snapshot and zero or more
+## cumulative XP awards. All health and award records are validated before one
+## collection_changed signal is emitted. Repeated award member IDs are summed.
+func apply_battle_health_and_experience(snapshot: Array, awards: Array) -> Dictionary:
 	_last_error = ""
 	var party_ids: Array[String] = []
 	for pcl_id in _party_slots:
@@ -232,49 +273,284 @@ func apply_battle_health_snapshot(snapshot: Array) -> bool:
 			party_ids.append(pcl_id)
 	if party_ids.is_empty():
 		_set_error("Cannot apply battle health to an empty party")
-		return false
+		return {"ok": false, "awards": []}
 	if snapshot.size() != party_ids.size():
 		_set_error("Battle health snapshot does not contain the complete player party")
-		return false
+		return {"ok": false, "awards": []}
 
 	var health_by_id: Dictionary = {}
 	for value: Variant in snapshot:
 		if typeof(value) != TYPE_DICTIONARY:
 			_set_error("Battle health snapshot contains a non-object member")
-			return false
+			return {"ok": false, "awards": []}
 		var member: Dictionary = value
 		var member_id_value: Variant = member.get("memberId")
 		var health_value: Variant = member.get("normalizedHealth")
 		if typeof(member_id_value) != TYPE_STRING:
 			_set_error("Battle health snapshot has an invalid memberId")
-			return false
+			return {"ok": false, "awards": []}
 		var member_id: String = member_id_value
 		if member_id not in party_ids:
 			_set_error("Battle health snapshot contains unknown memberId: %s" % member_id)
-			return false
+			return {"ok": false, "awards": []}
 		if health_by_id.has(member_id):
 			_set_error("Battle health snapshot repeats memberId: %s" % member_id)
-			return false
+			return {"ok": false, "awards": []}
 		if not _is_numeric(health_value):
 			_set_error("Battle health snapshot has non-numeric normalizedHealth")
-			return false
+			return {"ok": false, "awards": []}
 		var health := float(health_value)
 		if not _validate_percentage(health, "normalizedHealth"):
-			return false
+			return {"ok": false, "awards": []}
 		health_by_id[member_id] = health
 
 	for party_id in party_ids:
 		if not health_by_id.has(party_id):
 			_set_error("Battle health snapshot is missing memberId: %s" % party_id)
-			return false
+			return {"ok": false, "awards": []}
 
+	var award_by_id: Dictionary = {}
+	for value: Variant in awards:
+		if typeof(value) != TYPE_DICTIONARY:
+			_set_error("Battle experience awards contain a non-object entry")
+			return {"ok": false, "awards": []}
+		var award := value as Dictionary
+		var member_id_value: Variant = award.get("memberId")
+		var amount_value: Variant = award.get("amount")
+		if typeof(member_id_value) != TYPE_STRING or not _is_integer_value(amount_value):
+			_set_error("Battle experience award has invalid memberId or amount")
+			return {"ok": false, "awards": []}
+		var member_id := String(member_id_value)
+		var amount := int(amount_value)
+		if member_id not in party_ids:
+			_set_error("Battle experience award contains unknown memberId: %s" % member_id)
+			return {"ok": false, "awards": []}
+		if amount < 0:
+			_set_error("Battle experience award cannot be negative")
+			return {"ok": false, "awards": []}
+		award_by_id[member_id] = int(award_by_id.get(member_id, 0)) + amount
+
+	var updated_stats_by_id: Dictionary = {}
+	var applied_awards: Array[Dictionary] = []
 	for party_id in party_ids:
 		var pcl: Dictionary = _collection_by_id[party_id]
 		var updated_stats: Dictionary = pcl["instanceStats"].duplicate(true)
 		updated_stats["health"] = health_by_id[party_id]
-		pcl["instanceStats"] = updated_stats
+		var requested_amount := int(award_by_id.get(party_id, 0))
+		if requested_amount > 0:
+			var pokemon_id := int(pcl["pokemonId"])
+			var previous_xp := int(updated_stats["currentXp"])
+			var previous_level := int(updated_stats["level"])
+			var maximum_xp := CreatureSystem.get_experience_for_level(pokemon_id, MAX_LEVEL)
+			var current_xp := mini(previous_xp + requested_amount, maximum_xp)
+			var level := CreatureSystem.get_level_for_experience(pokemon_id, current_xp)
+			if maximum_xp < 0 or level < MIN_LEVEL:
+				_set_error("Could not resolve experience for PCL %s" % party_id)
+				return {"ok": false, "awards": []}
+			updated_stats["currentXp"] = current_xp
+			updated_stats["level"] = level
+			var progress := CreatureSystem.get_experience_progress(pokemon_id, current_xp)
+			var evolution_options := CreatureSystem.get_available_evolutions(
+				pokemon_id,
+				level
+			)
+			if not CreatureSystem.get_last_error().is_empty():
+				_set_error("Could not resolve evolution options for PCL %s" % party_id)
+				return {"ok": false, "awards": []}
+			applied_awards.append({
+				"memberId": party_id,
+				"pokemonId": pokemon_id,
+				"amount": requested_amount,
+				"appliedAmount": current_xp - previous_xp,
+				"previousLevel": previous_level,
+				"level": level,
+				"currentXp": current_xp,
+				"leveledUp": level > previous_level,
+				"normalizedProgress": float(progress.get("normalizedProgress", 1.0)),
+				"evolutionAvailable": not evolution_options.is_empty(),
+				"evolutionOptions": evolution_options,
+			})
+		updated_stats_by_id[party_id] = updated_stats
+
+	for party_id in party_ids:
+		var pcl: Dictionary = _collection_by_id[party_id]
+		pcl["instanceStats"] = updated_stats_by_id[party_id]
 	collection_changed.emit()
-	return true
+	return {"ok": true, "awards": applied_awards}
+
+
+## Grants cumulative XP to one collection instance outside battle. Level-ups
+## are applied in the same atomic update and the result is presentation-ready.
+func grant_experience(pcl_id: String, amount: int) -> Dictionary:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return {}
+	if amount < 0:
+		_set_error("Experience amount cannot be negative")
+		return {}
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var pokemon_id := int(pcl["pokemonId"])
+	var stats: Dictionary = pcl["instanceStats"].duplicate(true)
+	var previous_xp := int(stats["currentXp"])
+	var previous_level := int(stats["level"])
+	var maximum_xp := CreatureSystem.get_experience_for_level(pokemon_id, MAX_LEVEL)
+	var current_xp := mini(previous_xp + amount, maximum_xp)
+	var level := CreatureSystem.get_level_for_experience(pokemon_id, current_xp)
+	if maximum_xp < 0 or level < MIN_LEVEL:
+		_set_error("Could not resolve experience for PCL %s" % pcl_id)
+		return {}
+	stats["currentXp"] = current_xp
+	stats["level"] = level
+	var progress := CreatureSystem.get_experience_progress(pokemon_id, current_xp)
+	var evolution_options := CreatureSystem.get_available_evolutions(pokemon_id, level)
+	if not CreatureSystem.get_last_error().is_empty():
+		_set_error("Could not resolve evolution options for PCL %s" % pcl_id)
+		return {}
+	pcl["instanceStats"] = stats
+	collection_changed.emit()
+	return {
+		"memberId": pcl_id,
+		"pokemonId": pokemon_id,
+		"amount": amount,
+		"appliedAmount": current_xp - previous_xp,
+		"previousLevel": previous_level,
+		"level": level,
+		"currentXp": current_xp,
+		"leveledUp": level > previous_level,
+		"normalizedProgress": float(progress.get("normalizedProgress", 1.0)),
+		"evolutionAvailable": not evolution_options.is_empty(),
+		"evolutionOptions": evolution_options,
+	}
+
+
+func get_experience_progress(pcl_id: String) -> Dictionary:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return {}
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	return CreatureSystem.get_experience_progress(
+		int(pcl["pokemonId"]),
+		int((pcl["instanceStats"] as Dictionary)["currentXp"])
+	)
+
+
+## Returns the direct evolutions whose level requirements this captured
+## Pokemon currently meets. Eligibility is derived, so Pokemon acquired above
+## a threshold retain the same evolution action as Pokemon that just leveled.
+func get_evolution_options(pcl_id: String) -> Array[Dictionary]:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return []
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var stats := pcl.get("instanceStats", {}) as Dictionary
+	var options := CreatureSystem.get_available_evolutions(
+		int(pcl.get("pokemonId", 0)),
+		int(stats.get("level", 0))
+	)
+	if not CreatureSystem.get_last_error().is_empty():
+		_set_error(CreatureSystem.get_last_error())
+		return []
+	return options
+
+
+func can_evolve(pcl_id: String) -> bool:
+	return not get_evolution_options(pcl_id).is_empty()
+
+
+## Evolves one captured instance into a currently eligible direct target.
+## Identity, party position, health, level, and in-level XP progress survive;
+## the target growth curve and battle species/sprite metadata are reconciled.
+func evolve_pokemon(pcl_id: String, target_pokemon_id: int) -> Dictionary:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return {}
+	var available_options := get_evolution_options(pcl_id)
+	if not _last_error.is_empty():
+		return {}
+	if available_options.is_empty():
+		_set_error("PCL %s does not currently meet an evolution level" % pcl_id)
+		return {}
+	var selected_option: Dictionary = {}
+	for option in available_options:
+		if int(option.get("pokemonId", 0)) == target_pokemon_id:
+			selected_option = option
+			break
+	if selected_option.is_empty():
+		_set_error(
+			"Pokemon ID %d is not an available evolution for PCL %s"
+			% [target_pokemon_id, pcl_id]
+		)
+		return {}
+
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var previous_pokemon_id := int(pcl.get("pokemonId", 0))
+	var stats := (pcl.get("instanceStats", {}) as Dictionary).duplicate(true)
+	var level := int(stats.get("level", 0))
+	var previous_xp := int(stats.get("currentXp", 0))
+	var previous_progress := CreatureSystem.get_experience_progress(
+		previous_pokemon_id,
+		previous_xp
+	)
+	if previous_progress.is_empty():
+		_set_error("Could not preserve experience progress while evolving PCL %s" % pcl_id)
+		return {}
+	var target_level_start := CreatureSystem.get_experience_for_level(
+		target_pokemon_id,
+		level
+	)
+	if target_level_start < 0:
+		_set_error("Could not resolve the evolved Pokemon's experience curve")
+		return {}
+	var target_xp := target_level_start
+	if level < MAX_LEVEL:
+		var target_level_span := CreatureSystem.get_experience_to_next_level(
+			target_pokemon_id,
+			level
+		)
+		if target_level_span <= 0:
+			_set_error("Could not resolve the evolved Pokemon's next level")
+			return {}
+		var normalized_progress := clampf(
+			float(previous_progress.get("normalizedProgress", 0.0)),
+			0.0,
+			1.0
+		)
+		target_xp += mini(
+			roundi(normalized_progress * float(target_level_span)),
+			target_level_span - 1
+		)
+	if CreatureSystem.get_level_for_experience(target_pokemon_id, target_xp) != level:
+		_set_error("The evolved Pokemon's experience no longer matches its level")
+		return {}
+
+	var target_profile := _create_default_battle_profile(target_pokemon_id)
+	var previous_profile_value: Variant = pcl.get("battleProfile")
+	if not target_profile.is_empty() and typeof(previous_profile_value) == TYPE_DICTIONARY:
+		var previous_profile := previous_profile_value as Dictionary
+		target_profile["moves"] = (previous_profile.get("moves", []) as Array).duplicate()
+
+	pcl["pokemonId"] = target_pokemon_id
+	stats["currentXp"] = target_xp
+	pcl["instanceStats"] = stats
+	if target_profile.is_empty():
+		pcl.erase("battleProfile")
+	else:
+		pcl["battleProfile"] = target_profile
+
+	collection_changed.emit()
+	pokemon_evolved.emit(pcl_id, previous_pokemon_id, target_pokemon_id)
+	return {
+		"pclID": pcl_id,
+		"previousPokemonId": previous_pokemon_id,
+		"pokemonId": target_pokemon_id,
+		"level": level,
+		"currentXp": target_xp,
+		"requiredLevel": int(selected_option.get("requiredLevel", level)),
+	}
 
 
 func get_collection_size() -> int:
@@ -332,20 +608,69 @@ func remove_from_party(pcl_id: String) -> bool:
 	return set_party_slot(pcl_id, 0)
 
 
-## Applies any subset of `health`, `xp`, and `level` atomically.
+## Moves a captured Pokemon into a party slot in one atomic collection update.
+## If the target is occupied, a stored Pokemon replaces that member and sends
+## it to storage; a current party member swaps slots with the occupant.
+func move_to_party_slot(pcl_id: String, party_slot: int) -> bool:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return false
+	if not _validate_party_slot(party_slot):
+		return false
+
+	var pcl: Dictionary = _collection_by_id[pcl_id]
+	var party: Dictionary = pcl["party"]
+	var current_slot := int(party.get("slot", 0)) if bool(party["inParty"]) else 0
+	if current_slot == party_slot:
+		return true
+
+	var displaced_id := _party_slots[party_slot - 1]
+	if current_slot > 0:
+		_party_slots[current_slot - 1] = ""
+
+	if not displaced_id.is_empty() and displaced_id != pcl_id:
+		var displaced: Dictionary = _collection_by_id[displaced_id]
+		var displaced_party: Dictionary = displaced["party"]
+		if current_slot > 0:
+			displaced_party["inParty"] = true
+			displaced_party["slot"] = current_slot
+			_party_slots[current_slot - 1] = displaced_id
+		else:
+			displaced_party["inParty"] = false
+			displaced_party["slot"] = null
+
+	party["inParty"] = true
+	party["slot"] = party_slot
+	_party_slots[party_slot - 1] = pcl_id
+	party_changed.emit()
+	collection_changed.emit()
+	return true
+
+
+## Applies health and/or progression atomically. Setting only `level` moves XP
+## to that level's exact threshold. Setting currentXp derives the level.
 func update_instance_stats(pcl_id: String, changes: Dictionary) -> bool:
 	_last_error = ""
 	if not _collection_by_id.has(pcl_id):
 		_set_error("Unknown PCL ID: %s" % pcl_id)
 		return false
 	for field: Variant in changes.keys():
-		if field not in ["health", "xp", "level"]:
+		if field not in ["health", "currentXp", "level"]:
 			_set_error("Unknown instanceStats field: %s" % str(field))
 			return false
 
 	var pcl: Dictionary = _collection_by_id[pcl_id]
 	var current_stats: Dictionary = pcl["instanceStats"]
 	var updated_stats := current_stats.duplicate(true)
+	var requested_level := -1
+	if changes.has("level"):
+		if not _is_integer_value(changes["level"]):
+			_set_error("level must be a whole number")
+			return false
+		requested_level = int(changes["level"])
+		if not _validate_level(requested_level):
+			return false
 	if changes.has("health"):
 		if not _is_numeric(changes["health"]):
 			_set_error("health must be numeric")
@@ -354,22 +679,32 @@ func update_instance_stats(pcl_id: String, changes: Dictionary) -> bool:
 		if not _validate_percentage(health, "health"):
 			return false
 		updated_stats["health"] = health
-	if changes.has("xp"):
-		if not _is_numeric(changes["xp"]):
-			_set_error("xp must be numeric")
+	var pokemon_id := int(pcl["pokemonId"])
+	if changes.has("currentXp"):
+		if not _is_integer_value(changes["currentXp"]):
+			_set_error("currentXp must be a whole number")
 			return false
-		var xp: float = float(changes["xp"])
-		if not _validate_percentage(xp, "xp"):
+		var current_xp := int(changes["currentXp"])
+		var maximum_xp := CreatureSystem.get_experience_for_level(pokemon_id, MAX_LEVEL)
+		if current_xp < 0 or current_xp > maximum_xp:
+			_set_error("currentXp must be within this Pokemon's growth curve")
 			return false
-		updated_stats["xp"] = xp
-	if changes.has("level"):
-		if not _is_integer_value(changes["level"]):
-			_set_error("level must be a whole number")
+		var derived_level := CreatureSystem.get_level_for_experience(pokemon_id, current_xp)
+		if derived_level < MIN_LEVEL:
+			_set_error("currentXp could not be resolved for this Pokemon")
 			return false
-		var level: int = int(changes["level"])
-		if not _validate_level(level):
+		if requested_level >= MIN_LEVEL and requested_level != derived_level:
+			_set_error("level does not match currentXp")
 			return false
-		updated_stats["level"] = level
+		updated_stats["currentXp"] = current_xp
+		updated_stats["level"] = derived_level
+	if requested_level >= MIN_LEVEL:
+		if not changes.has("currentXp"):
+			updated_stats["level"] = requested_level
+			updated_stats["currentXp"] = CreatureSystem.get_experience_for_level(
+				pokemon_id,
+				requested_level
+			)
 
 	pcl["instanceStats"] = updated_stats
 	collection_changed.emit()
@@ -463,21 +798,45 @@ func load_save_data(collection_data: Array) -> bool:
 
 		var level_value: Variant = stats.get("level")
 		var health_value: Variant = stats.get("health")
-		var xp_value: Variant = stats.get("xp")
 		if not _is_integer_value(level_value):
 			_set_error("PCL %s has an invalid level" % pcl_id)
 			return false
-		if not _is_numeric(health_value) or not _is_numeric(xp_value):
-			_set_error("PCL %s has non-numeric health or xp data" % pcl_id)
+		if not _is_numeric(health_value):
+			_set_error("PCL %s has non-numeric health data" % pcl_id)
 			return false
 		var level := int(level_value)
 		var health := float(health_value)
-		var xp := float(xp_value)
 		if not _validate_level(level):
 			return false
 		if not _validate_percentage(health, "health"):
 			return false
-		if not _validate_percentage(xp, "xp"):
+
+		var current_xp := -1
+		if stats.has("currentXp"):
+			var current_xp_value: Variant = stats["currentXp"]
+			if not _is_integer_value(current_xp_value):
+				_set_error("PCL %s has invalid currentXp data" % pcl_id)
+				return false
+			current_xp = int(current_xp_value)
+			if not _validate_current_xp(pokemon_id, level, current_xp):
+				return false
+		elif stats.has("xp"):
+			# One-time migration from the legacy normalized in-level XP field.
+			var legacy_xp_value: Variant = stats["xp"]
+			if not _is_numeric(legacy_xp_value):
+				_set_error("PCL %s has non-numeric legacy xp data" % pcl_id)
+				return false
+			var legacy_progress := float(legacy_xp_value)
+			if not _validate_percentage(legacy_progress, "xp"):
+				return false
+			var level_start := CreatureSystem.get_experience_for_level(pokemon_id, level)
+			var level_span := CreatureSystem.get_experience_to_next_level(pokemon_id, level)
+			current_xp = level_start
+			if level < MAX_LEVEL:
+				current_xp += int(round(legacy_progress * float(level_span)))
+			level = CreatureSystem.get_level_for_experience(pokemon_id, current_xp)
+		else:
+			_set_error("PCL %s has no currentXp data" % pcl_id)
 			return false
 
 		var battle_profile: Dictionary = {}
@@ -513,7 +872,7 @@ func load_save_data(collection_data: Array) -> bool:
 			pcl_id,
 			level,
 			health,
-			xp,
+			current_xp,
 			party_slot,
 			battle_profile
 		)
@@ -552,7 +911,7 @@ func _create_pcl(
 	pcl_id: String,
 	level: int,
 	health: float,
-	xp: float,
+	current_xp: int,
 	party_slot: int,
 	battle_profile: Dictionary = {}
 ) -> Dictionary:
@@ -565,7 +924,7 @@ func _create_pcl(
 		},
 		"instanceStats": {
 			"health": health,
-			"xp": xp,
+			"currentXp": current_xp,
 			"level": level,
 		},
 	}
@@ -680,6 +1039,24 @@ func _is_showdown_id(value: String) -> bool:
 func _validate_level(level: int) -> bool:
 	if level < MIN_LEVEL or level > MAX_LEVEL:
 		_set_error("Pokemon level must be between %d and %d" % [MIN_LEVEL, MAX_LEVEL])
+		return false
+	return true
+
+
+func _validate_current_xp(pokemon_id: int, level: int, current_xp: int) -> bool:
+	if current_xp < 0:
+		_set_error("currentXp cannot be negative")
+		return false
+	var maximum_xp := CreatureSystem.get_experience_for_level(pokemon_id, MAX_LEVEL)
+	if maximum_xp < 0 or current_xp > maximum_xp:
+		_set_error("currentXp exceeds this Pokemon's level-100 threshold")
+		return false
+	var derived_level := CreatureSystem.get_level_for_experience(pokemon_id, current_xp)
+	if derived_level < MIN_LEVEL:
+		_set_error("currentXp could not be resolved for Pokemon ID %d" % pokemon_id)
+		return false
+	if derived_level != level:
+		_set_error("currentXp does not match Pokemon level %d" % level)
 		return false
 	return true
 

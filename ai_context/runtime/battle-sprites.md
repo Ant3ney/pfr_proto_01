@@ -34,6 +34,11 @@ one-frame gate; `ani/regieleki` is the 315-frame maximum.
 exact IDs, builds `SpriteFrames` from one manifest at a time, and retains at most
 the active `ani` and `ani-back` assets. It uses cache-bypassing texture loads so
 discarding those references does not intentionally retain prior atlases.
+`load_front_thumbnail()` reads the first composited `ani` frame for a compact
+switch-card still, crops it to that frame's alpha bounds, preserves its aspect,
+and grounds it inside a small transparent texture. The full atlas is transient
+and is never added to the active-asset cache, so rendering a party tray does not
+retain six animation atlases.
 
 `battle/system/BattleSpritePresenter.gd` owns both billboarded
 `AnimatedSprite3D` actors. `configure(player_spawn, opponent_spawn,
@@ -98,7 +103,8 @@ reconfigure, or a new direct presentation interrupts those tweens.
 Regression coverage includes exact Palkia/Wooper dimensions and contrast,
 Joltik/Wailord bounds, unknown zero weight, every-frame grounding, camera
 framing, shadow lifecycle, multi-tween completion at reduced fixed frame rates,
-and preservation of strict REST DTO keys.
+front-facing switch-card thumbnail extraction and placeholder behavior, and
+preservation of strict REST DTO keys.
 
 ## Export and provenance boundaries
 

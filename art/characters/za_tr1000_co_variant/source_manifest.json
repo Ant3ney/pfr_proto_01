@@ -1,0 +1,49 @@
+{
+  "format_version": 1,
+  "generated_by": "pipeline_tools/build_character_import_library.py",
+  "id": "tr1000_01_co",
+  "slug": "za_tr1000_co_variant",
+  "display_name": "ZA DLC CO Trainer Variant",
+  "source": {
+    "model_archive": "ZA-TrainersNPCDLC.zip",
+    "model_path": "ik_chara/model_uq/tr1000_01_co/tr1000_01.trmdl",
+    "animation_archive": "ZA-TrainersAnimDLC.zip",
+    "animation_paths": {
+      "idle": "ik_chara/motion_uq/tr1000_01_co/tr1000_01_00001_defaultwait01_loop.tranm",
+      "walk": "ik_chara/motion_uq/tr1000_00_co/tr1000_00_00051_walk01_000_loop.tranm",
+      "run": "ik_chara/motion_uq/tr1000_00_co/tr1000_00_00071_run01_000_loop.tranm"
+    },
+    "motion_source": "variant idle plus sibling tr1000_00 CO walk/run"
+  },
+  "runtime": {
+    "model": "models/model.glb",
+    "animation_player_path": "AnimationPlayer",
+    "glb_animation_names": {
+      "idle": "tr1000_01_00001_defaultwait01_loop",
+      "walk": "tr1000_00_00051_walk01_000_loop",
+      "run": "tr1000_00_00071_run01_000_loop"
+    },
+    "godot_animation_names": {
+      "idle": "tr1000_01_00001_defaultwait01",
+      "walk": "tr1000_00_00051_walk01_000",
+      "run": "tr1000_00_00071_run01_000"
+    },
+    "root_motion_bone": "origin",
+    "rotation_degrees": [
+      0.0,
+      180.0,
+      0.0
+    ],
+    "animation_sources": {
+      "idle": "animations/tr1000_01_00001_defaultwait01_loop.tranm",
+      "walk": "animations/tr1000_00_00051_walk01_000_loop.tranm",
+      "run": "animations/tr1000_00_00071_run01_000_loop.tranm"
+    }
+  },
+  "validation": {
+    "result": "pass",
+    "glb_report": "qa/validation.json",
+    "blender_report": "qa/blender_report.json",
+    "preview": "qa/preview.png"
+  }
+}

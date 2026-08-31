@@ -15,3 +15,29 @@ func process_behavior(
 	_controller: NPCController
 ) -> void:
 	pass
+
+
+## Interaction capability advertised to the RND player-look dispatcher.
+func can_interact(
+	_character: CharacterBody3D,
+	_controller: NPCController,
+	_interactor: PlayerCharacter
+) -> bool:
+	return false
+
+
+## Starts this behavior's interaction sequence when accepted.
+func interact(
+	_character: CharacterBody3D,
+	_controller: NPCController,
+	_interactor: PlayerCharacter
+) -> bool:
+	return false
+
+
+func get_interaction_prompt(
+	_character: CharacterBody3D,
+	_controller: NPCController,
+	_interactor: PlayerCharacter
+) -> String:
+	return "Interact"

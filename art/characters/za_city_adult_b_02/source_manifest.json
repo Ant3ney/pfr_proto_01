@@ -1,0 +1,81 @@
+{
+  "format_version": 1,
+  "generated_by": "pipeline_tools/build_character_import_library.py",
+  "id": "dm_adult_b_01",
+  "slug": "za_city_adult_b_02",
+  "display_name": "City Man B2",
+  "source": {
+    "model_archive": "ZA-TrainersNPCCommon.zip",
+    "model_paths": [
+      "ik_chara/model_cc_vr/face/dm_face0001_00_adult_b_m/dm_face0001_00.trmdl",
+      "ik_chara/model_cc_vr/drs/dm_drs0001_01_adult_b_m/dm_drs0001_01.trmdl",
+      "ik_chara/model_cc_vr/hrs/dm_hrs0001_01_adult_b_m/dm_hrs0001_01.trmdl"
+    ],
+    "model_support_paths": [
+      "ik_chara/model_cc_base/dm/dm_base.trskl"
+    ],
+    "animation_archive": "ZA-TrainersAnim.zip",
+    "animation_paths": {
+      "idle": "ik_chara/motion_cc_base/dm/cc0003_adl_m/cc0003_00_00001_defaultwait01_loop.tranm",
+      "walk": "ik_chara/motion_cc_base/dm/cc0003_adl_m/cc0003_00_00051_walk01_000_loop.tranm",
+      "run": "ik_chara/motion_cc_base/dm/cc0003_adl_m/cc0003_00_00071_run01_000_loop.tranm"
+    },
+    "motion_source": "matching Pokemon ZA common-NPC body locomotion set"
+  },
+  "runtime": {
+    "model": "models/model.glb",
+    "animation_player_path": "AnimationPlayer",
+    "glb_animation_names": {
+      "idle": "cc0003_00_00001_defaultwait01_loop",
+      "walk": "cc0003_00_00051_walk01_000_loop",
+      "run": "cc0003_00_00071_run01_000_loop"
+    },
+    "godot_animation_names": {
+      "idle": "cc0003_00_00001_defaultwait01",
+      "walk": "cc0003_00_00051_walk01_000",
+      "run": "cc0003_00_00071_run01_000"
+    },
+    "root_motion_bone": "origin",
+    "rotation_degrees": [
+      0.0,
+      180.0,
+      0.0
+    ],
+    "animation_sources": {
+      "idle": "animations/cc0003_00_00001_defaultwait01_loop.tranm",
+      "walk": "animations/cc0003_00_00051_walk01_000_loop.tranm",
+      "run": "animations/cc0003_00_00071_run01_000_loop.tranm"
+    }
+  },
+  "validation": {
+    "result": "pass",
+    "glb_report": "qa/validation.json",
+    "blender_report": "qa/blender_report.json",
+    "preview": "qa/preview.png",
+    "skin_tone_sync": {
+      "enabled": true,
+      "policy": "face_matches_body_hands",
+      "threshold": 0.12,
+      "status": "already_matched",
+      "body_material": "body_skin",
+      "face_material": "face_skin",
+      "body_hand_mean_rgb": [
+        0.613048,
+        0.338528,
+        0.316722
+      ],
+      "face_mean_rgb_before": [
+        0.622448,
+        0.377563,
+        0.283449
+      ],
+      "mismatch_distance_before": 0.052146,
+      "face_mean_rgb_after": [
+        0.622448,
+        0.377563,
+        0.283449
+      ],
+      "mismatch_distance_after": 0.052146
+    }
+  }
+}

@@ -17,18 +17,37 @@ GameInstance.startBattle({
 	"trainer_name": "Trainer Kyle",
 	"battle_scene_path": "res://battle/kyle_battle_scene.tscn",
 	"encounter_id": "trainer-kyle-lake-v1",
+	"trainer_aggression_mode": TrainerBehavior.AggressionMode.STANDARD,
 })
 ```
 
 `TrainerBehavior` closes its dialog through the normal `UITemplate.close()`
 lifecycle, releases its dialog lock, and transfers control to `startBattle()`.
-Kyle's controller supplies only the stable ID and concrete scene path.
+Each trainer controller supplies only its stable ID and matching concrete scene
+path. Kyle uses `trainer-kyle-lake-v1` with `kyle_battle_scene.tscn`. The city
+lineup uses stable `trainer-<role>-city-v1` IDs with matching concrete battle
+scenes for Delivery Worker, Police Officer, Businessman, Backpacker, Jogger,
+and Tourist. Every lineup trainer owns an independent encounter resource even
+when two encounters happen to reuse a species.
 
-`GameInstance` deep-copies launch data, captures `source_scene_path`, fills the
-transition title/subtitle, locks movement, and covers the old scene before
-loading `battle_scene_path`. `return_scene_path` remains launch metadata for
-legacy callers; completed networked battles always return through
-`BattleSystem` to `res://demo/modular_ground_scene.tscn`.
+`trainer_aggression_mode` distinguishes ordinary authored trainers from
+Stretchman's `HIGHLY_AGGRO` opponents. `GameInstance` records a standard
+trainer's accepted encounter ID as sight-consumed for the current play session;
+Highly Aggro launches do not enter that set.
+
+Route 4 wild grass follows the same launch boundary without a trainer dialog.
+`TallGrassEncounterZone` supplies `encounter_type = "wild"`, the concrete
+`route_4_wild_battle_scene.tscn`, and stable ID
+`wild-fletchling-route-4-v1`; the scene-local provider owns the matching
+Fletchling encounter resource. Distance and chance logic stay in the overworld
+zone and opponent DTO construction stays in `BattleSystem`.
+
+`GameInstance` deep-copies launch data, captures `source_scene_path`, the source
+player's global transform and visual facing, fills the transition
+title/subtitle, locks movement, and covers the old scene before loading
+`battle_scene_path`. Unless a caller supplies an explicit override,
+`return_scene_path` is the captured source scene. `BattleSystem` requests this
+implicit return instead of hard-coding one overworld.
 
 ## Covered connection and reveal
 
@@ -56,8 +75,10 @@ path that reveals the battlefield.
 Opening `res://battle/battle_scene.tscn` directly remains network-free. With no
 active launch handoff it plays its local intro and shows presentation defaults.
 The legacy default-scene transition path without an encounter ID is also kept
-offline for focused transition smoke tests. Production trainer entry uses the
-concrete Kyle scene and therefore always goes through `BattleSystem`.
+offline for focused transition smoke tests. Production trainer entry uses a
+concrete encounter scene and therefore always goes through `BattleSystem`.
+The launch ID must equal the ID authored by that scene's encounter provider;
+the mismatch guard intentionally rejects cross-wired trainer and battle scenes.
 
 ## Completion and return
 
@@ -67,23 +88,30 @@ unrecoverable-error returns all use this ordering:
 
 1. Enter `RETURNING`, cancel callbacks, and clear token/session data.
 2. Ask `GameInstance.return_from_battle()` to cover the battlefield.
-3. Change to `res://demo/modular_ground_scene.tscn` without restoring a saved
-   transform, so the scene's authored player spawn is used.
-4. Clear active launch data and enable movement only from `scene_changed`, after
-   the modular scene is ready.
-5. Reveal the overworld and emit `battle_return_finished`; `BattleSystem` then
+3. Resolve an explicit launch override when present, otherwise change back to
+   the captured source scene.
+4. When returning to that source, restore the player's exact pre-battle global
+   transform, zero velocity, and visual facing from `scene_changed` after the
+   new scene is ready. An explicit different-scene override uses that scene's
+   authored spawn instead.
+5. Clear active launch data and enable movement only after the returned scene is
+   ready.
+6. Reveal the overworld and emit `battle_return_finished`; `BattleSystem` then
    returns to `IDLE`.
 
-The completed encounter ID is retained only for that returned scene instance.
-`TrainerBehavior` checks `GameInstance.is_encounter_suppressed()` before any
-detection and starts Kyle in `COMPLETE`. Loading another scene clears the ID.
-This is trigger suppression, not persistent trainer progression or a rematch
-system.
+The completed encounter ID is retained for immediate-return suppression in that
+returned scene instance. `TrainerBehavior` checks
+`GameInstance.is_encounter_suppressed()` before detection. A standard trainer
+returns in `WAITING`; its session-level consumed ID blocks another forced sight
+encounter but leaves HUD interaction available for manual rematches. A Highly
+Aggro trainer returns in `COMPLETE` so it cannot immediately loop beneath the
+player, then regains forced sight after leaving and starting the destination
+again. Standard sight consumption is transient and is not autosaved.
 
 ## Ownership boundaries
 
 - `GameInstance`: scene changes, transition template, movement lock, one-scene
-  suppression.
+  suppression, and session-level standard-trainer sight consumption.
 - `BattleSystem`: encounter/party DTOs, REST session, tokens, revisions,
   validation, retries, snapshots, event ordering, HP writeback, outcome.
 - `BattleScene`: thin signal-to-visual and UI-intent adapter.
@@ -100,8 +128,10 @@ godot --headless --path . --scene res://tests/battle_start_smoke_test.tscn
 godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://rnd/tests/battle_return_position_smoke_test.tscn
 ```
 
 These cover the offline preview path, concrete provider discovery, covered
 connection, deep-copy boundaries, request-driven locking, event acknowledgement,
-confirmed forfeit, ordered return, movement restoration, and Kyle suppression.
+confirmed forfeit, ordered return, movement restoration, one-time Kyle sight,
+and manual-rematch availability.

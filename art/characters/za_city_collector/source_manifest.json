@@ -1,0 +1,81 @@
+{
+  "format_version": 1,
+  "generated_by": "pipeline_tools/build_character_import_library.py",
+  "id": "em_collector_00",
+  "slug": "za_city_collector",
+  "display_name": "Collector",
+  "source": {
+    "model_archive": "ZA-TrainersNPCCommon.zip",
+    "model_paths": [
+      "ik_chara/model_cc_vr/face/em_face0001_00_collector_m/em_face0001_00.trmdl",
+      "ik_chara/model_cc_vr/drs/em_drs0001_00_collector_m/em_drs0001_00.trmdl",
+      "ik_chara/model_cc_vr/hrs/em_hrs0001_00_collector_m/em_hrs0001_00.trmdl"
+    ],
+    "model_support_paths": [
+      "ik_chara/model_cc_base/em/em_base.trskl"
+    ],
+    "animation_archive": "ZA-TrainersAnim.zip",
+    "animation_paths": {
+      "idle": "ik_chara/motion_cc_base/em/cc0009_fat_m/cc0009_00_00001_defaultwait01_loop.tranm",
+      "walk": "ik_chara/motion_cc_base/em/cc0009_fat_m/cc0009_00_00051_walk01_000_loop.tranm",
+      "run": "ik_chara/motion_cc_base/em/cc0009_fat_m/cc0009_00_00071_run01_000_loop.tranm"
+    },
+    "motion_source": "matching Pokemon ZA common-NPC body locomotion set"
+  },
+  "runtime": {
+    "model": "models/model.glb",
+    "animation_player_path": "AnimationPlayer",
+    "glb_animation_names": {
+      "idle": "cc0009_00_00001_defaultwait01_loop",
+      "walk": "cc0009_00_00051_walk01_000_loop",
+      "run": "cc0009_00_00071_run01_000_loop"
+    },
+    "godot_animation_names": {
+      "idle": "cc0009_00_00001_defaultwait01",
+      "walk": "cc0009_00_00051_walk01_000",
+      "run": "cc0009_00_00071_run01_000"
+    },
+    "root_motion_bone": "origin",
+    "rotation_degrees": [
+      0.0,
+      180.0,
+      0.0
+    ],
+    "animation_sources": {
+      "idle": "animations/cc0009_00_00001_defaultwait01_loop.tranm",
+      "walk": "animations/cc0009_00_00051_walk01_000_loop.tranm",
+      "run": "animations/cc0009_00_00071_run01_000_loop.tranm"
+    }
+  },
+  "validation": {
+    "result": "pass",
+    "glb_report": "qa/validation.json",
+    "blender_report": "qa/blender_report.json",
+    "preview": "qa/preview.png",
+    "skin_tone_sync": {
+      "enabled": true,
+      "policy": "face_matches_body_hands",
+      "threshold": 0.12,
+      "status": "already_matched",
+      "body_material": "body_skin",
+      "face_material": "face_skin",
+      "body_hand_mean_rgb": [
+        0.590129,
+        0.323346,
+        0.245103
+      ],
+      "face_mean_rgb_before": [
+        0.597099,
+        0.348243,
+        0.253872
+      ],
+      "mismatch_distance_before": 0.027301,
+      "face_mean_rgb_after": [
+        0.597099,
+        0.348243,
+        0.253872
+      ],
+      "mismatch_distance_after": 0.027301
+    }
+  }
+}

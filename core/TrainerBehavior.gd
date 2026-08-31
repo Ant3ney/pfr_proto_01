@@ -9,12 +9,24 @@ enum ApproachState {
 	COMPLETE,
 }
 
+enum AggressionMode {
+	STANDARD,
+	HIGHLY_AGGRO,
+}
+
 @export_group("Detection")
 @export_range(0.1, 100.0, 0.1, "or_greater", "suffix:m")
 var detection_distance := 80.0
 @export_range(0.0, 3.0, 0.05, "or_greater", "suffix:m")
 var ray_height := 0.8
 @export_flags_3d_physics var detection_collision_mask := 1
+## Keep classic line-of-sight trainer challenges available for authored NPCs.
+## Set false when the trainer should wait for the HUD interaction button.
+@export var automatic_sight_encounter := true
+## Standard trainers force one sight encounter per play session, then remain
+## available for manual rematches. Highly Aggro is reserved for generated
+## Stretchman opponents and resets whenever their destination is entered anew.
+@export var aggression_mode: AggressionMode = AggressionMode.STANDARD
 
 @export_group("Approach")
 ## Additional space left between the trainer's and player's collision bounds.
@@ -40,18 +52,15 @@ func process_behavior(
 	character: CharacterBody3D,
 	controller: NPCController
 ) -> void:
-	if not _suppression_checked:
-		_suppression_checked = true
-		if GameInstance.is_encounter_suppressed(encounter_id):
-			_approach_state = ApproachState.COMPLETE
-			controller.stop_moving(character)
-			return
+	_apply_encounter_suppression(character, controller)
 	if _approach_state == ApproachState.COMPLETE:
 		return
 
 	if _approach_state == ApproachState.APPROACHING:
 		if _has_reached_approach_target(character):
 			_complete_approach(character, controller)
+		return
+	if not _can_start_automatic_sight_encounter():
 		return
 
 	var forward_direction := _get_forward_direction(character)
@@ -74,6 +83,76 @@ func process_behavior(
 
 	_approach_state = ApproachState.APPROACHING
 	controller.move_to(_approach_target)
+
+
+func can_interact(
+	character: CharacterBody3D,
+	controller: NPCController,
+	interactor: PlayerCharacter
+) -> bool:
+	_apply_encounter_suppression(character, controller)
+	return (
+		interactor != null
+		and _approach_state == ApproachState.WAITING
+		and not is_instance_valid(_dialog_template)
+		and GameInstance.is_player_movement_enabled()
+		and not GameInstance.is_battle_start_in_progress()
+		and not GameInstance.is_battle_return_in_progress()
+		and not GameInstance.is_scene_transfer_in_progress()
+	)
+
+
+func interact(
+	character: CharacterBody3D,
+	controller: NPCController,
+	interactor: PlayerCharacter
+) -> bool:
+	if not can_interact(character, controller, interactor):
+		return false
+
+	_approach_state = ApproachState.COMPLETE
+	controller.stop_moving(character)
+	_face_interactor(character, interactor)
+	GameInstance.set_player_movement_enabled(false)
+	if dialog != null and not dialog.is_empty():
+		_start_dialog()
+		return true
+
+	if _start_configured_battle():
+		return true
+	_approach_state = ApproachState.WAITING
+	return false
+
+
+func get_interaction_prompt(
+	character: CharacterBody3D,
+	_controller: NPCController,
+	_interactor: PlayerCharacter
+) -> String:
+	var trainer_name := dialog.character_name.strip_edges() if dialog != null else ""
+	if trainer_name.is_empty():
+		trainer_name = String(character.name)
+	return (
+		"Talk to %s" % trainer_name
+		if dialog != null and not dialog.is_empty()
+		else "Battle %s" % trainer_name
+	)
+
+
+func is_highly_aggro() -> bool:
+	return aggression_mode == AggressionMode.HIGHLY_AGGRO
+
+
+func _can_start_automatic_sight_encounter() -> bool:
+	return (
+		automatic_sight_encounter
+		and (
+			is_highly_aggro()
+			or not GameInstance.has_consumed_standard_trainer_sight_encounter(
+				encounter_id
+			)
+		)
+	)
 
 
 func _detect_player(
@@ -224,9 +303,54 @@ func _finish_dialog() -> void:
 	_dialog_line_index = -1
 	GameInstance.set_player_movement_enabled(true)
 	if should_start_battle:
-		GameInstance.startBattle({
-			"encounter_type": "trainer",
-			"trainer_name": dialog.character_name if dialog else "",
-			"battle_scene_path": battle_scene_path,
-			"encounter_id": encounter_id,
-		})
+		_start_configured_battle()
+
+
+func _start_configured_battle() -> bool:
+	# startBattle owns the next movement lock. Release the dialog/interaction
+	# lock first so a failed launch restores normal player control.
+	GameInstance.set_player_movement_enabled(true)
+	var accepted := GameInstance.startBattle({
+		"encounter_type": "trainer",
+		"trainer_name": dialog.character_name if dialog else "",
+		"battle_scene_path": battle_scene_path,
+		"encounter_id": encounter_id,
+		"trainer_aggression_mode": aggression_mode,
+	})
+	if not accepted:
+		GameInstance.set_player_movement_enabled(true)
+	return accepted
+
+
+func _apply_encounter_suppression(
+	character: CharacterBody3D,
+	controller: NPCController
+) -> void:
+	if _suppression_checked:
+		return
+	_suppression_checked = true
+	if GameInstance.is_encounter_suppressed(encounter_id):
+		# A standard trainer returns ready for a manual rematch, while a Highly
+		# Aggro destination trainer stays quiet for this one return scene so it
+		# cannot immediately loop back into battle underneath the player.
+		_approach_state = (
+			ApproachState.COMPLETE
+			if is_highly_aggro()
+			else ApproachState.WAITING
+		)
+		controller.stop_moving(character)
+
+
+func _face_interactor(
+	character: CharacterBody3D,
+	interactor: PlayerCharacter
+) -> void:
+	var visual := character.get_node_or_null(^"Visual") as Node3D
+	if visual == null:
+		return
+	var offset := interactor.global_position - character.global_position
+	offset.y = 0.0
+	if offset.is_zero_approx():
+		return
+	var local_direction := character.global_basis.orthonormalized().inverse() * offset.normalized()
+	visual.rotation.y = atan2(-local_direction.x, -local_direction.z)

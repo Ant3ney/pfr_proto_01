@@ -1,0 +1,122 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/city_interior_runtime.tscn" id="3_runtime"]
+[ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="4_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_plinth"]
+albedo_color = Color(0.73, 0.69, 0.6, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="Material_case"]
+albedo_color = Color(0.34, 0.55, 0.61, 1)
+roughness = 0.38
+
+[sub_resource type="StandardMaterial3D" id="Material_bronze"]
+albedo_color = Color(0.42, 0.25, 0.09, 1)
+metallic = 0.45
+roughness = 0.54
+
+[sub_resource type="StandardMaterial3D" id="Material_gallery_blue"]
+albedo_color = Color(0.11, 0.3, 0.5, 1)
+roughness = 0.72
+
+[sub_resource type="BoxMesh" id="Mesh_plinth"]
+material = SubResource("Material_plinth")
+size = Vector3(1.55, 0.78, 1.55)
+
+[sub_resource type="BoxMesh" id="Mesh_case"]
+material = SubResource("Material_case")
+size = Vector3(1.18, 1.05, 1.18)
+
+[sub_resource type="CylinderMesh" id="Mesh_artifact"]
+material = SubResource("Material_bronze")
+top_radius = 0.3
+bottom_radius = 0.52
+height = 1.15
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="Mesh_gallery_sign"]
+material = SubResource("Material_gallery_blue")
+size = Vector3(5.4, 0.78, 0.07)
+
+[sub_resource type="BoxMesh" id="Mesh_bench"]
+material = SubResource("Material_bronze")
+size = Vector3(3.4, 0.55, 0.78)
+
+[sub_resource type="BoxShape3D" id="Shape_display"]
+size = Vector3(1.55, 1.85, 1.55)
+
+[sub_resource type="BoxShape3D" id="Shape_bench"]
+size = Vector3(3.4, 0.55, 0.78)
+
+[node name="MuseumGallery" type="Node3D"]
+editor_description = "Broad civic gallery with brick and limestone architecture, opaque blue display cases, bronze artifacts, a central rest bench, and one clearly readable entry route."
+metadata/mobile_web_level = true
+metadata/interior_id = "museum"
+
+[node name="Room" parent="." instance=ExtResource("1_room")]
+scale = Vector3(1.35, 1, 1.1)
+
+[node name="Lighting" parent="." instance=ExtResource("2_lighting")]
+
+[node name="Runtime" parent="." instance=ExtResource("3_runtime")]
+
+[node name="GallerySign" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.45, -5.28)
+mesh = SubResource("Mesh_gallery_sign")
+
+[node name="DisplayLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-4.25, 0.39, -2.35)
+mesh = SubResource("Mesh_plinth")
+
+[node name="CaseLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-4.25, 1.3, -2.35)
+mesh = SubResource("Mesh_case")
+
+[node name="ArtifactLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-4.25, 1.38, -2.35)
+mesh = SubResource("Mesh_artifact")
+
+[node name="DisplayRight" type="MeshInstance3D" parent="."]
+position = Vector3(4.25, 0.39, -2.35)
+mesh = SubResource("Mesh_plinth")
+
+[node name="CaseRight" type="MeshInstance3D" parent="."]
+position = Vector3(4.25, 1.3, -2.35)
+mesh = SubResource("Mesh_case")
+
+[node name="ArtifactRight" type="MeshInstance3D" parent="."]
+position = Vector3(4.25, 1.38, -2.35)
+mesh = SubResource("Mesh_artifact")
+
+[node name="CentralBench" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.275, 0.65)
+rotation = Vector3(0, 1.570796, 0)
+mesh = SubResource("Mesh_bench")
+
+[node name="FurnitureCollision" type="StaticBody3D" parent="."]
+
+[node name="DisplayLeft" type="CollisionShape3D" parent="FurnitureCollision"]
+position = Vector3(-4.25, 0.925, -2.35)
+shape = SubResource("Shape_display")
+
+[node name="DisplayRight" type="CollisionShape3D" parent="FurnitureCollision"]
+position = Vector3(4.25, 0.925, -2.35)
+shape = SubResource("Shape_display")
+
+[node name="CentralBench" type="CollisionShape3D" parent="FurnitureCollision"]
+position = Vector3(0, 0.275, 0.65)
+rotation = Vector3(0, 1.570796, 0)
+shape = SubResource("Shape_bench")
+
+[node name="EntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, 3.95)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="ExitToCity" parent="." instance=ExtResource("4_transfer")]
+position = Vector3(0, 0, 5.15)
+scale = Vector3(1.65, 1, 0.9)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"MuseumReturn"

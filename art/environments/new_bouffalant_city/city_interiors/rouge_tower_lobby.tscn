@@ -1,0 +1,114 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/city_interior_runtime.tscn" id="3_runtime"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_walnut"]
+albedo_color = Color(0.14, 0.07, 0.045, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Material_brass"]
+albedo_color = Color(0.66, 0.42, 0.13, 1)
+metallic = 0.4
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Material_rouge"]
+albedo_color = Color(0.46, 0.07, 0.13, 1)
+roughness = 0.73
+
+[sub_resource type="BoxMesh" id="Mesh_directory"]
+material = SubResource("Material_walnut")
+size = Vector3(2.7, 1.1, 1.05)
+
+[sub_resource type="BoxMesh" id="Mesh_directory_top"]
+material = SubResource("Material_brass")
+size = Vector3(2.95, 0.11, 1.28)
+
+[sub_resource type="BoxMesh" id="Mesh_elevator"]
+material = SubResource("Material_brass")
+size = Vector3(1.55, 2.55, 0.09)
+
+[sub_resource type="BoxMesh" id="Mesh_runner"]
+material = SubResource("Material_rouge")
+size = Vector3(1.7, 0.035, 5.8)
+
+[sub_resource type="BoxShape3D" id="Shape_directory"]
+size = Vector3(2.95, 1.18, 1.28)
+
+[node name="RougeTowerLobby" type="Node3D"]
+editor_description = "Tall civic-tower lobby reduced to a readable walnut directory, brass lift doors, a restrained crimson runner, and three transfer openings."
+metadata/mobile_web_level = true
+metadata/interior_id = "rouge_tower"
+
+[node name="Room" parent="." instance=ExtResource("1_room")]
+scale = Vector3(0.8, 1, 0.9)
+
+[node name="Lighting" parent="." instance=ExtResource("2_lighting")]
+
+[node name="Runtime" parent="." instance=ExtResource("3_runtime")]
+
+[node name="DirectoryDesk" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.55, -0.45)
+mesh = SubResource("Mesh_directory")
+
+[node name="DirectoryTop" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.13, -0.45)
+mesh = SubResource("Mesh_directory_top")
+
+[node name="Runner" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.025, 1.1)
+mesh = SubResource("Mesh_runner")
+
+[node name="LiftLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-2.45, 1.275, -4.38)
+mesh = SubResource("Mesh_elevator")
+
+[node name="LiftRight" type="MeshInstance3D" parent="."]
+position = Vector3(2.45, 1.275, -4.38)
+mesh = SubResource("Mesh_elevator")
+
+[node name="DirectoryCollision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DirectoryCollision"]
+position = Vector3(0, 0.59, -0.45)
+shape = SubResource("Shape_directory")
+
+[node name="NorthDoor" parent="." instance=ExtResource("4_door")]
+position = Vector3(0, 0, -4.38)
+
+[node name="EastDoor" parent="." instance=ExtResource("4_door")]
+position = Vector3(4.67, 0, 1.55)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="SouthEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, 2.95)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="NorthEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, -2.85)
+
+[node name="EastEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(3.25, 0, 1.55)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="ExitSouth" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, 4.15)
+scale = Vector3(1.25, 1, 0.85)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"RougeTowerSouthReturn"
+
+[node name="ExitNorth" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, -4.08)
+scale = Vector3(1.25, 1, 0.85)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"RougeTowerNorthReturn"
+
+[node name="ExitEast" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(4.35, 0, 1.55)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(1.25, 1, 0.85)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"RougeTowerEastReturn"

@@ -348,6 +348,9 @@ func _configure_battle_ui(battle_data: Dictionary) -> void:
 	var player_hp := _battle_ui_overlay.get_node(
 		^"PlayerStatus/Margin/Content/Health/PlayerHP"
 	) as ProgressBar
+	var player_xp := _battle_ui_overlay.get_node(
+		^"PlayerStatus/Margin/Content/Experience/PlayerXP"
+	) as ProgressBar
 	var opponent_name_label := _battle_ui_overlay.get_node(
 		^"OpponentStatus/Margin/Content/Identity/OpponentName"
 	) as Label
@@ -365,6 +368,11 @@ func _configure_battle_ui(battle_data: Dictionary) -> void:
 	_set_battle_health(player_hp, _battle_health_value(
 		battle_data.get("player_health", 1.0)
 	))
+	player_xp.value = clampf(
+		float(battle_data.get("player_experience_progress", 0.0)),
+		0.0,
+		1.0
+	)
 	opponent_name_label.text = _format_battle_name(opponent_name)
 	opponent_level_label.text = _battle_level_text(
 		battle_data.get("opponent_level", 0)

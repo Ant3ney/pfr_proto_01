@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://rnd/tests/player_menu_hud_smoke_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="2_ui"]
+
+[node name="PlayerMenuHUDSmokeTest" type="Node"]
+script = ExtResource("1_test")
+
+[node name="GameUI" parent="." instance=ExtResource("2_ui")]

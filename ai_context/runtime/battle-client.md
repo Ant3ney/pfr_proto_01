@@ -1,7 +1,7 @@
 # Centralized Godot Battle Client
 
 Read this document when changing the Godot battle coordinator, REST transport,
-response validation, collection health writeback, request-driven choices, or
+response validation, collection health/XP writeback, request-driven choices, or
 presentation event sequencing. Check the linked implementation and focused
 tests before changing these contracts.
 
@@ -21,7 +21,7 @@ PRESENTING/SUBMITTING -> ENDED -> RETURNING -> IDLE
 
 `BattleSystem` owns encounter discovery, collection-party DTO construction,
 the memory-only state token, battle ID and revision, exact request retries,
-response validation, health writeback, event/request ordering, result state,
+response validation, atomic health/XP writeback, event/request ordering, result state,
 and session cleanup. [`BattleScene`](../../battle/BattleScene.gd) is a thin
 adapter: it converts UI actions into typed coordinator calls and converts
 copied snapshots/events into presentation. It must not create REST commands,
@@ -55,9 +55,27 @@ sprite metadata is joined by `memberId` only after validation and only in the
 deep-copied presentation snapshot.
 
 Every accepted response, including loss and forfeit, is written through
-`CollectionSystem.apply_battle_health_snapshot()`. That API validates a
-complete player party before applying all health values atomically and emitting
-one collection update.
+`CollectionSystem.apply_battle_health_and_experience()`. That API validates a
+complete player party and all XP recipients before applying health and
+progression atomically and emitting one collection update. `BattleSystem`
+tracks each player member that has been active in the current session. A
+validated opponent transition from not-fainted to fainted awards every such
+participant once; initial snapshots, stale callbacks, retries, and duplicate
+responses cannot award XP. The level differential supplies the base reward in
+[`BattleExperience`](../../battle/system/BattleExperience.gd), then the
+defeated Pokemon's local Pokédex `xp_multiplier` is applied. This progression
+metadata stays local and never enters the strict REST team DTO.
+
+Applied local XP awards also report whether a direct level-only evolution is
+available and copy its eligible targets. A level-up presentation message points
+the player to the Pokemon menu; the collection species is not changed during
+the in-flight server session. See [`evolution.md`](evolution.md).
+
+The pinned PvE rule first computes
+`base = round(defeated_level * 10 * clamp(1 + 0.18 * (defeated_level - participant_level), 0.4, 2.2))`,
+then `award = round(base * xp_multiplier)`, with a minimum award of 1. Every
+member that has been active receives the full award rather than dividing it;
+members that never entered receive none.
 
 ## Public input and presentation boundary
 
@@ -101,14 +119,33 @@ width clamped to 236 to 288 px, with a 10 px player-card/message gap, so wider
 landscape viewports give their extra width to the message panel rather than
 making the compact cards taller.
 
+The player card includes `PlayerXP`, a label-free 3 px cyan strip directly
+under HP. It displays copied `experienceProgress` from the active PCL and does
+not increase the 58 px card height. A level-up may update the local collection
+level immediately for presentation and later battles; the in-flight server
+session remains snapshot-authoritative for combat calculations.
+
+After an `experience` event is displayed, `BattleScene` asks the R&D
+`RNDMoveLearningSystem` to present every move earned by that event's `memberId`.
+The scene awaits replacement or decline before acknowledging the event
+revision, so the next server request cannot appear beneath the modal. Equipped
+moves still change only in `CollectionSystem`; the current REST session keeps
+its original team snapshot and later battles receive the updated move set. See
+[`move-learning.md`](move-learning.md) for the generated learnset and queue
+contract.
+
 Ordinary choices use [`battle_choice_overlay.tscn`](../../battle/ui/battle_choice_overlay.tscn)
 and [`BattleChoiceOverlay`](../../battle/ui/BattleChoiceOverlay.gd) as a bottom
 tray with the same 56 px geometry and no battlefield dim. Move buttons preserve
 the returned order and `moveIndex`, show the returned PP and disabled state,
 and include Back; voluntary switches show only returned `memberId` options
-joined to snapshot names and HP, while forced switches omit Back and cannot be
-cancelled. Forfeit confirmation, retry/return errors, and final results instead
-use the compact centered modal mode with a dim layer.
+joined to snapshot names, HP, and exact `spriteId`. Each switch card includes a
+32 px, alpha-cropped still from frame zero of that Pokémon's front-facing `ani`
+GIF atlas; unsupported exact forms and unapproved shiny requests retain the
+neutral placeholder policy rather than substituting related art. Forced
+switches omit Back and cannot be cancelled. Forfeit confirmation, retry/return
+errors, and final results instead use the compact centered modal mode with a
+dim layer.
 
 The request remains authoritative for available move and switch choices, and
 the snapshot remains authoritative for names and HP. Move color and type text
@@ -153,16 +190,26 @@ The resource owns stable IDs, protocol-safe side name, one-to-six validated
 members, optional approved sprite override, and forfeit policy. Kyle's example
 is [`trainer_kyle_lake_v1.tres`](../../battle/encounters/trainer_kyle_lake_v1.tres)
 inside [`kyle_battle_scene.tscn`](../../battle/kyle_battle_scene.tscn).
+Route 4 uses the same contract for a wild caller: distance travelled inside
+[`TallGrassEncounterZone`](../../rnd/TallGrassEncounterZone.gd) launches
+[`route_4_wild_battle_scene.tscn`](../../battle/route_4_wild_battle_scene.tscn),
+whose provider owns
+[`wild_fletchling_route_4_v1.tres`](../../battle/encounters/wild_fletchling_route_4_v1.tres).
+The launch ID and provider ID are both `wild-fletchling-route-4-v1`.
 
 ## Regression checks
 
 ```bash
 node tools/generate_battle_species_mapping.mjs --check
+node tools/generate_creature_experience_data.mjs --check
+node rnd/move_learning/tools/generate_move_learnsets.mjs --check
 godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_ui_layout_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_choice_overlay_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
+godot --headless --path . --scene res://tests/tall_grass_encounter_zone_smoke_test.tscn
 ```
 
 These cover migration and mapping, exact Kyle authoring, start/action/retry,

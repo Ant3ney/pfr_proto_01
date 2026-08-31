@@ -76,20 +76,131 @@ func load_active(
 		return {}
 	var side := _side_key(player_side)
 	release_active(player_side)
-	var asset: Dictionary
-	if not approved_sprite_override.is_empty():
-		asset = _load_override(approved_sprite_override, sprite_id, player_side)
-	elif shiny:
-		asset = _load_placeholder(sprite_id, player_side, "shiny_not_approved")
-	elif not _valid_exact_id(sprite_id):
-		asset = _load_placeholder(sprite_id, player_side, "invalid_exact_sprite_id")
-	else:
-		asset = _load_catalog_asset(sprite_id, player_side)
-		if asset.is_empty():
-			asset = _load_placeholder(sprite_id, player_side, "exact_sprite_missing")
+	var asset := _resolve_asset(
+		sprite_id,
+		player_side,
+		shiny,
+		approved_sprite_override
+	)
 	if not asset.is_empty():
 		_active_assets[side] = asset
 	return asset.duplicate(true)
+
+
+func load_front_thumbnail(
+	sprite_id: String,
+	shiny: bool = false,
+	approved_sprite_override: String = "",
+	thumbnail_size := Vector2i(32, 32)
+) -> Dictionary:
+	## Extract one small still from the exact front-facing GIF atlas without
+	## retaining that atlas in the active player/opponent cache. Switch menus can
+	## therefore show a full party without holding six animation atlases.
+	if _entries.is_empty() and not initialize():
+		return {}
+	if thumbnail_size.x <= 0 or thumbnail_size.y <= 0:
+		_fail("Battle sprite thumbnail dimensions must be positive.")
+		return {}
+
+	var asset := _resolve_asset(
+		sprite_id,
+		false,
+		shiny,
+		approved_sprite_override
+	)
+	if asset.is_empty():
+		return {}
+	var sprite_frames := asset.get("sprite_frames") as SpriteFrames
+	if sprite_frames == null or sprite_frames.get_frame_count(ANIMATION_NAME) <= 0:
+		_fail("Battle sprite thumbnail source has no frame.")
+		return {}
+	var frame_texture := sprite_frames.get_frame_texture(ANIMATION_NAME, 0) as AtlasTexture
+	if frame_texture == null or frame_texture.atlas == null:
+		_fail("Battle sprite thumbnail source is not an atlas frame.")
+		return {}
+	var atlas_image := frame_texture.atlas.get_image()
+	if atlas_image == null or atlas_image.is_empty():
+		_fail("Battle sprite thumbnail atlas pixels could not be read.")
+		return {}
+
+	var frame_region := Rect2i(
+		roundi(frame_texture.region.position.x),
+		roundi(frame_texture.region.position.y),
+		roundi(frame_texture.region.size.x),
+		roundi(frame_texture.region.size.y)
+	)
+	frame_region = frame_region.intersection(Rect2i(Vector2i.ZERO, atlas_image.get_size()))
+	if not frame_region.has_area():
+		_fail("Battle sprite thumbnail frame region is empty.")
+		return {}
+	var frame_image := atlas_image.get_region(frame_region)
+
+	var frame_metadata_value: Variant = asset.get("frame_metadata", [])
+	if (
+		typeof(frame_metadata_value) != TYPE_ARRAY
+		or (frame_metadata_value as Array).is_empty()
+		or typeof((frame_metadata_value as Array)[0]) != TYPE_DICTIONARY
+	):
+		_fail("Battle sprite thumbnail alpha bounds are missing.")
+		return {}
+	var metadata := (frame_metadata_value as Array)[0] as Dictionary
+	var bounds_value: Variant = metadata.get("alpha_bounds", {})
+	if typeof(bounds_value) != TYPE_DICTIONARY:
+		_fail("Battle sprite thumbnail alpha bounds are invalid.")
+		return {}
+	var bounds := bounds_value as Dictionary
+	var crop := Rect2i(
+		roundi(float(bounds.get("x", 0.0))),
+		roundi(float(bounds.get("y", 0.0))),
+		maxi(1, roundi(float(bounds.get("width", frame_image.get_width())))),
+		maxi(1, roundi(float(bounds.get("height", frame_image.get_height()))))
+	)
+	crop = crop.intersection(Rect2i(Vector2i.ZERO, frame_image.get_size()))
+	if not crop.has_area():
+		_fail("Battle sprite thumbnail has no visible pixels.")
+		return {}
+
+	var cropped := frame_image.get_region(crop)
+	if cropped.is_compressed() and cropped.decompress() != OK:
+		_fail("Battle sprite thumbnail pixels could not be decompressed.")
+		return {}
+	cropped.convert(Image.FORMAT_RGBA8)
+	var fit_scale := minf(
+		float(thumbnail_size.x) / float(cropped.get_width()),
+		float(thumbnail_size.y) / float(cropped.get_height())
+	)
+	var fitted_size := Vector2i(
+		maxi(1, roundi(float(cropped.get_width()) * fit_scale)),
+		maxi(1, roundi(float(cropped.get_height()) * fit_scale))
+	)
+	cropped.resize(fitted_size.x, fitted_size.y, Image.INTERPOLATE_NEAREST)
+	var thumbnail_image := Image.create(
+		thumbnail_size.x,
+		thumbnail_size.y,
+		false,
+		Image.FORMAT_RGBA8
+	)
+	thumbnail_image.fill(Color.TRANSPARENT)
+	# Center horizontally and ground every silhouette on the same lower edge.
+	var destination := Vector2i(
+		(thumbnail_size.x - fitted_size.x) / 2,
+		thumbnail_size.y - fitted_size.y
+	)
+	thumbnail_image.blit_rect(
+		cropped,
+		Rect2i(Vector2i.ZERO, fitted_size),
+		destination
+	)
+	var thumbnail_texture := ImageTexture.create_from_image(thumbnail_image)
+	return {
+		"texture": thumbnail_texture,
+		"sprite_id": String(asset.get("sprite_id", sprite_id)),
+		"style": OPPONENT_STYLE,
+		"frame_index": 0,
+		"atlas_path": String(asset.get("atlas_path", "")),
+		"is_placeholder": bool(asset.get("is_placeholder", false)),
+		"placeholder_reason": String(asset.get("placeholder_reason", "")),
+	}
 
 
 func release_active(player_side: bool) -> void:
@@ -118,6 +229,24 @@ func catalog_summary() -> Dictionary:
 
 func get_last_error() -> String:
 	return _last_error
+
+
+func _resolve_asset(
+	sprite_id: String,
+	player_side: bool,
+	shiny: bool,
+	approved_sprite_override: String
+) -> Dictionary:
+	if not approved_sprite_override.is_empty():
+		return _load_override(approved_sprite_override, sprite_id, player_side)
+	if shiny:
+		return _load_placeholder(sprite_id, player_side, "shiny_not_approved")
+	if not _valid_exact_id(sprite_id):
+		return _load_placeholder(sprite_id, player_side, "invalid_exact_sprite_id")
+	var asset := _load_catalog_asset(sprite_id, player_side)
+	if asset.is_empty():
+		return _load_placeholder(sprite_id, player_side, "exact_sprite_missing")
+	return asset
 
 
 func _load_catalog_asset(sprite_id: String, player_side: bool) -> Dictionary:

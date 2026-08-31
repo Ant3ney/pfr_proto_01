@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://core/PlayerCamera.gd" id="2_camera"]
+[ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="3_ui"]
+
+[node name="CityInteriorRuntime" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 5, 8)
+current = true
+near = 0.15
+far = 36.0
+script = ExtResource("2_camera")
+target_path = NodePath("../Player")
+offset = Vector3(0, 8.5, 6.8)
+camera_distance = 5.8
+camera_pitch_degrees = 18
+camera_fov_degrees = 52.0
+look_height = 0.72
+
+[node name="GameUI" parent="." instance=ExtResource("3_ui")]

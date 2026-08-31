@@ -26,10 +26,12 @@ var _current_animation: StringName
 
 
 func _ready() -> void:
+	add_to_group(&"pfr_characters")
 	if not character_movement:
 		character_movement = CharacterMovement.new()
 	if not controller:
 		controller = NPCController.new()
+	controller.prepare_for_character(self)
 
 	if not _load_character_art_asset_pack():
 		set_physics_process(false)
@@ -40,6 +42,25 @@ func _ready() -> void:
 		return
 
 	_play_animation(_idle_playback_animation)
+
+
+func can_interact(interactor: PlayerCharacter) -> bool:
+	return (
+		controller != null
+		and controller.can_interact(self, interactor)
+	)
+
+
+func interact(interactor: PlayerCharacter) -> bool:
+	if controller == null:
+		return false
+	return controller.interact(self, interactor)
+
+
+func get_interaction_prompt(interactor: PlayerCharacter) -> String:
+	if controller == null:
+		return ""
+	return controller.get_interaction_prompt(self, interactor)
 
 
 func _physics_process(delta: float) -> void:

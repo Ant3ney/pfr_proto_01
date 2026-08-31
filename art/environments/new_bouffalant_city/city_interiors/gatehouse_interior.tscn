@@ -1,0 +1,93 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/city_interior_runtime.tscn" id="3_runtime"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_desk"]
+albedo_color = Color(0.15, 0.08, 0.045, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Material_green"]
+albedo_color = Color(0.28, 0.38, 0.13, 1)
+roughness = 0.76
+
+[sub_resource type="StandardMaterial3D" id="Material_brass"]
+albedo_color = Color(0.65, 0.43, 0.13, 1)
+metallic = 0.38
+roughness = 0.52
+
+[sub_resource type="BoxMesh" id="Mesh_checkpoint"]
+material = SubResource("Material_desk")
+size = Vector3(3.4, 1.02, 1.0)
+
+[sub_resource type="BoxMesh" id="Mesh_map"]
+material = SubResource("Material_green")
+size = Vector3(2.6, 1.6, 0.07)
+
+[sub_resource type="BoxMesh" id="Mesh_barrier"]
+material = SubResource("Material_brass")
+size = Vector3(2.8, 0.12, 0.12)
+
+[sub_resource type="BoxShape3D" id="Shape_checkpoint"]
+size = Vector3(3.4, 1.02, 1.0)
+
+[node name="GatehouseInterior" type="Node3D"]
+editor_description = "Narrow classical checkpoint room with a walnut inspection desk, civic map, brass lane bars, and independent approaches from both sides of the gate building."
+metadata/mobile_web_level = true
+metadata/interior_id = "gatehouse"
+
+[node name="Room" parent="." instance=ExtResource("1_room")]
+scale = Vector3(0.75, 1, 0.8)
+
+[node name="Lighting" parent="." instance=ExtResource("2_lighting")]
+
+[node name="Runtime" parent="." instance=ExtResource("3_runtime")]
+
+[node name="CheckpointDesk" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.51, -0.35)
+mesh = SubResource("Mesh_checkpoint")
+
+[node name="CivicMap" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.0, -3.86)
+mesh = SubResource("Mesh_map")
+
+[node name="BarrierLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-2.7, 0.82, 1.35)
+rotation = Vector3(0, 0.28, 0)
+mesh = SubResource("Mesh_barrier")
+
+[node name="BarrierRight" type="MeshInstance3D" parent="."]
+position = Vector3(2.7, 0.82, -1.35)
+rotation = Vector3(0, 0.28, 0)
+mesh = SubResource("Mesh_barrier")
+
+[node name="CheckpointCollision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointCollision"]
+position = Vector3(0, 0.51, -0.35)
+shape = SubResource("Shape_checkpoint")
+
+[node name="RearDoor" parent="." instance=ExtResource("4_door")]
+position = Vector3(0, 0, -3.86)
+
+[node name="FrontEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, 2.55)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="RearEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, -2.45)
+
+[node name="ExitFront" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, 3.7)
+scale = Vector3(1.55, 1, 0.82)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"GateBuildingFrontReturn"
+
+[node name="ExitRear" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, -3.62)
+scale = Vector3(1.55, 1, 0.82)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"GateBuildingRearReturn"

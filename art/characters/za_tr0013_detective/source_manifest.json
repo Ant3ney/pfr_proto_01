@@ -1,0 +1,49 @@
+{
+  "format_version": 1,
+  "generated_by": "pipeline_tools/build_character_import_library.py",
+  "id": "tr0013_00_detective",
+  "slug": "za_tr0013_detective",
+  "display_name": "ZA Detective",
+  "source": {
+    "model_archive": "ZA-TrainersNPC.zip",
+    "model_path": "ik_chara/model_uq/tr0013_00_detective/tr0013_00.trmdl",
+    "animation_archive": "ZA-TrainersAnim.zip",
+    "animation_paths": {
+      "idle": "ik_chara/motion_uq/tr0013_00_detective/tr0013_00_00001_defaultwait01_loop.tranm",
+      "walk": "ik_chara/motion_uq/tr0013_00_detective/tr0013_00_00051_walk01_000_loop.tranm",
+      "run": "ik_chara/motion_uq/tr0013_00_detective/tr0013_00_00071_run01_000_loop.tranm"
+    },
+    "motion_source": "character-specific gait set"
+  },
+  "runtime": {
+    "model": "models/model.glb",
+    "animation_player_path": "AnimationPlayer",
+    "glb_animation_names": {
+      "idle": "tr0013_00_00001_defaultwait01_loop",
+      "walk": "tr0013_00_00051_walk01_000_loop",
+      "run": "tr0013_00_00071_run01_000_loop"
+    },
+    "godot_animation_names": {
+      "idle": "tr0013_00_00001_defaultwait01",
+      "walk": "tr0013_00_00051_walk01_000",
+      "run": "tr0013_00_00071_run01_000"
+    },
+    "root_motion_bone": "origin",
+    "rotation_degrees": [
+      0.0,
+      180.0,
+      0.0
+    ],
+    "animation_sources": {
+      "idle": "animations/tr0013_00_00001_defaultwait01_loop.tranm",
+      "walk": "animations/tr0013_00_00051_walk01_000_loop.tranm",
+      "run": "animations/tr0013_00_00071_run01_000_loop.tranm"
+    }
+  },
+  "validation": {
+    "result": "pass",
+    "glb_report": "qa/validation.json",
+    "blender_report": "qa/blender_report.json",
+    "preview": "qa/preview.png"
+  }
+}

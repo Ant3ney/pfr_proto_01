@@ -1,0 +1,234 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior_environment.glb" id="1_environment"]
+[ext_resource type="PackedScene" path="res://demo/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://core/PlayerCamera.gd" id="3_camera"]
+[ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="4_ui"]
+[ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="5_transfer"]
+[ext_resource type="PackedScene" path="res://overworld/pokemon_center/PokemonCenterHealer.tscn" id="6_healer"]
+[ext_resource type="PackedScene" path="res://rnd/stretch/npc/stretchman.tscn" id="7_stretchman"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_interior"]
+sky_top_color = Color(0.16, 0.38, 0.58, 1)
+sky_horizon_color = Color(0.66, 0.76, 0.75, 1)
+ground_bottom_color = Color(0.08, 0.07, 0.06, 1)
+ground_horizon_color = Color(0.38, 0.35, 0.3, 1)
+
+[sub_resource type="Sky" id="Sky_interior"]
+sky_material = SubResource("ProceduralSkyMaterial_interior")
+
+[sub_resource type="Environment" id="Environment_interior"]
+background_mode = 2
+sky = SubResource("Sky_interior")
+ambient_light_source = 2
+ambient_light_color = Color(0.86, 0.82, 0.76, 1)
+ambient_light_energy = 0.18
+reflected_light_source = 1
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape_floor"]
+size = Vector3(12, 0.2, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape_back_wall"]
+size = Vector3(12, 3.2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_left_wall"]
+size = Vector3(0.3, 3.2, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape_right_wall"]
+size = Vector3(0.3, 3.2, 7)
+
+[sub_resource type="BoxShape3D" id="BoxShape_chamfer_wall"]
+size = Vector3(4.25, 0.9, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_front_left"]
+size = Vector3(4.4, 0.9, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_front_right"]
+size = Vector3(1.4, 0.9, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_counter"]
+size = Vector3(7.85, 1.15, 1.45)
+
+[sub_resource type="BoxShape3D" id="BoxShape_console"]
+size = Vector3(4.15, 2.45, 0.62)
+
+[sub_resource type="BoxShape3D" id="BoxShape_bench"]
+size = Vector3(1, 1.35, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape_terminal"]
+size = Vector3(1.4, 1.7, 1.2)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape_planter"]
+radius = 0.44
+height = 1.5
+
+[node name="PokemonCenterInterior" type="Node3D"]
+editor_description = "Playable five-sided Pokemon Center interior. A warm grungy-brick civic shell, limestone pilasters and cornices, walnut wainscot and seating, bright near-future clinic fixtures, simplified collision, and restrained lighting are authored for the project's lower gameplay camera and mobile-web target."
+metadata/mobile_web_level = true
+metadata/environment_triangles = 1948
+metadata/environment_material_draws = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_interior")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.872665, -0.436332, 0)
+light_color = Color(1, 0.91, 0.76, 1)
+light_energy = 0.30
+shadow_enabled = true
+directional_shadow_max_distance = 20.0
+
+[node name="CounterFillLeft" type="OmniLight3D" parent="."]
+position = Vector3(-3, 2.65, -1.4)
+light_color = Color(0.73, 0.91, 1, 1)
+light_energy = 0.10
+omni_range = 5.2
+shadow_enabled = false
+
+[node name="CounterFillRight" type="OmniLight3D" parent="."]
+position = Vector3(3, 2.65, -1.4)
+light_color = Color(1, 0.82, 0.72, 1)
+light_energy = 0.09
+omni_range = 5.2
+shadow_enabled = false
+
+[node name="Environment" parent="." instance=ExtResource("1_environment")]
+metadata/mobile_web_asset = true
+metadata/collision_authored_separately = true
+
+[node name="Collision" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/Floor"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("BoxShape_floor")
+
+[node name="BackWall" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/BackWall"]
+position = Vector3(0, 1.6, -5)
+shape = SubResource("BoxShape_back_wall")
+
+[node name="LeftWall" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/LeftWall"]
+position = Vector3(-6, 1.6, 0)
+shape = SubResource("BoxShape_left_wall")
+
+[node name="RightWall" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/RightWall"]
+position = Vector3(6, 1.6, -1.5)
+shape = SubResource("BoxShape_right_wall")
+
+[node name="ChamferWall" type="StaticBody3D" parent="Collision"]
+position = Vector3(4.5, 0.45, 3.5)
+rotation = Vector3(0, 0.785398, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/ChamferWall"]
+shape = SubResource("BoxShape_chamfer_wall")
+
+[node name="FrontLeftWall" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/FrontLeftWall"]
+position = Vector3(-3.8, 0.45, 5)
+shape = SubResource("BoxShape_front_left")
+
+[node name="FrontRightWall" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/FrontRightWall"]
+position = Vector3(2.3, 0.45, 5)
+shape = SubResource("BoxShape_front_right")
+
+[node name="HealingCounter" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/HealingCounter"]
+position = Vector3(0, 0.575, -2.75)
+shape = SubResource("BoxShape_counter")
+
+[node name="HealingConsole" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/HealingConsole"]
+position = Vector3(0, 1.225, -4.5)
+shape = SubResource("BoxShape_console")
+
+[node name="WaitingBenches" type="StaticBody3D" parent="Collision"]
+
+[node name="BenchFront" type="CollisionShape3D" parent="Collision/WaitingBenches"]
+position = Vector3(-4.65, 0.675, 1.85)
+shape = SubResource("BoxShape_bench")
+
+[node name="BenchBack" type="CollisionShape3D" parent="Collision/WaitingBenches"]
+position = Vector3(-4.65, 0.675, -0.9)
+shape = SubResource("BoxShape_bench")
+
+[node name="PublicTerminal" type="StaticBody3D" parent="Collision"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/PublicTerminal"]
+position = Vector3(4.4, 0.85, 0.2)
+shape = SubResource("BoxShape_terminal")
+
+[node name="Planters" type="StaticBody3D" parent="Collision"]
+
+[node name="EntrancePlanter" type="CollisionShape3D" parent="Collision/Planters"]
+position = Vector3(-5.05, 0.75, 3.7)
+shape = SubResource("CylinderShape_planter")
+
+[node name="TerminalPlanter" type="CollisionShape3D" parent="Collision/Planters"]
+position = Vector3(4.72, 0.75, -1.72)
+shape = SubResource("CylinderShape_planter")
+
+[node name="EntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, 3.75)
+metadata/entry_id = "pokemon_center_front"
+
+[node name="ExitToCity" parent="." instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, 4.72)
+scale = Vector3(1.4, 1, 0.8)
+destination_scene_path = "res://demo/primary_development_enviroment.tscn"
+destination_spawn_marker = &"PokemonCenterEntrance"
+
+[node name="NurseSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, -3.83)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="PokemonCenterHealer" parent="." instance=ExtResource("6_healer")]
+position = Vector3(0, 0, -3.83)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="VisitorSpawnLeft" type="Marker3D" parent="."]
+position = Vector3(-3.55, 0, 1.8)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="VisitorSpawnRight" type="Marker3D" parent="."]
+position = Vector3(3.1, 0, 0.2)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="StretchmanReturnSpawn" type="Marker3D" parent="."]
+position = Vector3(2.35, 0, 2.1)
+rotation = Vector3(0, 0.45, 0)
+metadata/entry_id = "stretchman_return"
+
+[node name="Stretchman" parent="." instance=ExtResource("7_stretchman")]
+position = Vector3(3.1, 0, 0.2)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector3(0, 0, 3.75)
+
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 5, 8)
+current = true
+near = 0.15
+far = 35.0
+script = ExtResource("3_camera")
+target_path = NodePath("../Player")
+offset = Vector3(0, 9, 7)
+camera_distance = 6.0
+camera_pitch_degrees = 18
+camera_fov_degrees = 52.0
+look_height = 0.72
+
+[node name="GameUI" parent="." instance=ExtResource("4_ui")]

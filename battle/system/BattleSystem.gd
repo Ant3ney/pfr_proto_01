@@ -1,7 +1,7 @@
 extends Node
 
 ## The single owner of PvE battle state, REST sessions, validation, retries,
-## collection HP writeback, event ordering, and completion.
+## atomic collection HP/XP writeback, event ordering, and completion.
 
 signal state_changed(state: int)
 signal snapshot_changed(snapshot: Dictionary)
@@ -22,8 +22,8 @@ enum State {
 
 const START_ROUTE := "/battles"
 const ACTION_ROUTE := "/battles/actions"
-const RETURN_SCENE_PATH := "res://demo/modular_ground_scene.tscn"
 const MAX_RESPONSE_BYTES := 512 * 1024
+const ExperiencePolicy := preload("res://battle/system/BattleExperience.gd")
 
 var _state := State.IDLE
 var _transport: Node
@@ -36,6 +36,7 @@ var _forfeit_allowed := true
 var _player_member_ids: Array[String] = []
 var _opponent_member_ids: Array[String] = []
 var _presentation_metadata_by_id: Dictionary = {}
+var _participating_player_ids: Dictionary = {}
 
 # Sensitive session state. These values never enter a signal or public getter.
 var _state_token := ""
@@ -261,7 +262,7 @@ func continue_after_result() -> bool:
 	_cancel_inflight()
 	var suppression_id := _encounter_id
 	_clear_sensitive_session_state()
-	if not GameInstance.return_from_battle(RETURN_SCENE_PATH, suppression_id):
+	if not GameInstance.return_from_battle("", suppression_id):
 		_end_with_error(
 			"return_failed",
 			"The overworld could not be loaded.",
@@ -398,11 +399,20 @@ func _on_transport_completed(
 
 
 func _accept_response(response: Dictionary) -> void:
-	var player_snapshot := (response.parties as Dictionary).player as Array
-	if not CollectionSystem.apply_battle_health_snapshot(player_snapshot):
+	var parties := response.parties as Dictionary
+	var player_snapshot := parties.player as Array
+	var opponent_snapshot := parties.opponent as Array
+	var newly_fainted_opponents := _newly_fainted_opponents(opponent_snapshot)
+	_mark_active_participants(player_snapshot)
+	var requested_awards := _experience_awards_for_defeats(newly_fainted_opponents)
+	var progression: Dictionary = CollectionSystem.apply_battle_health_and_experience(
+		player_snapshot,
+		requested_awards
+	)
+	if not bool(progression.get("ok", false)):
 		_end_with_error(
 			"collection_writeback_failed",
-			_collection_error("The updated party health could not be saved."),
+			_collection_error("The updated party health and experience could not be saved."),
 			_pending_kind == "start"
 		)
 		return
@@ -432,6 +442,7 @@ func _accept_response(response: Dictionary) -> void:
 		_snapshot["result"] = _result.duplicate(true)
 
 	var translated_events := BattleEventTranslator.translate(response.events)
+	_append_experience_events(translated_events, progression.get("awards", []), player_snapshot)
 	_clear_pending_request()
 	_clear_battle_error()
 	_set_state(State.PRESENTING)
@@ -636,15 +647,130 @@ func _enrich_snapshot_presentation(snapshot: Dictionary) -> void:
 			var metadata_value: Variant = _presentation_metadata_by_id.get(
 				String(member.get("memberId", ""))
 			)
-			if typeof(metadata_value) != TYPE_DICTIONARY:
-				continue
-			for key: Variant in (metadata_value as Dictionary):
-				var metadata: Variant = (metadata_value as Dictionary)[key]
-				if typeof(metadata) == TYPE_STRING and (metadata as String).is_empty():
+			if typeof(metadata_value) == TYPE_DICTIONARY:
+				for key: Variant in (metadata_value as Dictionary):
+					var metadata: Variant = (metadata_value as Dictionary)[key]
+					if typeof(metadata) == TYPE_STRING and (metadata as String).is_empty():
+						continue
+					if typeof(metadata) in [TYPE_INT, TYPE_FLOAT] and float(metadata) == 0.0:
+						continue
+					member[key] = metadata
+			if side == "player":
+				var member_id := String(member.get("memberId", ""))
+				var pcl := CollectionSystem.get_pcl(member_id)
+				if pcl.is_empty():
 					continue
-				if typeof(metadata) in [TYPE_INT, TYPE_FLOAT] and float(metadata) == 0.0:
-					continue
-				member[key] = metadata
+				var stats := pcl.get("instanceStats", {}) as Dictionary
+				var progress := CollectionSystem.get_experience_progress(member_id)
+				member["collectionLevel"] = int(stats.get("level", member.get("level", 1)))
+				member["currentXp"] = int(stats.get("currentXp", 0))
+				member["experienceProgress"] = float(progress.get("normalizedProgress", 0.0))
+				member["xpIntoLevel"] = int(progress.get("xpIntoLevel", 0))
+				member["xpForNextLevel"] = int(progress.get("xpForNextLevel", 0))
+
+
+func _mark_active_participants(player_snapshot: Array) -> void:
+	for value: Variant in player_snapshot:
+		if typeof(value) != TYPE_DICTIONARY:
+			continue
+		var member := value as Dictionary
+		if bool(member.get("active", false)):
+			var member_id := String(member.get("memberId", ""))
+			if member_id in _player_member_ids:
+				_participating_player_ids[member_id] = true
+
+
+func _newly_fainted_opponents(opponent_snapshot: Array) -> Array[Dictionary]:
+	if _snapshot.is_empty():
+		return []
+	var previous_parties_value: Variant = _snapshot.get("parties")
+	if typeof(previous_parties_value) != TYPE_DICTIONARY:
+		return []
+	var previous_by_id: Dictionary = {}
+	for value: Variant in (previous_parties_value as Dictionary).get("opponent", []):
+		if typeof(value) == TYPE_DICTIONARY:
+			var member := value as Dictionary
+			previous_by_id[String(member.get("memberId", ""))] = member
+	var defeated: Array[Dictionary] = []
+	for value: Variant in opponent_snapshot:
+		if typeof(value) != TYPE_DICTIONARY:
+			continue
+		var member := value as Dictionary
+		var member_id := String(member.get("memberId", ""))
+		var previous_value: Variant = previous_by_id.get(member_id)
+		if typeof(previous_value) != TYPE_DICTIONARY:
+			continue
+		var previous := previous_value as Dictionary
+		if not bool(previous.get("fainted", false)) and bool(member.get("fainted", false)):
+			defeated.append(member)
+	return defeated
+
+
+func _experience_awards_for_defeats(defeated: Array[Dictionary]) -> Array[Dictionary]:
+	var awards: Array[Dictionary] = []
+	if defeated.is_empty():
+		return awards
+	for member_id in _player_member_ids:
+		if not _participating_player_ids.has(member_id):
+			continue
+		var pcl := CollectionSystem.get_pcl(member_id)
+		if pcl.is_empty():
+			continue
+		var participant_level := int((pcl.get("instanceStats", {}) as Dictionary).get("level", 1))
+		var total_amount := 0
+		for defeated_member in defeated:
+			var defeated_id := String(defeated_member.get("memberId", ""))
+			var metadata := _presentation_metadata_by_id.get(defeated_id, {}) as Dictionary
+			var reward := ExperiencePolicy.calculate_award(
+				participant_level,
+				int(defeated_member.get("level", 1)),
+				int(metadata.get("pokemonId", 0))
+			)
+			total_amount += int(reward.get("amount", 0))
+		if total_amount > 0:
+			awards.append({"memberId": member_id, "amount": total_amount})
+	return awards
+
+
+func _append_experience_events(
+	events: Array,
+	applied_awards_value: Variant,
+	player_snapshot: Array
+) -> void:
+	if typeof(applied_awards_value) != TYPE_ARRAY:
+		return
+	var name_by_id: Dictionary = {}
+	for value: Variant in player_snapshot:
+		if typeof(value) == TYPE_DICTIONARY:
+			var member := value as Dictionary
+			name_by_id[String(member.get("memberId", ""))] = String(
+				member.get("nickname", member.get("species", "Pokémon"))
+			)
+	for value: Variant in applied_awards_value as Array:
+		if typeof(value) != TYPE_DICTIONARY:
+			continue
+		var award := value as Dictionary
+		var applied_amount := int(award.get("appliedAmount", 0))
+		if applied_amount <= 0:
+			continue
+		var member_id := String(award.get("memberId", ""))
+		var display_name := String(name_by_id.get(member_id, "Pokémon"))
+		var message := "%s gained %d XP!" % [display_name, applied_amount]
+		if bool(award.get("leveledUp", false)):
+			message = "%s gained %d XP and grew to Lv. %d!" % [
+				display_name,
+				applied_amount,
+				int(award.get("level", 1)),
+			]
+			if bool(award.get("evolutionAvailable", false)):
+				message += " %s can now evolve from the Pokemon menu!" % display_name
+		events.append({
+			"type": "experience",
+			"side": "player",
+			"memberId": member_id,
+			"amount": applied_amount,
+			"message": message,
+		})
 
 
 func _collection_error(fallback: String) -> String:
@@ -689,6 +815,7 @@ func _clear_session_data() -> void:
 	_player_member_ids.clear()
 	_opponent_member_ids.clear()
 	_presentation_metadata_by_id.clear()
+	_participating_player_ids.clear()
 	_battle_id = ""
 	_revision = -1
 	_snapshot.clear()

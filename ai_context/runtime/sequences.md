@@ -56,9 +56,43 @@ example:
 | Dialog advancing | Caller updates the returned UI template | Disabled |
 | Final line dismissed | Clears dialog state, releases its lock, and calls `GameInstance.startBattle()` for a trainer encounter | Transferred to the battle-start flow; remains disabled after the synchronous handoff |
 
-An absent or empty dialog and a failed UI instantiation also use the finish
-path, restoring movement without starting a battle. Once the behavior reaches
-`COMPLETE`, it does not detect or approach the player again.
+The RND interaction HUD can also dispatch a trainer while it is `WAITING`.
+Interaction immediately marks the trainer `COMPLETE`, faces the player, and
+either starts the same dialog path or launches the configured battle directly
+when there is no dialog. `automatic_sight_encounter` controls the independent
+classic approach path. Kyle and all six city-line trainers use standard
+aggression: the first accepted battle consumes automatic sight for the current
+play session, and the returned trainer enters `WAITING` for HUD-driven manual
+rematches. Stretchman's generated opponents use Highly Aggro mode, stay
+`COMPLETE` only in the immediate suppressed return scene, and regain automatic
+sight when the destination is entered as a fresh run. The HUD interaction
+remains available while a trainer is `WAITING`, including when the player
+approaches from outside that sight line.
+
+An absent or empty dialog in the automatic path and a failed UI instantiation
+use the finish path, restoring movement without starting a battle. `COMPLETE`
+is terminal for that behavior instance; battle return creates a new scene-local
+instance and applies the standard/manual or Highly Aggro/suppressed policy above.
+
+## Current Pokemon Center healer sequence
+
+[`PokemonCenterHealerBehavior`](../../core/PokemonCenterHealerBehavior.gd)
+can poll its owning character's `InteractionArea` when
+`automatic_proximity_prompt` is enabled. The authored Center attendant disables
+that mode and is dispatched by the shared look-interaction HUD instead. The area
+still detects only the layer-1 `PlayerCharacter` and occupies no collision layer.
+
+| Stage | Healer behavior | Player movement |
+| --- | --- | --- |
+| Out of range | Waits and clears the re-entry latch | Unchanged |
+| Player newly enters or presses interact | Rejects overlap if movement is already locked; otherwise opens the prompt | Disabled |
+| Confirmation | **Heal** calls `CollectionSystem.heal_party()` once; **Not now** closes | Disabled |
+| Result | Reuses the prompt template for healed, already-healthy, or empty-party feedback | Disabled |
+| Dismissed/cancelled | Clears owned UI state and its lock | Restored |
+
+The proximity latch applies only in automatic mode. In HUD mode, a finished or
+declined prompt remains closed until the player explicitly presses interact
+again. `start_healing_sequence()` is the behavior's public dispatcher entry.
 
 ## Known cleanup boundary
 

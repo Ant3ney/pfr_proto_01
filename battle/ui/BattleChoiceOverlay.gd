@@ -19,6 +19,7 @@ const TRAY_BUTTON_HEIGHT := 40.0
 const MODAL_HALF_WIDTH := 270.0
 const MODAL_HALF_HEIGHT := 88.0
 const MAX_MOVE_OPTIONS := 4
+const SWITCH_THUMBNAIL_SIZE := Vector2i(32, 32)
 
 const GOLD := Color(0.91, 0.73, 0.38, 1.0)
 const GOLD_BRIGHT := Color(1.0, 0.91, 0.52, 1.0)
@@ -63,6 +64,7 @@ const MOVE_TYPE_COLORS := {
 
 var _forced_switch := false
 var _surface_mode := &"hidden"
+var _sprite_catalog := BattleSpriteCatalog.new()
 
 
 func _ready() -> void:
@@ -178,6 +180,7 @@ func show_switches(
 			int(member.get("maxHp", 0)),
 		]
 		button.set_meta("battle_switch_member_id", member_id)
+		_apply_switch_thumbnail(button, member)
 		button.pressed.connect(_on_switch_chosen.bind(member_id))
 	_update_row_stretch()
 	_grab_first_option_focus()
@@ -349,6 +352,37 @@ func _move_button_text(
 	]
 
 
+func _apply_switch_thumbnail(button: Button, member: Dictionary) -> void:
+	var sprite_id := String(member.get("spriteId", ""))
+	var thumbnail := _sprite_catalog.load_front_thumbnail(
+		sprite_id,
+		bool(member.get("shiny", false)),
+		String(member.get("spriteOverride", "")),
+		SWITCH_THUMBNAIL_SIZE
+	)
+	button.set_meta("battle_switch_sprite_id", sprite_id)
+	button.set_meta("battle_switch_thumbnail_style", String(thumbnail.get("style", "")))
+	button.set_meta(
+		"battle_switch_thumbnail_placeholder",
+		bool(thumbnail.get("is_placeholder", true))
+	)
+	button.set_meta(
+		"battle_switch_thumbnail_placeholder_reason",
+		String(thumbnail.get("placeholder_reason", ""))
+	)
+	button.set_meta(
+		"battle_switch_thumbnail_atlas_path",
+		String(thumbnail.get("atlas_path", ""))
+	)
+	var texture := thumbnail.get("texture") as Texture2D
+	if texture == null:
+		return
+	button.icon = texture
+	button.expand_icon = false
+	button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.add_theme_constant_override("h_separation", 4)
+
+
 func _style_option_button(button: Button, option_kind: String) -> void:
 	var accent: Color = MOVE_TYPE_COLORS.get(option_kind, Color(0.28, 0.62, 0.39, 1.0))
 	var base := FOREST_DARK.lerp(accent, 0.24)
@@ -470,6 +504,10 @@ func _clear_options() -> void:
 		return
 	for child in options.get_children():
 		if bool(child.get_meta("battle_option_dynamic", false)):
+			var button := child as Button
+			if button != null:
+				# Drop small preview textures as soon as their switch tray closes.
+				button.icon = null
 			options.remove_child(child)
 			child.queue_free()
 

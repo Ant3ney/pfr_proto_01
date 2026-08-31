@@ -102,7 +102,8 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"Battle system session test passed: start, validated presentation, exact "
-			+ "retry, stale/duplicate callbacks, 422 recovery, forfeit, health writeback, "
+			+ "retry, stale/duplicate callbacks, knockout XP, 422 recovery, forfeit, "
+			+ "atomic collection writeback, "
 			+ "and incompatible-response termination verified."
 		)
 		get_tree().quit(0)
@@ -130,6 +131,13 @@ func _verify_start_and_exact_retry() -> void:
 	_check(
 		(start_request.opponent.team as Array).size() == 2,
 		"BattleSystem should read Kyle's two-member authored encounter."
+	)
+	var strict_player_member := (start_request.player.team as Array)[0] as Dictionary
+	var strict_player_keys: Array = strict_player_member.keys()
+	strict_player_keys.sort()
+	_check(
+		strict_player_keys == ["health", "level", "memberId", "moves", "species"],
+		"Local XP and Pokédex metadata must not leave the strict REST team DTO."
 	)
 
 	_transport.complete_json(_response_from_start(start_request, 0, false))
@@ -181,17 +189,82 @@ func _verify_start_and_exact_retry() -> void:
 		"Retry must use the byte-identical action payload."
 	)
 
+	var palkia_id := String((start_request.player.team as Array)[0].memberId)
+	var second_participant_id := String((start_request.player.team as Array)[1].memberId)
+	var uninvolved_id := String((start_request.player.team as Array)[2].memberId)
+	var palkia_xp_before := int(CollectionSystem.get_pcl(palkia_id).instanceStats.currentXp)
+	var second_xp_before := int(CollectionSystem.get_pcl(second_participant_id).instanceStats.currentXp)
+	var uninvolved_xp_before := int(CollectionSystem.get_pcl(uninvolved_id).instanceStats.currentXp)
 	var action_response := _response_from_start(start_request, 1, false)
-	action_response.events = ["|turn|2"]
+	(action_response.parties.player as Array)[0].active = false
+	(action_response.parties.player as Array)[1].active = true
+	(action_response.parties.opponent as Array)[0].hp = 0
+	(action_response.parties.opponent as Array)[0].normalizedHealth = 0.0
+	(action_response.parties.opponent as Array)[0].fainted = true
+	(action_response.parties.opponent as Array)[0].active = false
+	(action_response.parties.opponent as Array)[1].active = true
+	action_response.request.activeMemberId = second_participant_id
+	action_response.request.moves = []
+	for move_value: Variant in (action_response.parties.player as Array)[1].moves:
+		var move := (move_value as Dictionary).duplicate(true)
+		move["disabled"] = false
+		action_response.request.moves.append(move)
+	action_response.request.switchOptions = []
+	for member_value: Variant in action_response.parties.player:
+		var member := member_value as Dictionary
+		if String(member.memberId) != second_participant_id:
+			action_response.request.switchOptions.append({"memberId": member.memberId})
+	action_response.events = [
+		"|drag|p1a: Mothim|Mothim, L3|100/100",
+		"|faint|p2a: Wooper",
+		"|switch|p2a: Magikarp|Magikarp, L3|100/100",
+		"|turn|2",
+	]
 	var retry_request_id := int(retry_call.request_id)
 	_transport.complete_json(action_response)
 	await get_tree().process_frame
 	_check(int(BattleSystem.get_snapshot().revision) == 1, "Successful retry should accept revision 1.")
+	var expected_wooper_award := int(
+		preload("res://battle/system/BattleExperience.gd").calculate_award(3, 3, 194).amount
+	)
+	_check(
+		int(CollectionSystem.get_pcl(palkia_id).instanceStats.currentXp)
+		== palkia_xp_before + expected_wooper_award,
+		"The active participant should gain level-differential, species-multiplied XP on knockout."
+	)
+	_check(
+		int(CollectionSystem.get_pcl(second_participant_id).instanceStats.currentXp)
+		== second_xp_before + expected_wooper_award,
+		"A switched-in participant should share the knockout XP."
+	)
+	_check(
+		int(CollectionSystem.get_pcl(uninvolved_id).instanceStats.currentXp) == uninvolved_xp_before,
+		"A party member that has not entered battle should not gain XP."
+	)
+	_check(
+		float(BattleSystem.get_snapshot().parties.player[1].get("experienceProgress", -1.0)) > 0.0,
+		"The accepted snapshot should expose copied XP progress for the battle HUD."
+	)
+	var has_experience_event := false
+	for event_value: Variant in (_captured_events.back().events as Array):
+		if typeof(event_value) == TYPE_DICTIONARY and String(event_value.get("type", "")) == "experience":
+			has_experience_event = true
+	_check(has_experience_event, "A knockout should enqueue a readable XP presentation event.")
 	_transport.complete_json(_response_from_start(start_request, 2, false), 200, HTTPRequest.RESULT_SUCCESS, retry_request_id)
 	await get_tree().process_frame
 	_check(
 		int(BattleSystem.get_snapshot().revision) == 1,
 		"A duplicate callback should be ignored after the request completes."
+	)
+	_check(
+		int(CollectionSystem.get_pcl(palkia_id).instanceStats.currentXp)
+		== palkia_xp_before + expected_wooper_award,
+		"A duplicate response callback must not award XP twice."
+	)
+	_check(
+		int(CollectionSystem.get_pcl(second_participant_id).instanceStats.currentXp)
+		== second_xp_before + expected_wooper_award,
+		"A duplicate response callback must not double-award another participant."
 	)
 	BattleSystem.acknowledge_events_presented(1)
 

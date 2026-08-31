@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="pokemon_fr_locomotion_proto"
-run/main_scene="res://demo/main.tscn"
+run/main_scene="res://demo/primary_development_enviroment.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -22,6 +22,9 @@ CreatureSystem="*res://core/CreatureSystem.gd"
 CollectionSystem="*res://core/CollectionSystem.gd"
 UIManager="*res://core/UIManager.gd"
 BattleSystem="*res://battle/system/BattleSystem.gd"
+RNDMoveLearningSystem="*res://rnd/move_learning/MoveLearningSystem.gd"
+StretchGoalSystem="*res://rnd/stretch/StretchGoalSystem.gd"
+ProgressionAutosave="*res://rnd/save/ProgressionAutosave.gd"
 
 [display]
 
@@ -45,8 +48,7 @@ enabled=PackedStringArray("res://addons/plain_http_lan_web/plugin.cfg", "res://a
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-anti_aliasing/quality/msaa_3d=2
 lights_and_shadows/directional_shadow/size=1024
 lights_and_shadows/directional_shadow/size.mobile=1024
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
-lights_and_shadows/directional_shadow/soft_shadow_filter_quality.mobile=0
+anti_aliasing/quality/msaa_3d=2

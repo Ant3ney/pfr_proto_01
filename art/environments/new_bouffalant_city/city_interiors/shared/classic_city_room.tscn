@@ -1,0 +1,127 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Texture2D" path="res://art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior_environment_pokemon_center_classic_brick.png" id="1_brick"]
+
+[sub_resource type="StandardMaterial3D" id="Material_brick"]
+albedo_texture = ExtResource("1_brick")
+roughness = 0.92
+uv1_scale = Vector3(4, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_limestone"]
+albedo_color = Color(0.72, 0.68, 0.58, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="Material_walnut"]
+albedo_color = Color(0.16, 0.09, 0.055, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+material = SubResource("Material_limestone")
+size = Vector3(12, 0.2, 10)
+
+[sub_resource type="BoxMesh" id="Mesh_back_wall"]
+material = SubResource("Material_brick")
+size = Vector3(12, 3.5, 0.25)
+
+[sub_resource type="BoxMesh" id="Mesh_side_wall"]
+material = SubResource("Material_brick")
+size = Vector3(0.25, 3.5, 10)
+
+[sub_resource type="BoxMesh" id="Mesh_back_wainscot"]
+material = SubResource("Material_walnut")
+size = Vector3(11.7, 1.1, 0.08)
+
+[sub_resource type="BoxMesh" id="Mesh_side_wainscot"]
+material = SubResource("Material_walnut")
+size = Vector3(0.08, 1.1, 9.7)
+
+[sub_resource type="BoxMesh" id="Mesh_back_trim"]
+material = SubResource("Material_limestone")
+size = Vector3(12, 0.18, 0.36)
+
+[sub_resource type="BoxMesh" id="Mesh_side_trim"]
+material = SubResource("Material_limestone")
+size = Vector3(0.36, 0.18, 10)
+
+[sub_resource type="BoxMesh" id="Mesh_column"]
+material = SubResource("Material_limestone")
+size = Vector3(0.34, 3.3, 0.34)
+
+[sub_resource type="BoxShape3D" id="Shape_floor"]
+size = Vector3(12, 0.2, 10)
+
+[sub_resource type="BoxShape3D" id="Shape_back_wall"]
+size = Vector3(12, 3.5, 0.25)
+
+[sub_resource type="BoxShape3D" id="Shape_side_wall"]
+size = Vector3(0.25, 3.5, 10)
+
+[node name="ClassicCityRoom" type="Node3D"]
+editor_description = "Reusable mobile-web city-interior shell: warm worn brick, limestone trim, dark walnut wainscot, an open camera-facing wall, and three simple static collision boxes."
+metadata/mobile_web_asset = true
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Mesh_floor")
+
+[node name="BackWall" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.75, -5)
+mesh = SubResource("Mesh_back_wall")
+
+[node name="LeftWall" type="MeshInstance3D" parent="."]
+position = Vector3(-6, 1.75, 0)
+mesh = SubResource("Mesh_side_wall")
+
+[node name="RightWall" type="MeshInstance3D" parent="."]
+position = Vector3(6, 1.75, 0)
+mesh = SubResource("Mesh_side_wall")
+
+[node name="BackWainscot" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.62, -4.84)
+mesh = SubResource("Mesh_back_wainscot")
+
+[node name="LeftWainscot" type="MeshInstance3D" parent="."]
+position = Vector3(-5.84, 0.62, 0)
+mesh = SubResource("Mesh_side_wainscot")
+
+[node name="RightWainscot" type="MeshInstance3D" parent="."]
+position = Vector3(5.84, 0.62, 0)
+mesh = SubResource("Mesh_side_wainscot")
+
+[node name="BackCornice" type="MeshInstance3D" parent="."]
+position = Vector3(0, 3.18, -4.86)
+mesh = SubResource("Mesh_back_trim")
+
+[node name="LeftCornice" type="MeshInstance3D" parent="."]
+position = Vector3(-5.86, 3.18, 0)
+mesh = SubResource("Mesh_side_trim")
+
+[node name="RightCornice" type="MeshInstance3D" parent="."]
+position = Vector3(5.86, 3.18, 0)
+mesh = SubResource("Mesh_side_trim")
+
+[node name="BackColumnLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-5.65, 1.65, -4.68)
+mesh = SubResource("Mesh_column")
+
+[node name="BackColumnRight" type="MeshInstance3D" parent="."]
+position = Vector3(5.65, 1.65, -4.68)
+mesh = SubResource("Mesh_column")
+
+[node name="RoomCollision" type="StaticBody3D" parent="."]
+
+[node name="Floor" type="CollisionShape3D" parent="RoomCollision"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("Shape_floor")
+
+[node name="BackWall" type="CollisionShape3D" parent="RoomCollision"]
+position = Vector3(0, 1.75, -5)
+shape = SubResource("Shape_back_wall")
+
+[node name="LeftWall" type="CollisionShape3D" parent="RoomCollision"]
+position = Vector3(-6, 1.75, 0)
+shape = SubResource("Shape_side_wall")
+
+[node name="RightWall" type="CollisionShape3D" parent="RoomCollision"]
+position = Vector3(6, 1.75, 0)
+shape = SubResource("Shape_side_wall")

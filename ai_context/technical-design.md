@@ -18,6 +18,33 @@ Each zone will have NPC's and objects that take in interation scrips. They will 
 
 The interaction scrip, being a child of a interaction parrent, will be a free handed way of handling what happons when interacted and when an interaction is called. The interaction parrent provides an ocean of healpers to help facilitate this.
 
+### Route 4 and wild grass
+
+The implemented Route 4 level is
+[`overworld/route_4/route_4.tscn`](../overworld/route_4/route_4.tscn). It uses
+96 unit-scale 4 × 4 m route modules, five reusable encounter fields, and the
+calibrated tree, hedge, shrub, flower, stump, and boulder families from the New
+Bouffalant City environment pack. `Route4Start` is the stable entry marker;
+`ExitToCity` returns through `Route4GatewayReturn` in the modular city.
+
+[`TallGrassEncounterZone`](../rnd/TallGrassEncounterZone.gd) is the reusable
+player-only `Area3D` under `rnd/`. Its ready-made
+[`tall_grass_encounter_zone.tscn`](../rnd/tall_grass_encounter_zone.tscn)
+combines six unit-scale tall-grass clumps with an 8.5 × 4.5 m detection volume.
+It accumulates horizontal distance only while movement is enabled, checks the
+authored chance every 2 m by default, never rolls while the player stands
+still, debounces a selected encounter, and calls `GameInstance.startBattle()`
+with a concrete scene and stable encounter ID. Route 4 currently authors an 8%
+check chance and launches `wild-fletchling-route-4-v1` through
+[`route_4_wild_battle_scene.tscn`](../battle/route_4_wild_battle_scene.tscn).
+
+The green
+[`route_4_gateway.tscn`](../overworld/route_4/route_4_gateway.tscn) is instanced
+in [`primary_development_enviroment.tscn`](../demo/primary_development_enviroment.tscn). It accepts
+only a nearby `PlayerCharacter`, then supports E, Enter, Space, gamepad A, or
+its 48 px touch button before using the normal `GameInstance.transfer_to_scene`
+contract. It is not a contact-triggered transfer.
+
 
 ### Character
 
@@ -47,6 +74,12 @@ The implimentation of how the player input controlls the player. Additionaly, so
 
 Entities that impliment this interface will be have access to a lot of objects with moethods need to drive the interaction along.
 
+The current RND implementation attaches a forward target detector to the shared
+player and a touch-friendly interaction button to `GameUI`. `PFRCharacter`
+delegates the request through `NPCController` to the owning `NPCBehavior`, so
+trainer dialog/battle and Center healing retain their own sequence state and
+cleanup. See [`runtime/interaction-hud.md`](runtime/interaction-hud.md).
+
 ### Sequences
 
 A sequnce can be started via all kinds of things not limeted to an interaction or an event. A sequence, on start, will gather all of it's actors needed for the seqence. A entity needed for a sequence is called an actor. The sequence is simply the name of all the interactions and behavior used to make a squence. It's nothing really set in code. It just describes a set of interelated code.
@@ -54,8 +87,32 @@ A sequnce can be started via all kinds of things not limeted to an interaction o
 ## GameInstance and game mode
 
 The implemented `GameInstance` autoload owns cross-scene gameplay state. It
-currently exposes the player-movement enable flag used by sequences and dialog
-callers.
+exposes the player-movement enable flag used by sequences and dialog callers,
+the covered battle transition lifecycle, and the ordinary level-transfer entry
+point `transfer_to_scene(path, optional_marker_name)`.
+
+[`SceneTransferTrigger`](../core/SceneTransferTrigger.gd) is the reusable
+player-only `Area3D` for ordinary level travel. Place its ready-made
+[`scene_transfer_trigger.tscn`](../core/scene_transfer_trigger.tscn), choose a
+`.tscn` path in the inspector, optionally name a destination `Node3D` or
+`Marker3D`, and fit its `CollisionShape3D` to the doorway. The trigger debounces
+contacts and defers the request outside the physics callback. `GameInstance`
+validates that the target is a `PackedScene`, locks movement, clears floating
+joystick input, changes scenes, applies the marker to the destination's first
+`PlayerCharacter`, and restores the previous movement state. It exposes
+started, finished, and failed signals. Path-based targets avoid cyclic scene
+dependencies for bidirectional doors; selected-resource export presets must
+explicitly include every destination scene. See the
+[`Scene Transfer Trigger` guide](../core/scene_transfer_trigger.md) and its
+focused smoke tests for the editor and runtime contracts.
+
+The modular city currently authors 17 contact-triggered exterior openings. Two
+serve the Pokemon Center and 15 serve City Hall, Rouge Tower, Miare Station,
+the garage, Gate Building, two tenant buildings, and the museum. Imported
+building collision remains solid: each `Area3D` reaches onto a verified
+walkable approach, and every interior exit targets a dedicated exterior marker
+beyond the corresponding reverse trigger. The selected-resources Web preset
+lists all string-addressed destination scenes explicitly.
 
 ## UI Template System
 
@@ -71,9 +128,20 @@ styling, lifecycle rules, and troubleshooting.
 
 ## Creature System
 
-The implemented Creature System is the `CreatureSystem` autoload backed by the local data snapshot in `data/creatures/`. `CreatureSystem.get_creature(pokemon_id)` is the canonical API; `get_pokemon(pokemon_id)` is an alias. A successful lookup returns the complete PokeAPI `pokemon` record at the root, plus its location encounters in `encounters_data` and complete `pokemon-species` and `evolution-chain` records under `species_data` and `evolution_chain_data`. It performs no network request.
+The implemented Creature System is the `CreatureSystem` autoload backed by the local data snapshot in `data/creatures/`. `CreatureSystem.get_creature(pokemon_id)` is the canonical API; `get_pokemon(pokemon_id)` is an alias. A successful lookup returns the complete PokeAPI `pokemon` record at the root, plus its location encounters in `encounters_data`, complete `pokemon-species` and `evolution-chain` records under `species_data` and `evolution_chain_data`, direct leveled targets in `evolution_options`, a top-level `xp_multiplier`, and `experience_data` containing its growth-row metadata and the cumulative level table. It performs no network request.
+
+[`CreatureExperience`](../core/CreatureExperience.gd) validates the generated `data/creatures/experience.json` artifact. The artifact is a compact two-dimensional table: six growth rows indexed from level 0 through 100 and one packed lookup row for every one of the 1,351 Pokemon IDs. `CreatureSystem.get_experience_for_level()`, `get_experience_to_next_level()`, `get_level_for_experience()`, `get_experience_progress()`, and `get_xp_multiplier()` are the public lookup boundary. Growth rows reproduce PokeAPI's six growth-rate tables. Reward multipliers are a project balance rule generated from pinned `pokemon-showdown@0.11.11` community singles tiers, falling back to National Dex tier and then documented BST bands; they are not an official Pokemon experience formula. Regenerate or check with `node tools/generate_creature_experience_data.mjs [--check]`.
+
+The pinned tier multipliers descend as `AG 1.60`, `Uber 1.50`, `OU 1.35`, `UUBL 1.28`, `UU 1.22`, `RUBL 1.16`, `RU 1.12`, `NUBL 1.08`, `NU 1.04`, `PUBL 1.00`, `PU 0.96`, `ZUBL 0.93`, `ZU 0.90`, `NFE 0.82`, and `LC 0.75`. The 106 records without a usable current or National Dex tier use exact-form BST bands from `0.80` below 330 through `1.50` at 670 or above. The generator, rather than battle runtime, owns this mapping.
 
 The snapshot contains 1,351 Pokemon records: 1,025 default National-Dex entries and 326 alternate or battle forms. Numeric IDs are PokeAPI Pokemon IDs, so default forms use National-Dex IDs `1` through `1025`, while alternate forms use PokeAPI's higher IDs such as `10001`. Call `has_pokemon(id)` before optional lookups when appropriate. Unknown IDs return an empty dictionary and set `get_last_error()`.
+
+Every direct default-form evolution edge also has a project level requirement.
+`get_evolution_options()` keeps authored PokeAPI minimum levels, fills a missing
+branch from an authored sibling, and otherwise uses level 20 for the first
+evolution or 36 for the second. `get_available_evolutions()` filters those
+options by current level. See [`runtime/evolution.md`](runtime/evolution.md) for
+the verified eligibility, form-safety, mutation, and UI contract.
 
 Records are losslessly gzip-compressed and loaded lazily. The runtime keeps a bounded cache and returns deep copies so consumers cannot mutate cached source data. Source provenance and counts are in `data/creatures/manifest.json`; the deterministic sync and full integrity check are provided by `tools/sync_pokeapi_data.py`. The JSON retains PokeAPI's sprite and cry URLs, but those binary media assets are not part of the local stat-data snapshot.
 
@@ -95,7 +163,7 @@ The canonical PCL object is:
   },
   instanceStats: {
     health: 0.4,
-    xp: 0.3,
+    currentXp: 152,
     level: 5
   },
   battleProfile: {
@@ -106,22 +174,42 @@ The canonical PCL object is:
 }
 ```
 
-Party slots are integers from `1` through `6`. A Pokemon outside the party has `inParty: false` and `slot: null`. Health and XP are normalized percentages from `0.0` through `1.0`; level is an integer from `1` through `100`.
+Party slots are integers from `1` through `6`. A Pokemon outside the party has `inParty: false` and `slot: null`. Health is normalized from `0.0` through `1.0`; `currentXp` is cumulative and level is derived from that Pokemon's growth row, from `1` through `100`. Save loading atomically migrates the former normalized `xp` field to cumulative `currentXp` and does not retain both fields.
 
 `add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance,
 and `get_pcl_by_party_slot(slot)` queries by party position. `set_party_slot(...)`
 rejects an occupied destination instead of silently removing another Pokemon.
-`update_instance_stats(...)` atomically applies any subset of health, XP, and
-level. All returned objects are deep copies.
+`move_to_party_slot(...)` is the separate atomic organizer API: a stored member
+replaces an occupied target and sends that occupant to storage, while one party
+member moved onto another swaps the two slots in a single collection update.
+`update_instance_stats(...)` atomically applies health and/or canonical
+`currentXp`; setting XP derives level, while setting only level moves XP to the
+exact level threshold. `grant_experience()` applies multi-level gains and
+`get_experience_progress()` returns presentation-ready in-level progress. All
+returned objects are deep copies.
+
+`heal_party()` restores only current party members to normalized health `1.0`,
+leaves stored Pokemon untouched, emits at most one `collection_changed` update,
+and returns the number of members whose health changed. Overworld healers call
+this ownership API instead of mutating copied PCL dictionaries.
 
 Supported instances persist a `battleProfile` with canonical Showdown species,
 exact sprite ID, and one to four equipped move IDs. Migration generates its
 defaults once; battle start never recomputes them. Use
 `get_battle_party_members()` for strict server-ready member DTOs,
 `set_equipped_moves()` for a validated future loadout change, and
-`apply_battle_health_snapshot()` for complete atomic health writeback.
+`apply_battle_health_snapshot()` for health-only callers, or
+`apply_battle_health_and_experience()` to validate and commit a complete health
+snapshot plus aggregated XP awards in one collection update.
 
 `get_save_data()` returns the full collection in capture/import order. `load_save_data(...)` validates Pokemon IDs, PCL IDs, stats, and unique party slots before replacing any current data, so an invalid save cannot partially overwrite the active collection.
+
+Evolution remains collection-owned. `get_evolution_options(pcl_id)` derives
+reached direct targets, while `evolve_pokemon()` validates the selected branch,
+preserves instance identity, party, health, level, and in-level XP progress,
+and reconciles the Pokemon ID plus battle profile in one collection update.
+Because the evolved species replaces `pokemonId` in the existing PCL, autosave
+needs no parallel pending-evolution field.
 
 Battle callers do not assemble a party one slot at a time. `BattleSystem` reads
 the complete validated party through `get_battle_party_members()` and keeps
@@ -133,4 +221,10 @@ Progression is a large object with a lot of methods. You passin in input and it 
 
 ## Save system.
 
-This is a large, organized object. Aupon starting your game, the data loads. The systems load from temp save data and will call the tempSaveData function a lot to pass in all saveable data to the tempSave data obj. When the user presses save game, the real save data becomes the temp save data.
+The current RND save owner automatically persists the validated
+`CollectionSystem` payload plus active overworld player scene, position, and
+facing. It loads at startup, debounces collection changes, checkpoints location
+periodically and around scene/battle transitions, and restores a saved pose when
+the same scene is active. It writes `user://pfr_rnd_progression.json`; there is
+no manual-save promotion layer yet. See
+[`runtime/progression-autosave.md`](runtime/progression-autosave.md).

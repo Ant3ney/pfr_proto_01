@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://battle/data/BattleEncounterDefinition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://battle/data/BattleEncounterMember.gd" id="2_member"]
+
+[sub_resource type="Resource" id="BattleEncounterMember_wooper"]
+script = ExtResource("2_member")
+member_id = "delivery-worker-wooper"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 3
+health = 1.0
+moves = Array[String](["watergun", "tailwhip"])
+
+[sub_resource type="Resource" id="BattleEncounterMember_magikarp"]
+script = ExtResource("2_member")
+member_id = "delivery-worker-magikarp"
+pokemon_id = 129
+species = "Magikarp"
+sprite_id = "magikarp"
+level = 3
+health = 1.0
+moves = Array[String](["splash"])
+
+[resource]
+script = ExtResource("1_definition")
+encounter_id = "trainer-delivery-worker-city-v1"
+display_name = "Delivery Worker"
+api_name = "DeliveryWorker"
+members = Array[ExtResource("2_member")]([SubResource("BattleEncounterMember_wooper"), SubResource("BattleEncounterMember_magikarp")])
+sprite_override = ""
+forfeit_policy = 0

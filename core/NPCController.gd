@@ -8,11 +8,9 @@ extends Resource
 @export var npc_behavior: NPCBehavior
 
 @export_group("Navigation")
-@export var map_coordinates := Vector3.ZERO:
-	set(value):
-		map_coordinates = value
-		_has_move_target = true
-		_target_changed = true
+## Last requested destination. Merely deserializing this stored value must not
+## activate navigation; callers start travel explicitly through move_to().
+@export var map_coordinates := Vector3.ZERO
 
 var _has_move_target := false
 var _target_changed := false
@@ -22,6 +20,12 @@ var _navigation_map_iteration := 0
 
 func _init() -> void:
 	resource_local_to_scene = true
+
+
+## Gives custom controller resources one deterministic point to synchronize
+## configuration after PackedScene resource duplication.
+func prepare_for_character(_character: CharacterBody3D) -> void:
+	pass
 
 
 func get_move_target(character: CharacterBody3D) -> Vector3:
@@ -63,6 +67,8 @@ func move_to(target_map_coordinates: Vector3) -> void:
 		return
 
 	map_coordinates = target_map_coordinates
+	_has_move_target = true
+	_target_changed = true
 
 
 func stop_moving(character: CharacterBody3D) -> void:
@@ -71,6 +77,34 @@ func stop_moving(character: CharacterBody3D) -> void:
 
 	if is_instance_valid(_navigation_agent):
 		_navigation_agent.target_position = character.global_position
+
+
+func can_interact(
+	character: CharacterBody3D,
+	interactor: PlayerCharacter
+) -> bool:
+	return (
+		npc_behavior != null
+		and npc_behavior.can_interact(character, self, interactor)
+	)
+
+
+func interact(
+	character: CharacterBody3D,
+	interactor: PlayerCharacter
+) -> bool:
+	if not can_interact(character, interactor):
+		return false
+	return npc_behavior.interact(character, self, interactor)
+
+
+func get_interaction_prompt(
+	character: CharacterBody3D,
+	interactor: PlayerCharacter
+) -> String:
+	if npc_behavior == null:
+		return ""
+	return npc_behavior.get_interaction_prompt(character, self, interactor)
 
 
 func _get_navigation_agent(character: CharacterBody3D) -> NavigationAgent3D:

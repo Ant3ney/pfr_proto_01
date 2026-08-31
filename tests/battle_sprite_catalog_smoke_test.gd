@@ -12,6 +12,8 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	_test_front_thumbnail_extraction()
+
 	var player_spawn := Node3D.new()
 	player_spawn.name = "PlayerSpawn"
 	player_spawn.position = Vector3(-2.35, 0.0, 1.45)
@@ -362,6 +364,42 @@ func _run() -> void:
 	presenter.queue_free()
 	await get_tree().process_frame
 	_finish()
+
+
+func _test_front_thumbnail_extraction() -> void:
+	var catalog := BattleSpriteCatalog.new()
+	_check(catalog.initialize(), "thumbnail catalog should initialize")
+	_check(
+		catalog.active_atlas_paths().is_empty(),
+		"thumbnail catalog should begin without retained active atlases"
+	)
+	var exact := catalog.load_front_thumbnail("vespiquen", false, "", Vector2i(32, 32))
+	var exact_texture := exact.get("texture") as Texture2D
+	_check(exact_texture != null, "Vespiquen should produce a switch-menu thumbnail")
+	_check(String(exact.get("style", "")) == "ani", "switch thumbnails should use front-facing ani art")
+	_check(int(exact.get("frame_index", -1)) == 0, "switch thumbnails should use the first composited GIF frame")
+	_check(
+		String(exact.get("atlas_path", ""))
+		== "res://art/battle/sprites/generated/ani/vespiquen.png",
+		"Vespiquen thumbnail should retain exact front-atlas provenance"
+	)
+	_check(not bool(exact.get("is_placeholder", true)), "Vespiquen thumbnail should load exactly")
+	if exact_texture != null:
+		var exact_image := exact_texture.get_image()
+		_check(exact_image.get_size() == Vector2i(32, 32), "switch thumbnails should use the requested compact size")
+		_check(exact_image.get_used_rect().has_area(), "switch thumbnails should retain visible alpha-cropped pixels")
+
+	var missing := catalog.load_front_thumbnail("definitely-missing-form")
+	_check(missing.get("texture") is Texture2D, "missing exact forms should still produce a neutral thumbnail")
+	_check(bool(missing.get("is_placeholder", false)), "missing exact forms should use the placeholder thumbnail")
+	_check(
+		String(missing.get("placeholder_reason", "")) == "exact_sprite_missing",
+		"missing switch thumbnail should preserve its exact fallback reason"
+	)
+	_check(
+		catalog.active_atlas_paths().is_empty(),
+		"extracting party thumbnails must not retain any full animation atlas"
+	)
 
 
 func _sprite(spawn: Node3D) -> AnimatedSprite3D:

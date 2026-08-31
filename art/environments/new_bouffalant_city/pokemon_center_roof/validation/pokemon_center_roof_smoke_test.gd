@@ -1,7 +1,7 @@
 extends Node
 
 const WRAPPER_SCENE := preload("res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_with_roof.tscn")
-const MODULAR_GROUND_SCENE := preload("res://demo/modular_ground_scene.tscn")
+const MODULAR_GROUND_SCENE := preload("res://demo/primary_development_enviroment.tscn")
 const WRAPPER_PATH := "res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_with_roof.tscn"
 const EXPECTED_WORLD_POSITION := Vector3(-1.0, 0.0, -17.0)
 const MAX_ROOF_TRIANGLES := 256

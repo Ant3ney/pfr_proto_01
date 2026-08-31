@@ -13,6 +13,8 @@ print(pikachu["stats"])                             # Base stats
 print(pikachu["encounters_data"])                   # Location encounters
 print(pikachu["species_data"]["capture_rate"])      # Species metadata
 print(pikachu["evolution_chain_data"]["chain"])     # Full evolution tree
+print(pikachu["xp_multiplier"])                      # Pinned reward multiplier
+print(pikachu["experience_data"]["experience_by_level"][25]) # XP for Lv. 25
 ```
 
 The API includes all 1,351 current PokeAPI Pokemon records: 1,025 default National-Dex entries plus 326 alternate and battle forms. `get_pokemon(id)` is an alias, `has_pokemon(id)` checks an ID without loading its record, and invalid lookups return an empty dictionary with details available from `get_last_error()`. Returned objects are deep copies and are safe for callers to modify.
@@ -21,27 +23,36 @@ The losslessly compressed local snapshot lives in [`data/creatures`](data/creatu
 
 ```sh
 python3 tools/sync_pokeapi_data.py --verify
+node tools/generate_creature_experience_data.mjs --check
 python3 tools/sync_pokeapi_data.py
 godot --headless --path . --scene res://tests/creature_system_smoke_test.tscn
 ```
 
 ## Manage the Player's Collection
 
-`CollectionSystem` is the global owner of captured Pokemon and the six-slot party. Each captured instance is a PCL (Pokemon collection instance) with its own ID, party assignment, health/XP percentages, and level:
+`CollectionSystem` is the global owner of captured Pokemon and the six-slot party. Each captured instance is a PCL (Pokemon collection instance) with its own ID, party assignment, normalized health, cumulative `currentXp`, and derived level:
 
 A fresh game starts with Palkia, Mothim, Hoothoot, Vespiquen, Luxray, and Pelipper in party slots 1–6. All six start at level 3, full health, and zero XP progress.
 
 ```gdscript
-var pcl := CollectionSystem.add_pokemon(25, 5, 1.0, 0.0, 1)
+var level_five_xp := CreatureSystem.get_experience_for_level(25, 5)
+var pcl := CollectionSystem.add_pokemon(25, 5, 1.0, level_five_xp, 1)
 var battle_pcl := CollectionSystem.get_pcl_by_party_slot(1)
 CollectionSystem.update_instance_stats(pcl["pclID"], {
 	"health": 0.4,
-	"xp": 0.3,
-	"level": 6,
+	"currentXp": level_five_xp + 40,
 })
+var award := CollectionSystem.grant_experience(pcl["pclID"], 25)
 ```
 
-Party slots are integers `1–6`; passing slot `0` stores the Pokemon outside the party. Health and XP use normalized percentages from `0.0` to `1.0`. Use `get_save_data()` and `load_save_data()` to hand the complete collection to the future Save System. Returned PCL objects are deep copies and can be safely modified by callers.
+Party slots are integers `1–6`; passing slot `0` stores the Pokemon outside the party. Health is normalized from `0.0` to `1.0`; XP is the exact cumulative integer for the species growth curve. `load_save_data()` migrates the former normalized `xp` field once. Use `get_experience_progress()` for the in-level fraction and `get_save_data()`/`load_save_data()` for persistence. Returned PCL objects are deep copies and can be safely modified by callers.
+
+When a battle-supported Pokemon crosses a level-up learnset threshold, the R&D
+move-learning system derives the move from the committed PokeAPI snapshot. It
+automatically fills an open move slot; at four moves it pauses play so the
+player can replace one exact slot or keep the current set. Unresolved choices
+survive schema-3 autosaves. See the
+[level-up move-learning contract](ai_context/runtime/move-learning.md).
 
 Run the collection verification with:
 
@@ -79,9 +90,12 @@ Run the focused battle gates with:
 
 ```sh
 node tools/generate_battle_species_mapping.mjs --check
+node tools/generate_creature_experience_data.mjs --check
+node rnd/move_learning/tools/generate_move_learnsets.mjs --check
 godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
 ```
 
 See the [Godot battle client contract](ai_context/runtime/battle-client.md),
@@ -109,7 +123,7 @@ See the complete [UI Template System guide](core/ui/README.md) for single messag
 
 ## Place the Player in a Traversable Scene
 
-[`demo/main.tscn`](demo/main.tscn) is the complete working example. The reusable player is [`demo/player.tscn`](demo/player.tscn); instance that scene instead of rebuilding its character body, collision capsule, controller, art, and animation setup in every level.
+[`demo/primary_development_enviroment.tscn`](demo/primary_development_enviroment.tscn) is the project main scene and complete city development environment. The reusable player is [`demo/player.tscn`](demo/player.tscn); instance that scene instead of rebuilding its character body, collision capsule, controller, art, and animation setup in every level.
 
 A playable level normally has this structure:
 
@@ -157,7 +171,7 @@ The New Bouffalant City ground wrappers and imported reference assets already in
 
 ## Add a Trainer to a Scene
 
-[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`demo/main.tscn`](demo/main.tscn) demonstrates a complete placement. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
+[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`demo/primary_development_enviroment.tscn`](demo/primary_development_enviroment.tscn) demonstrates complete placements. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
 
 A trainer-ready level adds these nodes to the playable-level structure above:
 
@@ -206,13 +220,14 @@ godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.
 
 The existing Kyle behavior implements a complete one-time approach, linear
 dialog, and networked battle. After the result or an unrecoverable failure, it
-returns to the authored spawn in `demo/modular_ground_scene.tscn`. A one-scene
-suppression ID prevents the just-finished Kyle encounter from immediately
-retriggering; it is not persistent trainer progression. Rematches,
-checkpoints, rewards, capture, XP, Bag behavior, post-loss world state, and
-persistent trainer completion remain outside this implementation. Avoid
-overlapping trainer sightlines because there is no encounter arbiter for
-simultaneous detections or UI templates.
+returns to the authored pose in `demo/primary_development_enviroment.tscn`.
+Standard authored trainers consume their forced sight encounter for the current
+play session, then remain available through the shared interaction prompt for
+manual rematches. Stretchman destination trainers use **Highly Aggro** mode:
+the just-returned scene suppresses an immediate loop, but leaving and starting
+that destination again restores their forced sight challenge. Standard sight
+consumption is not yet persisted to disk. Avoid overlapping trainer sightlines
+because there is no encounter arbiter for simultaneous detections or UI templates.
 
 To make another trainer type, duplicate the Kyle scene and give it a descriptive name. Keep the `PFRCharacter` root structure, collision capsule, `Visual` node, and character art pack. Duplicate [`overworld/trainer_lake/TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) when that trainer needs different detection distance, ray height, collision mask, stopping buffer, or arrival distance; the controller should continue to extend [`core/NPCController.gd`](core/NPCController.gd) and assign a `TrainerBehavior` resource.
 
