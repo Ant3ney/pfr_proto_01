@@ -63,3 +63,9 @@ mkdir -p "${project_root}/build/web/v1"
 for artifact in index.html index.js index.pck index.wasm; do
 	test -s "${project_root}/build/web/v1/${artifact}"
 done
+
+"${godot_bin}" \
+	--quiet \
+	--headless \
+	--main-pack "${project_root}/build/web/v1/index.pck" \
+	--script "${project_root}/tools/verify_web_export.gd"

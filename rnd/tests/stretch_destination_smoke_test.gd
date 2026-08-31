@@ -21,6 +21,7 @@ func _ready() -> void:
 func _run() -> void:
 	var original_stretch := StretchGoalSystem.get_save_data()
 	_check_trainer_resource_isolation()
+	_check_release_export_pre_spawn_repair()
 
 	StretchGoalSystem.begin_destination("champion", 1)
 	var world := await _build_world()
@@ -267,6 +268,40 @@ func _check_trainer_resource_isolation() -> void:
 			completed_trainer.free()
 		if fresh_trainer != null:
 			fresh_trainer.free()
+
+
+func _check_release_export_pre_spawn_repair() -> void:
+	var trainer_scene := load(TRAINER_SCENE_PATHS[0]) as PackedScene
+	var trainer := trainer_scene.instantiate() as PFRCharacter if trainer_scene != null else null
+	var destination := DestinationScene.instantiate() as RNDStretchDestination
+	if trainer == null or destination == null:
+		_check(false, "The release-export trainer repair fixture should instantiate.")
+		if trainer != null:
+			trainer.free()
+		if destination != null:
+			destination.free()
+		return
+
+	trainer.controller.npc_behavior = null
+	var configured: bool = bool(destination.call(
+		"_configure_existing_trainer",
+		trainer,
+		{
+			"encounter_id": "web-export-repair-test",
+			"battle_scene_path": "res://rnd/stretch/battle/stretch_battle_scene.tscn",
+			"display_name": "Export Repair Trainer",
+		}
+	))
+	var repaired_behavior := trainer.controller.npc_behavior as TrainerBehavior
+	_check(
+		configured
+		and repaired_behavior != null
+		and repaired_behavior.encounter_id == "web-export-repair-test"
+		and repaired_behavior.is_highly_aggro(),
+		"A generated destination should repair a release-exported null trainer behavior before spawning."
+	)
+	trainer.free()
+	destination.free()
 
 
 func _find_dialog_template() -> UITemplate:

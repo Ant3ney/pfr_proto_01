@@ -43,13 +43,17 @@ their sight challenge again after the player leaves and starts that destination
 anew. The HUD remains an alternate way to talk while a trainer is `WAITING`,
 such as when the player approaches from the side or behind.
 
-Every stateful NPC scene explicitly marks its controller and behavior resources
-`resource_local_to_scene`. `PFRCharacter._ready()` calls
-`NPCController.prepare_for_character()` so `TrainerKyle` can re-synchronize its
-exported dialog, battle path, encounter ID, and aggression mode after Godot
-duplicates the controller. Do not remove either ownership step: shared resources
-leak `COMPLETE` between trainers, while an unsynchronized duplicate launches the
-generic no-encounter battle preview.
+Every stateful NPC scene explicitly marks its controller resource
+`resource_local_to_scene`, and `NPCBehavior._init()` makes runtime-created
+behaviors scene-local. `PFRCharacter._ready()` calls
+`NPCController.prepare_for_character()` so `TrainerKyle` can recreate an
+exported null behavior and re-synchronize its dialog, battle path, encounter ID,
+and aggression mode after Godot duplicates the controller. Generated
+destinations call the same preparation hook before inspecting a trainer that has
+not entered the tree yet. Do not remove these ownership and repair steps: shared
+resources leak `COMPLETE` between trainers, an unsynchronized duplicate launches
+the generic no-encounter battle preview, and a release-exported null behavior
+makes city trainers inert while generated opponents are discarded.
 
 `PokemonCenterHealerBehavior` exposes the same dispatcher through
 `start_healing_sequence()`. The behavior still supports legacy automatic

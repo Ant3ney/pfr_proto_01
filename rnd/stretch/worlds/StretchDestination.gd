@@ -311,6 +311,12 @@ func _configure_existing_trainer(
 	encounter: Dictionary
 ) -> bool:
 	var trainer_controller := trainer.controller as NPCController
+	# A release-exported PackedScene can overwrite the controller's constructor
+	# behavior with the inherited exported null value. Runtime destinations
+	# inspect trainers before add_child() can invoke PFRCharacter._ready(), so
+	# repair the controller explicitly at this pre-spawn boundary.
+	if trainer_controller != null:
+		trainer_controller.prepare_for_character(trainer)
 	var trainer_behavior := (
 		trainer_controller.npc_behavior as TrainerBehavior
 		if trainer_controller != null

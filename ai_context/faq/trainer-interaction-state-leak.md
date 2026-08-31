@@ -44,16 +44,19 @@ duplication also exposes two initialization hazards:
 ## Current Required Behavior
 
 Every authored scene with mutable NPC state explicitly serializes its controller
-and behavior resources as `resource_local_to_scene`. Do not rely only on setting
-that property from a resource constructor; the scene file must own the local
-subresource configuration.
+resource as `resource_local_to_scene`. Runtime-created behaviors set
+`resource_local_to_scene` from `NPCBehavior._init()`. `TrainerKyle` must also
+recreate its behavior from `prepare_for_character()` because release PackedScene
+deserialization can overwrite the inherited exported property with null; see
+[`web-export-trainer-behavior.md`](web-export-trainer-behavior.md).
 
 [`PFRCharacter.gd`](../../core/PFRCharacter.gd) calls
 `NPCController.prepare_for_character()` from `_ready()`. Custom trainer
-controllers use that hook to copy their exported dialog, encounter ID, battle
-scene path, sight flag, and aggression mode into the local `TrainerBehavior`.
-Keep `NPCController.map_coordinates` as passive storage and activate travel only
-through `move_to()`.
+controllers use that hook to ensure a local behavior exists and copy their
+exported dialog, encounter ID, battle scene path, sight flag, and aggression
+mode into it. Runtime destination spawners must call the hook before inspecting
+trainers that have not entered the scene tree. Keep `NPCController.map_coordinates`
+as passive storage and activate travel only through `move_to()`.
 
 Standard trainers consume automatic sight once per play session and then remain
 in `WAITING` for manual rematches. Stretchman destination trainers use
