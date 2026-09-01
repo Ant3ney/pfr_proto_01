@@ -16,6 +16,35 @@ const SpriteMapping := preload("res://battle/system/BattleSpeciesMapping.gd")
 const LootBoxScene := preload("res://rnd/stretch/ui/loot_box_roulette.tscn")
 const SPRITE_ANIMATION := &"idle"
 const POKEMON_ICON_SIZE := Vector2i(48, 48)
+const POKEMON_SORT_POKEDEX := "pokedex"
+const POKEMON_SORT_PRICE_ASCENDING := "price_ascending"
+const POKEMON_SORT_PRICE_DESCENDING := "price_descending"
+const POKEMON_SORT_COOLNESS_DESCENDING := "coolness_descending"
+const POKEMON_SORT_COOLNESS_ASCENDING := "coolness_ascending"
+const POKEMON_COOLNESS_APPEAL := {
+	"standard": 25,
+	"rare": 55,
+	"iconic": 70,
+	"legendary": 80,
+	"mythical": 84,
+}
+const POKEMON_COOLNESS_TIER := {
+	"LC": 0,
+	"NFE": 1,
+	"ZU": 2,
+	"ZUBL": 3,
+	"PU": 4,
+	"PUBL": 5,
+	"NU": 6,
+	"NUBL": 7,
+	"RU": 8,
+	"RUBL": 9,
+	"UU": 10,
+	"UUBL": 11,
+	"OU": 12,
+	"Uber": 13,
+	"AG": 14,
+}
 
 var _category := CATEGORY_ITEMS
 var _visible_entries: Array[Dictionary] = []
@@ -32,6 +61,8 @@ var _balance_label: Label
 var _search: LineEdit
 var _filter_row: HBoxContainer
 var _filter: OptionButton
+var _sort_row: HBoxContainer
+var _sort: OptionButton
 var _result_count: Label
 var _list: ItemList
 var _detail: RichTextLabel
@@ -188,7 +219,7 @@ func _build_interface() -> void:
 	_search.name = "Search"
 	_search.placeholder_text = "Search the current menu…"
 	_search.clear_button_enabled = true
-	_search.custom_minimum_size = Vector2(320.0, 38.0)
+	_search.custom_minimum_size = Vector2(235.0, 38.0)
 	_search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_search.text_changed.connect(_on_search_changed)
 	search_row.add_child(_search)
@@ -202,9 +233,21 @@ func _build_interface() -> void:
 	_filter_row.add_child(filter_label)
 	_filter = OptionButton.new()
 	_filter.name = "Filter"
-	_filter.custom_minimum_size = Vector2(230.0, 38.0)
+	_filter.custom_minimum_size = Vector2(195.0, 38.0)
 	_filter.item_selected.connect(_on_filter_selected)
 	_filter_row.add_child(_filter)
+	_sort_row = HBoxContainer.new()
+	_sort_row.name = "PokemonSortRow"
+	_sort_row.add_theme_constant_override("separation", 8)
+	search_row.add_child(_sort_row)
+	var sort_label := Label.new()
+	sort_label.text = "Sort"
+	_sort_row.add_child(sort_label)
+	_sort = OptionButton.new()
+	_sort.name = "PokemonSort"
+	_sort.custom_minimum_size = Vector2(190.0, 38.0)
+	_sort.item_selected.connect(_on_sort_selected)
+	_sort_row.add_child(_sort)
 	_result_count = Label.new()
 	_result_count.name = "ResultCount"
 	_result_count.custom_minimum_size = Vector2(105.0, 0.0)
@@ -297,6 +340,7 @@ func _select_category(category: String) -> void:
 		(_tab_buttons[key] as Button).button_pressed = String(key) == category
 	_search.text = ""
 	_configure_filters()
+	_configure_sort()
 	match category:
 		CATEGORY_ITEMS:
 			_search.placeholder_text = "Search all 2,223 PokeAPI items…"
@@ -314,10 +358,14 @@ func _select_category(category: String) -> void:
 
 
 func _on_search_changed(_new_text: String) -> void:
-	_refresh_entries()
+	_refresh_entries(false)
 
 
 func _on_filter_selected(_index: int) -> void:
+	_refresh_entries()
+
+
+func _on_sort_selected(_index: int) -> void:
 	_refresh_entries()
 
 
@@ -363,12 +411,30 @@ func _configure_filters() -> void:
 	_filter.select(0)
 
 
+func _configure_sort() -> void:
+	_sort.clear()
+	_sort_row.visible = _category == CATEGORY_POKEMON
+	if not _sort_row.visible:
+		return
+	_add_sort_option("Pokedex Number", POKEMON_SORT_POKEDEX)
+	_add_sort_option("$ Low to High", POKEMON_SORT_PRICE_ASCENDING)
+	_add_sort_option("$ High to Low", POKEMON_SORT_PRICE_DESCENDING)
+	_add_sort_option("Coolest to Lamest", POKEMON_SORT_COOLNESS_DESCENDING)
+	_add_sort_option("Lamest to Coolest", POKEMON_SORT_COOLNESS_ASCENDING)
+	_sort.select(0)
+
+
 func _add_filter_option(label: String, value: String) -> void:
 	_filter.add_item(label)
 	_filter.set_item_metadata(_filter.item_count - 1, value)
 
 
-func _refresh_entries() -> void:
+func _add_sort_option(label: String, value: String) -> void:
+	_sort.add_item(label)
+	_sort.set_item_metadata(_sort.item_count - 1, value)
+
+
+func _refresh_entries(focus_results := true) -> void:
 	_icon_generation += 1
 	var source: Array[Dictionary]
 	match _category:
@@ -394,6 +460,9 @@ func _refresh_entries() -> void:
 		if not _entry_passes_filter(entry, filter_value) or not _entry_matches(entry, query):
 			continue
 		_visible_entries.append(entry)
+	if _category == CATEGORY_POKEMON:
+		_visible_entries.sort_custom(_pokemon_entry_precedes)
+	for entry in _visible_entries:
 		_list.add_item(_entry_text(entry))
 	_result_count.text = "%s result%s" % [
 		_format_count(_visible_entries.size()),
@@ -406,7 +475,8 @@ func _refresh_entries() -> void:
 		return
 	_list.select(0)
 	_on_item_selected(0)
-	_list.grab_focus()
+	if focus_results:
+		_list.grab_focus()
 	if _category == CATEGORY_POKEMON:
 		_queue_visible_pokemon_icons.call_deferred()
 
@@ -444,6 +514,56 @@ func _selected_filter_value() -> String:
 	if not is_instance_valid(_filter) or _filter.item_count == 0:
 		return "all"
 	return String(_filter.get_item_metadata(_filter.selected))
+
+
+func _selected_sort_value() -> String:
+	if not is_instance_valid(_sort) or _sort.item_count == 0:
+		return POKEMON_SORT_POKEDEX
+	return String(_sort.get_item_metadata(_sort.selected))
+
+
+func _pokemon_entry_precedes(left: Dictionary, right: Dictionary) -> bool:
+	var left_id := int(left.get("id", 0))
+	var right_id := int(right.get("id", 0))
+	match _selected_sort_value():
+		POKEMON_SORT_PRICE_ASCENDING:
+			var left_price := int(left.get("price", 0))
+			var right_price := int(right.get("price", 0))
+			return left_price < right_price if left_price != right_price else left_id < right_id
+		POKEMON_SORT_PRICE_DESCENDING:
+			var left_price := int(left.get("price", 0))
+			var right_price := int(right.get("price", 0))
+			return left_price > right_price if left_price != right_price else left_id < right_id
+		POKEMON_SORT_COOLNESS_DESCENDING:
+			var left_coolness := _pokemon_coolness_score(left)
+			var right_coolness := _pokemon_coolness_score(right)
+			if left_coolness != right_coolness:
+				return left_coolness > right_coolness
+			var left_price := int(left.get("price", 0))
+			var right_price := int(right.get("price", 0))
+			return left_price > right_price if left_price != right_price else left_id < right_id
+		POKEMON_SORT_COOLNESS_ASCENDING:
+			var left_coolness := _pokemon_coolness_score(left)
+			var right_coolness := _pokemon_coolness_score(right)
+			if left_coolness != right_coolness:
+				return left_coolness < right_coolness
+			var left_price := int(left.get("price", 0))
+			var right_price := int(right.get("price", 0))
+			return left_price < right_price if left_price != right_price else left_id < right_id
+	return left_id < right_id
+
+
+func _pokemon_coolness_score(entry: Dictionary) -> int:
+	var appeal_points := int(
+		POKEMON_COOLNESS_APPEAL.get(String(entry.get("appeal", "standard")), 25)
+	)
+	var tier_points := int(
+		POKEMON_COOLNESS_TIER.get(String(entry.get("tier", "LC")), 0)
+	)
+	var capture_rate := clampi(int(entry.get("captureRate", 255)), 1, 255)
+	var rarity_points := roundi(float(255 - capture_rate) / 254.0 * 8.0)
+	var evolution_points := clampi(int(entry.get("evolutionStage", 1)) - 1, 0, 2) * 3
+	return clampi(appeal_points + tier_points + rarity_points + evolution_points, 0, 100)
 
 
 func _entry_passes_filter(entry: Dictionary, filter_value: String) -> bool:
@@ -652,9 +772,12 @@ func _entry_text(entry: Dictionary) -> String:
 				owned,
 			]
 		CATEGORY_POKEMON:
-			return "#%04d  %s  [%s]  —  %s" % [
+			return "#%04d  %s  [Lv. %d · %s]  —  %s" % [
 				int(entry.get("id", 0)),
 				String(entry.get("name", "Pokemon")),
+				StretchGoalSystem.get_pokemon_purchase_level(
+					int(entry.get("id", 0))
+				),
 				String(entry.get("tier", "Unranked")),
 				StretchGoalSystem.format_money(int(entry.get("price", 0))),
 			]
@@ -671,7 +794,18 @@ func _entry_text(entry: Dictionary) -> String:
 			var clear := "  ✓ CLEARED" if StretchGoalSystem.is_champion_cleared() else ""
 			return "%s%s" % [String(entry.get("name", "Champion Challenge")), clear]
 		CATEGORY_ROUTES:
-			return String(entry.get("name", "Route"))
+			var route_status := (
+				"  ✓ COMPLETE"
+				if bool(entry.get("completed", false))
+				else ("  🔒 LOCKED" if not bool(entry.get("unlocked", false)) else "  • AVAILABLE")
+			)
+			return "%s  [Lv. %d–%d · %s]%s" % [
+				String(entry.get("name", "Route")),
+				int(entry.get("level_min", 1)),
+				int(entry.get("level_max", 1)),
+				String(entry.get("biome", "route")).capitalize(),
+				route_status,
+			]
 	return String(entry.get("name", "Entry"))
 
 
@@ -688,7 +822,11 @@ func _on_item_selected(index: int) -> void:
 			_action.text = "Buy Item"
 			_detail.text = _item_details(_selected_entry)
 		CATEGORY_POKEMON:
-			_action.text = "Buy Lv. %d Pokemon" % StretchGoalSystem.PURCHASED_POKEMON_LEVEL
+			_action.text = "Buy Lv. %d Pokemon" % (
+				StretchGoalSystem.get_pokemon_purchase_level(
+					int(_selected_entry.get("id", 0))
+				)
+			)
 			_detail.text = _pokemon_details(_selected_entry)
 			_show_pokemon_preview(_selected_entry)
 		CATEGORY_LOOT_BOXES:
@@ -705,7 +843,15 @@ func _on_item_selected(index: int) -> void:
 			_detail.text = _destination_details(_selected_entry, "CHAMPION RUN")
 		CATEGORY_ROUTES:
 			_clear_pokemon_preview()
-			_action.text = "Travel to Route %d" % int(_selected_entry.get("index", 0))
+			var route_unlocked := bool(_selected_entry.get("unlocked", false))
+			_action.disabled = not route_unlocked
+			_action.text = (
+				"Travel to Route %d" % int(_selected_entry.get("index", 0))
+				if route_unlocked
+				else "Locked — finish Route %d" % (
+					int(_selected_entry.get("index", 0)) - 1
+				)
+			)
 			_detail.text = _destination_details(_selected_entry, "OUTDOOR ROUTE")
 
 
@@ -732,7 +878,15 @@ func _activate_selected() -> void:
 				_open_loot_box_result(result.get("summary", {}) as Dictionary)
 			else:
 				_status.text = String(result.get("error", "Loot-box purchase failed."))
-		CATEGORY_GYMS, CATEGORY_CHAMPION, CATEGORY_ROUTES:
+		CATEGORY_ROUTES:
+			if not bool(_selected_entry.get("unlocked", false)):
+				_status.text = String(_selected_entry.get(
+					"unlock_requirement",
+					"Reach the end of the previous route first."
+				))
+				return
+			travel_requested.emit(_category, int(_selected_entry.get("index", 0)))
+		CATEGORY_GYMS, CATEGORY_CHAMPION:
 			travel_requested.emit(_category, int(_selected_entry.get("index", 0)))
 
 
@@ -778,7 +932,7 @@ func _pokemon_details(entry: Dictionary) -> String:
 		"[font_size=26][b]#%04d %s[/b][/font_size]\n\n"
 		+ "[color=#88d8ff]Animated GIF sprite preview[/color]\n\n"
 		+ "[b]Price:[/b] %s\n[b]Community tier:[/b] %s\n[b]Rarity:[/b] %s\n"
-		+ "[b]Appeal markup:[/b] %s\n"
+		+ "[b]Appeal markup:[/b] %s\n[b]Stretchman coolness:[/b] %d / 100\n"
 		+ "[b]Delivered level:[/b] %d\n\nPurchased Pokemon are added safely to "
 		+ "CollectionSystem storage. Ordinary species are affordable; rarity, tier, "
 		+ "and Stretchman's subjective cool-factor markup drive premium prices."
@@ -789,7 +943,8 @@ func _pokemon_details(entry: Dictionary) -> String:
 		String(entry.get("tier", "Unranked")),
 		rarity,
 		String(entry.get("appeal", "standard")).capitalize(),
-		StretchGoalSystem.PURCHASED_POKEMON_LEVEL,
+		_pokemon_coolness_score(entry),
+		StretchGoalSystem.get_pokemon_purchase_level(int(entry.get("id", 0))),
 	]
 
 
@@ -844,15 +999,24 @@ func _destination_details(entry: Dictionary, heading: String) -> String:
 			StretchGoalSystem.format_money(int(last_reward.get("amount", 0))),
 			String(last_reward.get("opponent", "an opponent")),
 		]
+	var route_progress_text := ""
+	if _category == CATEGORY_ROUTES:
+		route_progress_text = "\n\n[b]Progress:[/b] %s\n[b]Unlock rule:[/b] %s" % [
+			"Complete" if bool(entry.get("completed", false)) else (
+				"Available" if bool(entry.get("unlocked", false)) else "Locked"
+			),
+			String(entry.get("unlock_requirement", "Reach the previous route's end.")),
+		]
 	return (
 		"[font_size=18][color=#88d8ff]%s[/color][/font_size]\n"
-		+ "[font_size=26][b]%s[/b][/font_size]\n\n%s%s\n\n"
+		+ "[font_size=26][b]%s[/b][/font_size]\n\n%s%s%s\n\n"
 		+ "Selecting this starts a fresh run. Trainers challenge automatically when "
 		+ "you move into their sight line."
 	) % [
 		heading,
 		String(entry.get("name", "Destination")),
 		String(entry.get("description", "")),
+		route_progress_text,
 		reward_text,
 	]
 

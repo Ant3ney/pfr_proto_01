@@ -13,12 +13,21 @@ func _run() -> void:
 	GameInstance.set_player_movement_enabled(true)
 	var working_stretch := original_stretch.duplicate(true)
 	working_stretch["balance"] = 10_000
+	working_stretch["item_inventory"] = {}
+	working_stretch["claimed_gifts"] = []
 	_check(
 		StretchGoalSystem.load_save_data(working_stretch),
 		"The player-menu fixture should load a funded R&D economy."
 	)
 	_check(bool(StretchGoalSystem.buy_item("potion").get("ok", false)), "The fixture should buy its first Potion.")
 	_check(bool(StretchGoalSystem.buy_item("potion").get("ok", false)), "The fixture should buy its second Potion.")
+	_check(
+		bool(StretchGoalSystem.claim_unique_item(
+			"player-menu-xp-share",
+			StretchGoalSystem.XP_SHARE_ITEM_KEY
+		).get("ok", false)),
+		"The player-menu fixture should receive one Exp. Share."
+	)
 	var storage_pokemon := CollectionSystem.add_pokemon(10, 50, 1.0, -1, 0)
 	var storage_pcl_id := String(storage_pokemon.get("pclID", ""))
 	var branching_pokemon := CollectionSystem.add_pokemon(133, 50, 1.0, -1, 0)
@@ -57,21 +66,63 @@ func _run() -> void:
 		var primary := menu.find_child("PrimaryAction", true, false) as Button
 		var party_slot := menu.find_child("PartySlot", true, false) as OptionButton
 		var evolve_action := menu.find_child("EvolutionAction", true, false) as Button
+		var held_item_action := menu.find_child("HeldItemAction", true, false) as Button
 		var evolution_prompt := menu.find_child("EvolutionPrompt", true, false) as Control
 		var evolution_choice := menu.find_child("EvolutionChoice", true, false) as OptionButton
+		var cloud_button := menu.find_child("CloudSave", true, false) as Button
+		var cloud_prompt := menu.find_child("CloudSavePrompt", true, false) as Control
+		var cloud_save_id := menu.find_child("CloudSaveId", true, false) as LineEdit
+		var cloud_status := menu.find_child("CloudSaveStatus", true, false) as Label
 		_check(
 			menu._tab_buttons.size() == 3,
 			"The player menu should expose Party & PC, Bag, and Pokedex tabs."
 		)
 		_check(
+			cloud_button != null and cloud_button.focus_mode != Control.FOCUS_NONE,
+			"The player menu should expose keyboard/gamepad cloud-save settings."
+		)
+		menu.open_cloud_save()
+		_check(
+			cloud_prompt.visible and cloud_save_id.secret,
+			"Cloud-save settings should open with the private Save ID masked."
+		)
+		cloud_save_id.text = "short"
+		_check(
+			not menu.apply_cloud_save_id()
+			and "12" in cloud_status.text,
+			"A guessable short Save ID should be rejected with an inline explanation."
+		)
+		cloud_save_id.text = "menu-smoke-private-save-id"
+		_check(
+			menu.apply_cloud_save_id()
+			and CloudSaveSync.is_enabled()
+			and menu.sync_cloud_save_now(),
+			"A valid Save ID should opt in and allow an immediate background sync request."
+		)
+		menu.opt_out_of_cloud_save()
+		_check(
+			not CloudSaveSync.is_enabled()
+			and cloud_save_id.text.is_empty(),
+			"Opting out should forget the Save ID without disabling local progress saves."
+		)
+		menu.close_cloud_save()
+		_check(
 			_list_contains(entries, "PC  —  #0010 Caterpie"),
 			"The Party & PC screen should show the complete storage collection."
+		)
+		_check(
+			_list_contains(entries, " —  XP "),
+			"Every captured-Pokemon row should expose its in-level XP progress."
 		)
 		_check(
 			primary != null and primary.focus_mode != Control.FOCUS_NONE
 			and party_slot != null and party_slot.focus_mode != Control.FOCUS_NONE
 			and evolve_action != null and evolve_action.focus_mode != Control.FOCUS_NONE,
 			"Party management controls should be keyboard/gamepad focusable."
+		)
+		_check(
+			held_item_action != null and held_item_action.focus_mode != Control.FOCUS_NONE,
+			"The held-item action should be keyboard/gamepad focusable."
 		)
 		menu._refresh_entries(storage_pcl_id)
 		_check(
@@ -107,6 +158,37 @@ func _run() -> void:
 			"The branching prompt should apply the player's selected evolution."
 		)
 
+		menu._refresh_entries(storage_pcl_id)
+		_check(
+			held_item_action.visible and "Give Exp. Share" in held_item_action.text,
+			"An owned Exp. Share should expose a Give action on the selected Pokemon."
+		)
+		_check(
+			menu.give_xp_share_to_pokemon(storage_pcl_id)
+			and CollectionSystem.get_held_item(storage_pcl_id)
+			== StretchGoalSystem.XP_SHARE_ITEM_KEY
+			and StretchGoalSystem.get_item_count(StretchGoalSystem.XP_SHARE_ITEM_KEY) == 0,
+			"The menu should move the Exp. Share from the bag to the selected Pokemon."
+		)
+		var details := menu.find_child("Details", true, false) as RichTextLabel
+		_check(
+			details != null
+			and "Level XP:" in details.text
+			and "remaining to Lv." in details.text
+			and "normal full award" in details.text,
+			"A holder's detail panel should show level progress and explain benched versus active XP."
+		)
+		_check(
+			menu.take_held_item_from_pokemon(storage_pcl_id)
+			and CollectionSystem.get_held_item(storage_pcl_id).is_empty()
+			and StretchGoalSystem.get_item_count(StretchGoalSystem.XP_SHARE_ITEM_KEY) == 1,
+			"The menu should return a held Exp. Share to the bag."
+		)
+		_check(
+			menu.give_xp_share_to_pokemon(storage_pcl_id),
+			"The Exp. Share should be equippable again after it is taken."
+		)
+
 		var original_slot_one := CollectionSystem.get_pcl_by_party_slot(1)
 		var original_slot_one_id := String(original_slot_one.get("pclID", ""))
 		_check(
@@ -129,12 +211,27 @@ func _run() -> void:
 			not bool(CollectionSystem.get_pcl(storage_pcl_id).get("party", {}).get("inParty", true)),
 			"Sending a Pokemon to the PC should clear its party assignment."
 		)
+		_check(
+			CollectionSystem.get_held_item(storage_pcl_id) == StretchGoalSystem.XP_SHARE_ITEM_KEY,
+			"Moving a Pokemon between party and PC should preserve its held item."
+		)
 
 		menu.select_tab(RNDPlayerMenuUI.TAB_BAG)
 		_check(entries.item_count == 1 and _list_contains(entries, "x2  Potion"), "The Bag should show owned item quantities only.")
+		search.grab_focus()
+		await get_tree().process_frame
+		search.text = "p"
+		await get_tree().process_frame
+		_check(
+			search.has_focus(),
+			"Typing a search character should not transfer focus to the player-menu results."
+		)
 		search.text = "poton"
 		await get_tree().process_frame
-		_check(_list_contains(entries, "Potion"), "Bag search should recover a one-letter item typo.")
+		_check(
+			search.has_focus() and _list_contains(entries, "Potion"),
+			"Player-menu search should retain focus across multiple characters and recover a typo."
+		)
 		var discard_result := StretchGoalSystem.discard_item("potion", 1)
 		_check(bool(discard_result.get("ok", false)), "Owned item quantities should be manageable from the R&D inventory API.")
 		_check(StretchGoalSystem.get_item_count("potion") == 1, "Discarding one item should leave the remaining stack intact.")
@@ -177,8 +274,9 @@ func _run() -> void:
 	GameInstance.set_player_movement_enabled(true)
 	if _failures.is_empty():
 		print(
-			"R&D player menu HUD smoke test passed: persistent button, leveled evolution "
-			+ "choices, Party/PC swaps, bag management, complete Pokedex, GIF art, focus, and cleanup verified."
+			"R&D player menu HUD smoke test passed: persistent button, retained search "
+			+ "focus, leveled evolution choices, held-item transfers, Party/PC swaps, bag "
+			+ "management, cloud opt-in/out, complete Pokedex, GIF art, focus, and cleanup verified."
 		)
 		get_tree().quit(0)
 		return

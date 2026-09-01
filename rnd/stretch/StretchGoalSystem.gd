@@ -12,22 +12,29 @@ signal purchase_failed(message: String)
 signal destination_started(destination: Dictionary)
 signal battle_reward_granted(summary: Dictionary)
 signal loot_box_opened(summary: Dictionary)
+signal route_progression_changed(completed_routes: Array[int])
 
 const Content := preload("res://rnd/stretch/StretchContent.gd")
 const ITEM_CATALOG_PATH := "res://rnd/stretch/data/items.json"
 const POKEMON_CATALOG_PATH := "res://rnd/stretch/data/pokemon.json"
 const CURRENT_ECONOMY_VERSION := 2
 const LEGACY_STARTING_BALANCE := 5_000_000
-const STARTING_BALANCE := 500
-const PURCHASED_POKEMON_LEVEL := 50
+const STARTING_BALANCE := 50
+const PURCHASED_POKEMON_MIN_LEVEL := 5
+const PURCHASED_POKEMON_MAX_LEVEL := 20
+const PURCHASED_POKEMON_LEVEL_PRICE_FLOOR := 500
+const PURCHASED_POKEMON_LEVEL_PRICE_CAP := 2_000_000_000
 const LOOT_BOX_HIGH_QUALITY_CHANCE := 0.10
 const MAX_BALANCE := 9_000_000_000_000_000
 const MAX_ITEM_QUANTITY := 999_999
+const XP_SHARE_ITEM_KEY := "exp-share"
 
 var _balance := STARTING_BALANCE
 var _item_inventory: Dictionary = {}
+var _claimed_gifts: Dictionary = {}
 var _earned_badges: Array[int] = []
 var _champion_cleared := false
+var _completed_routes: Array[int] = []
 var _active_destination: Dictionary = {}
 var _run_defeated_ids: Dictionary = {}
 var _run_id := 0
@@ -66,6 +73,13 @@ func get_pokemon_offer(pokemon_id: int) -> Dictionary:
 	return (_pokemon_by_id[pokemon_id] as Dictionary).duplicate(true)
 
 
+func get_pokemon_purchase_level(pokemon_id: int) -> int:
+	if not _pokemon_by_id.has(pokemon_id):
+		return 0
+	var offer := _pokemon_by_id[pokemon_id] as Dictionary
+	return _pokemon_purchase_level_for_price(int(offer.get("price", 0)))
+
+
 func get_loot_box_catalog() -> Array[Dictionary]:
 	return Content.get_loot_boxes()
 
@@ -76,6 +90,124 @@ func get_item_count(item_key: String) -> int:
 
 func get_item_inventory() -> Dictionary:
 	return _item_inventory.duplicate(true)
+
+
+func has_claimed_gift(gift_id: String) -> bool:
+	return _claimed_gifts.has(gift_id.strip_edges())
+
+
+func get_claimed_gift_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for key: Variant in _claimed_gifts.keys():
+		ids.append(String(key))
+	ids.sort()
+	return ids
+
+
+## Grants a catalog item exactly once for a stable world gift ID. The claim is
+## permanent even if the player later discards the item.
+func claim_unique_item(gift_id: String, item_key: String) -> Dictionary:
+	_last_error = ""
+	var normalized_gift_id := gift_id.strip_edges()
+	var normalized_item_key := item_key.strip_edges()
+	if not _is_progress_key(normalized_gift_id):
+		return _inventory_failure("That world gift has an invalid ID.")
+	if not _items_by_slug.has(normalized_item_key):
+		return _inventory_failure("That world gift references an unknown item.")
+	var item := _items_by_slug[normalized_item_key] as Dictionary
+	var summary := {
+		"kind": "unique_item_gift",
+		"gift_id": normalized_gift_id,
+		"id": normalized_item_key,
+		"name": String(item.get("name", normalized_item_key)),
+	}
+	if _claimed_gifts.has(normalized_gift_id):
+		summary["newly_claimed"] = false
+		return {"ok": true, "summary": summary}
+
+	var current_quantity := int(_item_inventory.get(normalized_item_key, 0))
+	if current_quantity >= MAX_ITEM_QUANTITY:
+		return _inventory_failure("There is no room for that item in the bag.")
+	_item_inventory[normalized_item_key] = current_quantity + 1
+	_claimed_gifts[normalized_gift_id] = true
+	summary["newly_claimed"] = true
+	summary["quantity"] = current_quantity + 1
+	_emit_progression_change()
+	inventory_changed.emit()
+	return {"ok": true, "summary": summary}
+
+
+## Moves one bag item onto a captured Pokemon. Replacing an existing held item
+## returns that item to the bag in the same synchronous transaction.
+func give_item_to_pokemon(item_key: String, pcl_id: String) -> Dictionary:
+	_last_error = ""
+	var normalized_key := item_key.strip_edges()
+	if not _items_by_slug.has(normalized_key):
+		return _inventory_failure("Unknown held item: %s" % normalized_key)
+	var bag_quantity := int(_item_inventory.get(normalized_key, 0))
+	if bag_quantity <= 0:
+		return _inventory_failure("You do not have that item in the bag.")
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	if pcl.is_empty():
+		return _inventory_failure(CollectionSystem.get_last_error())
+	var previous_key := String(pcl.get("heldItem", ""))
+	if previous_key == normalized_key:
+		return _inventory_failure("That Pokemon is already holding this item.")
+	if not previous_key.is_empty():
+		if not _items_by_slug.has(previous_key):
+			return _inventory_failure("The Pokemon is holding an unknown item.")
+		if int(_item_inventory.get(previous_key, 0)) >= MAX_ITEM_QUANTITY:
+			return _inventory_failure("There is no bag room for the Pokemon's current item.")
+	if not CollectionSystem.set_held_item(pcl_id, normalized_key):
+		return _inventory_failure(CollectionSystem.get_last_error())
+
+	if bag_quantity == 1:
+		_item_inventory.erase(normalized_key)
+	else:
+		_item_inventory[normalized_key] = bag_quantity - 1
+	if not previous_key.is_empty():
+		_item_inventory[previous_key] = int(_item_inventory.get(previous_key, 0)) + 1
+	var item := _items_by_slug[normalized_key] as Dictionary
+	var summary := {
+		"kind": "held_item_equipped",
+		"pcl_id": pcl_id,
+		"item_key": normalized_key,
+		"item_name": String(item.get("name", normalized_key)),
+		"replaced_item_key": previous_key,
+	}
+	_emit_progression_change()
+	inventory_changed.emit()
+	return {"ok": true, "summary": summary}
+
+
+## Returns one captured Pokemon's held item to the persistent bag.
+func take_held_item_from_pokemon(pcl_id: String) -> Dictionary:
+	_last_error = ""
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	if pcl.is_empty():
+		return _inventory_failure(CollectionSystem.get_last_error())
+	var item_key := String(pcl.get("heldItem", ""))
+	if item_key.is_empty():
+		return _inventory_failure("That Pokemon is not holding an item.")
+	if not _items_by_slug.has(item_key):
+		return _inventory_failure("The Pokemon is holding an unknown item.")
+	var current_quantity := int(_item_inventory.get(item_key, 0))
+	if current_quantity >= MAX_ITEM_QUANTITY:
+		return _inventory_failure("There is no room for that item in the bag.")
+	if not CollectionSystem.set_held_item(pcl_id, ""):
+		return _inventory_failure(CollectionSystem.get_last_error())
+	_item_inventory[item_key] = current_quantity + 1
+	var item := _items_by_slug[item_key] as Dictionary
+	var summary := {
+		"kind": "held_item_taken",
+		"pcl_id": pcl_id,
+		"item_key": item_key,
+		"item_name": String(item.get("name", item_key)),
+		"quantity": current_quantity + 1,
+	}
+	_emit_progression_change()
+	inventory_changed.emit()
+	return {"ok": true, "summary": summary}
 
 
 func get_earned_badges() -> Array[int]:
@@ -171,10 +303,11 @@ func buy_pokemon(pokemon_id: int) -> Dictionary:
 			"Stretchman wants %s, but you only have %s."
 			% [format_money(price), format_money(_balance)]
 		)
+	var delivered_level := _pokemon_purchase_level_for_price(price)
 
 	var purchased := CollectionSystem.add_pokemon(
 		pokemon_id,
-		PURCHASED_POKEMON_LEVEL,
+		delivered_level,
 		1.0,
 		-1,
 		0
@@ -192,7 +325,7 @@ func buy_pokemon(pokemon_id: int) -> Dictionary:
 		"pcl_id": String(purchased.get("pclID", "")),
 		"name": String(offer.get("name", "Pokemon")),
 		"price": price,
-		"level": PURCHASED_POKEMON_LEVEL,
+		"level": delivered_level,
 	}
 	_emit_progression_change(true)
 	purchase_completed.emit(summary.duplicate(true))
@@ -290,7 +423,19 @@ func build_loot_box_reel(
 
 
 func get_destinations(kind: String) -> Array[Dictionary]:
-	return Content.get_destinations(kind)
+	var destinations := Content.get_destinations(kind)
+	if kind != "route":
+		return destinations
+	for destination in destinations:
+		var route_index := int(destination.get("index", -1))
+		destination["unlocked"] = is_route_unlocked(route_index)
+		destination["completed"] = is_route_completed(route_index)
+		destination["unlock_requirement"] = (
+			"Available from the beginning."
+			if route_index == 0
+			else "Reach the end of Route %d." % (route_index - 1)
+		)
+	return destinations
 
 
 func begin_destination(kind: String, destination_index: int) -> Dictionary:
@@ -299,10 +444,21 @@ func begin_destination(kind: String, destination_index: int) -> Dictionary:
 	if destination.is_empty():
 		_last_error = "Unknown Stretchman destination: %s %d" % [kind, destination_index]
 		return {}
+	if kind == "route" and not is_route_unlocked(destination_index):
+		_last_error = "Route %d is locked. Reach the end of Route %d first." % [
+			destination_index,
+			destination_index - 1,
+		]
+		return {}
 	_run_id += 1
 	_active_destination = destination.duplicate(true)
 	_active_destination["kind"] = kind
-	_active_destination["scene_path"] = Content.DESTINATION_SCENE_PATH
+	_active_destination["scene_path"] = String(
+		destination.get("scene_path", Content.DESTINATION_SCENE_PATH)
+	)
+	_active_destination["spawn_marker"] = String(
+		destination.get("spawn_marker", "EntrySpawn")
+	)
 	_active_destination["run_id"] = _run_id
 	_run_defeated_ids.clear()
 	progression_changed.emit()
@@ -312,6 +468,65 @@ func begin_destination(kind: String, destination_index: int) -> Dictionary:
 
 func get_active_destination() -> Dictionary:
 	return _active_destination.duplicate(true)
+
+
+func get_completed_routes() -> Array[int]:
+	return _completed_routes.duplicate()
+
+
+func is_route_completed(route_index: int) -> bool:
+	return route_index in _completed_routes
+
+
+func is_route_unlocked(route_index: int) -> bool:
+	if route_index < 0 or route_index >= Content.ROUTE_COUNT:
+		return false
+	return route_index == 0 or route_index - 1 in _completed_routes
+
+
+func are_active_route_trainers_defeated(route_index: int) -> bool:
+	if route_index == 0:
+		return true
+	if (
+		String(_active_destination.get("kind", "")) != "route"
+		or int(_active_destination.get("index", -1)) != route_index
+	):
+		return false
+	var encounters := Content.get_encounters("route", route_index)
+	if encounters.is_empty():
+		return false
+	for encounter in encounters:
+		if not _run_defeated_ids.has(String(encounter.get("encounter_id", ""))):
+			return false
+	return true
+
+
+## Called only by the physical goal at a route's far end. Unlocking is
+## sequential, idempotent, and separate from winning the final battle so the
+## player must actually traverse the complete dungeon.
+func complete_route_at_end(route_index: int) -> Dictionary:
+	_last_error = ""
+	if not is_route_unlocked(route_index):
+		_last_error = "Route %d is not unlocked." % route_index
+		return {"ok": false, "error": _last_error}
+	if route_index > 0 and not are_active_route_trainers_defeated(route_index):
+		_last_error = "Defeat every Route %d trainer before using the exit." % route_index
+		return {"ok": false, "error": _last_error}
+	var newly_completed := route_index not in _completed_routes
+	if newly_completed:
+		_completed_routes.append(route_index)
+		_completed_routes.sort()
+		progression_changed.emit()
+		route_progression_changed.emit(_completed_routes.duplicate())
+	var next_route := route_index + 1 if route_index + 1 < Content.ROUTE_COUNT else -1
+	return {
+		"ok": true,
+		"route_index": route_index,
+		"newly_completed": newly_completed,
+		"next_route": next_route,
+		"next_route_unlocked": next_route >= 0 and is_route_unlocked(next_route),
+		"all_routes_completed": route_index == Content.ROUTE_COUNT - 1,
+	}
 
 
 func get_active_encounters() -> Array[Dictionary]:
@@ -330,6 +545,12 @@ func get_encounter_by_id(encounter_id: String) -> Dictionary:
 	for encounter in get_active_encounters():
 		if String(encounter.get("encounter_id", "")) == normalized_id:
 			return encounter.duplicate(true)
+	if String(_active_destination.get("kind", "")) == "route":
+		var wild_encounter := Content.get_route_wild_encounter(
+			int(_active_destination.get("index", -1))
+		)
+		if String(wild_encounter.get("encounter_id", "")) == normalized_id:
+			return wild_encounter
 	return {}
 
 
@@ -360,13 +581,35 @@ func get_save_data() -> Dictionary:
 		"economy_version": CURRENT_ECONOMY_VERSION,
 		"balance": _balance,
 		"item_inventory": _item_inventory.duplicate(true),
+		"claimed_gifts": get_claimed_gift_ids(),
 		"earned_badges": _earned_badges.duplicate(),
 		"champion_cleared": _champion_cleared,
+		"completed_routes": _completed_routes.duplicate(),
 		"active_destination": _active_destination.duplicate(true),
 		"run_defeated_ids": get_run_defeated_ids(),
 		"run_id": _run_id,
 		"last_battle_reward": _last_battle_reward.duplicate(true),
 	}
+
+
+## Restores the complete R&D economy and destination progression to a new-game
+## state. ProgressionAutosave is the only normal gameplay caller.
+func reset_progress() -> void:
+	_balance = STARTING_BALANCE
+	_item_inventory.clear()
+	_claimed_gifts.clear()
+	_earned_badges.clear()
+	_champion_cleared = false
+	_completed_routes.clear()
+	_active_destination.clear()
+	_run_defeated_ids.clear()
+	_run_id = 0
+	_last_battle_reward.clear()
+	_last_error = ""
+	balance_changed.emit(_balance)
+	inventory_changed.emit()
+	progression_changed.emit()
+	route_progression_changed.emit(_completed_routes.duplicate())
 
 
 func validate_save_data(value: Variant) -> String:
@@ -394,6 +637,18 @@ func validate_save_data(value: Variant) -> String:
 		if not _is_integer_value(quantity) or int(quantity) < 1 or int(quantity) > MAX_ITEM_QUANTITY:
 			return "Stretch progression contains an invalid item quantity."
 
+	var claimed_gifts_value: Variant = data.get("claimed_gifts", [])
+	if typeof(claimed_gifts_value) != TYPE_ARRAY:
+		return "Stretch progression has an invalid claimed-gift list."
+	var seen_gifts: Dictionary = {}
+	for gift_id_value: Variant in claimed_gifts_value as Array:
+		if typeof(gift_id_value) != TYPE_STRING or not _is_progress_key(String(gift_id_value)):
+			return "Stretch progression contains an invalid claimed gift."
+		var gift_id := String(gift_id_value)
+		if seen_gifts.has(gift_id):
+			return "Stretch progression repeats a claimed gift."
+		seen_gifts[gift_id] = true
+
 	var badges_value: Variant = data.get("earned_badges", [])
 	if typeof(badges_value) != TYPE_ARRAY:
 		return "Stretch progression has an invalid badge list."
@@ -407,6 +662,23 @@ func validate_save_data(value: Variant) -> String:
 
 	if typeof(data.get("champion_cleared", false)) != TYPE_BOOL:
 		return "Stretch progression has an invalid champion flag."
+	var completed_routes_value: Variant = data.get("completed_routes", [])
+	if typeof(completed_routes_value) != TYPE_ARRAY:
+		return "Stretch progression has an invalid completed-route list."
+	var seen_routes: Dictionary = {}
+	for route_value: Variant in completed_routes_value as Array:
+		if (
+			not _is_integer_value(route_value)
+			or int(route_value) < 0
+			or int(route_value) >= Content.ROUTE_COUNT
+		):
+			return "Stretch progression contains an invalid completed route."
+		var route_index := int(route_value)
+		if seen_routes.has(route_index):
+			return "Stretch progression repeats a completed route."
+		if route_index > 0 and not seen_routes.has(route_index - 1):
+			return "Stretch progression skips a required route."
+		seen_routes[route_index] = true
 	if not _is_integer_value(data.get("run_id", 0)) or int(data.get("run_id", 0)) < 0:
 		return "Stretch progression has an invalid run ID."
 
@@ -441,11 +713,18 @@ func load_save_data(value: Variant) -> bool:
 	):
 		_balance = STARTING_BALANCE
 	_item_inventory = (data.get("item_inventory", {}) as Dictionary).duplicate(true)
+	_claimed_gifts.clear()
+	for gift_id_value: Variant in data.get("claimed_gifts", []) as Array:
+		_claimed_gifts[String(gift_id_value)] = true
 	_earned_badges.clear()
 	for badge_value: Variant in data.get("earned_badges", []) as Array:
 		_earned_badges.append(int(badge_value))
 	_earned_badges.sort()
 	_champion_cleared = bool(data.get("champion_cleared", false))
+	_completed_routes.clear()
+	for route_value: Variant in data.get("completed_routes", []) as Array:
+		_completed_routes.append(int(route_value))
+	_completed_routes.sort()
 	_active_destination = (data.get("active_destination", {}) as Dictionary).duplicate(true)
 	_run_defeated_ids.clear()
 	for defeated_id: Variant in data.get("run_defeated_ids", []) as Array:
@@ -459,6 +738,7 @@ func load_save_data(value: Variant) -> bool:
 	balance_changed.emit(_balance)
 	inventory_changed.emit()
 	progression_changed.emit()
+	route_progression_changed.emit(_completed_routes.duplicate())
 	return true
 
 
@@ -513,6 +793,32 @@ func _can_afford(price: int) -> bool:
 	return price > 0 and _balance >= price
 
 
+func _pokemon_purchase_level_for_price(price: int) -> int:
+	# Shop prices are authored independently by the generated catalog. Delivery
+	# level is a one-way logarithmic projection of that immutable price so large
+	# collector premiums remain meaningful without pushing purchases above Lv. 20.
+	var clamped_price := clampi(
+		price,
+		PURCHASED_POKEMON_LEVEL_PRICE_FLOOR,
+		PURCHASED_POKEMON_LEVEL_PRICE_CAP
+	)
+	var minimum_log := log(float(PURCHASED_POKEMON_LEVEL_PRICE_FLOOR))
+	var maximum_log := log(float(PURCHASED_POKEMON_LEVEL_PRICE_CAP))
+	var price_progress := (
+		(log(float(clamped_price)) - minimum_log)
+		/ (maximum_log - minimum_log)
+	)
+	return clampi(
+		PURCHASED_POKEMON_MIN_LEVEL
+		+ int(roundf(
+			price_progress
+			* float(PURCHASED_POKEMON_MAX_LEVEL - PURCHASED_POKEMON_MIN_LEVEL)
+		)),
+		PURCHASED_POKEMON_MIN_LEVEL,
+		PURCHASED_POKEMON_MAX_LEVEL
+	)
+
+
 func _is_integer_value(value: Variant) -> bool:
 	if typeof(value) == TYPE_INT:
 		return true
@@ -521,6 +827,22 @@ func _is_integer_value(value: Variant) -> bool:
 		and is_finite(float(value))
 		and floorf(float(value)) == float(value)
 	)
+
+
+func _is_progress_key(value: String) -> bool:
+	var normalized := value.strip_edges()
+	if normalized.is_empty() or normalized.length() > 128 or normalized != value:
+		return false
+	for character_index in normalized.length():
+		var codepoint := normalized.unicode_at(character_index)
+		if not (
+			(codepoint >= 48 and codepoint <= 57)
+			or (codepoint >= 65 and codepoint <= 90)
+			or (codepoint >= 97 and codepoint <= 122)
+			or codepoint in [45, 95]
+		):
+			return false
+	return true
 
 
 func _purchase_failure(message: String) -> Dictionary:
@@ -607,6 +929,8 @@ func _apply_generic_battle_result(
 
 
 func _record_encounter_victory(encounter: Dictionary) -> void:
+	if bool(encounter.get("is_wild", false)):
+		return
 	var encounter_id := String(encounter.get("encounter_id", ""))
 	if not encounter_id.is_empty():
 		_run_defeated_ids[encounter_id] = true
@@ -638,8 +962,9 @@ func _destination_win_reward(encounter: Dictionary) -> int:
 	var destination_index := int(_active_destination.get("index", 1))
 	match String(_active_destination.get("kind", "")):
 		"route":
-			var route_rewards: Array[int] = [20, 100, 250, 500, 1_000, 1_800, 2_800, 4_000]
-			return route_rewards[clampi(destination_index, 1, route_rewards.size()) - 1]
+			# Route 8 remains near the former $4,000 payout while the 40-route
+			# chain grows smoothly to roughly $95,000 per late-route trainer.
+			return 20 + roundi(float(destination_index * destination_index) * 6.21875) * 10
 		"gym":
 			var gym_rewards: Array[int] = [200, 400, 750, 1_200, 2_000, 3_000, 4_500, 6_000]
 			return gym_rewards[clampi(destination_index, 1, gym_rewards.size()) - 1]

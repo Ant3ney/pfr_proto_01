@@ -10,6 +10,18 @@ presentation state and typed UI intents. Battle scenes remain presentation and
 input adapters; they do not construct REST commands or calculate results. See
 [`runtime/battle-client.md`](runtime/battle-client.md) for the verified contract.
 
+## Local and optional cloud persistence
+
+`ProgressionAutosave` owns the validated schema-5 local checkpoint and
+per-section offline timestamps. Optional `CloudSaveSync` sends that payload to
+a same-origin Netlify Function only after a player enters a private Save ID;
+opting out never disables local saving. MongoDB Atlas credentials remain
+server-side, Save IDs are HMACed before becoming document keys, and
+revision/timestamp/epoch conflict resolution prevents an old offline device
+from undoing a confirmed reset. See
+[`runtime/progression-autosave.md`](runtime/progression-autosave.md) and
+[`runtime/cloud-save.md`](runtime/cloud-save.md).
+
 ## Overworld and traversal.
 
 Simple character controller. The art of the overworld will be made with modular assets that way the world can be easily made. For the time being, no additional tools will be implimentedt to speed up overwold creation. The overwold will be developed via simple drag and drop placements of the assets.
@@ -18,14 +30,32 @@ Each zone will have NPC's and objects that take in interation scrips. They will 
 
 The interaction scrip, being a child of a interaction parrent, will be a free handed way of handling what happons when interacted and when an interaction is called. The interaction parrent provides an ocean of healpers to help facilitate this.
 
-### Route 4 and wild grass
+### Routes 0–39 and wild grass
 
-The implemented Route 4 level is
-[`overworld/route_4/route_4.tscn`](../overworld/route_4/route_4.tscn). It uses
+The authored opening level is
+[`overworld/route_0/route_0.tscn`](../overworld/route_0/route_0.tscn). It uses
 96 unit-scale 4 × 4 m route modules, five reusable encounter fields, and the
 calibrated tree, hedge, shrub, flower, stump, and boulder families from the New
-Bouffalant City environment pack. `Route4Start` is the stable entry marker;
-`ExitToCity` returns through `Route4GatewayReturn` in the modular city.
+Bouffalant City environment pack. Its authored `NavigationRegion3D` supports
+seven standard prototype trainers in nondecreasing battle order: Kyle and
+Delivery Worker at Lv. 3, Police Officer and Businessman at Lv. 4, Backpacker
+and Tourist at Lv. 5, then Jogger at Lv. 6. Map-wide checkpoint walls force the
+player through each unobstructed sight lane. Their first sight battle is forced
+once per play session; later rematches use normal interaction. `Route0Start` is
+the stable entry marker. The red interactive `Route0ReturnGateway` beside that
+marker returns to `Route0ReturnSpawn` in the Gate Building's rear exit room;
+there is no contact exit at the Route 0 spawn.
+
+Stretchman lists Route 0 plus 39 deterministic generated dungeons. The catalog
+groups four routes into each of 10 shared level ranges and uses 20 biome
+families with named deep variants. Generated routes have winding segmented
+paths, continuous side-wall collision, route-specific tall grass, four-to-eight
+Highly Aggro trainer chokepoints, and increasing lengths through Route 39.
+Every route ends at a physical completion goal. Route 0 begins unlocked; the
+next route becomes available only after the prior route's far-end goal is
+reached, and generated goals additionally require every trainer win. See
+[`runtime/stretch-goals.md`](runtime/stretch-goals.md) for the catalog,
+persistence, reward, and regression contracts.
 
 [`TallGrassEncounterZone`](../rnd/TallGrassEncounterZone.gd) is the reusable
 player-only `Area3D` under `rnd/`. Its ready-made
@@ -34,16 +64,27 @@ combines six unit-scale tall-grass clumps with an 8.5 × 4.5 m detection volume.
 It accumulates horizontal distance only while movement is enabled, checks the
 authored chance every 2 m by default, never rolls while the player stands
 still, debounces a selected encounter, and calls `GameInstance.startBattle()`
-with a concrete scene and stable encounter ID. Route 4 currently authors an 8%
-check chance and launches `wild-fletchling-route-4-v1` through
-[`route_4_wild_battle_scene.tscn`](../battle/route_4_wild_battle_scene.tscn).
+with a concrete scene and stable encounter ID. Route 0 currently authors an 8%
+check chance and launches `wild-fletchling-route-0-v1` through
+[`route_0_wild_battle_scene.tscn`](../battle/route_0_wild_battle_scene.tscn).
 
-The green
-[`route_4_gateway.tscn`](../overworld/route_4/route_4_gateway.tscn) is instanced
-in [`primary_development_enviroment.tscn`](../demo/primary_development_enviroment.tscn). It accepts
-only a nearby `PlayerCharacter`, then supports E, Enter, Space, gamepad A, or
-its 48 px touch button before using the normal `GameInstance.transfer_to_scene`
-contract. It is not a contact-triggered transfer.
+The Gate Building's rear `Route0ExitRoom` uses an ordinary player-only
+`ExitToRoute0` threshold at the labeled rear door, so walking through the door
+immediately enters Route 0 without an interaction prop. Its city-facing arrival
+marker sits well beyond a narrower `ExitFront` threshold and faces into the
+room, preventing an idle arrival from bouncing back outside. Illuminated floor
+guides and `CITY EXIT` / `ROUTE 0` labels make both directions explicit. The
+modular city's sole Gate Building trigger sits on the city-facing side and
+enters this safe front-room marker; the old second exterior-side transition is
+absent.
+
+[`route_4_return_gateway.tscn`](../overworld/route_4/route_4_return_gateway.tscn)
+inherits the configurable
+[`route_4_gateway.tscn`](../overworld/route_4/route_4_gateway.tscn) interaction
+object, styles it red, and places it near `Route0Start`. These legacy internal
+resource names remain dependencies of the live Route 0 wrapper. It accepts only a
+nearby `PlayerCharacter`, then supports E, Enter, Space, gamepad A, or its 48 px
+touch button before returning to the Gate Building rear marker.
 
 
 ### Character
@@ -106,13 +147,15 @@ explicitly include every destination scene. See the
 [`Scene Transfer Trigger` guide](../core/scene_transfer_trigger.md) and its
 focused smoke tests for the editor and runtime contracts.
 
-The modular city currently authors 17 contact-triggered exterior openings. Two
-serve the Pokemon Center and 15 serve City Hall, Rouge Tower, Miare Station,
-the garage, Gate Building, two tenant buildings, and the museum. Imported
-building collision remains solid: each `Area3D` reaches onto a verified
-walkable approach, and every interior exit targets a dedicated exterior marker
-beyond the corresponding reverse trigger. The selected-resources Web preset
-lists all string-addressed destination scenes explicitly.
+The modular city currently authors 10 contact-triggered exterior openings. Two
+serve the Pokemon Center; the other eight serve three City Hall doors, Miare
+Station, the city-facing Gate Building door, two tenant buildings, and the
+museum. Rouge Tower and the garage remain visual city landmarks but have no
+exterior transfer triggers or return markers. Imported building collision
+remains solid: each live `Area3D` reaches onto a verified walkable approach,
+and every interior exit targets a dedicated exterior marker beyond the
+corresponding reverse trigger. The selected-resources Web preset lists all
+live string-addressed destination scenes explicitly.
 
 ## UI Template System
 
@@ -149,7 +192,14 @@ Records are losslessly gzip-compressed and loaded lazily. The runtime keeps a bo
 
 The implemented `CollectionSystem` autoload owns the player's captured Pokemon and six-slot party. A specific captured instance is called a `pcl` (Pokemon collection instance). Pokemon IDs are the numeric PokeAPI IDs accepted by `CreatureSystem`; every PCL has a separately generated unique instance ID.
 
-On a fresh runtime, the collection starts with a full level-3 party in this slot order: Palkia, Mothim, Hoothoot, Vespiquen, Luxray, and Pelipper. Each starts at full health and zero XP progress. Loading collection save data replaces this starting collection.
+The autoload still seeds its legacy level-3 six-member fixture so isolated
+scenes and collection tests have deterministic bootstrap data. Normal game
+startup never exposes that fixture as a new profile: ProgressionAutosave either
+replaces it with the saved collection or clears it before the mandatory starter
+picker. A player-facing fresh profile chooses animated Charmander, Froakie, or
+Treecko and receives exactly that one full-health level-5 PCL in party slot 1.
+See [`runtime/starter-selection.md`](runtime/starter-selection.md) for first-run
+and complete-reset ownership.
 
 The canonical PCL object is:
 
@@ -170,11 +220,17 @@ The canonical PCL object is:
     species: "Pikachu",
     spriteId: "pikachu",
     moves: ["thundershock", "growl"]
-  }
+  },
+  heldItem: "exp-share"
 }
 ```
 
 Party slots are integers from `1` through `6`. A Pokemon outside the party has `inParty: false` and `slot: null`. Health is normalized from `0.0` through `1.0`; `currentXp` is cumulative and level is derived from that Pokemon's growth row, from `1` through `100`. Save loading atomically migrates the former normalized `xp` field to cumulative `currentXp` and does not retain both fields.
+
+`heldItem` is an optional lowercase catalog slug owned by the captured instance.
+`set_held_item()` validates and mutates that field; it does not manage bag
+quantity. `StretchGoalSystem` is the transaction owner that moves an item
+between its bag and a PCL, so replacing or taking an item cannot duplicate it.
 
 `add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance,
 and `get_pcl_by_party_slot(slot)` queries by party position. `set_party_slot(...)`

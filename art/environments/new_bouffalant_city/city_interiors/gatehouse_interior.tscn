@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_city_room.tscn" id="1_room"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
@@ -19,6 +19,20 @@ albedo_color = Color(0.65, 0.43, 0.13, 1)
 metallic = 0.38
 roughness = 0.52
 
+[sub_resource type="StandardMaterial3D" id="Material_city_exit"]
+albedo_color = Color(0.12, 0.68, 0.95, 1)
+roughness = 0.48
+emission_enabled = true
+emission = Color(0.025, 0.22, 0.46, 1)
+emission_energy_multiplier = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Material_route_exit"]
+albedo_color = Color(0.12, 0.92, 0.38, 1)
+roughness = 0.48
+emission_enabled = true
+emission = Color(0.02, 0.38, 0.11, 1)
+emission_energy_multiplier = 0.85
+
 [sub_resource type="BoxMesh" id="Mesh_checkpoint"]
 material = SubResource("Material_desk")
 size = Vector3(3.4, 1.02, 1.0)
@@ -31,11 +45,19 @@ size = Vector3(2.6, 1.6, 0.07)
 material = SubResource("Material_brass")
 size = Vector3(2.8, 0.12, 0.12)
 
+[sub_resource type="BoxMesh" id="Mesh_city_exit_guide"]
+material = SubResource("Material_city_exit")
+size = Vector3(2.7, 0.04, 0.72)
+
+[sub_resource type="BoxMesh" id="Mesh_route_exit_guide"]
+material = SubResource("Material_route_exit")
+size = Vector3(2.7, 0.04, 0.72)
+
 [sub_resource type="BoxShape3D" id="Shape_checkpoint"]
 size = Vector3(3.4, 1.02, 1.0)
 
 [node name="GatehouseInterior" type="Node3D"]
-editor_description = "Narrow classical checkpoint room with a walnut inspection desk, civic map, brass lane bars, and independent approaches from both sides of the gate building."
+editor_description = "Narrow classical checkpoint room with a walnut inspection desk, civic map, brass lane bars, a clearly marked city exit, and a walk-through Route 0 door in the rear exit room."
 metadata/mobile_web_level = true
 metadata/interior_id = "gatehouse"
 
@@ -70,24 +92,58 @@ mesh = SubResource("Mesh_barrier")
 position = Vector3(0, 0.51, -0.35)
 shape = SubResource("Shape_checkpoint")
 
-[node name="RearDoor" parent="." instance=ExtResource("4_door")]
+[node name="Route0ExitRoom" type="Node3D" parent="."]
+editor_description = "The Gate Building's rear room is the sole authored city entrance to Route 0."
+
+[node name="RearDoor" parent="Route0ExitRoom" instance=ExtResource("4_door")]
 position = Vector3(0, 0, -3.86)
 
-[node name="FrontEntrySpawn" type="Marker3D" parent="."]
-position = Vector3(0, 0, 2.55)
+[node name="Route0DoorLabel" type="Label3D" parent="Route0ExitRoom"]
+position = Vector3(0, 2.34, -3.42)
+billboard = 1
+text = "ROUTE 0"
+font_size = 42
+outline_size = 9
+modulate = Color(0.72, 1, 0.8, 1)
+outline_modulate = Color(0.01, 0.16, 0.05, 1)
+
+[node name="Route0DoorGuide" type="MeshInstance3D" parent="Route0ExitRoom"]
+position = Vector3(0, 0.02, -2.9)
+mesh = SubResource("Mesh_route_exit_guide")
+
+[node name="ExitToRoute0" parent="Route0ExitRoom" instance=ExtResource("5_transfer")]
+position = Vector3(0, 0, -3.7)
+scale = Vector3(1.55, 1, 0.55)
+destination_scene_path = "res://overworld/route_0/route_0.tscn"
+destination_spawn_marker = &"Route0Start"
+
+[node name="Route0ReturnSpawn" type="Marker3D" parent="Route0ExitRoom"]
+position = Vector3(0, 0, -1.55)
+rotation = Vector3(0, 3.141593, 0)
+metadata/entry_id = "route_0_gatehouse_return"
+
+[node name="FrontDoor" parent="." instance=ExtResource("4_door")]
+position = Vector3(0, 0, 3.86)
 rotation = Vector3(0, 3.141593, 0)
 
-[node name="RearEntrySpawn" type="Marker3D" parent="."]
-position = Vector3(0, 0, -2.45)
+[node name="CityExitLabel" type="Label3D" parent="."]
+position = Vector3(0, 2.34, 3.42)
+billboard = 1
+text = "CITY EXIT"
+font_size = 42
+outline_size = 9
+modulate = Color(0.72, 0.91, 1, 1)
+outline_modulate = Color(0.015, 0.09, 0.18, 1)
+
+[node name="CityExitGuide" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, 2.9)
+mesh = SubResource("Mesh_city_exit_guide")
+
+[node name="FrontEntrySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0, 1.65)
 
 [node name="ExitFront" parent="." instance=ExtResource("5_transfer")]
 position = Vector3(0, 0, 3.7)
-scale = Vector3(1.55, 1, 0.82)
+scale = Vector3(1.55, 1, 0.55)
 destination_scene_path = "res://demo/primary_development_enviroment.tscn"
 destination_spawn_marker = &"GateBuildingFrontReturn"
-
-[node name="ExitRear" parent="." instance=ExtResource("5_transfer")]
-position = Vector3(0, 0, -3.62)
-scale = Vector3(1.55, 1, 0.82)
-destination_scene_path = "res://demo/primary_development_enviroment.tscn"
-destination_spawn_marker = &"GateBuildingRearReturn"

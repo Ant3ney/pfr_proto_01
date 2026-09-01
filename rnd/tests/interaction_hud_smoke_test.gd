@@ -1,6 +1,6 @@
 extends Node3D
 
-const CITY_TRAINER_SCENES: Array[String] = [
+const PROTOTYPE_TRAINER_SCENES: Array[String] = [
 	"res://overworld/trainer_lake/TrainerDeliveryWorker.tscn",
 	"res://overworld/trainer_lake/TrainerPoliceOfficer.tscn",
 	"res://overworld/trainer_lake/TrainerBusinessman.tscn",
@@ -19,7 +19,7 @@ func _ready() -> void:
 func _run() -> void:
 	for _frame in range(4):
 		await get_tree().physics_frame
-	_check_city_trainers_keep_automatic_sight()
+	_check_prototype_trainers_keep_automatic_sight()
 
 	var player := $Player as PlayerCharacter
 	var trainer := $DeliveryWorker as PFRCharacter
@@ -36,11 +36,11 @@ func _run() -> void:
 	_check(detector != null, "The shared player should own the RND interaction detector.")
 	_check(
 		trainer_behavior != null and trainer_behavior.automatic_sight_encounter,
-		"City trainers should retain automatic sight encounters."
+		"Prototype trainers should retain automatic sight encounters."
 	)
 	_check(
 		police_behavior != null and police_behavior.automatic_sight_encounter,
-		"Every city trainer scene should inherit automatic sight encounters."
+		"Every prototype trainer scene should inherit automatic sight encounters."
 	)
 	_check(
 		detector != null and detector.get_current_target() == trainer,
@@ -82,7 +82,7 @@ func _run() -> void:
 	_check(
 		police_behavior != null
 		and police_behavior._approach_state == TrainerBehavior.ApproachState.COMPLETE,
-		"Walking into a city trainer's forward sight line should force its sequence."
+		"Walking into a prototype trainer's forward sight line should force its sequence."
 	)
 	_check(
 		not GameInstance.is_player_movement_enabled(),
@@ -121,22 +121,22 @@ func _find_dialog_template() -> UITemplate:
 	return null
 
 
-func _check_city_trainers_keep_automatic_sight() -> void:
-	for scene_path in CITY_TRAINER_SCENES:
+func _check_prototype_trainers_keep_automatic_sight() -> void:
+	for scene_path in PROTOTYPE_TRAINER_SCENES:
 		var packed_scene := load(scene_path) as PackedScene
-		_check(packed_scene != null, "The city trainer scene should load: %s" % scene_path)
+		_check(packed_scene != null, "The prototype trainer scene should load: %s" % scene_path)
 		if packed_scene == null:
 			continue
 		var scene_instance := packed_scene.instantiate()
-		var city_trainer := scene_instance as PFRCharacter
+		var prototype_trainer := scene_instance as PFRCharacter
 		var behavior := (
-			city_trainer.controller.npc_behavior as TrainerBehavior
-			if city_trainer != null
+			prototype_trainer.controller.npc_behavior as TrainerBehavior
+			if prototype_trainer != null
 			else null
 		)
 		_check(
 			behavior != null and behavior.automatic_sight_encounter,
-			"City trainer should force forward-sight encounters: %s" % scene_path
+			"Prototype trainer should force forward-sight encounters: %s" % scene_path
 		)
 		scene_instance.free()
 

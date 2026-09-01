@@ -54,27 +54,6 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_joystick")
 
-[node name="FullscreenButton" type="Button" parent="."]
-custom_minimum_size = Vector2(156, 48)
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -172.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 64.0
-grow_horizontal = 0
-focus_mode = 0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 17
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-text = "Fullscreen"
-
 [node name="InteractionButton" type="Button" parent="."]
 visible = false
 custom_minimum_size = Vector2(260, 58)
@@ -102,9 +81,3 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 text = "Interact   •   E / A"
 
 [node name="PlayerMenuHUD" parent="." instance=ExtResource("3_player_menu")]
-
-[node name="FullscreenHelp" type="AcceptDialog" parent="."]
-title = "Fullscreen unavailable"
-initial_position = 2
-size = Vector2i(360, 220)
-ok_button_text = "Got it"

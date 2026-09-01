@@ -10,9 +10,12 @@ signal interaction_became_unavailable
 signal route_transfer_requested(destination_scene_path: String, destination_spawn_marker: StringName)
 
 @export_group("Route Destination")
-@export_file("*.tscn") var destination_scene_path := "res://overworld/route_4/route_4.tscn"
-@export var destination_spawn_marker: StringName = &"Route4Start"
-@export var interaction_text := "Enter Route 4"
+@export_file("*.tscn") var destination_scene_path := "res://overworld/route_0/route_0.tscn"
+@export var destination_spawn_marker: StringName = &"Route0Start"
+@export var interaction_text := "Enter Route 0"
+@export var traveling_text := "Traveling to Route 0..."
+@export var display_text := "ROUTE 0"
+@export var accent_color := Color(0.08, 0.9, 0.38, 1)
 @export var enabled := true
 
 @onready var _interaction_prompt: CanvasLayer = $InteractionPrompt
@@ -23,6 +26,7 @@ var _transfer_requested := false
 
 
 func _ready() -> void:
+	_apply_visual_style()
 	if Engine.is_editor_hint():
 		return
 	body_entered.connect(_on_body_entered)
@@ -53,7 +57,7 @@ func interact() -> bool:
 
 	var normalized_path := destination_scene_path.strip_edges()
 	if normalized_path.is_empty() or not ResourceLoader.exists(normalized_path, "PackedScene"):
-		push_warning("%s cannot open missing Route 4 scene: %s" % [get_path(), normalized_path])
+		push_warning("%s cannot open missing destination scene: %s" % [get_path(), normalized_path])
 		return false
 
 	_transfer_requested = true
@@ -97,10 +101,41 @@ func _update_prompt() -> void:
 	_interaction_prompt.visible = available or _transfer_requested
 	_interaction_button.disabled = not available
 	_interaction_button.text = (
-		"Traveling to Route 4..."
+		traveling_text.strip_edges()
 		if _transfer_requested
 		else "%s   •   E / A" % interaction_text.strip_edges()
 	)
+
+
+func _apply_visual_style() -> void:
+	var label := get_node_or_null(^"Visual/RouteLabel") as Label3D
+	if label != null:
+		label.text = display_text.strip_edges()
+		label.modulate = accent_color.lightened(0.45)
+		label.outline_modulate = accent_color.darkened(0.78)
+	_apply_mesh_color(^"Visual/Pedestal", accent_color.darkened(0.68), false)
+	_apply_mesh_color(^"Visual/Stem", accent_color, true)
+	_apply_mesh_color(^"Visual/Beacon", accent_color, true)
+	_apply_mesh_color(^"Visual/BeaconCap", accent_color, true)
+
+
+func _apply_mesh_color(path: NodePath, color: Color, emissive: bool) -> void:
+	var mesh_instance := get_node_or_null(path) as MeshInstance3D
+	if mesh_instance == null or not mesh_instance.mesh is PrimitiveMesh:
+		return
+	var mesh := mesh_instance.mesh.duplicate(true) as PrimitiveMesh
+	var material := mesh.material as StandardMaterial3D
+	if material == null:
+		material = StandardMaterial3D.new()
+	else:
+		material = material.duplicate(true) as StandardMaterial3D
+	material.albedo_color = color
+	material.emission_enabled = emissive
+	if emissive:
+		material.emission = color.darkened(0.34)
+		material.emission_energy_multiplier = 1.35
+	mesh.material = material
+	mesh_instance.mesh = mesh
 
 
 func _is_interaction_event(event: InputEvent) -> bool:
@@ -121,9 +156,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	var normalized_path := destination_scene_path.strip_edges()
 	if normalized_path.is_empty():
-		warnings.append("Choose the Route 4 destination scene.")
+		warnings.append("Choose a destination scene.")
 	elif not ResourceLoader.exists(normalized_path, "PackedScene"):
-		warnings.append("The configured Route 4 destination scene does not exist.")
+		warnings.append("The configured destination scene does not exist.")
 	var has_enabled_shape := false
 	for node: Node in find_children("*", "CollisionShape3D", true, false):
 		var collision_shape := node as CollisionShape3D

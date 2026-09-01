@@ -35,10 +35,10 @@ Stretchman's `HIGHLY_AGGRO` opponents. `GameInstance` records a standard
 trainer's accepted encounter ID as sight-consumed for the current play session;
 Highly Aggro launches do not enter that set.
 
-Route 4 wild grass follows the same launch boundary without a trainer dialog.
+Route 0 wild grass follows the same launch boundary without a trainer dialog.
 `TallGrassEncounterZone` supplies `encounter_type = "wild"`, the concrete
-`route_4_wild_battle_scene.tscn`, and stable ID
-`wild-fletchling-route-4-v1`; the scene-local provider owns the matching
+`route_0_wild_battle_scene.tscn`, and stable ID
+`wild-fletchling-route-0-v1`; the scene-local provider owns the matching
 Fletchling encounter resource. Distance and chance logic stay in the overworld
 zone and opponent DTO construction stays in `BattleSystem`.
 

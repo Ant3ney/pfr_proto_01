@@ -1,6 +1,6 @@
 extends SceneTree
 
-const CITY_SCENE_PATH := "res://demo/primary_development_enviroment.tscn"
+const ROUTE_SCENE_PATH := "res://overworld/route_0/route_0.tscn"
 const DESTINATION_SCENE_PATH := "res://rnd/stretch/worlds/stretch_destination.tscn"
 const TRAINER_SCENE_PATH := "res://overworld/trainer_lake/TrainerKyle.tscn"
 const TRAINER_NAMES := [
@@ -22,8 +22,9 @@ func _initialize() -> void:
 
 func _run() -> void:
 	await process_frame
-	await _verify_city_trainers()
+	await _verify_route_trainers()
 	_verify_destination_pre_spawn_repair()
+	_verify_cloud_save_runtime()
 
 	if _failures.is_empty():
 		print("Web export trainer verification passed.")
@@ -34,26 +35,41 @@ func _run() -> void:
 	quit(1)
 
 
-func _verify_city_trainers() -> void:
-	var packed_city := load(CITY_SCENE_PATH) as PackedScene
-	_check(packed_city != null, "The exported city scene should load.")
-	if packed_city == null:
+func _verify_route_trainers() -> void:
+	var packed_route := load(ROUTE_SCENE_PATH) as PackedScene
+	_check(packed_route != null, "The exported Route 0 scene should load.")
+	if packed_route == null:
 		return
 
-	var city := packed_city.instantiate()
-	root.add_child(city)
+	var route := packed_route.instantiate()
+	root.add_child(route)
 	await process_frame
 	await physics_frame
-	var player := city.get_node_or_null(^"Player") as Node3D
-	_check(player != null, "The exported city should contain its player.")
+	var player := route.get_node_or_null(^"Player") as Node3D
+	_check(player != null, "The exported Route 0 scene should contain its player.")
+	var checkpoint_root := route.get_node_or_null(^"TrainerChokepoints")
+	_check(
+		checkpoint_root != null
+		and checkpoint_root.find_children(
+			"TrainerGate*", "StaticBody3D", false, false
+		).size() == 14,
+		"The exported Route 0 scene should retain all seven mandatory trainer chokes."
+	)
+	var completion_gate := route.get_node_or_null(^"Route0CompletionGate") as Area3D
+	_check(
+		completion_gate != null and int(completion_gate.get("route_index")) == 0,
+		"The exported Route 0 scene should retain its far-end progression gate."
+	)
 
 	var sight_trainer: Node3D
 	var sight_behavior: Resource
 	for trainer_name in TRAINER_NAMES:
-		var trainer := city.get_node_or_null(NodePath(trainer_name)) as Node3D
+		var trainer := route.get_node_or_null(
+			NodePath("RouteTrainers/%s" % trainer_name)
+		) as Node3D
 		var controller := trainer.get("controller") as Resource if trainer != null else null
 		var behavior := controller.get("npc_behavior") as Resource if controller != null else null
-		_check(trainer != null, "The exported city should contain %s." % trainer_name)
+		_check(trainer != null, "The exported Route 0 scene should contain %s." % trainer_name)
 		_check(
 			behavior != null,
 			"The exported %s controller should repair its trainer behavior." % trainer_name
@@ -78,13 +94,13 @@ func _verify_city_trainers() -> void:
 			await physics_frame
 		_check(
 			int(sight_behavior.get("_approach_state")) != 0,
-			"An exported city trainer should detect a player in its sight line."
+			"An exported Route 0 trainer should detect a player in its sight line."
 		)
 
 	var game_instance := root.get_node_or_null(^"GameInstance")
 	if game_instance != null:
 		game_instance.call("set_player_movement_enabled", true)
-	city.free()
+	route.free()
 
 
 func _verify_destination_pre_spawn_repair() -> void:
@@ -117,6 +133,25 @@ func _verify_destination_pre_spawn_repair() -> void:
 	)
 	trainer.free()
 	destination.free()
+
+
+func _verify_cloud_save_runtime() -> void:
+	var autosave := root.get_node_or_null(^"ProgressionAutosave")
+	var cloud_sync := root.get_node_or_null(^"CloudSaveSync")
+	var autosave_constants: Dictionary = {}
+	if autosave != null and autosave.get_script() is Script:
+		autosave_constants = (autosave.get_script() as Script).get_script_constant_map()
+	_check(
+		autosave != null and int(autosave_constants.get("SAVE_SCHEMA_VERSION", 0)) == 5,
+		"The exported progression owner should use timestamped schema 5."
+	)
+	_check(
+		cloud_sync != null
+		and cloud_sync.has_method("enable_with_save_id")
+		and cloud_sync.has_method("disable_cloud_sync")
+		and cloud_sync.has_method("request_sync"),
+		"The exported project should retain the optional cloud-save coordinator."
+	)
 
 
 func _check(condition: bool, message: String) -> void:

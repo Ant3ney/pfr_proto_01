@@ -4,6 +4,7 @@ extends Control
 ## R&D player menu backed by the real collection and Stretchman inventory.
 
 signal closed
+signal reset_progress_confirmed
 
 const TAB_POKEMON := "pokemon"
 const TAB_BAG := "bag"
@@ -11,6 +12,7 @@ const TAB_POKEDEX := "pokedex"
 const SpriteMapping := preload("res://battle/system/BattleSpeciesMapping.gd")
 const SPRITE_ANIMATION := &"idle"
 const POKEMON_ICON_SIZE := Vector2i(48, 48)
+const RESET_CONFIRMATION_PHRASE := "RESET FOREVER"
 
 var _tab := TAB_POKEMON
 var _visible_entries: Array[Dictionary] = []
@@ -26,6 +28,7 @@ var _pending_discard_key := ""
 var _pending_discard_quantity := 0
 var _pending_evolution_pcl_id := ""
 var _pending_evolution_options: Array[Dictionary] = []
+var _reset_warning_step := 0
 
 var _summary: Label
 var _balance: Label
@@ -40,6 +43,7 @@ var _party_slot_row: HBoxContainer
 var _party_slot_picker: OptionButton
 var _item_amount_row: HBoxContainer
 var _item_amount: SpinBox
+var _held_item_action: Button
 var _evolve_action: Button
 var _primary_action: Button
 var _secondary_action: Button
@@ -49,6 +53,24 @@ var _evolution_prompt: Control
 var _evolution_message: Label
 var _evolution_choice: OptionButton
 var _evolution_confirm: Button
+var _reset_button: Button
+var _reset_prompt: Control
+var _reset_step_label: Label
+var _reset_title: Label
+var _reset_message: Label
+var _reset_ack_pokemon: CheckButton
+var _reset_ack_irreversible: CheckButton
+var _reset_phrase: LineEdit
+var _reset_continue: Button
+var _reset_final: Button
+var _cloud_button: Button
+var _cloud_prompt: Control
+var _cloud_save_id: LineEdit
+var _cloud_show_id: CheckButton
+var _cloud_status: Label
+var _cloud_apply: Button
+var _cloud_sync_now: Button
+var _cloud_opt_out: Button
 var _sprite_catalog: BattleSpriteCatalog
 var _preview_frames: SpriteFrames
 
@@ -63,7 +85,10 @@ func _ready() -> void:
 	CollectionSystem.collection_changed.connect(_on_collection_changed)
 	StretchGoalSystem.inventory_changed.connect(_on_inventory_changed)
 	StretchGoalSystem.balance_changed.connect(_on_balance_changed)
+	CloudSaveSync.status_changed.connect(_on_cloud_status_changed)
+	CloudSaveSync.configuration_changed.connect(_on_cloud_configuration_changed)
 	select_tab(TAB_POKEMON)
+	_refresh_cloud_controls()
 
 
 func _exit_tree() -> void:
@@ -106,6 +131,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		close_requested = (event as InputEventJoypadButton).button_index == JOY_BUTTON_B
 	if not close_requested:
 		return
+	if _cloud_prompt.visible:
+		get_viewport().set_input_as_handled()
+		close_cloud_save()
+		return
+	if _reset_prompt.visible:
+		get_viewport().set_input_as_handled()
+		cancel_reset_warnings()
+		return
 	if _evolution_prompt.visible:
 		get_viewport().set_input_as_handled()
 		_close_evolution_prompt()
@@ -124,6 +157,103 @@ func close_menu() -> void:
 	queue_free()
 
 
+func open_cloud_save() -> void:
+	if _closing:
+		return
+	_cloud_save_id.text = CloudSaveSync.get_save_id()
+	_cloud_save_id.secret = true
+	_cloud_show_id.button_pressed = false
+	_cloud_prompt.visible = true
+	_refresh_cloud_controls()
+	_cloud_save_id.grab_focus()
+
+
+func close_cloud_save() -> void:
+	_cloud_prompt.visible = false
+	_cloud_save_id.release_focus()
+	if is_instance_valid(_cloud_button):
+		_cloud_button.grab_focus()
+
+
+func apply_cloud_save_id() -> bool:
+	if not CloudSaveSync.enable_with_save_id(_cloud_save_id.text):
+		_refresh_cloud_controls()
+		return false
+	_cloud_save_id.text = CloudSaveSync.get_save_id()
+	_refresh_cloud_controls()
+	return true
+
+
+func sync_cloud_save_now() -> bool:
+	if not CloudSaveSync.is_enabled():
+		_cloud_status.text = "Enter a private Save ID, then choose Use ID & Sync."
+		_cloud_save_id.grab_focus()
+		return false
+	var requested := CloudSaveSync.request_sync(true)
+	_refresh_cloud_controls()
+	return requested
+
+
+func opt_out_of_cloud_save() -> void:
+	CloudSaveSync.disable_cloud_sync()
+	_cloud_save_id.text = ""
+	_cloud_show_id.button_pressed = false
+	_refresh_cloud_controls()
+
+
+func open_reset_warnings() -> void:
+	if _closing:
+		return
+	_reset_warning_step = 1
+	_reset_prompt.visible = true
+	_show_reset_warning_step()
+
+
+func advance_reset_warning() -> bool:
+	if _reset_warning_step == 1:
+		_reset_warning_step = 2
+		_show_reset_warning_step()
+		return true
+	if (
+		_reset_warning_step == 2
+		and _reset_ack_pokemon.button_pressed
+		and _reset_ack_irreversible.button_pressed
+	):
+		_reset_warning_step = 3
+		_show_reset_warning_step()
+		return true
+	return false
+
+
+func cancel_reset_warnings() -> void:
+	_reset_warning_step = 0
+	_reset_prompt.visible = false
+	_reset_phrase.text = ""
+	_reset_ack_pokemon.button_pressed = false
+	_reset_ack_irreversible.button_pressed = false
+	if is_instance_valid(_reset_button):
+		_reset_button.grab_focus()
+
+
+func confirm_progress_reset() -> bool:
+	if (
+		_reset_warning_step != 3
+		or _reset_phrase.text.strip_edges().to_upper()
+		!= RESET_CONFIRMATION_PHRASE
+	):
+		return false
+	_reset_final.disabled = true
+	_reset_phrase.editable = false
+	_reset_title.text = "ERASING ALL PROGRESS…"
+	_reset_message.text = "The confirmed reset request is being applied."
+	reset_progress_confirmed.emit()
+	return true
+
+
+func get_reset_warning_step() -> int:
+	return _reset_warning_step
+
+
 func select_tab(tab: String) -> void:
 	if tab not in [TAB_POKEMON, TAB_BAG, TAB_POKEDEX]:
 		return
@@ -137,7 +267,7 @@ func select_tab(tab: String) -> void:
 	match tab:
 		TAB_POKEMON:
 			_search.placeholder_text = "Search your party and PC…"
-			_status.text = "Select any Pokemon to move it between the six party slots and PC storage."
+			_status.text = "Move Pokémon between the party and PC, evolve them, or manage their held item."
 		TAB_BAG:
 			_search.placeholder_text = "Search the items you own…"
 			_status.text = "The bag uses the same persistent item inventory as Stretchman's shop."
@@ -190,6 +320,38 @@ func send_pokemon_to_pc(pcl_id: String) -> bool:
 		_status.text = CollectionSystem.get_last_error()
 		return false
 	_status.text = "%s was sent to PC storage." % _pokemon_name(int(pcl.get("pokemonId", 0)))
+	_refresh_entries(pcl_id)
+	return true
+
+
+func give_xp_share_to_pokemon(pcl_id: String) -> bool:
+	var result := StretchGoalSystem.give_item_to_pokemon(
+		StretchGoalSystem.XP_SHARE_ITEM_KEY,
+		pcl_id
+	)
+	if not bool(result.get("ok", false)):
+		_status.text = String(result.get("error", "The Exp. Share could not be given."))
+		return false
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	_status.text = "%s is now holding the Exp. Share." % _pokemon_name(
+		int(pcl.get("pokemonId", 0))
+	)
+	_refresh_entries(pcl_id)
+	return true
+
+
+func take_held_item_from_pokemon(pcl_id: String) -> bool:
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	var pokemon_name := _pokemon_name(int(pcl.get("pokemonId", 0)))
+	var result := StretchGoalSystem.take_held_item_from_pokemon(pcl_id)
+	if not bool(result.get("ok", false)):
+		_status.text = String(result.get("error", "The held item could not be taken."))
+		return false
+	var summary := result.get("summary", {}) as Dictionary
+	_status.text = "Took %s from %s and returned it to the bag." % [
+		String(summary.get("item_name", "the held item")),
+		pokemon_name,
+	]
 	_refresh_entries(pcl_id)
 	return true
 
@@ -326,6 +488,22 @@ func _build_interface() -> void:
 	close_button.custom_minimum_size = Vector2(140.0, 38.0)
 	close_button.pressed.connect(close_menu)
 	header.add_child(close_button)
+	_reset_button = Button.new()
+	_reset_button.name = "ResetProgress"
+	_reset_button.text = "RESET PROGRESS"
+	_reset_button.custom_minimum_size = Vector2(155.0, 38.0)
+	_reset_button.add_theme_color_override("font_color", Color("fff1f1"))
+	_reset_button.add_theme_color_override("font_hover_color", Color.WHITE)
+	_reset_button.add_theme_stylebox_override(
+		"normal",
+		_danger_style(Color("501218"), Color("d83343"), 2, 8)
+	)
+	_reset_button.add_theme_stylebox_override(
+		"hover",
+		_danger_style(Color("741822"), Color("ff5262"), 2, 8)
+	)
+	_reset_button.pressed.connect(open_reset_warnings)
+	header.add_child(_reset_button)
 
 	var tabs := HBoxContainer.new()
 	tabs.name = "Tabs"
@@ -334,6 +512,12 @@ func _build_interface() -> void:
 	_add_tab(tabs, TAB_POKEMON, "Pokemon Party & PC")
 	_add_tab(tabs, TAB_BAG, "Bag & Items")
 	_add_tab(tabs, TAB_POKEDEX, "Pokedex")
+	_cloud_button = Button.new()
+	_cloud_button.name = "CloudSave"
+	_cloud_button.text = "Cloud Save"
+	_cloud_button.custom_minimum_size = Vector2(142.0, 38.0)
+	_cloud_button.pressed.connect(open_cloud_save)
+	tabs.add_child(_cloud_button)
 
 	var search_row := HBoxContainer.new()
 	search_row.add_theme_constant_override("separation", 10)
@@ -436,6 +620,14 @@ func _build_interface() -> void:
 	_item_amount.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_item_amount_row.add_child(_item_amount)
 
+	_held_item_action = Button.new()
+	_held_item_action.name = "HeldItemAction"
+	_held_item_action.custom_minimum_size = Vector2(0.0, 42.0)
+	_held_item_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_held_item_action.visible = false
+	_held_item_action.pressed.connect(_activate_held_item)
+	detail_column.add_child(_held_item_action)
+
 	_evolve_action = Button.new()
 	_evolve_action.name = "EvolutionAction"
 	_evolve_action.custom_minimum_size = Vector2(0.0, 42.0)
@@ -476,6 +668,8 @@ func _build_interface() -> void:
 	_discard_dialog.confirmed.connect(_confirm_discard)
 	add_child(_discard_dialog)
 	_build_evolution_prompt()
+	_build_cloud_prompt()
+	_build_reset_prompt()
 
 
 func _build_evolution_prompt() -> void:
@@ -537,6 +731,296 @@ func _build_evolution_prompt() -> void:
 	buttons.add_child(_evolution_confirm)
 
 
+func _build_cloud_prompt() -> void:
+	_cloud_prompt = ColorRect.new()
+	_cloud_prompt.name = "CloudSavePrompt"
+	_cloud_prompt.color = Color(0.004, 0.012, 0.025, 0.96)
+	_cloud_prompt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cloud_prompt.mouse_filter = Control.MOUSE_FILTER_STOP
+	_cloud_prompt.z_index = 55
+	_cloud_prompt.visible = false
+	add_child(_cloud_prompt)
+
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cloud_prompt.add_child(center)
+	var panel := PanelContainer.new()
+	panel.name = "CloudSavePanel"
+	panel.custom_minimum_size = Vector2(680.0, 360.0)
+	center.add_child(panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 24)
+	margin.add_theme_constant_override("margin_top", 20)
+	margin.add_theme_constant_override("margin_right", 24)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	panel.add_child(margin)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 12)
+	margin.add_child(column)
+
+	var title := Label.new()
+	title.text = "OPTIONAL CLOUD SAVE"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 25)
+	column.add_child(title)
+	var explanation := Label.new()
+	explanation.text = (
+		"Choose a private Save ID to synchronize this profile across devices. "
+		+ "The Save ID acts like a password: anyone who knows it can load this save. "
+		+ "Local saving continues while offline and also works when cloud sync is off."
+	)
+	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	explanation.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(explanation)
+
+	var id_row := HBoxContainer.new()
+	id_row.add_theme_constant_override("separation", 10)
+	column.add_child(id_row)
+	_cloud_save_id = LineEdit.new()
+	_cloud_save_id.name = "CloudSaveId"
+	_cloud_save_id.placeholder_text = "Private Save ID — 12 to 128 characters"
+	_cloud_save_id.secret = true
+	_cloud_save_id.secret_character = "●"
+	_cloud_save_id.max_length = RNDCloudSaveSync.SAVE_ID_MAX_LENGTH
+	_cloud_save_id.custom_minimum_size = Vector2(420.0, 44.0)
+	_cloud_save_id.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_cloud_save_id.text_submitted.connect(_on_cloud_save_id_submitted)
+	id_row.add_child(_cloud_save_id)
+	_cloud_show_id = CheckButton.new()
+	_cloud_show_id.name = "ShowCloudSaveId"
+	_cloud_show_id.text = "Show ID"
+	_cloud_show_id.toggled.connect(_on_cloud_show_id_toggled)
+	id_row.add_child(_cloud_show_id)
+
+	_cloud_status = Label.new()
+	_cloud_status.name = "CloudSaveStatus"
+	_cloud_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_cloud_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_cloud_status.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_cloud_status.add_theme_color_override("font_color", Color("b9ddff"))
+	column.add_child(_cloud_status)
+
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 10)
+	column.add_child(buttons)
+	var close := Button.new()
+	close.name = "CloseCloudSave"
+	close.text = "Close"
+	close.custom_minimum_size = Vector2(100.0, 46.0)
+	close.pressed.connect(close_cloud_save)
+	buttons.add_child(close)
+	_cloud_opt_out = Button.new()
+	_cloud_opt_out.name = "DisableCloudSave"
+	_cloud_opt_out.text = "Opt Out"
+	_cloud_opt_out.custom_minimum_size = Vector2(120.0, 46.0)
+	_cloud_opt_out.pressed.connect(opt_out_of_cloud_save)
+	buttons.add_child(_cloud_opt_out)
+	_cloud_sync_now = Button.new()
+	_cloud_sync_now.name = "SyncCloudSaveNow"
+	_cloud_sync_now.text = "Sync Now"
+	_cloud_sync_now.custom_minimum_size = Vector2(125.0, 46.0)
+	_cloud_sync_now.pressed.connect(sync_cloud_save_now)
+	buttons.add_child(_cloud_sync_now)
+	_cloud_apply = Button.new()
+	_cloud_apply.name = "ApplyCloudSaveId"
+	_cloud_apply.text = "Use ID & Sync"
+	_cloud_apply.custom_minimum_size = Vector2(175.0, 46.0)
+	_cloud_apply.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_cloud_apply.pressed.connect(apply_cloud_save_id)
+	buttons.add_child(_cloud_apply)
+
+
+func _build_reset_prompt() -> void:
+	_reset_prompt = ColorRect.new()
+	_reset_prompt.name = "ResetWarningPrompt"
+	_reset_prompt.color = Color(0.04, 0.0, 0.005, 0.96)
+	_reset_prompt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_reset_prompt.mouse_filter = Control.MOUSE_FILTER_STOP
+	_reset_prompt.z_index = 60
+	_reset_prompt.visible = false
+	add_child(_reset_prompt)
+
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_reset_prompt.add_child(center)
+	var panel := PanelContainer.new()
+	panel.name = "ResetDangerPanel"
+	panel.custom_minimum_size = Vector2(650.0, 410.0)
+	panel.add_theme_stylebox_override(
+		"panel",
+		_danger_style(Color("21070a"), Color("ff263d"), 5, 14)
+	)
+	center.add_child(panel)
+	var margin := MarginContainer.new()
+	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
+		margin.add_theme_constant_override(side, 24)
+	panel.add_child(margin)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 12)
+	margin.add_child(column)
+
+	_reset_step_label = Label.new()
+	_reset_step_label.name = "ResetWarningStep"
+	_reset_step_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reset_step_label.add_theme_color_override("font_color", Color("ff7785"))
+	_reset_step_label.add_theme_font_size_override("font_size", 13)
+	column.add_child(_reset_step_label)
+	_reset_title = Label.new()
+	_reset_title.name = "ResetWarningTitle"
+	_reset_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reset_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_reset_title.add_theme_color_override("font_color", Color("ff263d"))
+	_reset_title.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_reset_title.add_theme_constant_override("shadow_offset_x", 2)
+	_reset_title.add_theme_constant_override("shadow_offset_y", 2)
+	_reset_title.add_theme_font_size_override("font_size", 29)
+	column.add_child(_reset_title)
+	_reset_message = Label.new()
+	_reset_message.name = "ResetWarningMessage"
+	_reset_message.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_reset_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reset_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_reset_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_reset_message.add_theme_color_override("font_color", Color("ffe7e9"))
+	_reset_message.add_theme_font_size_override("font_size", 16)
+	column.add_child(_reset_message)
+
+	_reset_ack_pokemon = CheckButton.new()
+	_reset_ack_pokemon.name = "AcknowledgePokemonDeletion"
+	_reset_ack_pokemon.text = "I understand every party and PC Pokémon will be deleted."
+	_reset_ack_pokemon.toggled.connect(_on_reset_acknowledgement_changed)
+	column.add_child(_reset_ack_pokemon)
+	_reset_ack_irreversible = CheckButton.new()
+	_reset_ack_irreversible.name = "AcknowledgeNoRecovery"
+	_reset_ack_irreversible.text = "I understand there is no undo, backup, or recovery button."
+	_reset_ack_irreversible.toggled.connect(_on_reset_acknowledgement_changed)
+	column.add_child(_reset_ack_irreversible)
+
+	_reset_phrase = LineEdit.new()
+	_reset_phrase.name = "ResetConfirmationPhrase"
+	_reset_phrase.placeholder_text = "Type %s exactly" % RESET_CONFIRMATION_PHRASE
+	_reset_phrase.custom_minimum_size = Vector2(0.0, 48.0)
+	_reset_phrase.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reset_phrase.add_theme_color_override("font_color", Color("ffb8bf"))
+	_reset_phrase.add_theme_font_size_override("font_size", 19)
+	_reset_phrase.text_changed.connect(_on_reset_phrase_changed)
+	column.add_child(_reset_phrase)
+
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 12)
+	column.add_child(buttons)
+	var cancel := Button.new()
+	cancel.name = "CancelReset"
+	cancel.text = "CANCEL — KEEP MY SAVE"
+	cancel.custom_minimum_size = Vector2(210.0, 50.0)
+	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel.pressed.connect(cancel_reset_warnings)
+	buttons.add_child(cancel)
+	_reset_continue = Button.new()
+	_reset_continue.name = "ContinueResetWarning"
+	_reset_continue.custom_minimum_size = Vector2(250.0, 50.0)
+	_reset_continue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_reset_continue.pressed.connect(advance_reset_warning)
+	buttons.add_child(_reset_continue)
+	_reset_final = Button.new()
+	_reset_final.name = "ConfirmProgressReset"
+	_reset_final.text = "ERASE EVERYTHING NOW"
+	_reset_final.custom_minimum_size = Vector2(250.0, 50.0)
+	_reset_final.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_reset_final.add_theme_color_override("font_color", Color.WHITE)
+	_reset_final.add_theme_color_override("font_hover_color", Color.WHITE)
+	_reset_final.add_theme_stylebox_override(
+		"normal",
+		_danger_style(Color("7e0d19"), Color("ff263d"), 3, 9)
+	)
+	_reset_final.add_theme_stylebox_override(
+		"hover",
+		_danger_style(Color("b31020"), Color("ff8290"), 3, 9)
+	)
+	_reset_final.pressed.connect(confirm_progress_reset)
+	buttons.add_child(_reset_final)
+
+
+func _show_reset_warning_step() -> void:
+	_reset_ack_pokemon.visible = false
+	_reset_ack_irreversible.visible = false
+	_reset_phrase.visible = false
+	_reset_continue.visible = false
+	_reset_final.visible = false
+	match _reset_warning_step:
+		1:
+			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  WARNING 1 OF 3"
+			_reset_title.text = "⚠ DANGER: FULL PROGRESS RESET ⚠"
+			_reset_message.text = (
+				"This is not a logout, restart, or temporary reset. Continuing begins "
+				+ "a permanent deletion sequence for this local save and any linked cloud copy."
+			)
+			_reset_continue.text = "I UNDERSTAND — SHOW THE NEXT WARNING"
+			_reset_continue.disabled = false
+			_reset_continue.visible = true
+			_reset_continue.grab_focus()
+		2:
+			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  WARNING 2 OF 3"
+			_reset_title.text = "EVERYTHING YOU EARNED WILL BE DESTROYED"
+			_reset_message.text = (
+				"All Pokémon, levels, XP, equipped moves, pending move choices, items, "
+				+ "money, badges, Champion progress, route progress, and saved world "
+				+ "position will be erased. This cannot be reversed."
+			)
+			_reset_ack_pokemon.button_pressed = false
+			_reset_ack_irreversible.button_pressed = false
+			_reset_ack_irreversible.text = (
+				"I understand no local or linked cloud copy can undo this reset."
+			)
+			_reset_ack_pokemon.visible = true
+			_reset_ack_irreversible.visible = true
+			_reset_continue.text = "I ACCEPT BOTH WARNINGS"
+			_reset_continue.disabled = true
+			_reset_continue.visible = true
+			_reset_ack_pokemon.grab_focus()
+		3:
+			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  FINAL WARNING 3 OF 3"
+			_reset_title.text = "POINT OF NO RETURN"
+			_reset_message.text = (
+				"Type %s exactly. The red button will erase local progress, mark any linked "
+				+ "cloud profile as reset, "
+				+ "return to the main development environment, and force a new starter choice."
+			) % RESET_CONFIRMATION_PHRASE
+			_reset_phrase.text = ""
+			_reset_phrase.editable = true
+			_reset_phrase.visible = true
+			_reset_final.disabled = true
+			_reset_final.visible = true
+			_reset_phrase.grab_focus()
+
+
+func _on_reset_acknowledgement_changed(_pressed: bool) -> void:
+	_reset_continue.disabled = not (
+		_reset_ack_pokemon.button_pressed
+		and _reset_ack_irreversible.button_pressed
+	)
+
+
+func _on_reset_phrase_changed(value: String) -> void:
+	_reset_final.disabled = (
+		value.strip_edges().to_upper() != RESET_CONFIRMATION_PHRASE
+	)
+
+
+func _danger_style(
+	background: Color,
+	border: Color,
+	border_width: int,
+	radius: int
+) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.set_border_width_all(border_width)
+	style.set_corner_radius_all(radius)
+	return style
+
+
 func _add_tab(parent: HBoxContainer, tab: String, label: String) -> void:
 	var button := Button.new()
 	button.name = tab.capitalize().replace(" ", "")
@@ -585,7 +1069,7 @@ func _add_filter(label: String, value: String) -> void:
 	_filter.set_item_metadata(_filter.item_count - 1, value)
 
 
-func _refresh_entries(preserve_key := "") -> void:
+func _refresh_entries(preserve_key := "", focus_results := true) -> void:
 	if preserve_key.is_empty() and not _selected_entry.is_empty():
 		preserve_key = _entry_key(_selected_entry)
 	_icon_generation += 1
@@ -626,7 +1110,8 @@ func _refresh_entries(preserve_key := "") -> void:
 				break
 	_list.select(selected_index)
 	_on_item_selected(selected_index)
-	_list.grab_focus()
+	if focus_results:
+		_list.grab_focus()
 	if _tab in [TAB_POKEMON, TAB_POKEDEX]:
 		_queue_visible_icons.call_deferred()
 
@@ -817,18 +1302,22 @@ func _entry_text(entry: Dictionary) -> String:
 		"pcl":
 			var pcl := entry.get("pcl", {}) as Dictionary
 			var stats := pcl.get("instanceStats", {}) as Dictionary
+			var level_xp := _level_xp_text(String(entry.get("pcl_id", "")))
 			var prefix := (
 				"PARTY %d" % int(entry.get("party_slot", 0))
 				if String(entry.get("location", "")) == "party"
 				else "PC"
 			)
-			return "%s  —  #%04d %s  —  Lv.%d  —  HP %d%%" % [
+			var held_item := String(pcl.get("heldItem", ""))
+			var held_suffix := "" if held_item.is_empty() else "  —  Holding %s" % _item_name(held_item)
+			return ("%s  —  #%04d %s  —  Lv.%d  —  XP %s  —  HP %d%%" % [
 				prefix,
 				int(entry.get("pokemon_id", 0)),
 				String(entry.get("name", "Pokemon")),
 				int(stats.get("level", 1)),
+				level_xp,
 				roundi(float(stats.get("health", 0.0)) * 100.0),
-			]
+			]) + held_suffix
 		"item":
 			return "x%d  %s  —  %s" % [
 				int(entry.get("quantity", 0)),
@@ -882,6 +1371,7 @@ func _on_item_activated(index: int) -> void:
 func _hide_actions() -> void:
 	_party_slot_row.visible = false
 	_item_amount_row.visible = false
+	_held_item_action.visible = false
 	_evolve_action.visible = false
 	_primary_action.visible = false
 	_secondary_action.visible = false
@@ -913,6 +1403,20 @@ func _configure_party_actions() -> void:
 		or CollectionSystem.get_party_size() <= 1
 	)
 	var pcl_id := String(_selected_entry.get("pcl_id", ""))
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	var held_item := String(pcl.get("heldItem", ""))
+	_held_item_action.visible = (
+		not held_item.is_empty()
+		or StretchGoalSystem.get_item_count(StretchGoalSystem.XP_SHARE_ITEM_KEY) > 0
+	)
+	if not held_item.is_empty():
+		_held_item_action.text = "Take %s" % _item_name(held_item)
+		_held_item_action.disabled = false
+	else:
+		_held_item_action.text = "Give Exp. Share"
+		_held_item_action.disabled = (
+			StretchGoalSystem.get_item_count(StretchGoalSystem.XP_SHARE_ITEM_KEY) <= 0
+		)
 	var evolution_options := CollectionSystem.get_evolution_options(pcl_id)
 	_evolve_action.visible = not evolution_options.is_empty()
 	if evolution_options.size() > 1:
@@ -986,6 +1490,17 @@ func _activate_evolution() -> void:
 	request_pokemon_evolution(String(_selected_entry.get("pcl_id", "")))
 
 
+func _activate_held_item() -> void:
+	if String(_selected_entry.get("kind", "")) != "pcl":
+		return
+	var pcl_id := String(_selected_entry.get("pcl_id", ""))
+	var held_item := CollectionSystem.get_held_item(pcl_id)
+	if held_item.is_empty():
+		give_xp_share_to_pokemon(pcl_id)
+	else:
+		take_held_item_from_pokemon(pcl_id)
+
+
 func _close_evolution_prompt() -> void:
 	_evolution_prompt.visible = false
 	_pending_evolution_pcl_id = ""
@@ -1047,10 +1562,20 @@ func _collection_details(entry: Dictionary) -> String:
 		int(entry.get("pokemon_id", 0)),
 		int(stats.get("level", 1))
 	)
+	var held_item_key := String(pcl.get("heldItem", ""))
+	var held_item_text := "None" if held_item_key.is_empty() else _item_name(held_item_key)
+	var held_effect_text := (
+		" A party holder receives half of its normal knockout XP without entering battle; "
+		+ "a holder that enters battle receives the normal full award instead."
+		if held_item_key == StretchGoalSystem.XP_SHARE_ITEM_KEY
+		else ""
+	)
+	var level_xp_text := _level_xp_text(String(entry.get("pcl_id", "")), true)
 	return (
 		"[font_size=23][b]#%04d %s[/b][/font_size]\n\n"
 		+ "[b]Location:[/b] %s\n[b]Level:[/b] %d\n[b]Health:[/b] %d%%\n"
-		+ "[b]Current XP:[/b] %s\n[b]Moves:[/b] %s\n[b]Evolution:[/b] %s\n\n"
+		+ "[b]Current XP:[/b] %s\n[b]Level XP:[/b] %s\n[b]Held item:[/b] %s%s\n"
+		+ "[b]Moves:[/b] %s\n[b]Evolution:[/b] %s\n\n"
 		+ "Use the slot selector to move or atomically swap this individual Pokemon."
 	) % [
 		int(entry.get("pokemon_id", 0)),
@@ -1059,9 +1584,29 @@ func _collection_details(entry: Dictionary) -> String:
 		int(stats.get("level", 1)),
 		roundi(float(stats.get("health", 0.0)) * 100.0),
 		_format_count(int(stats.get("currentXp", 0))),
+		level_xp_text,
+		held_item_text,
+		held_effect_text,
 		move_text,
 		evolution_text,
 	]
+
+
+func _level_xp_text(pcl_id: String, include_remaining := false) -> String:
+	var progress := CollectionSystem.get_experience_progress(pcl_id)
+	if progress.is_empty():
+		return "Unavailable"
+	var required := int(progress.get("xpForNextLevel", 0))
+	if required <= 0:
+		return "MAX"
+	var earned := int(progress.get("xpIntoLevel", 0))
+	var text := "%s/%s" % [_format_count(earned), _format_count(required)]
+	if include_remaining:
+		text += " (%s remaining to Lv. %d)" % [
+			_format_count(maxi(0, required - earned)),
+			int(progress.get("level", 1)) + 1,
+		]
+	return text
 
 
 func _evolution_level_summary(pokemon_id: int, level: int) -> String:
@@ -1082,17 +1627,24 @@ func _evolution_level_summary(pokemon_id: int, level: int) -> String:
 
 
 func _item_details(entry: Dictionary) -> String:
+	var item_key := String(entry.get("item_key", ""))
+	var effect_note := (
+		"Give this to a Pokémon from the Pokémon Party & PC tab. A party holder that "
+		+ "does not enter battle receives half of its normal knockout XP."
+		if item_key == StretchGoalSystem.XP_SHARE_ITEM_KEY
+		else "This item's battle effect is not wired yet; it can still be stored or discarded."
+	)
 	return (
 		"[font_size=23][b]%s[/b][/font_size]\n\n"
 		+ "[b]Quantity:[/b] %d\n[b]Category:[/b] %s\n[b]Shop value:[/b] %s\n\n%s\n\n"
-		+ "[color=#e4b663]R&D note: item effects are not wired yet; this screen "
-		+ "manages the persistent bag and safely confirms discards.[/color]"
+		+ "[color=#e4b663]%s[/color]"
 	) % [
 		String(entry.get("name", "Item")),
 		int(entry.get("quantity", 0)),
 		String(entry.get("category", "miscellaneous")).replace("-", " ").capitalize(),
 		StretchGoalSystem.format_money(int(entry.get("price", 0))),
 		String(entry.get("description", "No description available.")),
+		effect_note,
 	]
 
 
@@ -1164,6 +1716,13 @@ func _pokemon_slug(pokemon_id: int) -> String:
 	if not offer.is_empty():
 		return String(offer.get("slug", ""))
 	return String(SpriteMapping.get_entry(pokemon_id).get("spriteId", "missing-pokemon"))
+
+
+func _item_name(item_key: String) -> String:
+	for item in StretchGoalSystem.get_item_catalog():
+		if String(item.get("key", item.get("slug", ""))) == item_key:
+			return String(item.get("name", item_key.replace("-", " ").capitalize()))
+	return item_key.replace("-", " ").capitalize()
 
 
 func _pokemon_sprite_id(entry: Dictionary) -> String:
@@ -1300,11 +1859,54 @@ func _update_summary() -> void:
 
 
 func _on_search_changed(_value: String) -> void:
-	_refresh_entries()
+	_refresh_entries("", false)
 
 
 func _on_filter_selected(_index: int) -> void:
 	_refresh_entries()
+
+
+func _on_cloud_save_id_submitted(_value: String) -> void:
+	apply_cloud_save_id()
+
+
+func _on_cloud_show_id_toggled(show_id: bool) -> void:
+	_cloud_save_id.secret = not show_id
+	_cloud_save_id.grab_focus()
+	_cloud_save_id.caret_column = _cloud_save_id.text.length()
+
+
+func _on_cloud_status_changed(_state: String, _message: String) -> void:
+	_refresh_cloud_controls()
+
+
+func _on_cloud_configuration_changed(_enabled: bool) -> void:
+	_refresh_cloud_controls()
+
+
+func _refresh_cloud_controls() -> void:
+	if not is_instance_valid(_cloud_button):
+		return
+	var cloud_enabled := CloudSaveSync.is_enabled()
+	var cloud_state := CloudSaveSync.get_state()
+	match cloud_state:
+		"synced":
+			_cloud_button.text = "Cloud ✓"
+		"syncing", "pending":
+			_cloud_button.text = "Cloud …"
+		"offline", "error":
+			_cloud_button.text = "Cloud !"
+		_:
+			_cloud_button.text = "Cloud Save"
+	_cloud_status.text = CloudSaveSync.get_status_message()
+	var last_sync_ms := CloudSaveSync.get_last_sync_at_ms()
+	if last_sync_ms > 0:
+		_cloud_status.text += "\nLast successful sync: %s UTC · revision %d" % [
+			Time.get_datetime_string_from_unix_time(last_sync_ms / 1000, true),
+			CloudSaveSync.get_base_revision(),
+		]
+	_cloud_opt_out.disabled = not cloud_enabled
+	_cloud_sync_now.disabled = not cloud_enabled or cloud_state == "syncing"
 
 
 func _on_collection_changed() -> void:
@@ -1317,6 +1919,8 @@ func _on_collection_changed() -> void:
 func _on_inventory_changed() -> void:
 	if _tab == TAB_BAG:
 		_configure_filter()
+		_refresh_entries()
+	elif _tab == TAB_POKEMON:
 		_refresh_entries()
 	else:
 		_update_summary()

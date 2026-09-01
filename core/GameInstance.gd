@@ -233,6 +233,14 @@ func has_consumed_standard_trainer_sight_encounter(encounter_id: String) -> bool
 	)
 
 
+## Clears process-only encounter history when the player explicitly creates a
+## completely fresh profile. Persistent owners reset their own state separately.
+func reset_profile_transient_progress() -> void:
+	_one_scene_suppression_id = ""
+	_suppression_scene_instance_id = 0
+	_consumed_standard_trainer_sight_encounters.clear()
+
+
 func _record_standard_trainer_sight_from_launch(battle_data: Dictionary) -> void:
 	if String(battle_data.get("encounter_type", "")) != "trainer":
 		return

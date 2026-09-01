@@ -1,6 +1,10 @@
 extends Node
 
 const DestinationScene := preload("res://rnd/stretch/worlds/stretch_destination.tscn")
+const MIARE_STATION_PATH := (
+	"res://art/environments/new_bouffalant_city/city_interiors/"
+	+ "miare_station_concourse.tscn"
+)
 const TRAINER_SCENE_PATHS: Array[String] = [
 	"res://overworld/trainer_lake/TrainerKyle.tscn",
 	"res://overworld/trainer_lake/TrainerBackpacker.tscn",
@@ -20,6 +24,7 @@ func _ready() -> void:
 
 func _run() -> void:
 	var original_stretch := StretchGoalSystem.get_save_data()
+	_check_stretchman_hub_contract()
 	_check_trainer_resource_isolation()
 	_check_release_export_pre_spawn_repair()
 
@@ -41,22 +46,65 @@ func _run() -> void:
 	_check(_count_stretch_trainers(world) == 4, "A defeated Elite Four member should stay removed when the room reloads after battle.")
 	world.free()
 
-	StretchGoalSystem.begin_destination("route", 4)
+	_check(
+		_load_route_unlock_fixture(4)
+		and not StretchGoalSystem.begin_destination("route", 4).is_empty(),
+		"A contiguous Route 0–3 clear should make Route 4 available."
+	)
 	world = await _build_world()
 	_check(world.get_node_or_null(^"DirtPath") != null, "A selected route should build outdoor route geometry.")
 	_check(world.get_node_or_null(^"NavigationRegion3D") != null, "R&D routes should provide navigation for the existing trainer approach behavior.")
-	_check(_count_stretch_trainers(world) == 4, "Every route should place a bunch of four forced trainers.")
+	_check(_count_stretch_trainers(world) == 4, "Route 4's level band should place four mandatory trainers.")
+	var route_path := world.get_node_or_null(^"DirtPath") as Node3D
+	var route_walls := world.get_node_or_null(^"RouteWalls") as Node3D
+	var route_points := world.get_meta("route_path_points", []) as Array
+	_check(
+		route_path != null
+		and route_path.get_child_count() >= 7
+		and _route_x_span(route_points) >= 4.0,
+		"Generated routes should visibly twist through multiple path segments instead of forming a straight corridor."
+	)
+	_check(
+		route_walls != null
+		and route_walls.find_children("RouteWall*", "StaticBody3D", false, false).size()
+		== route_path.get_child_count() * 2,
+		"Both sides of every winding path segment should have continuous collision walls."
+	)
+	var grass_fields := world.get_node_or_null(^"TallGrassFields") as Node3D
+	_check(
+		grass_fields != null
+		and grass_fields.get_child_count()
+		== int(StretchGoalSystem.get_active_destination().get("grass_fields", 0)),
+		"A generated route should place every configured real tall-grass encounter field."
+	)
+	if grass_fields != null:
+		for field: Node in grass_fields.get_children():
+			_check(
+				field is TallGrassEncounterZone
+				and not String((field as TallGrassEncounterZone).encounter_id).is_empty(),
+				"Every generated grass patch should use the shared encounter zone with a route-specific wild encounter."
+			)
+	_check(
+		world.get_node_or_null(^"RouteCompletionGate") is RNDRouteCompletionGate,
+		"Every generated dungeon should end at a physical route-completion gate."
+	)
 	_check(
 		world.find_children("TrainerGate*", "StaticBody3D", false, false).size() == 8,
 		"Each route trainer should have a two-sided geometry choke that crosses the existing sight ray."
 	)
 	var first_route_gate := world.get_node_or_null(^"TrainerGate1LCollision") as StaticBody3D
 	var authored_route_trainers := _stretch_trainers(world)
+	var first_route_direction: Vector3 = world.call("_trainer_direction", 0)
 	_check(
 		first_route_gate != null
 		and not authored_route_trainers.is_empty()
-		and first_route_gate.position.z > authored_route_trainers[0].position.z,
-		"Each route choke should center the player before they can pass its trainer."
+		and is_equal_approx(
+			(first_route_gate.position - authored_route_trainers[0].position).dot(
+				first_route_direction
+			),
+			-0.65
+		),
+		"Each route choke should sit immediately before its trainer across the local winding path."
 	)
 	for trainer in _stretch_trainers(world):
 		var behavior := trainer.controller.npc_behavior as TrainerBehavior
@@ -84,9 +132,8 @@ func _run() -> void:
 		var first_route_behavior := (
 			first_route_trainer.controller.npc_behavior as TrainerBehavior
 		)
-		route_player.global_position = (
-			first_route_trainer.global_position + Vector3(0.0, 0.0, 6.0)
-		)
+		var trainer_forward := _trainer_forward(first_route_trainer)
+		route_player.global_position = first_route_trainer.global_position + trainer_forward * 6.0
 		for _frame in 12:
 			await get_tree().physics_frame
 			if (
@@ -121,9 +168,8 @@ func _run() -> void:
 		var repeated_route_behavior := (
 			repeated_route_trainer.controller.npc_behavior as TrainerBehavior
 		)
-		route_player.global_position = (
-			repeated_route_trainer.global_position + Vector3(0.0, 0.0, 6.0)
-		)
+		var repeated_forward := _trainer_forward(repeated_route_trainer)
+		route_player.global_position = repeated_route_trainer.global_position + repeated_forward * 6.0
 		for _frame in 12:
 			await get_tree().physics_frame
 			if (
@@ -139,6 +185,37 @@ func _run() -> void:
 	else:
 		_check(false, "The re-entered route fixture should contain a player and trainer.")
 	GameInstance.set_player_movement_enabled(true)
+	world.free()
+
+	_check(
+		_load_route_unlock_fixture(39)
+		and not StretchGoalSystem.begin_destination("route", 39).is_empty(),
+		"A contiguous Route 0–38 clear should make the final route available."
+	)
+	world = await _build_world()
+	var final_path := world.get_node_or_null(^"DirtPath") as Node3D
+	var final_grass := world.get_node_or_null(^"TallGrassFields") as Node3D
+	_check(
+		int(world.get_meta("route_index", -1)) == 39
+		and float(world.get_meta("route_world_length", 0.0)) >= 190.0
+		and final_path != null
+		and final_path.get_child_count() >= 17,
+		"Route 39 should build as a substantially larger final dungeon."
+	)
+	_check(
+		_count_stretch_trainers(world) == 8
+		and world.find_children("TrainerGate*", "StaticBody3D", false, false).size() == 16,
+		"The final route should enforce all eight scaled trainer checkpoints."
+	)
+	_check(
+		final_grass != null and final_grass.get_child_count() == 9,
+		"The final route should contain its full scaled set of nine tall-grass fields."
+	)
+	_check(
+		world.get_node_or_null(^"BiomeDecorations") != null
+		and world.get_node_or_null(^"RouteCompletionGate") is RNDRouteCompletionGate,
+		"The final biome should retain themed decoration and a physical far-end goal."
+	)
 	world.free()
 
 	StretchGoalSystem.begin_destination("gym", 8)
@@ -204,8 +281,9 @@ func _run() -> void:
 	StretchGoalSystem.load_save_data(original_stretch)
 	if _failures.is_empty():
 		print(
-			"Stretch destination smoke test passed: isolated trainer state, sequential "
-			+ "champion progression, Highly Aggro re-entry, and Gym 8 E interaction verified."
+			"Stretch destination smoke test passed: winding biome routes, real tall grass, "
+			+ "mandatory trainer chokes, scaled Route 39 geometry, Highly Aggro re-entry, "
+			+ "Gym 8 E interaction, champion progression, and Miare Station return verified."
 		)
 		get_tree().quit(0)
 		return
@@ -214,12 +292,61 @@ func _run() -> void:
 	get_tree().quit(1)
 
 
+func _check_stretchman_hub_contract() -> void:
+	_check(
+		RNDStretchDestination.STRETCHMAN_HUB_SCENE_PATH == MIARE_STATION_PATH,
+		"Generated destinations should return to Miare Station."
+	)
+	var packed := load(MIARE_STATION_PATH) as PackedScene
+	var hub := packed.instantiate() if packed != null else null
+	_check(hub != null, "The Miare Station Stretchman hub should instantiate.")
+	if hub == null:
+		return
+	_check(
+		hub.get_node_or_null(^"Stretchman") is PFRCharacter,
+		"Miare Station should contain Stretchman."
+	)
+	_check(
+		hub.get_node_or_null(^"StretchmanReturnSpawn") is Marker3D,
+		"Miare Station should contain the generated-destination return marker."
+	)
+	hub.free()
+
+
 func _build_world() -> RNDStretchDestination:
 	var world := DestinationScene.instantiate() as RNDStretchDestination
 	add_child(world)
 	for _frame in 3:
 		await get_tree().process_frame
 	return world
+
+
+func _load_route_unlock_fixture(route_index: int) -> bool:
+	var save := StretchGoalSystem.get_save_data()
+	save["completed_routes"] = range(route_index)
+	save["active_destination"] = {}
+	save["run_defeated_ids"] = []
+	return StretchGoalSystem.load_save_data(save)
+
+
+func _route_x_span(points: Array) -> float:
+	if points.is_empty():
+		return 0.0
+	var minimum_x := INF
+	var maximum_x := -INF
+	for point_value: Variant in points:
+		if point_value is Vector3:
+			minimum_x = minf(minimum_x, (point_value as Vector3).x)
+			maximum_x = maxf(maximum_x, (point_value as Vector3).x)
+	return maximum_x - minimum_x
+
+
+func _trainer_forward(trainer: PFRCharacter) -> Vector3:
+	var visual := trainer.get_node_or_null(^"Visual") as Node3D
+	var facing_basis := visual.global_basis if visual != null else trainer.global_basis
+	var forward := -facing_basis.z
+	forward.y = 0.0
+	return forward.normalized()
 
 
 func _check_trainer_resource_isolation() -> void:

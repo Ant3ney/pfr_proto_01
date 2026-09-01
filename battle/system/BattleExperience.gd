@@ -5,8 +5,9 @@ extends RefCounted
 ## CreatureSystem supplies the pinned community-derived species multiplier.
 
 const BASE_XP_PER_DEFEATED_LEVEL := 10.0
-const LEVEL_DIFFERENTIAL_STEP := 0.18
-const MINIMUM_LEVEL_FACTOR := 0.4
+const HIGHER_LEVEL_BONUS_STEP := 0.18
+const LOWER_LEVEL_PENALTY_STEP := 0.09
+const MINIMUM_LEVEL_FACTOR := 0.7
 const MAXIMUM_LEVEL_FACTOR := 2.2
 
 
@@ -26,8 +27,13 @@ static func calculate_award(
 	if species_multiplier <= 0.0:
 		return {}
 	var level_difference := defeated_level - participant_level
+	var differential_step := (
+		LOWER_LEVEL_PENALTY_STEP
+		if level_difference < 0
+		else HIGHER_LEVEL_BONUS_STEP
+	)
 	var level_factor := clampf(
-		1.0 + float(level_difference) * LEVEL_DIFFERENTIAL_STEP,
+		1.0 + float(level_difference) * differential_step,
 		MINIMUM_LEVEL_FACTOR,
 		MAXIMUM_LEVEL_FACTOR
 	)

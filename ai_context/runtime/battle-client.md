@@ -58,10 +58,16 @@ Every accepted response, including loss and forfeit, is written through
 `CollectionSystem.apply_battle_health_and_experience()`. That API validates a
 complete player party and all XP recipients before applying health and
 progression atomically and emitting one collection update. `BattleSystem`
-tracks each player member that has been active in the current session. A
-validated opponent transition from not-fainted to fainted awards every such
-participant once; initial snapshots, stale callbacks, retries, and duplicate
-responses cannot award XP. The level differential supplies the base reward in
+tracks every player member that appeared on the stage for the rest of the
+current session. An active accepted snapshot records ordinary appearances, and
+a living-to-fainted player transition records a forced-in member that fainted
+before the final state could show it active. An accepted typed switch also
+records its target before rewards, covering a target that enters and leaves or
+faints within the same response. A validated opponent transition from
+not-fainted to fainted awards every recorded participant once, including
+participants that later switched out or fainted. Initial snapshots, stale
+callbacks, retries, and duplicate responses cannot award XP. The level
+differential supplies the base reward in
 [`BattleExperience`](../../battle/system/BattleExperience.gd), then the
 defeated Pokemon's local Pokédex `xp_multiplier` is applied. This progression
 metadata stays local and never enters the strict REST team DTO.
@@ -71,11 +77,24 @@ available and copy its eligible targets. A level-up presentation message points
 the player to the Pokemon menu; the collection species is not changed during
 the in-flight server session. See [`evolution.md`](evolution.md).
 
-The pinned PvE rule first computes
-`base = round(defeated_level * 10 * clamp(1 + 0.18 * (defeated_level - participant_level), 0.4, 2.2))`,
-then `award = round(base * xp_multiplier)`, with a minimum award of 1. Every
-member that has been active receives the full award rather than dividing it;
-members that never entered receive none.
+The pinned PvE rule sets `d = defeated_level - participant_level`. For `d >= 0`,
+`level_factor = clamp(1 + 0.18d, 1.0, 2.2)`; the higher-level opponent bonus is
+unchanged. For `d < 0`, `level_factor = max(0.7, 1 + 0.09d)`. This halves the
+former lower-level penalty from 18 to 9 percentage points per level and halves
+its maximum penalty from 60% to 30%. It then computes
+`base = round(defeated_level * 10 * level_factor)` and
+`award = round(base * xp_multiplier)`, with a minimum award of 1. Every member
+that appeared receives the full award rather than dividing it; members that
+never appeared normally receive none. A current party member that never
+entered but holds `exp-share` receives half of the award calculated from its
+own level for each knockout. A participating holder receives only the ordinary
+full award, never a second Exp. Share award. Held-item metadata remains local
+collection progression and never enters the strict REST team DTO. Every XP
+presentation event includes the recipient's post-award in-level progress and
+remaining XP to the next-level target, so a holder's gain remains visible even
+when it does not cross a level threshold. A per-session level-announcement
+high-water mark prevents the same Pokemon from presenting `grew to Lv. N`
+twice; multi-opponent battles still present one ordinary XP gain per knockout.
 
 ## Public input and presentation boundary
 
@@ -190,12 +209,12 @@ The resource owns stable IDs, protocol-safe side name, one-to-six validated
 members, optional approved sprite override, and forfeit policy. Kyle's example
 is [`trainer_kyle_lake_v1.tres`](../../battle/encounters/trainer_kyle_lake_v1.tres)
 inside [`kyle_battle_scene.tscn`](../../battle/kyle_battle_scene.tscn).
-Route 4 uses the same contract for a wild caller: distance travelled inside
+Route 0 uses the same contract for a wild caller: distance travelled inside
 [`TallGrassEncounterZone`](../../rnd/TallGrassEncounterZone.gd) launches
-[`route_4_wild_battle_scene.tscn`](../../battle/route_4_wild_battle_scene.tscn),
+[`route_0_wild_battle_scene.tscn`](../../battle/route_0_wild_battle_scene.tscn),
 whose provider owns
-[`wild_fletchling_route_4_v1.tres`](../../battle/encounters/wild_fletchling_route_4_v1.tres).
-The launch ID and provider ID are both `wild-fletchling-route-4-v1`.
+[`wild_fletchling_route_0_v1.tres`](../../battle/encounters/wild_fletchling_route_0_v1.tres).
+The launch ID and provider ID are both `wild-fletchling-route-0-v1`.
 
 ## Regression checks
 

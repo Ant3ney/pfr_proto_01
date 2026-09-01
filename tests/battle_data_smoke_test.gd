@@ -310,6 +310,8 @@ func _test_experience_policy() -> void:
 	var same_level_wooper := ExperiencePolicy.calculate_award(3, 3, 194)
 	var same_level_palkia := ExperiencePolicy.calculate_award(3, 3, 484)
 	var higher_level_wooper := ExperiencePolicy.calculate_award(3, 8, 194)
+	var lower_level_wooper := ExperiencePolicy.calculate_award(5, 3, 194)
+	var far_lower_level_wooper := ExperiencePolicy.calculate_award(100, 3, 194)
 	_check(
 		int(same_level_wooper.get("baseXp", 0)) == 30
 		and int(same_level_wooper.get("amount", 0)) == 23,
@@ -320,8 +322,22 @@ func _test_experience_policy() -> void:
 		"A same-level Uber species should apply its stronger community multiplier."
 	)
 	_check(
-		int(higher_level_wooper.get("amount", 0)) > int(same_level_wooper.get("amount", 0)),
-		"A higher-level defeated Pokemon should yield more from the level differential."
+		is_equal_approx(float(higher_level_wooper.get("levelFactor", 0.0)), 1.9)
+		and int(higher_level_wooper.get("baseXp", 0)) == 152
+		and int(higher_level_wooper.get("amount", 0)) == 114,
+		"The existing higher-level opponent bonus should remain unchanged."
+	)
+	_check(
+		is_equal_approx(float(lower_level_wooper.get("levelFactor", 0.0)), 0.82)
+		and int(lower_level_wooper.get("baseXp", 0)) == 25
+		and int(lower_level_wooper.get("amount", 0)) == 19,
+		"A two-level disadvantage should apply half of the former XP penalty."
+	)
+	_check(
+		is_equal_approx(float(far_lower_level_wooper.get("levelFactor", 0.0)), 0.7)
+		and int(far_lower_level_wooper.get("baseXp", 0)) == 21
+		and int(far_lower_level_wooper.get("amount", 0)) == 16,
+		"A much lower-level opponent should retain 70% XP instead of bottoming at 40%."
 	)
 
 

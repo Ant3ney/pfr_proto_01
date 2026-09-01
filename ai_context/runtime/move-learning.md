@@ -54,7 +54,7 @@ in `PRESENTING` and cannot expose the next request early. The in-flight server
 team remains snapshot-authoritative, so a learned move is available in later
 battles rather than changing the current server session.
 
-ProgressionAutosave schema 3 stores only unresolved queue identity under
+ProgressionAutosave schema 3 and later store only unresolved queue identity under
 `move_learning.pending`: `pcl_id`, `pokemon_id`, `learned_level`, and `move_id`.
 The loader validates each row against the incoming collection and generated
 learnset before replacing state. Collection restore is bracketed by

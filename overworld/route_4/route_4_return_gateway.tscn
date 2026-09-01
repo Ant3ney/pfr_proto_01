@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://overworld/route_4/route_4_gateway.tscn" id="1_gateway"]
+
+[node name="Route0ReturnGateway" instance=ExtResource("1_gateway")]
+editor_description = "Bright red Route 0 return marker. Walk close, then press E/Enter/Space, gamepad A, or its touch prompt to return to the Gate Building."
+destination_scene_path = "res://art/environments/new_bouffalant_city/city_interiors/gatehouse_interior.tscn"
+destination_spawn_marker = &"Route0ReturnSpawn"
+interaction_text = "Return to Gate Building"
+traveling_text = "Returning to Gate Building..."
+display_text = "GATE BUILDING"
+accent_color = Color(0.96, 0.08, 0.075, 1)

@@ -27,10 +27,21 @@ const match = preset.match(exportLinePattern);
 if (!match) throw new Error('WebBuild export_files line was not found.');
 
 const existing = [...match[1].matchAll(/"([^"]+)"/g)].map((entry) => entry[1]);
+const noLongerLiveTopLevelResources = new Set([
+  'res://art/environments/new_bouffalant_city/city_interiors/rouge_tower_lobby.tscn',
+  'res://art/environments/new_bouffalant_city/city_interiors/garage_workshop.tscn',
+  'res://overworld/route_4/route_4.tscn',
+  'res://overworld/route_4/route_4_return_gateway.tscn',
+  'res://battle/route_4_wild_battle_scene.tscn',
+]);
 const required = [
   'res://art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex.tscn',
-  'res://overworld/route_4/route_4.tscn',
-  'res://battle/route_4_wild_battle_scene.tscn',
+  'res://art/environments/new_bouffalant_city/city_interiors/miare_station_concourse.tscn',
+  'res://art/environments/new_bouffalant_city/city_interiors/gatehouse_interior.tscn',
+  'res://overworld/route_0/route_0.tscn',
+  'res://overworld/route_0/RouteZeroRuntime.gd',
+  'res://battle/route_0_wild_battle_scene.tscn',
+  'res://battle/encounters/wild_fletchling_route_0_v1.tres',
   'res://battle/delivery_worker_battle_scene.tscn',
   'res://battle/police_officer_battle_scene.tscn',
   'res://battle/businessman_battle_scene.tscn',
@@ -44,6 +55,9 @@ const required = [
   'res://battle/encounters/trainer_jogger_city_v1.tres',
   'res://battle/encounters/trainer_tourist_city_v1.tres',
   'res://rnd/interaction/PlayerInteractionDetector.gd',
+  'res://overworld/town_npcs/RoamingTownNpcBehavior.gd',
+  'res://overworld/town_npcs/TownNpcBehavior.gd',
+  'res://overworld/town_npcs/town_npc.tscn',
   'res://rnd/player_menu/PlayerMenuHUD.gd',
   'res://rnd/player_menu/PlayerMenuUI.gd',
   'res://rnd/player_menu/player_menu_hud.tscn',
@@ -53,7 +67,11 @@ const required = [
   'res://rnd/move_learning/MoveLearningUI.gd',
   'res://rnd/move_learning/move_learning_ui.tscn',
   'res://rnd/move_learning/data/level_up_learnsets.json',
+  'res://rnd/starter_selection/StarterSelectionSystem.gd',
+  'res://rnd/starter_selection/StarterSelectionUI.gd',
+  'res://rnd/starter_selection/starter_selection_ui.tscn',
   'res://rnd/save/ProgressionAutosave.gd',
+  'res://rnd/save/CloudSaveSync.gd',
   'res://rnd/stretch/StretchContent.gd',
   'res://rnd/stretch/StretchGoalSystem.gd',
   'res://rnd/stretch/battle/stretch_battle_scene.tscn',
@@ -62,6 +80,8 @@ const required = [
   'res://rnd/stretch/npc/stretchman.tscn',
   'res://rnd/stretch/ui/loot_box_roulette.tscn',
   'res://rnd/stretch/ui/stretch_goal_ui.tscn',
+  'res://rnd/stretch/worlds/RouteCompletionGate.gd',
+  'res://rnd/stretch/worlds/route_completion_gate.tscn',
   'res://rnd/stretch/worlds/stretch_destination.tscn',
   'res://art/battle/ui/icons/bag_icon.png',
   'res://art/battle/ui/icons/pokeball_icon.png',
@@ -97,7 +117,8 @@ for (const resourcePath of required) {
     throw new Error(`Required Web battle resource does not exist: ${resourcePath}`);
   }
 }
-const files = [...new Set([...existing, ...required])];
+const retainedExisting = existing.filter((file) => !noLongerLiveTopLevelResources.has(file));
+const files = [...new Set([...retainedExisting, ...required])];
 const existingSet = new Set(existing);
 const prefix = files.filter((file) => existingSet.has(file));
 const appended = files.filter((file) => !existingSet.has(file)).sort();

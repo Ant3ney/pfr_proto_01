@@ -35,7 +35,7 @@ not interpret gameplay data.
 opens that dialog and starts its configured battle after the final line. A
 trainer without dialog can launch its configured battle directly. Its exported
 `automatic_sight_encounter` flag independently controls the classic forward-ray
-approach. Kyle and all six city-line trainers use `STANDARD` aggression: their
+approach. Kyle and all six standard prototype trainers use `STANDARD` aggression: their
 first battle consumes forced sight for the current play session, and later
 rematches start only from the HUD. Generated Stretchman opponents use
 `HIGHLY_AGGRO`; they are quiet in the immediate battle-return scene, then force
@@ -53,7 +53,7 @@ destinations call the same preparation hook before inspecting a trainer that has
 not entered the tree yet. Do not remove these ownership and repair steps: shared
 resources leak `COMPLETE` between trainers, an unsynchronized duplicate launches
 the generic no-encounter battle preview, and a release-exported null behavior
-makes city trainers inert while generated opponents are discarded.
+makes Route 0 trainers inert while generated opponents are discarded.
 
 `PokemonCenterHealerBehavior` exposes the same dispatcher through
 `start_healing_sequence()`. The behavior still supports legacy automatic
@@ -63,6 +63,16 @@ attendant sets it to `false` and uses the shared HUD.
 The older [`Interaction`](../../core/Interaction.gd) data resource is not yet a
 general interaction runner. Current RND dispatch is deliberately behavior-owned.
 
+[`TownNpcBehavior`](../../overworld/town_npcs/TownNpcBehavior.gd) is the
+non-battling resident implementation. It owns repeatable multi-line dialog and
+an optional one-time catalog-item gift; it never enters trainer state or starts
+a battle. [`RoamingTownNpcBehavior`](../../overworld/town_npcs/RoamingTownNpcBehavior.gd)
+adds short, deterministic local strolls and pauses whenever a conversation or
+another gameplay sequence owns movement. The primary development environment's
+`TownResidents` group contains seven lore-focused residents, including three
+women models and three roamers. Researcher Lumen stands on the interior plaza
+cobblestone and grants the persistent one-time Exp. Share gift.
+
 ## Regression checks
 
 ```bash
@@ -70,4 +80,5 @@ godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tsc
 godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
 godot --headless --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn
 godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/town_npc_smoke_test.tscn
 ```

@@ -53,10 +53,31 @@ The custom shell skips only Godot's secure-context startup requirement. It
 still checks for WebGL 2 and Fetch. On insecure HTTP it selects Godot's Dummy
 audio driver; on localhost or HTTPS it keeps normal browser audio.
 
+## Production browser cache
+
+The PFR Netlify build also turns the shell's production cache on. The build
+script hashes `index.js`, `index.pck`, and `index.wasm`, injects that version into
+the HTML, and generates `pfr-cache-sw.js` from the template beside this README.
+
+On the first HTTPS visit, the game still downloads normally while the service
+worker stores the large pack and WebAssembly runtime in browser Cache Storage.
+Later visits reuse those responses locally. A changed export produces a new
+versioned URL and cache name, so an old pack cannot be combined with a new
+build. HTML and the service worker are always revalidated.
+
+Direct editor/LAN exports leave the build-version placeholder untouched and
+therefore disable this production cache. This avoids stale assets during local
+development and because service workers are unavailable on ordinary insecure
+LAN origins. Do not enable Godot's separate PWA service worker for this export;
+only one worker should own the same scope.
+
 ## Important limits
 
 - Insecure LAN HTTP has no audio with this shell.
 - Clipboard, microphone, and some gamepad/browser features may require HTTPS.
+- Browsers may evict cached files when storage is low, and private-browsing
+  modes may reject the roughly 255 MB persistent cache. The game still falls
+  back to the network in either case.
 - This changes Web delivery, not input. Add touch controls separately if a game
   currently supports only keyboard or gamepad.
 - The shell is based on the Godot 4.7 Web template. When moving projects to a

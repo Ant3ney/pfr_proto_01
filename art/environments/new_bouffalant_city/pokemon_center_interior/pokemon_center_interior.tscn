@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior_environment.glb" id="1_environment"]
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="2_player"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" path="res://demo/game_ui.tscn" id="4_ui"]
 [ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="5_transfer"]
 [ext_resource type="PackedScene" path="res://overworld/pokemon_center/PokemonCenterHealer.tscn" id="6_healer"]
-[ext_resource type="PackedScene" path="res://rnd/stretch/npc/stretchman.tscn" id="7_stretchman"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_interior"]
 sky_top_color = Color(0.16, 0.38, 0.58, 1)
@@ -203,15 +202,6 @@ position = Vector3(-3.55, 0, 1.8)
 rotation = Vector3(0, -1.570796, 0)
 
 [node name="VisitorSpawnRight" type="Marker3D" parent="."]
-position = Vector3(3.1, 0, 0.2)
-rotation = Vector3(0, 1.570796, 0)
-
-[node name="StretchmanReturnSpawn" type="Marker3D" parent="."]
-position = Vector3(2.35, 0, 2.1)
-rotation = Vector3(0, 0.45, 0)
-metadata/entry_id = "stretchman_return"
-
-[node name="Stretchman" parent="." instance=ExtResource("7_stretchman")]
 position = Vector3(3.1, 0, 0.2)
 rotation = Vector3(0, 1.570796, 0)
 

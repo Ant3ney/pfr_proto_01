@@ -24,6 +24,8 @@ const START_ROUTE := "/battles"
 const ACTION_ROUTE := "/battles/actions"
 const MAX_RESPONSE_BYTES := 512 * 1024
 const ExperiencePolicy := preload("res://battle/system/BattleExperience.gd")
+const XP_SHARE_ITEM_KEY := "exp-share"
+const XP_SHARE_REWARD_MULTIPLIER := 0.5
 
 var _state := State.IDLE
 var _transport: Node
@@ -37,6 +39,7 @@ var _player_member_ids: Array[String] = []
 var _opponent_member_ids: Array[String] = []
 var _presentation_metadata_by_id: Dictionary = {}
 var _participating_player_ids: Dictionary = {}
+var _highest_announced_level_by_member: Dictionary = {}
 
 # Sensitive session state. These values never enter a signal or public getter.
 var _state_token := ""
@@ -403,7 +406,8 @@ func _accept_response(response: Dictionary) -> void:
 	var player_snapshot := parties.player as Array
 	var opponent_snapshot := parties.opponent as Array
 	var newly_fainted_opponents := _newly_fainted_opponents(opponent_snapshot)
-	_mark_active_participants(player_snapshot)
+	_mark_snapshot_participants(player_snapshot)
+	_mark_accepted_switch_participant()
 	var requested_awards := _experience_awards_for_defeats(newly_fainted_opponents)
 	var progression: Dictionary = CollectionSystem.apply_battle_health_and_experience(
 		player_snapshot,
@@ -669,15 +673,48 @@ func _enrich_snapshot_presentation(snapshot: Dictionary) -> void:
 				member["xpForNextLevel"] = int(progress.get("xpForNextLevel", 0))
 
 
-func _mark_active_participants(player_snapshot: Array) -> void:
+## Accepted snapshots normally expose the current stage member as active. A
+## forced-in member can instead faint to entry damage before the response's
+## final state, so a living-to-fainted transition also proves it appeared.
+func _mark_snapshot_participants(player_snapshot: Array) -> void:
+	var previous_by_id: Dictionary = {}
+	if not _snapshot.is_empty():
+		var previous_parties_value: Variant = _snapshot.get("parties")
+		if typeof(previous_parties_value) == TYPE_DICTIONARY:
+			for value: Variant in (previous_parties_value as Dictionary).get("player", []):
+				if typeof(value) != TYPE_DICTIONARY:
+					continue
+				var previous_member := value as Dictionary
+				previous_by_id[String(previous_member.get("memberId", ""))] = previous_member
 	for value: Variant in player_snapshot:
 		if typeof(value) != TYPE_DICTIONARY:
 			continue
 		var member := value as Dictionary
-		if bool(member.get("active", false)):
-			var member_id := String(member.get("memberId", ""))
-			if member_id in _player_member_ids:
-				_participating_player_ids[member_id] = true
+		var member_id := String(member.get("memberId", ""))
+		var previous_value: Variant = previous_by_id.get(member_id)
+		var newly_fainted := (
+			typeof(previous_value) == TYPE_DICTIONARY
+			and not bool((previous_value as Dictionary).get("fainted", false))
+			and bool(member.get("fainted", false))
+		)
+		if member_id in _player_member_ids and (
+			bool(member.get("active", false)) or newly_fainted
+		):
+			_participating_player_ids[member_id] = true
+
+
+## A switch target appeared even when entry damage, recoil, or the same turn's
+## attack makes it faint before the accepted final snapshot can mark it active.
+## This runs only after the response to that typed switch action is validated.
+func _mark_accepted_switch_participant() -> void:
+	if (
+		_pending_kind != "action"
+		or String(_pending_action.get("type", "")) != "switch"
+	):
+		return
+	var member_id := String(_pending_action.get("memberId", ""))
+	if member_id in _player_member_ids:
+		_participating_player_ids[member_id] = true
 
 
 func _newly_fainted_opponents(opponent_snapshot: Array) -> Array[Dictionary]:
@@ -712,10 +749,13 @@ func _experience_awards_for_defeats(defeated: Array[Dictionary]) -> Array[Dictio
 		return awards
 	for member_id in _player_member_ids:
 		if not _participating_player_ids.has(member_id):
-			continue
+			var possible_holder := CollectionSystem.get_pcl(member_id)
+			if String(possible_holder.get("heldItem", "")) != XP_SHARE_ITEM_KEY:
+				continue
 		var pcl := CollectionSystem.get_pcl(member_id)
 		if pcl.is_empty():
 			continue
+		var is_participant := _participating_player_ids.has(member_id)
 		var participant_level := int((pcl.get("instanceStats", {}) as Dictionary).get("level", 1))
 		var total_amount := 0
 		for defeated_member in defeated:
@@ -726,7 +766,13 @@ func _experience_awards_for_defeats(defeated: Array[Dictionary]) -> Array[Dictio
 				int(defeated_member.get("level", 1)),
 				int(metadata.get("pokemonId", 0))
 			)
-			total_amount += int(reward.get("amount", 0))
+			var reward_amount := int(reward.get("amount", 0))
+			if not is_participant and reward_amount > 0:
+				reward_amount = maxi(
+					roundi(float(reward_amount) * XP_SHARE_REWARD_MULTIPLIER),
+					1
+				)
+			total_amount += reward_amount
 		if total_amount > 0:
 			awards.append({"memberId": member_id, "amount": total_amount})
 	return awards
@@ -755,20 +801,58 @@ func _append_experience_events(
 			continue
 		var member_id := String(award.get("memberId", ""))
 		var display_name := String(name_by_id.get(member_id, "Pokémon"))
+		var previous_level := int(award.get("previousLevel", award.get("level", 1)))
+		var awarded_level := int(award.get("level", previous_level))
+		var highest_announced_level := int(
+			_highest_announced_level_by_member.get(member_id, previous_level)
+		)
+		var announces_level_up := (
+			bool(award.get("leveledUp", false))
+			and awarded_level > previous_level
+			and awarded_level > highest_announced_level
+		)
+		_highest_announced_level_by_member[member_id] = maxi(
+			highest_announced_level,
+			awarded_level
+		)
 		var message := "%s gained %d XP!" % [display_name, applied_amount]
-		if bool(award.get("leveledUp", false)):
-			message = "%s gained %d XP and grew to Lv. %d!" % [
+		var used_xp_share := (
+			not _participating_player_ids.has(member_id)
+			and CollectionSystem.get_held_item(member_id) == XP_SHARE_ITEM_KEY
+		)
+		if used_xp_share:
+			message = "%s gained %d XP through its Exp. Share!" % [
 				display_name,
 				applied_amount,
-				int(award.get("level", 1)),
+			]
+		if announces_level_up:
+			message = "%s gained %d XP%s and grew to Lv. %d!" % [
+				display_name,
+				applied_amount,
+				" through its Exp. Share" if used_xp_share else "",
+				awarded_level,
 			]
 			if bool(award.get("evolutionAvailable", false)):
 				message += " %s can now evolve from the Pokemon menu!" % display_name
+		var xp_for_next_level := int(award.get("xpForNextLevel", 0))
+		if xp_for_next_level > 0:
+			var xp_into_level := int(award.get("xpIntoLevel", 0))
+			message += " Lv. %d progress: %d/%d XP (%d XP to Lv. %d)." % [
+				awarded_level,
+				xp_into_level,
+				xp_for_next_level,
+				maxi(xp_for_next_level - xp_into_level, 0),
+				awarded_level + 1,
+			]
 		events.append({
 			"type": "experience",
 			"side": "player",
 			"memberId": member_id,
 			"amount": applied_amount,
+			"source": "exp_share" if used_xp_share else "participation",
+			"previousLevel": previous_level,
+			"level": awarded_level,
+			"leveledUp": announces_level_up,
 			"message": message,
 		})
 
@@ -816,6 +900,7 @@ func _clear_session_data() -> void:
 	_opponent_member_ids.clear()
 	_presentation_metadata_by_id.clear()
 	_participating_player_ids.clear()
+	_highest_announced_level_by_member.clear()
 	_battle_id = ""
 	_revision = -1
 	_snapshot.clear()

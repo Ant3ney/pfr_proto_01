@@ -42,27 +42,6 @@ class TransferWatcher:
 			"exit": "ExitSide",
 		},
 		{
-			"trigger": "RougeTowerSouthEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/rouge_tower_lobby.tscn",
-			"spawn": "SouthEntrySpawn",
-			"return": "RougeTowerSouthReturn",
-			"exit": "ExitSouth",
-		},
-		{
-			"trigger": "RougeTowerNorthEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/rouge_tower_lobby.tscn",
-			"spawn": "NorthEntrySpawn",
-			"return": "RougeTowerNorthReturn",
-			"exit": "ExitNorth",
-		},
-		{
-			"trigger": "RougeTowerEastEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/rouge_tower_lobby.tscn",
-			"spawn": "EastEntrySpawn",
-			"return": "RougeTowerEastReturn",
-			"exit": "ExitEast",
-		},
-		{
 			"trigger": "MiareStationEntranceTrigger",
 			"destination": "res://art/environments/new_bouffalant_city/city_interiors/miare_station_concourse.tscn",
 			"spawn": "EntrySpawn",
@@ -70,39 +49,11 @@ class TransferWatcher:
 			"exit": "ExitToCity",
 		},
 		{
-			"trigger": "GarageOfficeEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/garage_workshop.tscn",
-			"spawn": "OfficeEntrySpawn",
-			"return": "GarageOfficeReturn",
-			"exit": "ExitOffice",
-		},
-		{
-			"trigger": "GarageBayEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/garage_workshop.tscn",
-			"spawn": "BayEntrySpawn",
-			"return": "GarageBayReturn",
-			"exit": "ExitVehicleBay",
-		},
-		{
-			"trigger": "GarageSideEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/garage_workshop.tscn",
-			"spawn": "SideEntrySpawn",
-			"return": "GarageSideReturn",
-			"exit": "ExitSideService",
-		},
-		{
 			"trigger": "GateBuildingFrontEntranceTrigger",
 			"destination": "res://art/environments/new_bouffalant_city/city_interiors/gatehouse_interior.tscn",
 			"spawn": "FrontEntrySpawn",
 			"return": "GateBuildingFrontReturn",
 			"exit": "ExitFront",
-		},
-		{
-			"trigger": "GateBuildingRearEntranceTrigger",
-			"destination": "res://art/environments/new_bouffalant_city/city_interiors/gatehouse_interior.tscn",
-			"spawn": "RearEntrySpawn",
-			"return": "GateBuildingRearReturn",
-			"exit": "ExitRear",
 		},
 		{
 			"trigger": "WestTenantEntranceTrigger",
@@ -126,6 +77,32 @@ class TransferWatcher:
 			"exit": "ExitToCity",
 		},
 	]
+	const REMOVED_CITY_TRANSITIONS: Array[StringName] = [
+		&"Route0Gateway",
+		&"Route0GatewayReturn",
+		&"Route4Gateway",
+		&"Route4GatewayReturn",
+		&"RougeTowerSouthReturn",
+		&"RougeTowerNorthReturn",
+		&"RougeTowerEastReturn",
+		&"RougeTowerSouthEntranceTrigger",
+		&"RougeTowerNorthEntranceTrigger",
+		&"RougeTowerEastEntranceTrigger",
+		&"GarageOfficeReturn",
+		&"GarageBayReturn",
+		&"GarageSideReturn",
+		&"GarageOfficeEntranceTrigger",
+		&"GarageBayEntranceTrigger",
+		&"GarageSideEntranceTrigger",
+		&"GateBuildingRearReturn",
+		&"GateBuildingRearEntranceTrigger",
+	]
+	const RED_CITY_BARRIERS: Array[StringName] = [
+		&"MeshInstance3D",
+		&"MeshInstance3D2",
+		&"MeshInstance3D3",
+		&"MeshInstance3D4",
+	]
 
 	var failures: Array[String] = []
 	var transfer_failures: Array[String] = []
@@ -144,6 +121,13 @@ class TransferWatcher:
 		if city == null or city.scene_file_path != CITY_PATH:
 			_finish()
 			return
+		_validate_red_city_barriers(city)
+		_check(ROUTES.size() == 10, "The city should retain exactly ten authored building transitions.")
+		for removed_name in REMOVED_CITY_TRANSITIONS:
+			_check(
+				city.get_node_or_null(NodePath(String(removed_name))) == null,
+				"Removed city transition %s should stay absent." % removed_name
+			)
 
 		var player := _find_player_character(city)
 		_check(player != null, "The modular city should contain a PlayerCharacter.")
@@ -181,6 +165,30 @@ class TransferWatcher:
 
 		_check(transfer_failures.is_empty(), "No configured modular-city transfer should fail.")
 		_finish()
+
+
+	func _validate_red_city_barriers(city: Node) -> void:
+		for barrier_name in RED_CITY_BARRIERS:
+			var barrier := city.get_node_or_null(NodePath(String(barrier_name))) as MeshInstance3D
+			_check(
+				barrier != null,
+				"The primary development environment should retain red mesh %s at runtime."
+				% barrier_name
+			)
+			if barrier == null:
+				continue
+			_check(barrier.visible, "Red mesh %s should be visible." % barrier_name)
+			var box_mesh := barrier.mesh as BoxMesh
+			_check(box_mesh != null, "Red mesh %s should retain its box geometry." % barrier_name)
+			if box_mesh == null:
+				continue
+			var material := box_mesh.material as StandardMaterial3D
+			_check(material != null, "Red mesh %s should retain its authored material." % barrier_name)
+			if material != null:
+				_check(
+					material.albedo_color.is_equal_approx(Color(1, 0.2901961, 0, 1)),
+					"Red mesh %s should retain its red-orange color." % barrier_name
+				)
 
 
 	func _validate_route_configuration(
@@ -357,6 +365,21 @@ class TransferWatcher:
 			)
 		var exit_trigger := _find_node_by_name(station, &"ExitToCity") as SceneTransferTrigger
 		_check(exit_trigger != null, "The station concourse should have an exit back to the city.")
+		var stretchman := _find_node_by_name(station, &"Stretchman") as PFRCharacter
+		var stretchman_return := _find_node_by_name(
+			station,
+			&"StretchmanReturnSpawn"
+		) as Marker3D
+		_check(
+			stretchman != null
+			and stretchman.controller != null
+			and stretchman.controller.npc_behavior is RNDStretchmanBehavior,
+			"Miare Station should contain the interactive Stretchman hub NPC."
+		)
+		_check(
+			stretchman_return != null,
+			"Miare Station should own Stretchman's generated-destination return marker."
+		)
 		if exit_trigger == null or station_player == null:
 			return
 		exit_trigger.body_entered.emit(station_player)
@@ -420,10 +443,11 @@ class TransferWatcher:
 	func _finish() -> void:
 		if failures.is_empty():
 			print(
-				"Modular city scene transfer smoke test passed: all 17 exterior openings have valid "
-				+ "destinations and safe returns, all 15 non-Pokemon-Center triggers are compact "
+				"Modular city scene transfer smoke test passed: all 10 retained exterior openings have valid "
+				+ "destinations and safe returns, all 8 non-Pokemon-Center triggers are compact "
 				+ "threshold strips that ignore nearby players while retaining live collision-free contact, "
-				+ "and the photographed Miare Station route works from live body contact."
+				+ "all four red city meshes remain visible, removed transitions stay absent, and Miare Station "
+				+ "contains Stretchman."
 			)
 			get_tree().quit(0)
 			return

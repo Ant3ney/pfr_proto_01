@@ -32,7 +32,12 @@ godot --headless --path . --scene res://tests/creature_system_smoke_test.tscn
 
 `CollectionSystem` is the global owner of captured Pokemon and the six-slot party. Each captured instance is a PCL (Pokemon collection instance) with its own ID, party assignment, normalized health, cumulative `currentXp`, and derived level:
 
-A fresh game starts with Palkia, Mothim, Hoothoot, Vespiquen, Luxray, and Pelipper in party slots 1–6. All six start at level 3, full health, and zero XP progress.
+A fresh profile first presents animated Charmander (Generation I), Froakie
+(Generation VI), and Treecko (Generation III) cards. Confirming one creates that
+Pokemon as the only initial party member in slot 1 at level 5 and full health.
+Existing saves keep their collection. The player menu can completely reset a
+profile only after three destructive warnings, two acknowledgements, and the
+exact phrase `RESET FOREVER`; reset returns to this starter choice.
 
 ```gdscript
 var level_five_xp := CreatureSystem.get_experience_for_level(25, 5)
@@ -47,17 +52,44 @@ var award := CollectionSystem.grant_experience(pcl["pclID"], 25)
 
 Party slots are integers `1–6`; passing slot `0` stores the Pokemon outside the party. Health is normalized from `0.0` to `1.0`; XP is the exact cumulative integer for the species growth curve. `load_save_data()` migrates the former normalized `xp` field once. Use `get_experience_progress()` for the in-level fraction and `get_save_data()`/`load_save_data()` for persistence. Returned PCL objects are deep copies and can be safely modified by callers.
 
+Captured instances may also persist one optional `heldItem`. Researcher Lumen
+in the main city's paved plaza gives one Exp. Share per profile. The Pokemon
+menu moves it between the bag and a selected PCL; a party holder that did not
+enter battle receives half of its own normal knockout XP, while an active
+holder receives the ordinary full award without doubling it.
+
 When a battle-supported Pokemon crosses a level-up learnset threshold, the R&D
 move-learning system derives the move from the committed PokeAPI snapshot. It
 automatically fills an open move slot; at four moves it pauses play so the
 player can replace one exact slot or keep the current set. Unresolved choices
-survive schema-3 autosaves. See the
+survive schema-5 autosaves. See the
 [level-up move-learning contract](ai_context/runtime/move-learning.md).
 
 Run the collection verification with:
 
 ```sh
 godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
+```
+
+## Optional Cloud Saves
+
+The player menu now has an optional masked `Cloud Save` panel. A private Save
+ID links the local profile to the same ID on other devices; `Opt Out` forgets
+that linkage without affecting ordinary local saves. Background sync retains
+per-section timestamps while offline, pulls an existing cloud save on first
+link, and resolves later conflicts with causal revisions, timestamps, monotonic
+XP/achievements, and reset protection.
+
+The Web client talks only to the same-origin Netlify function. MongoDB Atlas
+credentials are never compiled into Godot or published in browser assets. A
+deployment must configure a rotated `MONGODB_URI`, optional
+`MONGODB_DATABASE`, and independent `CLOUD_SAVE_PEPPER` as Netlify Functions
+environment variables. See the [cloud-save runtime contract](ai_context/runtime/cloud-save.md)
+and [function deployment notes](netlify/functions/README.md).
+
+```sh
+npm run test:cloud-save
+godot --headless --path . --scene res://rnd/tests/cloud_save_sync_smoke_test.tscn
 ```
 
 ## Author and Run PvE Battles
@@ -96,6 +128,7 @@ godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
 godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
+godot --headless --path . --scene res://rnd/tests/starter_selection_smoke_test.tscn
 ```
 
 See the [Godot battle client contract](ai_context/runtime/battle-client.md),
@@ -145,7 +178,7 @@ Level (Node3D)
 3. Give every walkable surface and blocking obstacle physics collision. A visible `MeshInstance3D` alone does not stop the player: use a `StaticBody3D` with one or more `CollisionShape3D` children, or a `GridMap` whose `MeshLibrary` items contain collision shapes. The default collision layer and mask, layer 1, match the player.
 4. Add a `Camera3D` as a sibling of the player, attach [`core/PlayerCamera.gd`](core/PlayerCamera.gd), enable **Current**, and set **Target Path** to the player. For the tree above, the path is `../Player`. Movement is camera-relative when this camera is active.
 5. Add lighting and a `WorldEnvironment` so the level is visible. These nodes affect presentation, not movement.
-6. Optionally instance [`demo/game_ui.tscn`](demo/game_ui.tscn) to enable the floating touch/mouse joystick and fullscreen control. Keyboard and gamepad movement work without this UI.
+6. Optionally instance [`demo/game_ui.tscn`](demo/game_ui.tscn) to enable the floating touch/mouse joystick. Keyboard and gamepad movement work without this UI.
 
 The current project already registers [`core/GameInstance.gd`](core/GameInstance.gd) as the `GameInstance` autoload. Keep that autoload enabled because `PlayerController` checks it before accepting movement. A `NavigationRegion3D` is not required for player movement; navigation meshes are used by NPC controllers.
 
@@ -171,7 +204,7 @@ The New Bouffalant City ground wrappers and imported reference assets already in
 
 ## Add a Trainer to a Scene
 
-[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`demo/primary_development_enviroment.tscn`](demo/primary_development_enviroment.tscn) demonstrates complete placements. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
+[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn) demonstrates all seven standard prototype placements in Lv. 3–6 order. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
 
 A trainer-ready level adds these nodes to the playable-level structure above:
 
@@ -220,7 +253,7 @@ godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.
 
 The existing Kyle behavior implements a complete one-time approach, linear
 dialog, and networked battle. After the result or an unrecoverable failure, it
-returns to the authored pose in `demo/primary_development_enviroment.tscn`.
+returns to the authored pose in `overworld/route_0/route_0.tscn`.
 Standard authored trainers consume their forced sight encounter for the current
 play session, then remain available through the shared interaction prompt for
 manual rematches. Stretchman destination trainers use **Highly Aggro** mode:

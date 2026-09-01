@@ -56,17 +56,17 @@ func _finish_sequence() -> void:
 
 
 func _travel_to_destination(kind: String, destination_index: int) -> void:
+	var destination := StretchGoalSystem.begin_destination(kind, destination_index)
+	if destination.is_empty():
+		return
 	var hub := _hub
 	_hub = null
 	if is_instance_valid(hub):
 		hub.dismiss_for_travel()
 	GameInstance.set_player_movement_enabled(true)
-	var destination := StretchGoalSystem.begin_destination(kind, destination_index)
-	if destination.is_empty():
-		return
 	if not GameInstance.transfer_to_scene(
 		String(destination.get("scene_path", "")),
-		&"EntrySpawn"
+		StringName(String(destination.get("spawn_marker", "EntrySpawn")))
 	):
 		GameInstance.set_player_movement_enabled(true)
 
@@ -81,4 +81,3 @@ func _face_interactor(character: CharacterBody3D, interactor: PlayerCharacter) -
 		return
 	var local_direction := character.global_basis.orthonormalized().inverse() * offset.normalized()
 	visual.rotation.y = atan2(-local_direction.x, -local_direction.z)
-

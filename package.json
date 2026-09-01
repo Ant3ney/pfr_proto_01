@@ -1,0 +1,16 @@
+{
+  "name": "pfr-locomotion-prototype-cloud",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Server-side cloud save support for the PFR locomotion prototype.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19 <25"
+  },
+  "scripts": {
+    "test:cloud-save": "node --test netlify/cloud-save/cloud-save-resolver.test.mjs"
+  },
+  "dependencies": {
+    "mongodb": "7.6.0"
+  }
+}

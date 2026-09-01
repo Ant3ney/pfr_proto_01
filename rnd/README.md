@@ -12,14 +12,18 @@ New experimental runtime systems live here during the current RND phase.
 - `move_learning/` derives level-up learnsets from the committed PokeAPI data,
   queues moves earned on real level changes, and owns the four-slot
   replace-or-keep modal while `CollectionSystem` remains the move-set owner.
+- `starter_selection/` owns fresh-profile Charmander, Froakie, and Treecko
+  choice cards with three simultaneous exact battle GIF animations.
 - `save/ProgressionAutosave.gd` owns automatic collection and overworld-pose
-  persistence.
+  persistence plus the confirmation-gated complete progress reset.
 - `stretch/` owns Stretchman's experimental economy and hub: complete item and
-  default-Pokemon catalogs, fuzzy shop search and filters, GIF-derived Pokemon
-  icons/previews, tiered loot-box reels, eight gyms, eight trainer routes, and
-  the Elite Four/Champion run. Generated opponents configure the project's
-  existing authored trainer scenes and `TrainerBehavior`; there is no RND
-  trainer implementation.
+  default-Pokemon catalogs, fuzzy shop search and filters, price and subjective
+  coolness sorting, GIF-derived Pokemon icons/previews, price-derived Lv. 5–20
+  direct purchases, tiered loot-box reels, eight gyms, eight trainer routes,
+  and the Elite Four/Champion run.
+  Miare Station owns the hub NPC and destination return. Generated opponents
+  configure the project's existing authored trainer scenes and
+  `TrainerBehavior`; there is no RND trainer implementation.
 - `TallGrassEncounterZone.gd` owns the existing experimental wild encounter
   trigger.
 - `tests/` contains focused headless regression scenes for the RND systems.

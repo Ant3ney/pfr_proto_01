@@ -1,12 +1,31 @@
 <!DOCTYPE html>
-<!-- Godot 4.7 shell adapted for plain-HTTP LAN development. -->
+<!-- Godot 4.7 shell adapted for plain-HTTP LAN development and PFR branding. -->
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>$GODOT_PROJECT_NAME</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, viewport-fit=cover">
+		<meta name="theme-color" content="#16263d">
+		<meta name="description" content="Enter the divided region of Pokémon Fracture and Pokémon Revolt.">
+		<title>Pokémon Fracture &amp; Revolt</title>
 		<style>
-html, body, #canvas {
+:root {
+	--fracture: #7cc8f4;
+	--fracture-deep: #235c91;
+	--revolt: #ef745e;
+	--revolt-deep: #9d352f;
+	--gold: #f3c978;
+	--cream: #fff5dc;
+	--ink: #101827;
+	--panel: rgba(13, 24, 42, 0.78);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -16,11 +35,19 @@ html, body, #canvas {
 	user-select: none;
 }
 
+html,
+body {
+	width: 100%;
+	height: 100%;
+}
+
 body {
 	color: white;
-	background-color: black;
+	background: var(--ink);
+	font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	overflow: hidden;
 	overscroll-behavior: none;
+	-webkit-font-smoothing: antialiased;
 }
 
 #canvas {
@@ -31,88 +58,854 @@ body {
 	outline: none;
 }
 
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
-}
-
 #status {
-	background-color: $GODOT_SPLASH_COLOR;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	display: grid;
+	place-items: center;
+	min-height: 100%;
+	overflow: hidden;
+	background:
+		radial-gradient(circle at 50% 64%, rgba(255, 220, 151, 0.4) 0, rgba(255, 190, 111, 0.1) 19%, transparent 43%),
+		linear-gradient(112deg, #173e69 0%, #1b426d 36%, #313b50 51%, #7b312e 76%, #4d2027 100%);
+	opacity: 1;
+	transition: opacity 550ms ease, visibility 550ms ease;
+}
+
+#status.is-leaving {
 	visibility: hidden;
+	opacity: 0;
 }
 
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
+#status::before {
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+	background-size: 42px 42px;
+	content: "";
+	-webkit-mask-image: linear-gradient(to bottom, black, transparent 78%);
+	mask-image: linear-gradient(to bottom, black, transparent 78%);
+	opacity: 0.62;
 }
 
-#status-splash.show-image--false {
-	display: none;
+#status::after {
+	position: absolute;
+	top: -20%;
+	bottom: -20%;
+	left: 50%;
+	width: 2px;
+	background: linear-gradient(to bottom, transparent, rgba(255, 242, 199, 0.72), transparent);
+	box-shadow: 0 0 28px rgba(255, 212, 125, 0.55);
+	content: "";
+	transform: rotate(12deg);
 }
 
-#status-splash.fullsize--true {
-	height: 100%;
+.atmosphere,
+.cityscape,
+.light-rays,
+.faction-glow {
+	pointer-events: none;
+	position: absolute;
+}
+
+.atmosphere {
+	inset: 0;
+	overflow: hidden;
+}
+
+.sun {
+	position: absolute;
+	left: 50%;
+	top: 61%;
+	width: clamp(180px, 31vw, 440px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255, 246, 205, 0.92) 0 7%, rgba(255, 210, 124, 0.44) 27%, transparent 70%);
+	filter: blur(1px);
+	transform: translate(-50%, -50%);
+}
+
+.light-rays {
+	inset: -30%;
+	background: conic-gradient(from 244deg at 50% 56%, transparent 0deg, rgba(255, 234, 181, 0.08) 8deg, transparent 18deg, transparent 42deg, rgba(255, 234, 181, 0.07) 50deg, transparent 61deg);
+	animation: breathe 7s ease-in-out infinite;
+}
+
+.faction-glow {
+	top: -25%;
+	width: 54%;
+	height: 96%;
+	filter: blur(80px);
+	opacity: 0.32;
+}
+
+.faction-glow--fracture {
+	left: -13%;
+	background: radial-gradient(ellipse, #69bce8, transparent 68%);
+}
+
+.faction-glow--revolt {
+	right: -13%;
+	background: radial-gradient(ellipse, #e9654e, transparent 68%);
+}
+
+.cloud {
+	position: absolute;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, rgba(236, 246, 255, 0.38), transparent);
+	filter: blur(5px);
+	opacity: 0.68;
+	animation: cloud-drift 18s ease-in-out infinite alternate;
+}
+
+.cloud--one {
+	top: 17%;
+	left: -8%;
+	width: 48%;
+}
+
+.cloud--two {
+	top: 27%;
+	right: -11%;
+	width: 56%;
+	animation-delay: -6s;
+}
+
+.cloud--three {
+	top: 42%;
+	left: 15%;
+	width: 64%;
+	animation-delay: -11s;
+}
+
+.fracture-marks {
+	position: absolute;
+	inset: 0 50% 0 0;
+	opacity: 0.28;
+}
+
+.fracture-marks path {
+	fill: none;
+	stroke: #c2e8ff;
+	stroke-linecap: round;
+	stroke-width: 1.3;
+	vector-effect: non-scaling-stroke;
+}
+
+.banner {
+	position: absolute;
+	top: -3%;
+	width: clamp(18px, 2.3vw, 34px);
+	height: clamp(110px, 24vh, 230px);
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	box-shadow: 0 10px 30px rgba(4, 9, 18, 0.2);
+	opacity: 0.52;
+	transform-origin: top center;
+	animation: banner-sway 4.6s ease-in-out infinite alternate;
+}
+
+.banner::after {
+	position: absolute;
+	right: 0;
+	bottom: -16px;
+	left: 0;
+	border-top: 16px solid transparent;
+	border-right: calc(clamp(18px, 2.3vw, 34px) / 2) solid transparent;
+	border-left: calc(clamp(18px, 2.3vw, 34px) / 2) solid transparent;
+	content: "";
+}
+
+.banner--fracture {
+	left: 9%;
+	background: linear-gradient(#86c9ed, #285c91);
+}
+
+.banner--fracture::after {
+	border-top-color: #285c91;
+}
+
+.banner--revolt {
+	right: 9%;
+	background: linear-gradient(#f5a262, #a53c36);
+	animation-delay: -1.7s;
+}
+
+.banner--revolt::after {
+	border-top-color: #a53c36;
+}
+
+.cityscape {
+	right: 0;
+	bottom: -1px;
+	left: 0;
+	z-index: 1;
 	width: 100%;
-	object-fit: contain;
+	height: min(43vh, 390px);
+	filter: drop-shadow(0 -12px 35px rgba(13, 18, 29, 0.2));
 }
 
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
+.cityscape .mountains {
+	fill: rgba(21, 33, 52, 0.38);
 }
 
-#status-progress, #status-notice {
-	display: none;
+.cityscape .city-back {
+	fill: #26354a;
+	opacity: 0.82;
+}
+
+.cityscape .city-front {
+	fill: #182538;
+}
+
+.cityscape .roof-light {
+	fill: #edc174;
+	opacity: 0.75;
+}
+
+.cityscape .window {
+	fill: #f5d98e;
+	opacity: 0.38;
+}
+
+.cityscape .flag-fracture {
+	fill: #70b8e3;
+}
+
+.cityscape .flag-revolt {
+	fill: #e86c57;
+}
+
+.loader {
+	position: relative;
+	z-index: 3;
+	display: grid;
+	place-items: center;
+	width: min(760px, calc(100vw - 32px));
+	padding: clamp(20px, 4vh, 42px) clamp(18px, 5vw, 58px) clamp(19px, 3.6vh, 36px);
+	border: 1px solid rgba(255, 255, 255, 0.17);
+	border-radius: 28px;
+	background:
+		linear-gradient(115deg, rgba(71, 122, 167, 0.11), transparent 38%, rgba(172, 76, 62, 0.1)),
+		var(--panel);
+	box-shadow: 0 28px 80px rgba(6, 11, 21, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	text-align: center;
+	transform: translateY(-4vh);
+	backdrop-filter: blur(18px) saturate(112%);
+	animation: loader-arrive 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.loader::before,
+.loader::after {
+	position: absolute;
+	top: -1px;
+	height: 2px;
+	content: "";
+}
+
+.loader::before {
+	right: 50%;
+	left: 8%;
+	background: linear-gradient(90deg, transparent, var(--fracture));
+}
+
+.loader::after {
+	right: 8%;
+	left: 50%;
+	background: linear-gradient(90deg, var(--gold), var(--revolt), transparent);
+}
+
+.crest {
+	width: clamp(62px, 8.5vh, 88px);
+	height: clamp(62px, 8.5vh, 88px);
+	margin-top: calc(clamp(20px, 4vh, 42px) * -1 - 18px);
+	filter: drop-shadow(0 10px 20px rgba(4, 9, 18, 0.4));
+	animation: crest-float 3.2s ease-in-out infinite;
+}
+
+.crest-ring {
+	fill: #17243a;
+	stroke: var(--gold);
+	stroke-width: 4;
+}
+
+.crest-left {
+	fill: url(#crest-fracture-gradient);
+}
+
+.crest-right {
+	fill: url(#crest-revolt-gradient);
+}
+
+.crest-center {
+	fill: var(--cream);
+	stroke: var(--gold);
+	stroke-width: 3;
+}
+
+.crest-crack {
+	fill: none;
+	stroke: var(--cream);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 4;
+}
+
+.brand-kicker {
+	margin: clamp(8px, 1.5vh, 14px) 0 4px;
+	color: rgba(255, 248, 227, 0.76);
+	font-size: clamp(0.64rem, 1.4vw, 0.78rem);
+	font-weight: 800;
+	letter-spacing: 0.42em;
+	text-indent: 0.42em;
+}
+
+.game-title {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: clamp(8px, 1.9vw, 20px);
+	margin: 0;
+	font-family: "Trebuchet MS", Inter, ui-sans-serif, system-ui, sans-serif;
+	font-size: clamp(2rem, 6.5vw, 4.55rem);
+	font-style: italic;
+	font-weight: 900;
+	letter-spacing: -0.065em;
+	line-height: 0.95;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.game-title__fracture {
+	color: #bce6ff;
+	text-shadow: 0 3px 0 #214e7c, 0 0 28px rgba(88, 180, 233, 0.25);
+}
+
+.game-title__divider {
+	color: var(--gold);
+	font-size: 0.62em;
+	font-style: normal;
+	font-weight: 400;
+	text-shadow: 0 0 18px rgba(243, 201, 120, 0.36);
+	transform: translateY(0.05em);
+}
+
+.game-title__revolt {
+	color: #ffc09e;
+	text-shadow: 0 3px 0 #87342f, 0 0 28px rgba(232, 101, 77, 0.25);
+}
+
+.tagline {
+	margin: clamp(7px, 1.6vh, 13px) 0 0;
+	color: rgba(255, 250, 236, 0.75);
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: clamp(0.8rem, 1.9vw, 1rem);
+	font-style: italic;
+	letter-spacing: 0.08em;
+}
+
+.loading-panel {
+	width: min(560px, 100%);
+	margin-top: clamp(17px, 3.6vh, 32px);
+}
+
+.loading-meta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 18px;
+	margin-bottom: 9px;
+	color: rgba(255, 255, 255, 0.82);
+	font-size: clamp(0.72rem, 1.8vw, 0.86rem);
+	font-weight: 650;
+	letter-spacing: 0.035em;
+}
+
+#status-label {
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#status-percent {
+	min-width: 3.5ch;
+	color: var(--cream);
+	font-variant-numeric: tabular-nums;
+	font-weight: 800;
+	text-align: right;
 }
 
 #status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
+	position: relative;
+	height: 12px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.17);
+	border-radius: 999px;
+	background: rgba(5, 12, 23, 0.65);
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.38), 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-#status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
-	padding: 1rem;
+.progress-fill {
+	position: absolute;
+	inset: 2px;
+	border-radius: inherit;
+	background: linear-gradient(90deg, #57aee0 0%, #8dd5f5 33%, #f1c878 58%, #f18a64 78%, #d94e45 100%);
+	box-shadow: 0 0 16px rgba(126, 202, 242, 0.42);
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: transform 220ms ease-out;
+}
+
+.progress-fill::after {
+	position: absolute;
+	top: -6px;
+	right: -8px;
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 246, 213, 0.94);
+	border-radius: 50%;
+	background: #f0bf69;
+	box-shadow: 0 0 15px rgba(255, 218, 146, 0.8);
+	content: "";
+}
+
+.progress-sheen {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(105deg, transparent 28%, rgba(255, 255, 255, 0.24) 48%, transparent 68%);
+	transform: translateX(-100%);
+	animation: sheen 2.4s ease-in-out infinite;
+}
+
+#status-progress.is-indeterminate .progress-fill {
+	right: auto;
+	width: 34%;
+	transform: translateX(-115%);
+	animation: indeterminate 1.55s ease-in-out infinite;
+}
+
+.loading-hint {
+	margin: 10px 0 0;
+	color: rgba(225, 234, 244, 0.58);
+	font-size: clamp(0.66rem, 1.55vw, 0.76rem);
+	letter-spacing: 0.025em;
+}
+
+.status-notice {
+	position: relative;
+	z-index: 4;
+	display: none;
+	width: min(540px, calc(100vw - 32px));
+	padding: clamp(24px, 5vw, 42px);
+	border: 1px solid rgba(255, 201, 167, 0.38);
+	border-radius: 24px;
+	background: rgba(31, 25, 34, 0.9);
+	box-shadow: 0 24px 70px rgba(8, 10, 18, 0.46);
 	text-align: center;
-	z-index: 1;
+	backdrop-filter: blur(18px);
+}
+
+.notice-mark {
+	display: grid;
+	place-items: center;
+	width: 54px;
+	height: 54px;
+	margin: 0 auto 16px;
+	border: 1px solid rgba(255, 220, 181, 0.48);
+	border-radius: 50%;
+	background: rgba(201, 80, 64, 0.22);
+	color: #ffd7b6;
+	font-family: Georgia, serif;
+	font-size: 1.7rem;
+}
+
+.status-notice h2 {
+	margin: 0 0 12px;
+	color: #fff3dc;
+	font-family: "Trebuchet MS", ui-sans-serif, sans-serif;
+	font-size: clamp(1.35rem, 4vw, 2rem);
+	letter-spacing: -0.02em;
+}
+
+#status-notice-message {
+	margin: 0;
+	color: rgba(255, 240, 226, 0.78);
+	font-size: 0.88rem;
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+}
+
+.notice-advice {
+	margin: 16px 0 0;
+	color: rgba(228, 234, 243, 0.52);
+	font-size: 0.76rem;
+	line-height: 1.5;
+}
+
+#status.mode-notice .loader {
+	display: none;
+}
+
+#status.mode-notice .status-notice {
+	display: block;
+	animation: loader-arrive 450ms ease-out both;
+}
+
+.region-caption {
+	position: absolute;
+	right: 0;
+	bottom: max(15px, env(safe-area-inset-bottom));
+	left: 0;
+	z-index: 3;
+	color: rgba(223, 229, 237, 0.46);
+	font-size: clamp(0.55rem, 1.4vw, 0.68rem);
+	font-weight: 700;
+	letter-spacing: 0.28em;
+	text-align: center;
+	text-indent: 0.28em;
+	text-transform: uppercase;
+}
+
+.noscript-notice {
+	position: fixed;
+	inset: 0;
+	z-index: 30;
+	display: grid;
+	place-items: center;
+	padding: 24px;
+	background: #17243a;
+	color: #fff4dd;
+	font: 600 1rem/1.5 ui-sans-serif, system-ui, sans-serif;
+	text-align: center;
+}
+
+@keyframes loader-arrive {
+	from {
+		opacity: 0;
+		transform: translateY(calc(-4vh + 14px)) scale(0.985);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(-4vh) scale(1);
+	}
+}
+
+@keyframes crest-float {
+	0%, 100% { transform: translateY(0) rotate(-1deg); }
+	50% { transform: translateY(-5px) rotate(1deg); }
+}
+
+@keyframes breathe {
+	0%, 100% { opacity: 0.56; transform: scale(1); }
+	50% { opacity: 0.9; transform: scale(1.03); }
+}
+
+@keyframes cloud-drift {
+	from { transform: translateX(-3%); }
+	to { transform: translateX(8%); }
+}
+
+@keyframes banner-sway {
+	from { transform: rotate(-1.3deg) skewX(-0.4deg); }
+	to { transform: rotate(1.6deg) skewX(0.7deg); }
+}
+
+@keyframes sheen {
+	0%, 30% { transform: translateX(-110%); }
+	72%, 100% { transform: translateX(110%); }
+}
+
+@keyframes indeterminate {
+	0% { transform: translateX(-115%); }
+	55% { transform: translateX(135%); }
+	100% { transform: translateX(310%); }
+}
+
+@media (max-width: 620px) {
+	.loader {
+		width: min(94vw, 480px);
+		border-radius: 22px;
+		transform: translateY(-2vh);
+	}
+
+	.game-title {
+		gap: 7px;
+		font-size: clamp(1.65rem, 9.3vw, 3rem);
+	}
+
+	.brand-kicker {
+		letter-spacing: 0.32em;
+		text-indent: 0.32em;
+	}
+
+	.banner {
+		opacity: 0.36;
+	}
+
+	@keyframes loader-arrive {
+		from { opacity: 0; transform: translateY(calc(-2vh + 12px)) scale(0.985); }
+		to { opacity: 1; transform: translateY(-2vh) scale(1); }
+	}
+}
+
+@media (max-height: 590px) {
+	.loader {
+		padding-top: 18px;
+		padding-bottom: 17px;
+	}
+
+	.crest {
+		width: 56px;
+		height: 56px;
+		margin-top: -39px;
+	}
+
+	.brand-kicker {
+		margin-top: 5px;
+	}
+
+	.tagline {
+		display: none;
+	}
+
+	.loading-panel {
+		margin-top: 15px;
+	}
+
+	.region-caption {
+		display: none;
+	}
+}
+
+@media (max-height: 430px) {
+	.crest,
+	.loading-hint {
+		display: none;
+	}
+
+	.loader {
+		transform: none;
+	}
+
+	.brand-kicker {
+		margin-top: 0;
+	}
+
+	@keyframes loader-arrive {
+		from { opacity: 0; transform: translateY(10px) scale(0.985); }
+		to { opacity: 1; transform: none; }
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 1ms !important;
+	}
 }
 		</style>
 		$GODOT_HEAD_INCLUDE
 	</head>
 	<body>
-		<canvas id="canvas">
+		<canvas id="canvas" aria-label="Pokémon Fracture and Revolt game">
 			Your browser does not support the canvas tag.
 		</canvas>
 
 		<noscript>
-			Your browser does not support JavaScript.
+			<div class="noscript-notice">JavaScript is required to enter the region. Enable it in your browser, then reload this page.</div>
 		</noscript>
 
-		<div id="status">
-			<img id="status-splash" class="$GODOT_SPLASH_CLASSES" src="$GODOT_SPLASH" alt="">
-			<progress id="status-progress"></progress>
-			<div id="status-notice"></div>
+		<div id="status" class="mode-progress" aria-live="polite">
+			<div class="atmosphere" aria-hidden="true">
+				<div class="faction-glow faction-glow--fracture"></div>
+				<div class="faction-glow faction-glow--revolt"></div>
+				<div class="sun"></div>
+				<div class="light-rays"></div>
+				<div class="cloud cloud--one"></div>
+				<div class="cloud cloud--two"></div>
+				<div class="cloud cloud--three"></div>
+				<div class="banner banner--fracture"></div>
+				<div class="banner banner--revolt"></div>
+				<svg class="fracture-marks" viewBox="0 0 800 900" preserveAspectRatio="none">
+					<path d="M90 0 L182 118 L141 236 L273 352 L230 482 L365 626 L328 742 L445 900" />
+					<path d="M182 118 L296 76 M141 236 L38 298 M273 352 L388 289 M230 482 L104 540 M365 626 L491 570" />
+				</svg>
+			</div>
+
+			<svg class="cityscape" viewBox="0 0 1600 430" preserveAspectRatio="none" aria-hidden="true">
+				<path class="mountains" d="M0 215 L112 126 L196 171 L301 82 L418 174 L525 105 L641 187 L775 98 L908 183 L1024 116 L1127 176 L1244 80 L1377 168 L1492 111 L1600 185 L1600 430 L0 430 Z" />
+				<path class="city-back" d="M0 244 H110 V203 H180 V257 H248 V177 H318 V248 H401 V214 H473 V268 H548 V191 H626 V249 H705 V220 H778 V264 H852 V182 H928 V253 H1007 V214 H1080 V261 H1150 V187 H1237 V248 H1323 V209 H1398 V258 H1490 V190 H1600 V430 H0 Z" />
+				<g class="city-front">
+					<path d="M0 318 H130 V267 H210 V306 H298 V246 H386 V319 H476 V286 H562 V329 H654 V275 H731 V320 H842 V289 H934 V323 H1036 V271 H1120 V315 H1210 V251 H1294 V314 H1396 V280 H1483 V316 H1600 V430 H0 Z" />
+					<path d="M667 430 V241 H702 V196 H732 V145 H756 V101 H779 V57 H800 V24 H821 V57 H844 V101 H868 V145 H898 V196 H933 V430 Z" />
+					<path d="M575 430 V304 H621 V268 H667 V430 Z M933 430 V268 H979 V304 H1025 V430 Z" />
+					<path d="M367 430 V320 H395 V291 H423 V320 H450 V430 Z M1150 430 V320 H1178 V291 H1206 V320 H1233 V430 Z" />
+				</g>
+				<path class="roof-light" d="M756 101 H844 L836 112 H764 Z M702 196 H898 L886 207 H714 Z" />
+				<g class="window">
+					<rect x="785" y="123" width="30" height="38" rx="14" />
+					<rect x="751" y="224" width="24" height="42" rx="12" />
+					<rect x="789" y="224" width="24" height="42" rx="12" />
+					<rect x="827" y="224" width="24" height="42" rx="12" />
+					<rect x="710" y="337" width="27" height="43" rx="3" />
+					<rect x="758" y="337" width="27" height="43" rx="3" />
+					<rect x="815" y="337" width="27" height="43" rx="3" />
+					<rect x="863" y="337" width="27" height="43" rx="3" />
+				</g>
+				<path class="flag-fracture" d="M734 145 V89 H675 L693 111 L675 133 H734 Z" />
+				<path class="flag-revolt" d="M866 145 V89 H925 L907 111 L925 133 H866 Z" />
+			</svg>
+
+			<main id="status-loader" class="loader">
+				<svg class="crest" viewBox="0 0 120 120" aria-hidden="true">
+					<defs>
+						<linearGradient id="crest-fracture-gradient" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0" stop-color="#a8ddf7" />
+							<stop offset="1" stop-color="#2b6598" />
+						</linearGradient>
+						<linearGradient id="crest-revolt-gradient" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0" stop-color="#f5aa72" />
+							<stop offset="1" stop-color="#a33d38" />
+						</linearGradient>
+					</defs>
+					<circle class="crest-ring" cx="60" cy="60" r="55" />
+					<path class="crest-left" d="M60 11 A49 49 0 0 0 60 109 L60 79 L48 68 L58 52 L50 39 L60 26 Z" />
+					<path class="crest-right" d="M60 11 A49 49 0 0 1 60 109 L60 79 L72 68 L62 52 L70 39 L60 26 Z" />
+					<path class="crest-crack" d="M60 20 L50 39 L61 52 L49 68 L60 80 L54 101" />
+					<circle class="crest-center" cx="60" cy="60" r="10" />
+				</svg>
+
+				<p class="brand-kicker">POKÉMON</p>
+				<h1 class="game-title">
+					<span class="game-title__fracture">Fracture</span>
+					<span class="game-title__divider" aria-hidden="true">/</span>
+					<span class="game-title__revolt">Revolt</span>
+				</h1>
+				<p class="tagline">A beautiful region at a historic turning point</p>
+
+				<section class="loading-panel" aria-label="Game loading progress">
+					<div class="loading-meta">
+						<span id="status-label">Opening the city gates...</span>
+						<output id="status-percent">0%</output>
+					</div>
+					<div id="status-progress" class="is-indeterminate" role="progressbar" aria-label="Loading game">
+						<div id="status-progress-fill" class="progress-fill"></div>
+						<div class="progress-sheen"></div>
+					</div>
+					<p id="status-hint" class="loading-hint">Restoring roads, raising banners, and waking New Bouffalant City.</p>
+				</section>
+			</main>
+
+			<section id="status-notice" class="status-notice" role="alert">
+				<div class="notice-mark" aria-hidden="true">!</div>
+				<h2>The road ahead is blocked</h2>
+				<p id="status-notice-message"></p>
+				<p class="notice-advice">Try reloading the page or opening it in a current version of Chrome, Edge, Firefox, or Safari.</p>
+			</section>
+
+			<div class="region-caption" aria-hidden="true">New Bouffalant City &nbsp;&bull;&nbsp; The future is yours to shape</div>
 		</div>
 
-		<script src="$GODOT_URL"></script>
+		<script>
+const PFR_BUILD_VERSION = '__PFR_CACHE_VERSION__';
+const PFR_HAS_BUILD_VERSION = !PFR_BUILD_VERSION.startsWith('__PFR_');
+const PFR_VERSIONED_ASSETS = new Set(['index.pck', 'index.wasm']);
+
+// Give each exported game pack and runtime a content-derived URL. This keeps
+// cached files update-safe even though Godot exports them with fixed names.
+if (PFR_HAS_BUILD_VERSION) {
+	const nativeFetch = window.fetch.bind(window);
+	window.fetch = function (input, init) {
+		try {
+			const inputUrl = input instanceof Request ? input.url : input;
+			const url = new URL(inputUrl, window.location.href);
+			const fileName = url.pathname.slice(url.pathname.lastIndexOf('/') + 1);
+			if (url.origin === window.location.origin && PFR_VERSIONED_ASSETS.has(fileName)) {
+				url.searchParams.set('v', PFR_BUILD_VERSION);
+				input = input instanceof Request ? new Request(url.href, input) : url.href;
+			}
+		} catch (error) {
+			console.warn('[PFR cache] Could not version request:', error);
+		}
+		return nativeFetch(input, init);
+	};
+}
+
+window.PFR_CACHE_READY = (async function () {
+	if (!PFR_HAS_BUILD_VERSION || !window.isSecureContext || !('serviceWorker' in navigator)) {
+		return false;
+	}
+
+	function waitForActivation(worker) {
+		if (!worker || worker.state === 'activated' || worker.state === 'redundant') {
+			return Promise.resolve();
+		}
+		return new Promise((resolve) => {
+			let settled = false;
+			const finish = () => {
+				if (settled) {
+					return;
+				}
+				settled = true;
+				worker.removeEventListener('statechange', onStateChange);
+				resolve();
+			};
+			const onStateChange = () => {
+				if (worker.state === 'activated' || worker.state === 'redundant') {
+					finish();
+				}
+			};
+			worker.addEventListener('statechange', onStateChange);
+			window.setTimeout(finish, 2500);
+		});
+	}
+
+	function waitForController() {
+		if (navigator.serviceWorker.controller) {
+			return Promise.resolve();
+		}
+		return new Promise((resolve) => {
+			let settled = false;
+			const finish = () => {
+				if (settled) {
+					return;
+				}
+				settled = true;
+				navigator.serviceWorker.removeEventListener('controllerchange', finish);
+				resolve();
+			};
+			navigator.serviceWorker.addEventListener('controllerchange', finish);
+			window.setTimeout(finish, 2500);
+		});
+	}
+
+	try {
+		const workerUrl = `pfr-cache-sw.js?v=${encodeURIComponent(PFR_BUILD_VERSION)}`;
+		const registration = await navigator.serviceWorker.register(workerUrl, {
+			scope: './',
+			updateViaCache: 'none',
+		});
+		const pendingWorker = registration.installing || registration.waiting;
+		await waitForActivation(pendingWorker);
+		await navigator.serviceWorker.ready;
+		await waitForController();
+		return navigator.serviceWorker.controller !== null;
+	} catch (error) {
+		// Caching is an optimization. Storage policies, private browsing, or an
+		// unsupported browser must never prevent the game from starting.
+		console.warn('[PFR cache] Browser cache unavailable:', error);
+		return false;
+	}
+}());
+		</script>
+		<script src="$GODOT_URL?v=__PFR_CACHE_VERSION__"></script>
 		<script>
 const GODOT_CONFIG = $GODOT_CONFIG;
 const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
@@ -127,7 +920,11 @@ const engine = new Engine(GODOT_CONFIG);
 (function () {
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
-	const statusNotice = document.getElementById('status-notice');
+	const statusProgressFill = document.getElementById('status-progress-fill');
+	const statusPercent = document.getElementById('status-percent');
+	const statusLabel = document.getElementById('status-label');
+	const statusHint = document.getElementById('status-hint');
+	const statusNoticeMessage = document.getElementById('status-notice-message');
 
 	let initializing = true;
 	let statusMode = '';
@@ -137,24 +934,25 @@ const engine = new Engine(GODOT_CONFIG);
 			return;
 		}
 		if (mode === 'hidden') {
-			statusOverlay.remove();
 			initializing = false;
+			statusOverlay.classList.add('is-leaving');
+			statusOverlay.setAttribute('aria-hidden', 'true');
+			window.setTimeout(() => statusOverlay.remove(), 600);
 			return;
 		}
-		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
-		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		statusOverlay.classList.toggle('mode-progress', mode === 'progress');
+		statusOverlay.classList.toggle('mode-notice', mode === 'notice');
 		statusMode = mode;
 	}
 
 	function setStatusNotice(text) {
-		while (statusNotice.lastChild) {
-			statusNotice.removeChild(statusNotice.lastChild);
-		}
+		statusNoticeMessage.replaceChildren();
 		const lines = text.split('\n');
-		lines.forEach((line) => {
-			statusNotice.appendChild(document.createTextNode(line));
-			statusNotice.appendChild(document.createElement('br'));
+		lines.forEach((line, index) => {
+			if (index > 0) {
+				statusNoticeMessage.appendChild(document.createElement('br'));
+			}
+			statusNoticeMessage.appendChild(document.createTextNode(line));
 		});
 	}
 
@@ -171,6 +969,40 @@ const engine = new Engine(GODOT_CONFIG);
 		initializing = false;
 	}
 
+	function setLoadingProgress(current, total) {
+		if (current > 0 && total > 0) {
+			const ratio = Math.min(Math.max(current / total, 0), 1);
+			const percentage = Math.round(ratio * 100);
+			statusProgress.classList.remove('is-indeterminate');
+			statusProgressFill.style.transform = `scaleX(${ratio})`;
+			statusProgress.setAttribute('aria-valuemin', '0');
+			statusProgress.setAttribute('aria-valuemax', '100');
+			statusProgress.setAttribute('aria-valuenow', String(percentage));
+			statusPercent.value = `${percentage}%`;
+
+			if (ratio < 0.24) {
+				statusLabel.textContent = 'Opening the city gates...';
+				statusHint.textContent = 'Restoring roads, raising banners, and waking New Bouffalant City.';
+			} else if (ratio < 0.58) {
+				statusLabel.textContent = 'Mapping streets and plazas...';
+				statusHint.textContent = 'Every district carries a different piece of the region\'s story.';
+			} else if (ratio < 0.86) {
+				statusLabel.textContent = 'Gathering trainers and creatures...';
+				statusHint.textContent = 'The region is divided, but its next chapter is still unwritten.';
+			} else {
+				statusLabel.textContent = 'Your journey is almost ready...';
+				statusHint.textContent = 'Choose your path. Shape what this region becomes.';
+			}
+		} else {
+			statusProgress.classList.add('is-indeterminate');
+			statusProgressFill.style.removeProperty('transform');
+			statusProgress.removeAttribute('aria-valuemin');
+			statusProgress.removeAttribute('aria-valuemax');
+			statusProgress.removeAttribute('aria-valuenow');
+			statusPercent.value = '...';
+		}
+	}
+
 	const missing = Engine.getMissingFeatures({
 		threads: GODOT_THREADS_ENABLED,
 	}).filter((feature) => feature !== SECURE_CONTEXT_FEATURE);
@@ -183,7 +1015,7 @@ const engine = new Engine(GODOT_CONFIG);
 			} catch (err) {
 				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
 			}
-			// There's a chance that installing the service worker would fix the issue
+			// There's a chance that installing the service worker would fix the issue.
 			Promise.race([
 				serviceWorkerRegistrationPromise.then((registration) => {
 					if (registration != null) {
@@ -191,7 +1023,7 @@ const engine = new Engine(GODOT_CONFIG);
 					}
 					return registration;
 				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
+				// Some browsers can stall while retrieving a registration.
 				new Promise((resolve) => {
 					setTimeout(() => resolve(), 2000);
 				}),
@@ -202,22 +1034,18 @@ const engine = new Engine(GODOT_CONFIG);
 				console.error('Error while registering service worker:', err);
 			});
 		} else {
-			// Display the message as usual
-			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+			const missingMsg = 'This browser is missing features required to run the game:\n';
 			displayFailureNotice(missingMsg + missing.join('\n'));
 		}
 	} else {
 		setStatusMode('progress');
-		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
+		statusLabel.textContent = 'Checking saved game files...';
+		statusHint.textContent = 'Previously downloaded game data will be reused from this device.';
+		setLoadingProgress(0, 0);
+		Promise.resolve(window.PFR_CACHE_READY).then(() => {
+			return engine.startGame({
+				'onProgress': setLoadingProgress,
+			});
 		}).then(() => {
 			setStatusMode('hidden');
 		}, displayFailureNotice);

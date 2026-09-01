@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_city_room.tscn" id="1_room"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/city_interiors/shared/city_interior_runtime.tscn" id="3_runtime"]
 [ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="4_transfer"]
+[ext_resource type="PackedScene" path="res://rnd/stretch/npc/stretchman.tscn" id="5_stretchman"]
 
 [sub_resource type="StandardMaterial3D" id="Material_walnut"]
 albedo_color = Color(0.16, 0.085, 0.05, 1)
@@ -48,7 +49,7 @@ size = Vector3(7.45, 1.12, 1.4)
 size = Vector3(3.6, 0.62, 0.78)
 
 [node name="MiareStationConcourse" type="Node3D"]
-editor_description = "Compact classical station concourse with worn brick, dark timber ticketing, brass trim, broad blue wayfinding, benches, and one safe return through the photographed double doors."
+editor_description = "Compact classical station concourse with worn brick, dark timber ticketing, brass trim, broad blue wayfinding, benches, Stretchman's R&D counter presence, and one safe return through the photographed double doors."
 metadata/mobile_web_level = true
 metadata/interior_id = "miare_station"
 
@@ -101,6 +102,14 @@ shape = SubResource("Shape_bench")
 position = Vector3(4.9, 0.31, 0.5)
 rotation = Vector3(0, 1.570796, 0)
 shape = SubResource("Shape_bench")
+
+[node name="StretchmanReturnSpawn" type="Marker3D" parent="."]
+position = Vector3(2.8, 0, -0.3)
+metadata/entry_id = "stretchman_return"
+
+[node name="Stretchman" parent="." instance=ExtResource("5_stretchman")]
+position = Vector3(2.8, 0, -1.6)
+rotation = Vector3(0, 3.141593, 0)
 
 [node name="EntrySpawn" type="Marker3D" parent="."]
 position = Vector3(0, 0, 3.35)

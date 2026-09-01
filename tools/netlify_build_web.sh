@@ -15,6 +15,8 @@ web_template_sha256="d3ee2f08cef0cf3cf6678a6355a92a8db48ccdd35cbd2e8bfd5f0e8a0b4
 template_archive_url="https://downloads.godotengine.org/?version=${godot_version}&flavor=stable&slug=export_templates.tpz&platform=templates"
 godot_bin=""
 
+npm --prefix "${project_root}" run test:cloud-save
+
 download_file() {
 	local url="$1"
 	local destination="$2"
@@ -63,6 +65,36 @@ mkdir -p "${project_root}/build/web/v1"
 for artifact in index.html index.js index.pck index.wasm; do
 	test -s "${project_root}/build/web/v1/${artifact}"
 done
+
+web_output="${project_root}/build/web/v1"
+cache_worker_template="${project_root}/addons/plain_http_lan_web/pfr_cache_service_worker.js"
+cache_version="$(
+	sha256sum \
+		"${web_output}/index.js" \
+		"${web_output}/index.pck" \
+		"${web_output}/index.wasm" \
+	| cut -d ' ' -f 1 \
+	| sha256sum \
+	| cut -c 1-20
+)"
+
+# Godot's output filenames are stable between builds. Injecting a content hash
+# lets the browser persist the large pack/runtime while still fetching updates.
+sed \
+	"s/__PFR_CACHE_VERSION__/${cache_version}/g" \
+	"${cache_worker_template}" \
+	> "${web_output}/pfr-cache-sw.js"
+sed -i \
+	"s/__PFR_CACHE_VERSION__/${cache_version}/g" \
+	"${web_output}/index.html"
+
+test -s "${web_output}/pfr-cache-sw.js"
+if grep -q "__PFR_CACHE_VERSION__" \
+	"${web_output}/index.html" \
+	"${web_output}/pfr-cache-sw.js"; then
+	echo "Web cache version placeholder was not replaced." >&2
+	exit 1
+fi
 
 "${godot_bin}" \
 	--quiet \

@@ -21,6 +21,10 @@ func _run() -> void:
 	var saved_stretch := original_stretch.duplicate(true)
 	saved_stretch["balance"] = 777
 	saved_stretch["item_inventory"] = {"potion": 2}
+	saved_stretch["claimed_gifts"] = ["autosave-exp-share-fixture"]
+	saved_stretch["completed_routes"] = [0]
+	saved_stretch["active_destination"] = {}
+	saved_stretch["run_defeated_ids"] = []
 	_check(
 		StretchGoalSystem.load_save_data(saved_stretch),
 		"The save fixture should be able to set Stretchman's economy state."
@@ -34,6 +38,10 @@ func _run() -> void:
 
 	var first_party_member := CollectionSystem.get_party()[0] as Dictionary
 	var pcl_id := String(first_party_member["pclID"])
+	_check(
+		CollectionSystem.set_held_item(pcl_id, StretchGoalSystem.XP_SHARE_ITEM_KEY),
+		"The save fixture should be able to equip a held Exp. Share."
+	)
 	_check(
 		CollectionSystem.update_instance_stats(pcl_id, {"health": 0.41}),
 		"The save fixture should be able to change party health."
@@ -51,14 +59,32 @@ func _run() -> void:
 		ProgressionAutosave.save_now(true),
 		"The RND autosave owner should write a checkpoint immediately."
 	)
+	var timestamped_payload := ProgressionAutosave.get_save_payload()
+	var save_meta := timestamped_payload.get("save_meta", {}) as Dictionary
+	var section_timestamps := (
+		save_meta.get("section_updated_at_ms", {}) as Dictionary
+	)
+	_check(
+		int(timestamped_payload.get("schema_version", 0)) == 5
+		and int(save_meta.get("saved_at_ms", 0)) > 0
+		and int(section_timestamps.get("profile", 0)) > 0
+		and int(section_timestamps.get("collection", 0)) > 0
+		and int(section_timestamps.get("move_learning", 0)) > 0
+		and int(section_timestamps.get("stretch", 0)) > 0
+		and int(section_timestamps.get("world", 0)) > 0,
+		"Schema 5 should retain offline-safe timestamps for every mergeable save section."
+	)
 
 	player.global_position = Vector3(-8.0, 0.0, 6.0)
 	(player.get_node(^"Visual") as Node3D).rotation = Vector3.ZERO
 	CollectionSystem.update_instance_stats(pcl_id, {"health": 0.87})
+	CollectionSystem.set_held_item(pcl_id, "")
 	RNDMoveLearningSystem.resolve_next_pending(-1)
 	var changed_stretch := saved_stretch.duplicate(true)
 	changed_stretch["balance"] = 123
 	changed_stretch["item_inventory"] = {}
+	changed_stretch["claimed_gifts"] = []
+	changed_stretch["completed_routes"] = []
 	StretchGoalSystem.load_save_data(changed_stretch)
 	_check(
 		ProgressionAutosave.load_now(),
@@ -97,6 +123,34 @@ func _run() -> void:
 		StretchGoalSystem.get_item_count("potion") == 2,
 		"Loading should restore the player-menu Bag from the persistent item inventory."
 	)
+	_check(
+		CollectionSystem.get_held_item(pcl_id) == StretchGoalSystem.XP_SHARE_ITEM_KEY,
+		"Loading should restore the Pokemon's held item from its PCL."
+	)
+	_check(
+		StretchGoalSystem.has_claimed_gift("autosave-exp-share-fixture"),
+		"Loading should restore one-time world gift claims."
+	)
+	_check(
+		StretchGoalSystem.get_completed_routes() == [0]
+		and StretchGoalSystem.is_route_unlocked(1),
+		"Loading should restore the far-end Route 0 clear and its Route 1 unlock."
+	)
+	var cloud_payload := ProgressionAutosave.get_save_payload()
+	cloud_payload["stretch"]["balance"] = 888
+	var cloud_meta := cloud_payload.get("save_meta", {}) as Dictionary
+	var cloud_timestamps := (
+		cloud_meta.get("section_updated_at_ms", {}) as Dictionary
+	)
+	cloud_timestamps["stretch"] = int(cloud_timestamps.get("stretch", 0)) + 100
+	cloud_meta["section_updated_at_ms"] = cloud_timestamps
+	cloud_meta["saved_at_ms"] = int(cloud_meta.get("saved_at_ms", 0)) + 100
+	cloud_payload["save_meta"] = cloud_meta
+	_check(
+		ProgressionAutosave.apply_cloud_payload(cloud_payload)
+		and StretchGoalSystem.get_balance() == 888,
+		"A resolved cloud payload should use the normal validators and checkpoint locally."
+	)
 
 	RNDMoveLearningSystem.begin_save_restore()
 	CollectionSystem.load_save_data(original_collection)
@@ -110,8 +164,8 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"RND progression autosave smoke test passed: disk checkpoint, validated "
-			+ "collection/economy/move-choice reload, and current-scene player pose "
-			+ "restoration verified."
+			+ "collection/economy/held-item/gift/route/move-choice reload, and current-scene "
+			+ "player pose restoration plus schema-5 cloud timestamps verified."
 		)
 		get_tree().quit(0)
 		return

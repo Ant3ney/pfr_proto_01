@@ -5,13 +5,13 @@ release or web package.
 
 ## Recognize the Failure Signature
 
-- City trainers remain visible but neither notice the player nor accept the
+- Route 0's standard trainers remain visible but neither notice the player nor accept the
   shared interaction action.
 - Stretchman and the Pokemon Center attendant still work because they use
   different behavior resources.
 - Generated routes, gyms, and the Pokemon League contain no opponents.
 - Source-scene interaction and destination smoke tests pass.
-- Inspecting an exported city instance shows a valid `TrainerKyle` controller
+- Inspecting an exported Route 0 instance shows a valid `TrainerKyle` controller
   whose inherited `npc_behavior` property is null.
 
 ## Verified Cause
@@ -31,7 +31,7 @@ behavior is null, which makes every generated opponent appear to be absent.
 [`TrainerKyle`](../../overworld/trainer_lake/TrainerKyle.gd) owns
 `_ensure_trainer_behavior()`. Both `_init()` and `prepare_for_character()` call
 it before synchronizing dialog, battle scene, encounter ID, automatic sight,
-and aggression settings. This makes scene-ready city trainers recover from the
+and aggression settings. This makes scene-ready Route 0 trainers recover from the
 exported null property without weakening the base behavior boundary.
 
 [`StretchDestination`](../../rnd/stretch/worlds/StretchDestination.gd) must call
@@ -51,6 +51,6 @@ netlify build
 The destination test simulates the exported null property before pre-spawn
 configuration. The Netlify build exports the actual PCK and then runs
 [`verify_web_export.gd`](../../tools/verify_web_export.gd) against that package.
-The packaged check requires all seven city trainers to accept interaction,
+The packaged check requires all seven Route 0 trainers to accept interaction,
 requires sight detection to enter an approach state, and verifies destination
 pre-spawn repair.

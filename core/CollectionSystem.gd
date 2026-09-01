@@ -8,6 +8,7 @@ extends Node
 ##   "pclID": String,
 ##   "party": {"inParty": bool, "slot": int or null},
 ##   "instanceStats": {"health": float, "currentXp": int, "level": int},
+##   "heldItem": String (optional),
 ##   "battleProfile": {
 ##     "species": String, "spriteId": String, "moves": Array[String]
 ##   }
@@ -255,6 +256,38 @@ func set_equipped_moves(pcl_id: String, moves: Array) -> bool:
 	return true
 
 
+## Returns the item slug held by one captured Pokemon, or an empty string when
+## it is not holding an item. Held items stay local and never enter REST DTOs.
+func get_held_item(pcl_id: String) -> String:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return ""
+	return String((_collection_by_id[pcl_id] as Dictionary).get("heldItem", ""))
+
+
+## Replaces one captured Pokemon's held item. Pass an empty string to take the
+## current item. Bag ownership transfers are coordinated by StretchGoalSystem.
+func set_held_item(pcl_id: String, item_key: String) -> bool:
+	_last_error = ""
+	if not _collection_by_id.has(pcl_id):
+		_set_error("Unknown PCL ID: %s" % pcl_id)
+		return false
+	var normalized_key := item_key.strip_edges()
+	if not normalized_key.is_empty() and not _validate_item_key(normalized_key):
+		return false
+	var pcl := _collection_by_id[pcl_id] as Dictionary
+	var current_key := String(pcl.get("heldItem", ""))
+	if current_key == normalized_key:
+		return true
+	if normalized_key.is_empty():
+		pcl.erase("heldItem")
+	else:
+		pcl["heldItem"] = normalized_key
+	collection_changed.emit()
+	return true
+
+
 ## Atomically applies a complete server `parties.player` health snapshot.
 ## Every current party member must appear exactly once and no other member may
 ## appear. Validation completes before any collection state is changed.
@@ -366,6 +399,8 @@ func apply_battle_health_and_experience(snapshot: Array, awards: Array) -> Dicti
 				"level": level,
 				"currentXp": current_xp,
 				"leveledUp": level > previous_level,
+				"xpIntoLevel": int(progress.get("xpIntoLevel", 0)),
+				"xpForNextLevel": int(progress.get("xpForNextLevel", 0)),
 				"normalizedProgress": float(progress.get("normalizedProgress", 1.0)),
 				"evolutionAvailable": not evolution_options.is_empty(),
 				"evolutionOptions": evolution_options,
@@ -418,6 +453,8 @@ func grant_experience(pcl_id: String, amount: int) -> Dictionary:
 		"level": level,
 		"currentXp": current_xp,
 		"leveledUp": level > previous_level,
+		"xpIntoLevel": int(progress.get("xpIntoLevel", 0)),
+		"xpForNextLevel": int(progress.get("xpForNextLevel", 0)),
 		"normalizedProgress": float(progress.get("normalizedProgress", 1.0)),
 		"evolutionAvailable": not evolution_options.is_empty(),
 		"evolutionOptions": evolution_options,
@@ -867,6 +904,16 @@ func load_save_data(collection_data: Array) -> bool:
 			# One-time migration for saves created before battle profiles existed.
 			battle_profile = mapped_profile
 
+		var held_item := ""
+		if source_pcl.has("heldItem"):
+			var held_item_value: Variant = source_pcl["heldItem"]
+			if typeof(held_item_value) != TYPE_STRING:
+				_set_error("PCL %s has invalid heldItem data" % pcl_id)
+				return false
+			held_item = String(held_item_value).strip_edges()
+			if not held_item.is_empty() and not _validate_item_key(held_item):
+				return false
+
 		var normalized_pcl := _create_pcl(
 			pokemon_id,
 			pcl_id,
@@ -874,7 +921,8 @@ func load_save_data(collection_data: Array) -> bool:
 			health,
 			current_xp,
 			party_slot,
-			battle_profile
+			battle_profile,
+			held_item
 		)
 		loaded_by_id[pcl_id] = normalized_pcl
 		loaded_order.append(pcl_id)
@@ -913,7 +961,8 @@ func _create_pcl(
 	health: float,
 	current_xp: int,
 	party_slot: int,
-	battle_profile: Dictionary = {}
+	battle_profile: Dictionary = {},
+	held_item := ""
 ) -> Dictionary:
 	var pcl := {
 		"pokemonId": pokemon_id,
@@ -928,6 +977,8 @@ func _create_pcl(
 			"level": level,
 		},
 	}
+	if not held_item.is_empty():
+		pcl["heldItem"] = held_item
 	if not battle_profile.is_empty():
 		pcl["battleProfile"] = battle_profile.duplicate(true)
 	return pcl
@@ -1032,6 +1083,22 @@ func _is_showdown_id(value: String) -> bool:
 			(codepoint >= 48 and codepoint <= 57)
 			or (codepoint >= 97 and codepoint <= 122)
 		):
+			return false
+	return true
+
+
+func _validate_item_key(value: String) -> bool:
+	if value.is_empty() or value.length() > 128 or value != value.to_lower():
+		_set_error("Held item must use a lowercase catalog slug")
+		return false
+	for character_index in value.length():
+		var codepoint := value.unicode_at(character_index)
+		if not (
+			(codepoint >= 48 and codepoint <= 57)
+			or (codepoint >= 97 and codepoint <= 122)
+			or codepoint == 45
+		):
+			_set_error("Held item contains an invalid character: %s" % value)
 			return false
 	return true
 

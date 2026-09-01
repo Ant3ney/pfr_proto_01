@@ -58,6 +58,21 @@ func _ready() -> void:
 	)
 
 	var pikachu_pcl_id := str(pikachu["pclID"])
+	_check(
+		CollectionSystem.get_held_item(pikachu_pcl_id).is_empty(),
+		"A newly collected Pokemon should not hold an item by default."
+	)
+	_check(
+		CollectionSystem.set_held_item(pikachu_pcl_id, "exp-share")
+		and CollectionSystem.get_held_item(pikachu_pcl_id) == "exp-share"
+		and String(CollectionSystem.get_pcl(pikachu_pcl_id).get("heldItem", ""))
+		== "exp-share",
+		"CollectionSystem should own one validated held-item slug per PCL."
+	)
+	_check(
+		not CollectionSystem.set_held_item(pikachu_pcl_id, "Not A Valid Item!"),
+		"Held items should reject malformed catalog slugs."
+	)
 	var slot_three := CollectionSystem.get_pcl_by_party_slot(3)
 	_check(
 		slot_three.get("pclID") == pikachu_pcl_id,
@@ -311,6 +326,10 @@ func _ready() -> void:
 		CollectionSystem.get_pcl_by_party_slot(3).get("pclID") == pikachu_pcl_id,
 		"Save loading should restore party slot 3."
 	)
+	_check(
+		CollectionSystem.get_held_item(pikachu_pcl_id) == "exp-share",
+		"Save loading should restore each Pokemon's held item."
+	)
 
 	var legacy_save: Array = save_data.duplicate(true)
 	legacy_save[0]["instanceStats"].erase("currentXp")
@@ -331,6 +350,17 @@ func _ready() -> void:
 		"Legacy XP migration should persist only canonical currentXp."
 	)
 	_check(CollectionSystem.load_save_data(save_data), "Canonical save data should restore after migration test.")
+
+	var invalid_held_item_save: Array = save_data.duplicate(true)
+	invalid_held_item_save[0]["heldItem"] = 193
+	_check(
+		not CollectionSystem.load_save_data(invalid_held_item_save),
+		"Save data with a non-string held item should be rejected atomically."
+	)
+	_check(
+		CollectionSystem.get_held_item(pikachu_pcl_id) == "exp-share",
+		"Rejected held-item save data should leave the active collection untouched."
+	)
 
 	var invalid_save: Array = save_data.duplicate(true)
 	invalid_save[1]["party"]["inParty"] = true
@@ -358,7 +388,7 @@ func _ready() -> void:
 	if _failures.is_empty():
 		print(
 			"Collection System smoke test passed: cumulative XP migration, leveled and "
-			+ "branching evolutions, party lookups, safe copies, and atomic save loading verified."
+			+ "branching evolutions, held items, party lookups, safe copies, and atomic save loading verified."
 		)
 		get_tree().quit(0)
 		return

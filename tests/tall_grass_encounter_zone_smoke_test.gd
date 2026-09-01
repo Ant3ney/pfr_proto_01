@@ -2,8 +2,8 @@ extends Node
 
 const TALL_GRASS_SCENE := preload("res://rnd/tall_grass_encounter_zone.tscn")
 const PLAYER_SCENE := preload("res://demo/player.tscn")
-const ENCOUNTER_PATH := "res://battle/encounters/wild_fletchling_route_4_v1.tres"
-const BATTLE_SCENE_PATH := "res://battle/route_4_wild_battle_scene.tscn"
+const ENCOUNTER_PATH := "res://battle/encounters/wild_fletchling_route_0_v1.tres"
+const BATTLE_SCENE_PATH := "res://battle/route_0_wild_battle_scene.tscn"
 
 var _failures: Array[String] = []
 var _rolls: Array[Dictionary] = []
@@ -86,10 +86,10 @@ func _run() -> void:
 		_check(battle_data.get("encounter_type") == "wild", "Tall grass should author a wild encounter launch.")
 		_check(
 			battle_data.get("battle_scene_path") == BATTLE_SCENE_PATH,
-			"Tall grass should launch the concrete Route 4 battle scene."
+			"Tall grass should launch the concrete Route 0 battle scene."
 		)
 		_check(
-			battle_data.get("encounter_id") == "wild-fletchling-route-4-v1",
+			battle_data.get("encounter_id") == "wild-fletchling-route-0-v1",
 			"Tall grass and the authored encounter should share one stable ID."
 		)
 
@@ -101,7 +101,7 @@ func _run() -> void:
 	_check(_selected_encounters.size() == 1, "A zero-percent roll should never select another encounter.")
 
 	var encounter := load(ENCOUNTER_PATH) as Resource
-	_check(encounter != null, "The Route 4 encounter resource should load.")
+	_check(encounter != null, "The Route 0 encounter resource should load.")
 	if encounter != null and encounter.has_method("validate"):
 		_check(
 			(encounter.call("validate") as PackedStringArray).is_empty(),
@@ -120,7 +120,7 @@ func _run() -> void:
 	)
 	var pending_launch := GameInstance.get_pending_battle_data()
 	_check(
-		pending_launch.get("encounter_id") == "wild-fletchling-route-4-v1"
+		pending_launch.get("encounter_id") == "wild-fletchling-route-0-v1"
 		and pending_launch.get("battle_scene_path") == BATTLE_SCENE_PATH,
 		"The automatic integration path should preserve the concrete encounter ID and scene."
 	)
@@ -136,7 +136,7 @@ func _finish() -> void:
 	if _failures.is_empty():
 		print(
 			"Tall grass encounter smoke test passed: player-only distance checks, stationary safety, "
-			+ "chance handling, debounce, visuals, and automatic Route 4 battle start verified."
+			+ "chance handling, debounce, visuals, and automatic Route 0 battle start verified."
 		)
 		get_tree().quit(0)
 		return

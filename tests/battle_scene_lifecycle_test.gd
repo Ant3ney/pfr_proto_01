@@ -41,6 +41,8 @@ class FakeBattleTransport:
 class LifecycleWatcher:
 	extends Node
 
+	const ROUTE_0_PATH := "res://overworld/route_0/route_0.tscn"
+
 	var failures: Array[String] = []
 	var transport := FakeBattleTransport.new()
 	var original_collection: Array[Dictionary] = []
@@ -55,10 +57,10 @@ class LifecycleWatcher:
 			"trainer_name": "Trainer Kyle",
 			"battle_scene_path": "res://battle/kyle_battle_scene.tscn",
 			"encounter_id": "trainer-kyle-lake-v1",
-			# This lifecycle fixture has no overworld player. Keep its historical
-			# authored-world assertion while production calls return to the
+			# This lifecycle fixture has no overworld player. Explicitly exercise
+			# Kyle's authored Route 0 home while production calls return to the
 			# implicitly captured source scene and pose.
-			"return_scene_path": "res://demo/primary_development_enviroment.tscn",
+			"return_scene_path": ROUTE_0_PATH,
 		})
 		_check(accepted, "Kyle's concrete battle scene should be accepted.")
 		_check(not GameInstance.is_player_movement_enabled(), "Battle launch should lock movement.")
@@ -154,11 +156,11 @@ class LifecycleWatcher:
 		battle_scene.choice_overlay.continue_button.pressed.emit()
 		_check(not GameInstance.is_player_movement_enabled(), "Movement should remain locked when return begins.")
 
-		await _wait_for_scene_path("res://demo/primary_development_enviroment.tscn")
+		await _wait_for_scene_path(ROUTE_0_PATH)
 		_check(
 			get_tree().current_scene != null
-			and get_tree().current_scene.scene_file_path == "res://demo/primary_development_enviroment.tscn",
-			"Every result should return to the authored modular overworld."
+			and get_tree().current_scene.scene_file_path == ROUTE_0_PATH,
+			"Every result should return to Kyle's authored Route 0 home."
 		)
 		_check(GameInstance.is_player_movement_enabled(), "Movement should unlock only after the overworld is ready.")
 		_check(
@@ -166,7 +168,9 @@ class LifecycleWatcher:
 			"The just-finished Kyle encounter should be suppressed for this scene."
 		)
 		await get_tree().physics_frame
-		var trainer := get_tree().current_scene.get_node_or_null(^"TrainerKyle")
+		var trainer := get_tree().current_scene.get_node_or_null(
+			^"RouteTrainers/TrainerKyle"
+		)
 		if trainer:
 			var controller: Variant = trainer.get("controller")
 			var behavior: Variant = controller.get("npc_behavior") if controller != null else null
@@ -182,7 +186,7 @@ class LifecycleWatcher:
 				"Kyle's standard sight challenge should be consumed after one battle."
 			)
 		else:
-			_check(false, "The modular overworld should contain Trainer Kyle.")
+			_check(false, "Route 0 should contain Trainer Kyle in its ordered trainer group.")
 
 		await _wait_for_state(BattleSystem.State.IDLE)
 		if trainer:

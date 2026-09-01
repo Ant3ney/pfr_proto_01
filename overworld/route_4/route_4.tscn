@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3]
+[gd_scene load_steps=49 format=3]
 
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://core/PlayerCamera.gd" id="2_camera"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/route_tile/scenes/route_dirt_t_junction_04x04.tscn" id="7_dirt_t"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/route_tile/scenes/route_dirt_end_04x04.tscn" id="8_dirt_end"]
 [ext_resource type="PackedScene" path="res://rnd/tall_grass_encounter_zone.tscn" id="9_tall_grass"]
-[ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="10_transfer"]
+[ext_resource type="PackedScene" path="res://overworld/route_4/route_4_return_gateway.tscn" id="10_return_gateway"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl024.glb" id="11_tree_a"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl025.glb" id="12_tree_b"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl015.glb" id="13_tree_sparse"]
@@ -28,6 +28,14 @@
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl023.glb" id="26_flower_wild"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl035.glb" id="27_stump"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/field_item302a.glb" id="28_boulder"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerKyle.tscn" id="29_trainer_kyle"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerDeliveryWorker.tscn" id="30_delivery_worker"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerPoliceOfficer.tscn" id="31_police_officer"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerBusinessman.tscn" id="32_businessman"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerBackpacker.tscn" id="33_backpacker"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerTourist.tscn" id="34_tourist"]
+[ext_resource type="PackedScene" path="res://overworld/trainer_lake/TrainerJogger.tscn" id="35_jogger"]
+[ext_resource type="Script" path="res://overworld/route_0/RouteZeroRuntime.gd" id="36_route_zero_runtime"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_route4"]
 sky_top_color = Color(0.16, 0.48, 0.82, 1)
@@ -57,6 +65,10 @@ size = Vector3(32.5, 2.2, 0.5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_boundary_vertical"]
 size = Vector3(0.5, 2.2, 48.5)
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_route4"]
+vertices = PackedVector3Array(-15.5, 0, -23.5, -15.5, 0, 23.5, 15.5, 0, 23.5, 15.5, 0, -23.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sign_wood"]
 albedo_color = Color(0.28, 0.13, 0.055, 1)
 roughness = 0.82
@@ -76,8 +88,9 @@ size = Vector3(1.8, 0.78, 0.14)
 [sub_resource type="BoxShape3D" id="BoxShape3D_sign"]
 size = Vector3(1.9, 1.6, 0.3)
 
-[node name="Route4" type="Node3D"]
-editor_description = "Route 4: a bright, compact meadow route built on the project's 4 m ground system, with a winding dirt trail, clustered vegetation, and reusable encounter grass."
+[node name="Route0" type="Node3D"]
+editor_description = "Route 0: a bright meadow dungeon built on the project's 4 m ground system, with a winding dirt trail, mandatory trainer checkpoints, clustered vegetation, and reusable encounter grass."
+script = ExtResource("36_route_zero_runtime")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_route4")
@@ -91,7 +104,7 @@ shadow_opacity = 0.56
 directional_shadow_mode = 0
 directional_shadow_max_distance = 42.0
 
-[node name="Route4Start" type="Marker3D" parent="."]
+[node name="Route0Start" type="Marker3D" parent="."]
 position = Vector3(-2, 0, 21)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
@@ -105,6 +118,9 @@ script = ExtResource("2_camera")
 target_path = NodePath("../Player")
 
 [node name="GameUI" parent="." instance=ExtResource("3_game_ui")]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_route4")
 
 [node name="GroundTiles" type="Node3D" parent="."]
 editor_description = "Exact 4 x 4 m meadow and dirt modules, all placed at unit scale on the project grid."
@@ -433,34 +449,79 @@ position = Vector3(16.25, 1.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TerrainBoundaries/EastBoundary"]
 shape = SubResource("BoxShape3D_boundary_vertical")
 
-[node name="Route4Sign" type="Node3D" parent="."]
+[node name="Route0Sign" type="Node3D" parent="."]
 position = Vector3(-5.2, 0, 19.8)
 
-[node name="WestPost" type="MeshInstance3D" parent="Route4Sign"]
+[node name="WestPost" type="MeshInstance3D" parent="Route0Sign"]
 position = Vector3(-0.65, 0.7, 0)
 mesh = SubResource("BoxMesh_sign_post")
 
-[node name="EastPost" type="MeshInstance3D" parent="Route4Sign"]
+[node name="EastPost" type="MeshInstance3D" parent="Route0Sign"]
 position = Vector3(0.65, 0.7, 0)
 mesh = SubResource("BoxMesh_sign_post")
 
-[node name="Board" type="MeshInstance3D" parent="Route4Sign"]
+[node name="Board" type="MeshInstance3D" parent="Route0Sign"]
 position = Vector3(0, 1.35, 0)
 mesh = SubResource("BoxMesh_sign_board")
 
-[node name="Text" type="Label3D" parent="Route4Sign"]
+[node name="Text" type="Label3D" parent="Route0Sign"]
 position = Vector3(0, 1.36, 0.08)
-text = "ROUTE 4"
+text = "ROUTE 0"
 font_size = 42
 outline_size = 8
 modulate = Color(0.94, 1, 0.92, 1)
 outline_modulate = Color(0.02, 0.13, 0.06, 1)
 
-[node name="Collision" type="StaticBody3D" parent="Route4Sign"]
+[node name="Collision" type="StaticBody3D" parent="Route0Sign"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Route4Sign/Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Route0Sign/Collision"]
 position = Vector3(0, 0.8, 0)
 shape = SubResource("BoxShape3D_sign")
+
+[node name="RouteTrainers" type="Node3D" parent="."]
+editor_description = "Standard prototype trainers, scattered along the winding route in nondecreasing authored level order."
+
+[node name="TrainerKyle" parent="RouteTrainers" instance=ExtResource("29_trainer_kyle")]
+position = Vector3(-5, 0, 17)
+rotation = Vector3(0, -1.570796, 0)
+metadata/route_order = 1
+metadata/difficulty_level = 3
+
+[node name="DeliveryWorker" parent="RouteTrainers" instance=ExtResource("30_delivery_worker")]
+position = Vector3(1, 0, 14)
+rotation = Vector3(0, 1.570796, 0)
+metadata/route_order = 2
+metadata/difficulty_level = 3
+
+[node name="PoliceOfficer" parent="RouteTrainers" instance=ExtResource("31_police_officer")]
+position = Vector3(3.5, 0, 10)
+rotation = Vector3(0, 1.570796, 0)
+metadata/route_order = 3
+metadata/difficulty_level = 4
+
+[node name="Businessman" parent="RouteTrainers" instance=ExtResource("32_businessman")]
+position = Vector3(9, 0, 5)
+rotation = Vector3(0, 1.570796, 0)
+metadata/route_order = 4
+metadata/difficulty_level = 4
+
+[node name="Backpacker" parent="RouteTrainers" instance=ExtResource("33_backpacker")]
+position = Vector3(9, 0, -2)
+rotation = Vector3(0, 1.570796, 0)
+metadata/route_order = 5
+metadata/difficulty_level = 5
+
+[node name="Tourist" parent="RouteTrainers" instance=ExtResource("34_tourist")]
+position = Vector3(-2, 0, -10)
+rotation = Vector3(0, 1.570796, 0)
+metadata/route_order = 6
+metadata/difficulty_level = 5
+
+[node name="Jogger" parent="RouteTrainers" instance=ExtResource("35_jogger")]
+position = Vector3(-9, 0, -15)
+rotation = Vector3(0, -1.570796, 0)
+metadata/route_order = 7
+metadata/difficulty_level = 6
 
 [node name="TallGrassFields" type="Node3D" parent="."]
 
@@ -773,8 +834,5 @@ rotation = Vector3(0, 0.45, 0)
 position = Vector3(-11.5, 0, -13.5)
 rotation = Vector3(0, -0.38, 0)
 
-[node name="ExitToCity" parent="." instance=ExtResource("10_transfer")]
-transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 23.35)
-destination_scene_path = "res://demo/primary_development_enviroment.tscn"
-destination_spawn_marker = &"Route4GatewayReturn"
-
+[node name="Route0ReturnGateway" parent="." instance=ExtResource("10_return_gateway")]
+position = Vector3(2, 0, 21)

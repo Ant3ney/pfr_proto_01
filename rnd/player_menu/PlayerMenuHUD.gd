@@ -50,6 +50,7 @@ func open_menu() -> void:
 	PlayerController.set_floating_joystick_input(Vector2.ZERO)
 	menu_button.disabled = true
 	_menu.closed.connect(_on_menu_closed)
+	_menu.reset_progress_confirmed.connect(_on_reset_progress_confirmed)
 	add_child(_menu)
 	menu_opened.emit(_menu)
 
@@ -63,6 +64,16 @@ func _on_menu_closed() -> void:
 	menu_button.disabled = false
 	_restore_movement()
 	menu_closed.emit()
+
+
+func _on_reset_progress_confirmed() -> void:
+	if not is_instance_valid(_menu):
+		return
+	# Closing first releases this menu's movement lock. The starter picker then
+	# acquires its own lock after the reset returns to the main scene.
+	_menu.close_menu()
+	if not ProgressionAutosave.reset_all_progress():
+		push_error("The confirmed progress reset could not be started.")
 
 
 func _restore_movement() -> void:
