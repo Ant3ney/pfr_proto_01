@@ -13,6 +13,7 @@ const SpriteMapping := preload("res://battle/system/BattleSpeciesMapping.gd")
 const SPRITE_ANIMATION := &"idle"
 const POKEMON_ICON_SIZE := Vector2i(48, 48)
 const RESET_CONFIRMATION_PHRASE := "RESET FOREVER"
+const TOUCH_KEYBOARD_DEBOUNCE_MSEC := 120
 
 var _tab := TAB_POKEMON
 var _visible_entries: Array[Dictionary] = []
@@ -29,6 +30,7 @@ var _pending_discard_quantity := 0
 var _pending_evolution_pcl_id := ""
 var _pending_evolution_options: Array[Dictionary] = []
 var _reset_warning_step := 0
+var _last_touch_keyboard_request_msec := -TOUCH_KEYBOARD_DEBOUNCE_MSEC
 
 var _summary: Label
 var _balance: Label
@@ -165,7 +167,7 @@ func open_cloud_save() -> void:
 	_cloud_show_id.button_pressed = false
 	_cloud_prompt.visible = true
 	_refresh_cloud_controls()
-	_cloud_save_id.grab_focus()
+	_activate_text_input(_cloud_save_id)
 
 
 func close_cloud_save() -> void:
@@ -187,7 +189,7 @@ func apply_cloud_save_id() -> bool:
 func sync_cloud_save_now() -> bool:
 	if not CloudSaveSync.is_enabled():
 		_cloud_status.text = "Enter a private Save ID, then choose Use ID & Sync."
-		_cloud_save_id.grab_focus()
+		_activate_text_input(_cloud_save_id)
 		return false
 	var requested := CloudSaveSync.request_sync(true)
 	_refresh_cloud_controls()
@@ -525,6 +527,7 @@ func _build_interface() -> void:
 	_search = LineEdit.new()
 	_search.name = "Search"
 	_search.clear_button_enabled = true
+	_configure_text_input(_search)
 	_search.custom_minimum_size = Vector2(330.0, 36.0)
 	_search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_search.text_changed.connect(_on_search_changed)
@@ -781,6 +784,8 @@ func _build_cloud_prompt() -> void:
 	_cloud_save_id.placeholder_text = "Private Save ID — 12 to 128 characters"
 	_cloud_save_id.secret = true
 	_cloud_save_id.secret_character = "●"
+	_cloud_save_id.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_PASSWORD
+	_configure_text_input(_cloud_save_id)
 	_cloud_save_id.max_length = RNDCloudSaveSync.SAVE_ID_MAX_LENGTH
 	_cloud_save_id.custom_minimum_size = Vector2(420.0, 44.0)
 	_cloud_save_id.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -899,6 +904,7 @@ func _build_reset_prompt() -> void:
 	_reset_phrase = LineEdit.new()
 	_reset_phrase.name = "ResetConfirmationPhrase"
 	_reset_phrase.placeholder_text = "Type %s exactly" % RESET_CONFIRMATION_PHRASE
+	_configure_text_input(_reset_phrase)
 	_reset_phrase.custom_minimum_size = Vector2(0.0, 48.0)
 	_reset_phrase.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_reset_phrase.add_theme_color_override("font_color", Color("ffb8bf"))
@@ -991,7 +997,58 @@ func _show_reset_warning_step() -> void:
 			_reset_phrase.visible = true
 			_reset_final.disabled = true
 			_reset_final.visible = true
-			_reset_phrase.grab_focus()
+			_activate_text_input(_reset_phrase)
+
+
+func _configure_text_input(field: LineEdit) -> void:
+	field.virtual_keyboard_enabled = true
+	field.virtual_keyboard_show_on_focus = true
+	field.gui_input.connect(_on_text_input_gui_input.bind(field))
+
+
+func _on_text_input_gui_input(event: InputEvent, field: LineEdit) -> void:
+	var touch_pressed := (
+		event is InputEventScreenTouch
+		and (event as InputEventScreenTouch).pressed
+	)
+	var touchscreen_mouse_pressed := (
+		DisplayServer.is_touchscreen_available()
+		and event is InputEventMouseButton
+		and (event as InputEventMouseButton).pressed
+		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+	)
+	if touch_pressed or touchscreen_mouse_pressed:
+		_activate_text_input(field)
+
+
+func _activate_text_input(field: LineEdit) -> void:
+	if not is_instance_valid(field) or not field.editable or not field.is_visible_in_tree():
+		return
+	field.grab_focus()
+	field.edit()
+	if (
+		not field.virtual_keyboard_enabled
+		or not DisplayServer.is_touchscreen_available()
+		or not DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD)
+	):
+		return
+	var now_msec := Time.get_ticks_msec()
+	if now_msec - _last_touch_keyboard_request_msec < TOUCH_KEYBOARD_DEBOUNCE_MSEC:
+		return
+	_last_touch_keyboard_request_msec = now_msec
+	var keyboard_type: DisplayServer.VirtualKeyboardType = (
+		DisplayServer.KEYBOARD_TYPE_PASSWORD
+		if field.virtual_keyboard_type == LineEdit.KEYBOARD_TYPE_PASSWORD
+		else DisplayServer.KEYBOARD_TYPE_DEFAULT
+	)
+	DisplayServer.virtual_keyboard_show(
+		field.text,
+		field.get_global_rect(),
+		keyboard_type,
+		field.max_length,
+		field.caret_column,
+		field.caret_column
+	)
 
 
 func _on_reset_acknowledgement_changed(_pressed: bool) -> void:
@@ -1872,8 +1929,8 @@ func _on_cloud_save_id_submitted(_value: String) -> void:
 
 func _on_cloud_show_id_toggled(show_id: bool) -> void:
 	_cloud_save_id.secret = not show_id
-	_cloud_save_id.grab_focus()
 	_cloud_save_id.caret_column = _cloud_save_id.text.length()
+	_activate_text_input(_cloud_save_id)
 
 
 func _on_cloud_status_changed(_state: String, _message: String) -> void:

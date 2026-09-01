@@ -20,7 +20,10 @@ keyboard/gamepad-focusable modal with Party & PC, Bag & Items, and Pokedex
 tabs. Escape, M, gamepad B, or its close button dismiss it. Search is local,
 accent/punctuation-normalized, and typo-tolerant. Text-driven result refreshes
 must preserve the search `LineEdit` focus so keyboard and virtual-keyboard users
-can enter a complete query; tab and filter navigation may focus the list.
+can enter a complete query; tab and filter navigation may focus the list. Every
+menu text field also handles a touchscreen press by explicitly entering edit
+mode and requesting the native keyboard, including when the field already owns
+GUI focus.
 
 The header's red `RESET PROGRESS` action is intentionally difficult to finish:
 three full-screen danger stages enumerate deleted state, require two separate

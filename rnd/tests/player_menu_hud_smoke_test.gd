@@ -86,6 +86,19 @@ func _run() -> void:
 			cloud_prompt.visible and cloud_save_id.secret,
 			"Cloud-save settings should open with the private Save ID masked."
 		)
+		_check(
+			search.virtual_keyboard_enabled and cloud_save_id.virtual_keyboard_enabled,
+			"Player-menu text fields should request the touchscreen virtual keyboard."
+		)
+		cloud_save_id.release_focus()
+		cloud_save_id.unedit()
+		var cloud_touch := InputEventScreenTouch.new()
+		cloud_touch.pressed = true
+		cloud_save_id.gui_input.emit(cloud_touch)
+		_check(
+			cloud_save_id.has_focus() and cloud_save_id.is_editing(),
+			"Tapping the cloud Save ID should explicitly enter focused edit mode."
+		)
 		cloud_save_id.text = "short"
 		_check(
 			not menu.apply_cloud_save_id()

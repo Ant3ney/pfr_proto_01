@@ -10,19 +10,26 @@ resolver before changing the protocol.
 [`CloudSaveSync.gd`](../../rnd/save/CloudSaveSync.gd) is the optional Godot
 client and [`cloud-save.mjs`](../../netlify/functions/cloud-save.mjs) is the
 only MongoDB boundary. A Web export calls the same-origin `/api/cloud-save`
-path; a native development build may use the `PFR_CLOUD_SAVE_ENDPOINT`
-environment variable or the script's endpoint override. Non-local endpoints
-must use HTTPS. The game never contains an Atlas username, password, URI, or
-pepper.
+path. Native development and release builds default to the linked
+`https://pfr-early-alpha.netlify.app/api/cloud-save` function, so running the
+project from the Godot editor requires no hidden launch variable. Developers
+may still replace it with `PFR_CLOUD_SAVE_ENDPOINT` or the script's endpoint
+override. Non-local endpoints must use HTTPS. The public function URL is safe
+to ship; the game never contains an Atlas username, password, URI, or pepper.
 
-The Netlify function reads these runtime variables, which must be configured in
-the Netlify UI or CLI with Functions scope:
+The Netlify function reads these runtime variables. Configure them as
+production values in the Netlify UI or CLI, use Functions-only scope when the
+site plan supports granular scopes, and mark the URI and pepper as secrets:
 
 - `MONGODB_URI`: the rotated Atlas connection string.
 - `MONGODB_DATABASE`: optional; defaults to `pfr_locomotion`.
 - `CLOUD_SAVE_PEPPER`: a stable independent random secret of at least 32
   characters.
 
+The linked deployment currently stores the URI and pepper as production
+Netlify secrets. Its plan does not provide granular environment scopes, so
+Netlify exposes those secrets to its build, function, and runtime processes;
+the build pipeline must continue proving that none enter the published files.
 Never put real values in `netlify.toml`, `.env.example`, Godot project settings,
 AI Context, source, tests, logs, or the published Web directory. The function
 fails closed with `cloud_save_not_configured` when the URI or pepper is absent.
@@ -37,6 +44,10 @@ The player menu's `Cloud Save` overlay makes this feature explicitly optional.
 A Save ID is 12–128 printable characters and acts as the profile's password:
 anyone who knows it can load that save. The field is masked by default. `Opt
 Out` clears the local ID and cloud linkage without touching the ordinary save.
+On touchscreen Web builds, the field's press handler explicitly enters edit
+mode and calls `DisplayServer.virtual_keyboard_show()` during the gesture; do
+not rely only on a prior programmatic `grab_focus()`, which a mobile browser can
+accept without opening its keyboard.
 The local linkage file is `user://pfr_cloud_sync.json`; it stores the enabled
 flag, raw player-entered ID, random device ID, reset epoch, last cloud revision,
 base section fingerprints, and last successful-sync time. It is never uploaded

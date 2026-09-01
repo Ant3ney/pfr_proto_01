@@ -44,6 +44,7 @@ The computer and phone must be connected to the same local network.
 - Custom shell:
   `res://addons/plain_http_lan_web/plain_http_shell.html`
 - Web threading: disabled
+- Web touchscreen virtual keyboard: enabled for `LineEdit` and `TextEdit`
 - Development server address: `0.0.0.0`
 - Development server port: `8060`
 - TLS/HTTPS: disabled
@@ -78,7 +79,8 @@ only one worker should own the same scope.
 - Browsers may evict cached files when storage is low, and private-browsing
   modes may reject the roughly 255 MB persistent cache. The game still falls
   back to the network in either case.
-- This changes Web delivery, not input. Add touch controls separately if a game
-  currently supports only keyboard or gamepad.
+- The Web virtual keyboard is experimental and still depends on touchscreen
+  browser support. Add touch gameplay controls separately if a game currently
+  supports only keyboard or gamepad.
 - The shell is based on the Godot 4.7 Web template. When moving projects to a
   different major/minor Godot version, update and retest the shell.

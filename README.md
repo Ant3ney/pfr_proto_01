@@ -83,8 +83,9 @@ XP/achievements, and reset protection.
 The Web client talks only to the same-origin Netlify function. MongoDB Atlas
 credentials are never compiled into Godot or published in browser assets. A
 deployment must configure a rotated `MONGODB_URI`, optional
-`MONGODB_DATABASE`, and independent `CLOUD_SAVE_PEPPER` as Netlify Functions
-environment variables. See the [cloud-save runtime contract](ai_context/runtime/cloud-save.md)
+`MONGODB_DATABASE`, and independent `CLOUD_SAVE_PEPPER` as production Netlify
+environment variables, with the URI and pepper marked secret. See the
+[cloud-save runtime contract](ai_context/runtime/cloud-save.md)
 and [function deployment notes](netlify/functions/README.md).
 
 ```sh

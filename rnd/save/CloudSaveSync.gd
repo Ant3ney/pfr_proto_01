@@ -13,6 +13,9 @@ signal sync_failed(message: String)
 const PROTOCOL_VERSION := 1
 const DEFAULT_CONFIG_PATH := "user://pfr_cloud_sync.json"
 const WEB_ENDPOINT_PATH := "/api/cloud-save"
+const NATIVE_DEFAULT_ENDPOINT := (
+	"https://pfr-early-alpha.netlify.app/api/cloud-save"
+)
 const SAVE_ID_MIN_LENGTH := 12
 const SAVE_ID_MAX_LENGTH := 128
 const REQUEST_TIMEOUT_SECONDS := 18.0
@@ -518,7 +521,7 @@ func _resolve_endpoint() -> String:
 			var web_endpoint := String(origin).trim_suffix("/") + WEB_ENDPOINT_PATH
 			if _is_safe_endpoint(web_endpoint):
 				return web_endpoint
-	return ""
+	return NATIVE_DEFAULT_ENDPOINT
 
 
 func _is_safe_endpoint(value: String) -> bool:

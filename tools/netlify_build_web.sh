@@ -67,6 +67,11 @@ for artifact in index.html index.js index.pck index.wasm; do
 done
 
 web_output="${project_root}/build/web/v1"
+if ! grep -q '"experimentalVK":true' "${web_output}/index.html"; then
+	echo "Web export must embed touchscreen virtual-keyboard support." >&2
+	exit 1
+fi
+
 cache_worker_template="${project_root}/addons/plain_http_lan_web/pfr_cache_service_worker.js"
 cache_version="$(
 	sha256sum \

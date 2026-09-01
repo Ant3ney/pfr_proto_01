@@ -245,6 +245,15 @@ func _test_scary_reset_warnings() -> void:
 		menu.advance_reset_warning() and menu.get_reset_warning_step() == 3,
 		"Both acknowledgements should unlock the final point-of-no-return warning."
 	)
+	phrase.release_focus()
+	phrase.unedit()
+	var reset_touch := InputEventScreenTouch.new()
+	reset_touch.pressed = true
+	phrase.gui_input.emit(reset_touch)
+	_check(
+		phrase.virtual_keyboard_enabled and phrase.has_focus() and phrase.is_editing(),
+		"Tapping the reset phrase should explicitly enter touchscreen edit mode."
+	)
 	_check(final_button.disabled, "The final destructive button should begin disabled.")
 	phrase.text = "reset"
 	phrase.text_changed.emit(phrase.text)

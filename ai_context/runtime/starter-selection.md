@@ -65,6 +65,13 @@ Only the last red button emits `reset_progress_confirmed`. `PlayerMenuHUD`
 closes its menu first so the menu releases its movement lock, then calls
 `ProgressionAutosave.reset_all_progress()`.
 
+The final phrase field keeps `LineEdit.virtual_keyboard_enabled` on and handles
+its touchscreen press by explicitly entering edit mode and requesting
+`DisplayServer.virtual_keyboard_show()`. The Web export must also set
+`html/experimental_virtual_keyboard=true`. These boundaries are required for a
+tap to summon a phone's native keyboard even when the field already owns focus;
+the Netlify build rejects generated HTML whose Godot config disables support.
+
 The save owner deletes the disk checkpoint, clears the collection and pending
 move choices, restores the Stretch economy/inventory/badges/Champion/run state,
 clears process-only standard-trainer sight history, drops the saved world pose,
@@ -88,7 +95,8 @@ godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_tes
 The focused test verifies exact IDs and regions, multi-frame front animations,
 three-card 960-by-540 fit, confirmation, a single battle-ready level-5 PCL,
 schema-5 disk output, full owner reset, transient trainer reset, every warning
-gate, exact-phrase enforcement, and cloud-reset warning language. The
+gate, touchscreen-keyboard-enabled reset focus, exact-phrase enforcement, and
+cloud-reset warning language. The
 selected-resource Web export explicitly
 includes both starter scripts and its scene. Keep starter implementation under
 `rnd/starter_selection/`; outside changes should remain thin autoload, save,

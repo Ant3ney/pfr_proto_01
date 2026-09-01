@@ -22,6 +22,21 @@ func _run() -> void:
 		CloudSaveSync._test_mode,
 		"Cloud-save smoke tests must suppress real background network access."
 	)
+	var original_endpoint_environment := OS.get_environment(
+		"PFR_CLOUD_SAVE_ENDPOINT"
+	)
+	OS.unset_environment("PFR_CLOUD_SAVE_ENDPOINT")
+	CloudSaveSync.endpoint_override = ""
+	_check(
+		CloudSaveSync._resolve_endpoint()
+		== RNDCloudSaveSync.NATIVE_DEFAULT_ENDPOINT,
+		"Native debug builds should use the linked production cloud endpoint."
+	)
+	if not original_endpoint_environment.is_empty():
+		OS.set_environment(
+			"PFR_CLOUD_SAVE_ENDPOINT",
+			original_endpoint_environment,
+		)
 	_check(
 		not CloudSaveSync.enable_with_save_id("short")
 		and CloudSaveSync.enable_with_save_id(PRIVATE_SAVE_ID),

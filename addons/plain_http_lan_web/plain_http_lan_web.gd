@@ -89,6 +89,9 @@ func _configure_web_presets() -> Dictionary:
 		changed = _set_config_value(
 			config, options_section, "variant/thread_support", false
 		) or changed
+		changed = _set_config_value(
+			config, options_section, "html/experimental_virtual_keyboard", true
+		) or changed
 
 	if changed:
 		var save_error := config.save(EXPORT_PRESETS_PATH)
@@ -162,7 +165,7 @@ func _create_web_preset(config: ConfigFile) -> String:
 	config.set_value(options_section, "html/head_include", "")
 	config.set_value(options_section, "html/canvas_resize_policy", 2)
 	config.set_value(options_section, "html/focus_canvas_on_start", true)
-	config.set_value(options_section, "html/experimental_virtual_keyboard", false)
+	config.set_value(options_section, "html/experimental_virtual_keyboard", true)
 	config.set_value(options_section, "progressive_web_app/enabled", false)
 	config.set_value(
 		options_section, "progressive_web_app/ensure_cross_origin_isolation_headers", true
