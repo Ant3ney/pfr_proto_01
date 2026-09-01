@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4pkxw2k5fx4y"
-path="res://.godot/imported/model_02_eyebrow_albedo.png-74c357656aab35f3ade14c4bd7fb0b13.ctex"
+path.s3tc="res://.godot/imported/model_02_eyebrow_albedo.png-74c357656aab35f3ade14c4bd7fb0b13.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "c29b9809c6140aaa9fbcaa1718a7003f"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_tr0010_nu_boss_f/models/model_02_eyebrow_albedo.png"
-dest_files=["res://.godot/imported/model_02_eyebrow_albedo.png-74c357656aab35f3ade14c4bd7fb0b13.ctex"]
+dest_files=["res://.godot/imported/model_02_eyebrow_albedo.png-74c357656aab35f3ade14c4bd7fb0b13.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

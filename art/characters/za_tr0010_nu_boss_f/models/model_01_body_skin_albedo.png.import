@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dl7h78ulibv77"
-path="res://.godot/imported/model_01_body_skin_albedo.png-2cb1276b4d8f12d9c76e0a31c733cf72.ctex"
+path.s3tc="res://.godot/imported/model_01_body_skin_albedo.png-2cb1276b4d8f12d9c76e0a31c733cf72.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "96439e9bb40a63c2ea6837cfd33a705c"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_tr0010_nu_boss_f/models/model_01_body_skin_albedo.png"
-dest_files=["res://.godot/imported/model_01_body_skin_albedo.png-2cb1276b4d8f12d9c76e0a31c733cf72.ctex"]
+dest_files=["res://.godot/imported/model_01_body_skin_albedo.png-2cb1276b4d8f12d9c76e0a31c733cf72.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

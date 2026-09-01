@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pui0lut73ake"
-path="res://.godot/imported/model_01_body_skin_albedo.png-a7d3a67db5ab15a0cd8df8aeab9e60cd.ctex"
+path.s3tc="res://.godot/imported/model_01_body_skin_albedo.png-a7d3a67db5ab15a0cd8df8aeab9e60cd.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "55a97947d2f35e76d76bb86e06455931"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_city_old_man/models/model_01_body_skin_albedo.png"
-dest_files=["res://.godot/imported/model_01_body_skin_albedo.png-a7d3a67db5ab15a0cd8df8aeab9e60cd.ctex"]
+dest_files=["res://.godot/imported/model_01_body_skin_albedo.png-a7d3a67db5ab15a0cd8df8aeab9e60cd.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8g0sqlgcnph0"
-path="res://.godot/imported/model_04_hairstyle_albedo.png-5cca817381d12922570bc1c47b07312b.ctex"
+path.s3tc="res://.godot/imported/model_04_hairstyle_albedo.png-5cca817381d12922570bc1c47b07312b.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "d47aae0879852a2ed9228f39f874a5ae"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_tr0006_secretary/models/model_04_hairstyle_albedo.png"
-dest_files=["res://.godot/imported/model_04_hairstyle_albedo.png-5cca817381d12922570bc1c47b07312b.ctex"]
+dest_files=["res://.godot/imported/model_04_hairstyle_albedo.png-5cca817381d12922570bc1c47b07312b.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
