@@ -15,7 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://el74326i5kir" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl012.glb" id="11_qw6eg"]
 [ext_resource type="PackedScene" path="res://core/scene_transfer_trigger.tscn" id="12_transfer"]
 [ext_resource type="PackedScene" path="res://overworld/town_npcs/town_npc.tscn" id="20_town_npc"]
-[ext_resource type="Script" path="res://core/NPCController.gd" id="21_npc_controller"]
 [ext_resource type="Script" path="res://overworld/town_npcs/TownNpcBehavior.gd" id="22_town_behavior"]
 [ext_resource type="Resource" path="res://art/characters/za_tr0007_friend_f/za_tr0007_friend_f.tres" id="23_mara_art"]
 [ext_resource type="Resource" path="res://art/characters/za_city_old_man/za_city_old_man.tres" id="24_theo_art"]
@@ -67,21 +66,11 @@ roaming_radius = 2.2
 minimum_pause_seconds = 1.0
 maximum_pause_seconds = 3.0
 
-[sub_resource type="Resource" id="TownNpcController_mara"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_mara")
-
 [sub_resource type="Resource" id="TownNpcBehavior_theo"]
 resource_local_to_scene = true
 script = ExtResource("22_town_behavior")
 speaker_name = "Theo"
 dialog_lines = Array[String](["The Gate Building used to close at sunset, back when the outer roads belonged to feuding districts.", "A Champion ordered it kept open to every traveler. That small decree did more for unity than a hundred speeches."])
-
-[sub_resource type="Resource" id="TownNpcController_theo"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_theo")
 
 [sub_resource type="Resource" id="TownNpcBehavior_nia"]
 resource_local_to_scene = true
@@ -92,32 +81,17 @@ roaming_radius = 1.8
 minimum_pause_seconds = 2.0
 maximum_pause_seconds = 4.5
 
-[sub_resource type="Resource" id="TownNpcController_nia"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_nia")
-
 [sub_resource type="Resource" id="TownNpcBehavior_bram"]
 resource_local_to_scene = true
 script = ExtResource("22_town_behavior")
 speaker_name = "Bram"
 dialog_lines = Array[String](["Miare Station is supposed to be neutral ground. Workers, officials, protesters—everyone needs the same trains.", "The old station bell rings whenever a public argument becomes a public danger. We have heard it more often this year."])
 
-[sub_resource type="Resource" id="TownNpcController_bram"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_bram")
-
 [sub_resource type="Resource" id="TownNpcBehavior_iris"]
 resource_local_to_scene = true
 script = ExtResource("22_town_behavior")
 speaker_name = "Iris"
 dialog_lines = Array[String](["Team Bastion once recruited in daylight, promising order to neighborhoods that felt forgotten.", "Some of my neighbors applauded. Others shut their curtains. Making Bastion outlaws ended the rallies, but it did not end the argument."])
-
-[sub_resource type="Resource" id="TownNpcController_iris"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_iris")
 
 [sub_resource type="Resource" id="TownNpcBehavior_cam"]
 resource_local_to_scene = true
@@ -128,11 +102,6 @@ roaming_radius = 2.5
 minimum_pause_seconds = 0.8
 maximum_pause_seconds = 2.5
 
-[sub_resource type="Resource" id="TownNpcController_cam"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_cam")
-
 [sub_resource type="Resource" id="TownNpcBehavior_lumen"]
 resource_local_to_scene = true
 script = ExtResource("22_town_behavior")
@@ -142,11 +111,6 @@ gift_id = "new-bouffalant-lumen-exp-share"
 gift_item_key = "exp-share"
 gift_dialog_lines = Array[String](["I study how a Pokémon watching from the sidelines still grows through its bond with the team.", "The League once funded this work to keep young partners from being left behind. Funding vanished when the regional councils fractured, but the research survived.", "Take this Exp. Share. Give it to the party member you want to train.", "You received an Exp. Share!"])
 claimed_gift_dialog_lines = Array[String](["The League may be divided, but knowledge does not have to be.", "A Pokémon holding that Exp. Share can stay out of battle and still receive half of its normal XP reward."])
-
-[sub_resource type="Resource" id="TownNpcController_lumen"]
-resource_local_to_scene = true
-script = ExtResource("21_npc_controller")
-npc_behavior = SubResource("TownNpcBehavior_lumen")
 
 [node name="PrimaryDevelopmentEnviroment" type="Node3D" unique_id=938164210]
 
@@ -187,43 +151,43 @@ mesh = SubResource("BoxMesh_myi6a")
 [node name="Mara" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(5, 0, 4)
 rotation = Vector3(0, -1.5707963, 0)
-controller = SubResource("TownNpcController_mara")
+npc_behavior = SubResource("TownNpcBehavior_mara")
 character_art_asset_pack = ExtResource("23_mara_art")
 
 [node name="Theo" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(14, 0, 3)
 rotation = Vector3(0, 3.1415927, 0)
-controller = SubResource("TownNpcController_theo")
+npc_behavior = SubResource("TownNpcBehavior_theo")
 character_art_asset_pack = ExtResource("24_theo_art")
 
 [node name="Nia" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(-3, 0, -7)
 rotation = Vector3(0, 0.7853982, 0)
-controller = SubResource("TownNpcController_nia")
+npc_behavior = SubResource("TownNpcBehavior_nia")
 character_art_asset_pack = ExtResource("25_nia_art")
 
 [node name="Bram" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(4, 0, -12)
 rotation = Vector3(0, -2.3561945, 0)
-controller = SubResource("TownNpcController_bram")
+npc_behavior = SubResource("TownNpcBehavior_bram")
 character_art_asset_pack = ExtResource("26_bram_art")
 
 [node name="Iris" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(-14, 0, 7)
 rotation = Vector3(0, 1.5707963, 0)
-controller = SubResource("TownNpcController_iris")
+npc_behavior = SubResource("TownNpcBehavior_iris")
 character_art_asset_pack = ExtResource("27_iris_art")
 
 [node name="Cam" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(14, 0, -13)
 rotation = Vector3(0, -1.5707963, 0)
-controller = SubResource("TownNpcController_cam")
+npc_behavior = SubResource("TownNpcBehavior_cam")
 character_art_asset_pack = ExtResource("28_cam_art")
 
 [node name="ResearcherLumen" parent="TownResidents" instance=ExtResource("20_town_npc")]
 position = Vector3(10, 0, 5)
 rotation = Vector3(0, 3.1415927, 0)
-controller = SubResource("TownNpcController_lumen")
+npc_behavior = SubResource("TownNpcBehavior_lumen")
 character_art_asset_pack = ExtResource("29_lumen_art")
 
 [node name="NewBouffalantCityAssets2" type="Node3D" parent="." unique_id=657950639]

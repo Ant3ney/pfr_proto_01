@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://core/PFRCharacter.gd" id="1_character"]
-[ext_resource type="Script" path="res://core/NPCController.gd" id="2_controller"]
 [ext_resource type="Script" path="res://core/PokemonCenterHealerBehavior.gd" id="3_behavior"]
 [ext_resource type="Resource" path="res://art/characters/za_city_waiter/za_city_waiter.tres" id="4_waiter"]
 [ext_resource type="PackedScene" path="res://art/characters/za_city_waiter/models/model.glb" id="5_waiter_model"]
@@ -18,14 +17,9 @@ resource_local_to_scene = true
 script = ExtResource("3_behavior")
 automatic_proximity_prompt = false
 
-[sub_resource type="Resource" id="Resource_healer_controller"]
-resource_local_to_scene = true
-script = ExtResource("2_controller")
-npc_behavior = SubResource("Resource_healer_behavior")
-
 [node name="PokemonCenterHealer" type="CharacterBody3D"]
 script = ExtResource("1_character")
-controller = SubResource("Resource_healer_controller")
+npc_behavior = SubResource("Resource_healer_behavior")
 character_art_asset_pack = ExtResource("4_waiter")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

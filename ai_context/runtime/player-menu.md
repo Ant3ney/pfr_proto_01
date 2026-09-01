@@ -27,10 +27,11 @@ GUI focus.
 
 The header's red `RESET PROGRESS` action is intentionally difficult to finish:
 three full-screen danger stages enumerate deleted state, require two separate
-irreversibility acknowledgements, and finally require typing `RESET FOREVER`.
-Only then does the HUD close its own movement lock and call the save owner's
-complete reset. The warnings include any linked cloud copy, whose reset epoch
-advances before the new starter checkpoint. See
+deletion acknowledgements, and finally require typing `RESET FOREVER`. Only
+then does the HUD close its own movement lock and call the save owner's complete
+reset. The warnings include any linked cloud copy, whose reset epoch advances
+before the new starter checkpoint, and accurately state that only a portable
+JSON backup exported beforehand can later restore the deleted progression. See
 [`starter-selection.md`](starter-selection.md).
 
 ## Party and PC organization
@@ -92,11 +93,31 @@ successful states plus the last revision/time; it never prints database
 credentials. See [`cloud-save.md`](cloud-save.md) for persistence and merge
 ownership.
 
+## Portable JSON save panel
+
+The tab row's separate `Save Data` button opens a blocking export/import
+overlay that works whether cloud sync is enabled or not. `Export JSON` emits
+the exact schema-5 progression payload returned by `ProgressionAutosave`, but
+never the private Save ID, device ID, reset epoch, revision, or other cloud
+linkage. Native builds use filesystem dialogs; Web builds use
+`JavaScriptBridge.download_buffer()` for a real browser download and a hidden
+browser file input plus `FileReader` for upload because Godot `FileDialog`
+cannot access the browser host filesystem.
+
+Imports are capped at the cloud service's 2 MiB request limit and require an
+explicit replacement confirmation. The save owner parses the JSON and applies
+it through the same profile, collection, move-learning, Stretch, metadata, and
+world validators used by disk and cloud loads. A successful import immediately
+replaces the ordinary local checkpoint. Existing cloud linkage is preserved;
+all imported sections receive a fresh monotonic local timestamp and the normal
+cloud save signals queue synchronization. Import is refused during a battle,
+scene or battle transition, reset, or starter-selection handoff.
+
 ## Persistence, export, and regression check
 
 Party/PC operations, evolution, and `CollectionSystem.set_held_item()` emit the
 existing collection update signal. Item discards and held-item bag transfers
-emit the existing Stretch progression and inventory signals. Schema-4
+emit the existing Stretch progression and inventory signals. Schema-5
 ProgressionAutosave therefore persists the optional PCL `heldItem` field and
 the bag without a new top-level save section. The selected-resource Web export
 explicitly includes the player-menu scripts and scenes.

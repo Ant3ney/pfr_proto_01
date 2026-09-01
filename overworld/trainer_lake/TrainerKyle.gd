@@ -1,7 +1,9 @@
 class_name TrainerKyle
 extends NPCController
 
-## Controller configuration for Trainer Kyle in the lake overworld.
+## Legacy compatibility controller for trainer scenes saved before
+## PFRCharacter directly exported TrainerBehavior. Current trainer scenes assign
+## TrainerBehavior on PFRCharacter and do not use this controller subclass.
 
 const KYLE_BATTLE_SCENE_PATH := "res://battle/kyle_battle_scene.tscn"
 const KYLE_ENCOUNTER_ID := "trainer-kyle-lake-v1"

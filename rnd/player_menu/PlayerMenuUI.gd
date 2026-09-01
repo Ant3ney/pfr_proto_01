@@ -61,10 +61,28 @@ var _reset_step_label: Label
 var _reset_title: Label
 var _reset_message: Label
 var _reset_ack_pokemon: CheckButton
-var _reset_ack_irreversible: CheckButton
+var _reset_ack_backup: CheckButton
 var _reset_phrase: LineEdit
 var _reset_continue: Button
 var _reset_final: Button
+var _save_data_button: Button
+var _save_data_prompt: Control
+var _save_data_status: Label
+var _save_export: Button
+var _save_import: Button
+var _export_file_dialog: FileDialog
+var _import_file_dialog: FileDialog
+var _import_confirmation: Control
+var _import_confirmation_message: Label
+var _import_confirm: Button
+var _pending_import_json := ""
+var _pending_import_source := ""
+var _web_import_input: Variant
+var _web_import_input_callback: Variant
+var _web_import_reader: Variant
+var _web_import_reader_callback: Variant
+var _web_import_error_callback: Variant
+var _web_import_filename := ""
 var _cloud_button: Button
 var _cloud_prompt: Control
 var _cloud_save_id: LineEdit
@@ -94,6 +112,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	_release_web_import_objects()
 	if _sprite_catalog != null:
 		_sprite_catalog.release_all()
 
@@ -133,6 +152,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		close_requested = (event as InputEventJoypadButton).button_index == JOY_BUTTON_B
 	if not close_requested:
 		return
+	if _import_confirmation.visible:
+		get_viewport().set_input_as_handled()
+		cancel_json_import()
+		return
+	if _save_data_prompt.visible:
+		get_viewport().set_input_as_handled()
+		close_save_data()
+		return
 	if _cloud_prompt.visible:
 		get_viewport().set_input_as_handled()
 		close_cloud_save()
@@ -157,6 +184,122 @@ func close_menu() -> void:
 	_closing = true
 	closed.emit()
 	queue_free()
+
+
+func open_save_data() -> void:
+	if _closing:
+		return
+	_save_data_prompt.visible = true
+	_save_data_status.text = (
+		"Exports contain progression only; your cloud Save ID is never included. "
+		+ "Importing replaces local progress and then uses the existing cloud link, "
+		+ "if enabled."
+	)
+	_save_export.grab_focus()
+
+
+func close_save_data() -> void:
+	_save_data_prompt.visible = false
+	_clear_pending_import()
+	_release_web_import_objects()
+	if is_instance_valid(_import_confirmation):
+		_import_confirmation.hide()
+	if is_instance_valid(_export_file_dialog):
+		_export_file_dialog.hide()
+	if is_instance_valid(_import_file_dialog):
+		_import_file_dialog.hide()
+	if is_instance_valid(_save_data_button):
+		_save_data_button.grab_focus()
+
+
+func request_json_export() -> bool:
+	var source := ProgressionAutosave.get_export_json()
+	if source.is_empty():
+		_save_data_status.text = ProgressionAutosave.get_last_error()
+		return false
+	var filename := _default_json_filename()
+	if OS.has_feature("web"):
+		JavaScriptBridge.download_buffer(
+			source.to_utf8_buffer(),
+			filename,
+			"application/json"
+		)
+		_save_data_status.text = (
+			"JSON download started. It is ready to import here or use with the "
+			+ "same schema-5 cloud-save data."
+		)
+		return true
+	_export_file_dialog.current_file = filename
+	_export_file_dialog.popup_file_dialog()
+	return true
+
+
+func request_json_import() -> bool:
+	if OS.has_feature("web"):
+		return _open_web_import_picker()
+	_import_file_dialog.popup_file_dialog()
+	return true
+
+
+## Stages parsed JSON for the explicit replacement confirmation. Public so
+## focused tests can exercise the same boundary as native and Web file pickers.
+func stage_json_import(source: String, source_name := "selected JSON file") -> bool:
+	if source.to_utf8_buffer().size() > RNDProgressionAutosave.MAX_JSON_TRANSFER_BYTES:
+		_save_data_status.text = (
+			"That file is larger than the 2 MiB cloud-save limit and was not opened."
+		)
+		return false
+	var json := JSON.new()
+	if json.parse(source) != OK or typeof(json.data) != TYPE_DICTIONARY:
+		_save_data_status.text = "That file is not a valid JSON save object."
+		return false
+	_pending_import_json = source
+	_pending_import_source = source_name.get_file()
+	if _pending_import_source.is_empty():
+		_pending_import_source = "selected JSON file"
+	_import_confirmation_message.text = (
+		"Import %s?\n\nThis replaces the current local profile, including Pokémon, "
+		+ "items, progression, and saved position. Your cloud Save ID is not changed. "
+		+ "If cloud sync is enabled, this import becomes a new local change and will "
+		+ "synchronize through the normal cloud conflict rules."
+	) % _pending_import_source
+	_save_data_status.text = "Review the replacement warning before importing."
+	_import_confirmation.visible = true
+	_import_confirm.grab_focus()
+	return true
+
+
+func confirm_json_import() -> bool:
+	if _pending_import_json.is_empty():
+		_save_data_status.text = "Choose a JSON save file before importing."
+		return false
+	var source_name := _pending_import_source
+	_import_confirmation.visible = false
+	var imported := ProgressionAutosave.import_json_save(
+		_pending_import_json,
+		"JSON import: %s" % source_name
+	)
+	_clear_pending_import()
+	if not imported:
+		_save_data_status.text = ProgressionAutosave.get_last_error()
+		_save_import.grab_focus()
+		return false
+	_save_data_status.text = "Imported %s and saved it locally." % source_name
+	if CloudSaveSync.is_enabled():
+		_save_data_status.text += " Cloud synchronization is queued for the current Save ID."
+	else:
+		_save_data_status.text += " Cloud sync remains off."
+	_refresh_entries("", false)
+	_save_import.grab_focus()
+	return true
+
+
+func cancel_json_import() -> void:
+	_import_confirmation.visible = false
+	_clear_pending_import()
+	_save_data_status.text = "Import canceled. The current save was not changed."
+	if _save_data_prompt.visible:
+		_save_import.grab_focus()
 
 
 func open_cloud_save() -> void:
@@ -219,7 +362,7 @@ func advance_reset_warning() -> bool:
 	if (
 		_reset_warning_step == 2
 		and _reset_ack_pokemon.button_pressed
-		and _reset_ack_irreversible.button_pressed
+		and _reset_ack_backup.button_pressed
 	):
 		_reset_warning_step = 3
 		_show_reset_warning_step()
@@ -232,7 +375,7 @@ func cancel_reset_warnings() -> void:
 	_reset_prompt.visible = false
 	_reset_phrase.text = ""
 	_reset_ack_pokemon.button_pressed = false
-	_reset_ack_irreversible.button_pressed = false
+	_reset_ack_backup.button_pressed = false
 	if is_instance_valid(_reset_button):
 		_reset_button.grab_focus()
 
@@ -514,6 +657,12 @@ func _build_interface() -> void:
 	_add_tab(tabs, TAB_POKEMON, "Pokemon Party & PC")
 	_add_tab(tabs, TAB_BAG, "Bag & Items")
 	_add_tab(tabs, TAB_POKEDEX, "Pokedex")
+	_save_data_button = Button.new()
+	_save_data_button.name = "SaveData"
+	_save_data_button.text = "Save Data"
+	_save_data_button.custom_minimum_size = Vector2(118.0, 38.0)
+	_save_data_button.pressed.connect(open_save_data)
+	tabs.add_child(_save_data_button)
 	_cloud_button = Button.new()
 	_cloud_button.name = "CloudSave"
 	_cloud_button.text = "Cloud Save"
@@ -671,6 +820,7 @@ func _build_interface() -> void:
 	_discard_dialog.confirmed.connect(_confirm_discard)
 	add_child(_discard_dialog)
 	_build_evolution_prompt()
+	_build_save_data_prompt()
 	_build_cloud_prompt()
 	_build_reset_prompt()
 
@@ -732,6 +882,311 @@ func _build_evolution_prompt() -> void:
 	_evolution_confirm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_evolution_confirm.pressed.connect(confirm_evolution_choice)
 	buttons.add_child(_evolution_confirm)
+
+
+func _build_save_data_prompt() -> void:
+	_save_data_prompt = ColorRect.new()
+	_save_data_prompt.name = "SaveDataPrompt"
+	_save_data_prompt.color = Color(0.004, 0.012, 0.025, 0.96)
+	_save_data_prompt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_data_prompt.mouse_filter = Control.MOUSE_FILTER_STOP
+	_save_data_prompt.z_index = 55
+	_save_data_prompt.visible = false
+	add_child(_save_data_prompt)
+
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_data_prompt.add_child(center)
+	var panel := PanelContainer.new()
+	panel.name = "SaveDataPanel"
+	panel.custom_minimum_size = Vector2(650.0, 320.0)
+	center.add_child(panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 24)
+	margin.add_theme_constant_override("margin_top", 20)
+	margin.add_theme_constant_override("margin_right", 24)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	panel.add_child(margin)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 14)
+	margin.add_child(column)
+
+	var title := Label.new()
+	title.text = "PORTABLE JSON SAVE"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 25)
+	column.add_child(title)
+	var explanation := Label.new()
+	explanation.text = (
+		"Export a readable backup of the exact progression payload used by local "
+		+ "and cloud saves. The private cloud Save ID and device linkage are excluded. "
+		+ "Import validates the whole payload before replacing local progress."
+	)
+	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	explanation.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(explanation)
+
+	_save_data_status = Label.new()
+	_save_data_status.name = "SaveDataStatus"
+	_save_data_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_save_data_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_save_data_status.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_save_data_status.add_theme_color_override("font_color", Color("b9ddff"))
+	column.add_child(_save_data_status)
+
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 12)
+	column.add_child(buttons)
+	var close := Button.new()
+	close.name = "CloseSaveData"
+	close.text = "Close"
+	close.custom_minimum_size = Vector2(110.0, 48.0)
+	close.pressed.connect(close_save_data)
+	buttons.add_child(close)
+	_save_export = Button.new()
+	_save_export.name = "ExportSaveJson"
+	_save_export.text = "Export JSON"
+	_save_export.custom_minimum_size = Vector2(190.0, 48.0)
+	_save_export.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_save_export.pressed.connect(request_json_export)
+	buttons.add_child(_save_export)
+	_save_import = Button.new()
+	_save_import.name = "ImportSaveJson"
+	_save_import.text = "Import JSON…"
+	_save_import.custom_minimum_size = Vector2(190.0, 48.0)
+	_save_import.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_save_import.pressed.connect(request_json_import)
+	buttons.add_child(_save_import)
+
+	_export_file_dialog = FileDialog.new()
+	_export_file_dialog.name = "ExportSaveJsonDialog"
+	_export_file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	_export_file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	_export_file_dialog.use_native_dialog = true
+	_export_file_dialog.add_filter("*.json", "JSON save files", "application/json")
+	_export_file_dialog.file_selected.connect(_on_export_file_selected)
+	add_child(_export_file_dialog)
+
+	_import_file_dialog = FileDialog.new()
+	_import_file_dialog.name = "ImportSaveJsonDialog"
+	_import_file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	_import_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	_import_file_dialog.use_native_dialog = true
+	_import_file_dialog.add_filter("*.json", "JSON save files", "application/json")
+	_import_file_dialog.file_selected.connect(_on_import_file_selected)
+	add_child(_import_file_dialog)
+	var downloads_directory := OS.get_system_dir(OS.SYSTEM_DIR_DOWNLOADS)
+	if not downloads_directory.is_empty():
+		_export_file_dialog.current_dir = downloads_directory
+		_import_file_dialog.current_dir = downloads_directory
+
+	_import_confirmation = ColorRect.new()
+	_import_confirmation.name = "ImportSaveConfirmation"
+	_import_confirmation.color = Color(0.012, 0.018, 0.032, 0.97)
+	_import_confirmation.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_import_confirmation.mouse_filter = Control.MOUSE_FILTER_STOP
+	_import_confirmation.z_index = 58
+	_import_confirmation.visible = false
+	add_child(_import_confirmation)
+	var confirm_center := CenterContainer.new()
+	confirm_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_import_confirmation.add_child(confirm_center)
+	var confirm_panel := PanelContainer.new()
+	confirm_panel.name = "ImportSaveConfirmationPanel"
+	confirm_panel.custom_minimum_size = Vector2(650.0, 330.0)
+	confirm_center.add_child(confirm_panel)
+	var confirm_margin := MarginContainer.new()
+	confirm_margin.add_theme_constant_override("margin_left", 24)
+	confirm_margin.add_theme_constant_override("margin_top", 20)
+	confirm_margin.add_theme_constant_override("margin_right", 24)
+	confirm_margin.add_theme_constant_override("margin_bottom", 20)
+	confirm_panel.add_child(confirm_margin)
+	var confirm_column := VBoxContainer.new()
+	confirm_column.add_theme_constant_override("separation", 16)
+	confirm_margin.add_child(confirm_column)
+	var confirm_title := Label.new()
+	confirm_title.text = "REPLACE CURRENT SAVE?"
+	confirm_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	confirm_title.add_theme_color_override("font_color", Color("ffcf70"))
+	confirm_title.add_theme_font_size_override("font_size", 25)
+	confirm_column.add_child(confirm_title)
+	_import_confirmation_message = Label.new()
+	_import_confirmation_message.name = "ImportSaveConfirmationMessage"
+	_import_confirmation_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_import_confirmation_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_import_confirmation_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_import_confirmation_message.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_import_confirmation_message.add_theme_font_size_override("font_size", 16)
+	confirm_column.add_child(_import_confirmation_message)
+	var confirm_buttons := HBoxContainer.new()
+	confirm_buttons.add_theme_constant_override("separation", 12)
+	confirm_column.add_child(confirm_buttons)
+	var keep_current := Button.new()
+	keep_current.name = "CancelSaveImport"
+	keep_current.text = "KEEP CURRENT SAVE"
+	keep_current.custom_minimum_size = Vector2(220.0, 50.0)
+	keep_current.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	keep_current.pressed.connect(cancel_json_import)
+	confirm_buttons.add_child(keep_current)
+	_import_confirm = Button.new()
+	_import_confirm.name = "ConfirmSaveImport"
+	_import_confirm.text = "IMPORT AND REPLACE"
+	_import_confirm.custom_minimum_size = Vector2(220.0, 50.0)
+	_import_confirm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_import_confirm.add_theme_color_override("font_color", Color.WHITE)
+	_import_confirm.add_theme_color_override("font_hover_color", Color.WHITE)
+	_import_confirm.add_theme_stylebox_override(
+		"normal",
+		_danger_style(Color("6a2e0b"), Color("ffb347"), 2, 9)
+	)
+	_import_confirm.add_theme_stylebox_override(
+		"hover",
+		_danger_style(Color("8a3c0e"), Color("ffd080"), 2, 9)
+	)
+	_import_confirm.pressed.connect(confirm_json_import)
+	confirm_buttons.add_child(_import_confirm)
+
+
+func _on_export_file_selected(path: String) -> void:
+	var export_path := path
+	if not export_path.to_lower().ends_with(".json"):
+		export_path += ".json"
+	if ProgressionAutosave.write_export_json(export_path):
+		_save_data_status.text = "Exported a portable JSON save to %s." % export_path.get_file()
+	else:
+		_save_data_status.text = ProgressionAutosave.get_last_error()
+
+
+func _on_import_file_selected(path: String) -> void:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		_save_data_status.text = "The selected JSON file could not be opened."
+		return
+	if file.get_length() > RNDProgressionAutosave.MAX_JSON_TRANSFER_BYTES:
+		_save_data_status.text = (
+			"That file is larger than the 2 MiB cloud-save limit and was not opened."
+		)
+		return
+	var source := file.get_buffer(file.get_length()).get_string_from_utf8()
+	stage_json_import(source, path.get_file())
+
+
+func _open_web_import_picker() -> bool:
+	var document: Variant = JavaScriptBridge.get_interface("document")
+	if document == null:
+		_save_data_status.text = "The browser file picker is unavailable."
+		return false
+	if _web_import_input == null:
+		_web_import_input = document.createElement("input")
+		if _web_import_input == null:
+			_save_data_status.text = "The browser file picker could not be created."
+			return false
+		_web_import_input.type = "file"
+		_web_import_input.accept = ".json,application/json"
+		_web_import_input.multiple = false
+		_web_import_input.style.display = "none"
+		_web_import_input_callback = JavaScriptBridge.create_callback(
+			_on_web_import_file_selected
+		)
+		_web_import_input.onchange = _web_import_input_callback
+		document.body.appendChild(_web_import_input)
+	_web_import_input.value = ""
+	_web_import_input.click()
+	_save_data_status.text = "Choose a JSON save file from this device."
+	return true
+
+
+func _on_web_import_file_selected(arguments: Array) -> void:
+	if arguments.is_empty():
+		_save_data_status.text = "No JSON save file was selected."
+		return
+	var files: Variant = arguments[0].target.files
+	if files == null or int(files.length) <= 0:
+		_save_data_status.text = "No JSON save file was selected."
+		return
+	var selected_file: Variant = files.item(0)
+	if selected_file == null:
+		_save_data_status.text = "The selected browser file could not be opened."
+		return
+	if int(selected_file.size) > RNDProgressionAutosave.MAX_JSON_TRANSFER_BYTES:
+		_save_data_status.text = (
+			"That file is larger than the 2 MiB cloud-save limit and was not opened."
+		)
+		return
+	_web_import_filename = String(selected_file.name)
+	_web_import_reader = JavaScriptBridge.create_object("FileReader")
+	if _web_import_reader == null:
+		_save_data_status.text = "The browser could not read the selected file."
+		return
+	_web_import_reader_callback = JavaScriptBridge.create_callback(
+		_on_web_import_file_loaded
+	)
+	_web_import_error_callback = JavaScriptBridge.create_callback(
+		_on_web_import_file_error
+	)
+	_web_import_reader.onload = _web_import_reader_callback
+	_web_import_reader.onerror = _web_import_error_callback
+	_web_import_reader.readAsArrayBuffer(selected_file)
+	_save_data_status.text = "Reading %s…" % _web_import_filename
+
+
+func _on_web_import_file_loaded(arguments: Array) -> void:
+	var source_name := _web_import_filename
+	if arguments.is_empty():
+		_on_web_import_file_error([])
+		return
+	var buffer: Variant = arguments[0].target.result
+	if buffer == null or not JavaScriptBridge.is_js_buffer(buffer):
+		_on_web_import_file_error([])
+		return
+	var source := JavaScriptBridge.js_buffer_to_packed_byte_array(
+		buffer
+	).get_string_from_utf8()
+	_release_web_reader()
+	stage_json_import(source, source_name)
+
+
+func _on_web_import_file_error(_arguments: Array) -> void:
+	_release_web_reader()
+	_save_data_status.text = "The browser could not read the selected JSON file."
+
+
+func _release_web_reader() -> void:
+	if _web_import_reader != null:
+		_web_import_reader.onload = null
+		_web_import_reader.onerror = null
+	_web_import_reader = null
+	_web_import_reader_callback = null
+	_web_import_error_callback = null
+	_web_import_filename = ""
+
+
+func _release_web_import_objects() -> void:
+	_release_web_reader()
+	if _web_import_input != null:
+		_web_import_input.onchange = null
+		var parent: Variant = _web_import_input.parentNode
+		if parent != null:
+			parent.removeChild(_web_import_input)
+	_web_import_input = null
+	_web_import_input_callback = null
+
+
+func _clear_pending_import() -> void:
+	_pending_import_json = ""
+	_pending_import_source = ""
+
+
+func _default_json_filename() -> String:
+	var timestamp := Time.get_datetime_dict_from_system()
+	return "pfr-save-%04d-%02d-%02d_%02d-%02d-%02d.json" % [
+		int(timestamp.get("year", 0)),
+		int(timestamp.get("month", 0)),
+		int(timestamp.get("day", 0)),
+		int(timestamp.get("hour", 0)),
+		int(timestamp.get("minute", 0)),
+		int(timestamp.get("second", 0)),
+	]
 
 
 func _build_cloud_prompt() -> void:
@@ -895,11 +1350,13 @@ func _build_reset_prompt() -> void:
 	_reset_ack_pokemon.text = "I understand every party and PC Pokémon will be deleted."
 	_reset_ack_pokemon.toggled.connect(_on_reset_acknowledgement_changed)
 	column.add_child(_reset_ack_pokemon)
-	_reset_ack_irreversible = CheckButton.new()
-	_reset_ack_irreversible.name = "AcknowledgeNoRecovery"
-	_reset_ack_irreversible.text = "I understand there is no undo, backup, or recovery button."
-	_reset_ack_irreversible.toggled.connect(_on_reset_acknowledgement_changed)
-	column.add_child(_reset_ack_irreversible)
+	_reset_ack_backup = CheckButton.new()
+	_reset_ack_backup.name = "AcknowledgeBackupRequirement"
+	_reset_ack_backup.text = (
+		"I understand recovery requires a JSON backup exported before this reset."
+	)
+	_reset_ack_backup.toggled.connect(_on_reset_acknowledgement_changed)
+	column.add_child(_reset_ack_backup)
 
 	_reset_phrase = LineEdit.new()
 	_reset_phrase.name = "ResetConfirmationPhrase"
@@ -949,7 +1406,7 @@ func _build_reset_prompt() -> void:
 
 func _show_reset_warning_step() -> void:
 	_reset_ack_pokemon.visible = false
-	_reset_ack_irreversible.visible = false
+	_reset_ack_backup.visible = false
 	_reset_phrase.visible = false
 	_reset_continue.visible = false
 	_reset_final.visible = false
@@ -959,7 +1416,8 @@ func _show_reset_warning_step() -> void:
 			_reset_title.text = "⚠ DANGER: FULL PROGRESS RESET ⚠"
 			_reset_message.text = (
 				"This is not a logout, restart, or temporary reset. Continuing begins "
-				+ "a permanent deletion sequence for this local save and any linked cloud copy."
+				+ "a permanent deletion sequence for this active local save and any linked "
+				+ "cloud copy. Only a JSON backup exported beforehand can restore it later."
 			)
 			_reset_continue.text = "I UNDERSTAND — SHOW THE NEXT WARNING"
 			_reset_continue.disabled = false
@@ -967,30 +1425,31 @@ func _show_reset_warning_step() -> void:
 			_reset_continue.grab_focus()
 		2:
 			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  WARNING 2 OF 3"
-			_reset_title.text = "EVERYTHING YOU EARNED WILL BE DESTROYED"
+			_reset_title.text = "EVERYTHING YOU EARNED WILL BE REMOVED"
 			_reset_message.text = (
 				"All Pokémon, levels, XP, equipped moves, pending move choices, items, "
 				+ "money, badges, Champion progress, route progress, and saved world "
-				+ "position will be erased. This cannot be reversed."
+				+ "position will be erased from the active local and cloud saves. Without "
+				+ "a separately exported JSON backup, this cannot be recovered."
 			)
 			_reset_ack_pokemon.button_pressed = false
-			_reset_ack_irreversible.button_pressed = false
-			_reset_ack_irreversible.text = (
-				"I understand no local or linked cloud copy can undo this reset."
+			_reset_ack_backup.button_pressed = false
+			_reset_ack_backup.text = (
+				"I understand recovery requires a JSON backup exported before this reset."
 			)
 			_reset_ack_pokemon.visible = true
-			_reset_ack_irreversible.visible = true
+			_reset_ack_backup.visible = true
 			_reset_continue.text = "I ACCEPT BOTH WARNINGS"
 			_reset_continue.disabled = true
 			_reset_continue.visible = true
 			_reset_ack_pokemon.grab_focus()
 		3:
 			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  FINAL WARNING 3 OF 3"
-			_reset_title.text = "POINT OF NO RETURN"
+			_reset_title.text = "FINAL DELETION CONFIRMATION"
 			_reset_message.text = (
 				"Type %s exactly. The red button will erase local progress, mark any linked "
-				+ "cloud profile as reset, "
-				+ "return to the main development environment, and force a new starter choice."
+				+ "cloud profile as reset, return to the main development environment, and "
+				+ "force a new starter choice. Separately exported JSON files are not deleted."
 			) % RESET_CONFIRMATION_PHRASE
 			_reset_phrase.text = ""
 			_reset_phrase.editable = true
@@ -1054,7 +1513,7 @@ func _activate_text_input(field: LineEdit) -> void:
 func _on_reset_acknowledgement_changed(_pressed: bool) -> void:
 	_reset_continue.disabled = not (
 		_reset_ack_pokemon.button_pressed
-		and _reset_ack_irreversible.button_pressed
+		and _reset_ack_backup.button_pressed
 	)
 
 

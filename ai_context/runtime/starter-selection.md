@@ -58,8 +58,9 @@ requires all of these gates:
 
 1. A full-screen permanent-deletion warning.
 2. A detailed list of erased systems plus separate acknowledgements for Pokemon
-   deletion and the absence of recovery.
-3. A final point-of-no-return warning and the exact phrase `RESET FOREVER`.
+   deletion and the requirement for a previously exported JSON backup to
+   recover it.
+3. A final deletion warning and the exact phrase `RESET FOREVER`.
 
 Only the last red button emits `reset_progress_confirmed`. `PlayerMenuHUD`
 closes its menu first so the menu releases its movement lock, then calls
@@ -82,7 +83,10 @@ acquires movement control, and no new save exists until a new starter is
 confirmed. If optional cloud saving is linked, `CloudSaveSync` advances its
 reset epoch before the owners are cleared; the new starter checkpoint then
 supersedes older cloud copies, including a later upload from an offline old
-device. This API is valid only while battle and scene transitions are idle.
+device. A separately exported JSON file is outside both deletion targets and
+can be imported after the replacement starter is selected; that import keeps
+the advanced reset epoch and synchronizes as new progress. This API is valid
+only while battle and scene transitions are idle.
 
 ## Regression and export checks
 
@@ -96,7 +100,7 @@ The focused test verifies exact IDs and regions, multi-frame front animations,
 three-card 960-by-540 fit, confirmation, a single battle-ready level-5 PCL,
 schema-5 disk output, full owner reset, transient trainer reset, every warning
 gate, touchscreen-keyboard-enabled reset focus, exact-phrase enforcement, and
-cloud-reset warning language. The
+cloud-reset/portable-backup warning language. The
 selected-resource Web export explicitly
 includes both starter scripts and its scene. Keep starter implementation under
 `rnd/starter_selection/`; outside changes should remain thin autoload, save,

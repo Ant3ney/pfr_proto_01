@@ -172,8 +172,7 @@ class LifecycleWatcher:
 			^"RouteTrainers/TrainerKyle"
 		)
 		if trainer:
-			var controller: Variant = trainer.get("controller")
-			var behavior: Variant = controller.get("npc_behavior") if controller != null else null
+			var behavior: Variant = trainer.get("npc_behavior")
 			_check(
 				behavior != null
 				and int(behavior.get("_approach_state")) == TrainerBehavior.ApproachState.WAITING,

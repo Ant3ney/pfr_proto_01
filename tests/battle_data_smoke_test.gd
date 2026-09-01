@@ -391,23 +391,16 @@ func _test_kyle_encounter_resource_and_provider_scene() -> void:
 	if trainer_scene != null:
 		var trainer := trainer_scene.instantiate() as PFRCharacter
 		add_child(trainer)
-		var controller := trainer.controller as TrainerKyle if trainer != null else null
 		var behavior := (
-			controller.npc_behavior as TrainerBehavior
-			if controller != null
+			trainer.npc_behavior as TrainerBehavior
+			if trainer != null
 			else null
-		)
-		_check(
-			controller != null
-			and controller.encounter_id == encounter.encounter_id
-			and controller.battle_scene_path == KYLE_SCENE_PATH,
-			"Kyle's scene-local controller should retain its concrete encounter launch."
 		)
 		_check(
 			behavior != null
 			and behavior.encounter_id == encounter.encounter_id
 			and behavior.battle_scene_path == KYLE_SCENE_PATH,
-			"Kyle's scene-local behavior should receive the same concrete encounter launch."
+			"Kyle's direct scene-local behavior should retain its concrete encounter launch."
 		)
 		trainer.queue_free()
 
@@ -462,17 +455,16 @@ func _test_delivery_worker_encounter_mapping() -> void:
 	_check(trainer_scene != null, "Delivery Worker trainer scene should load.")
 	if trainer_scene == null:
 		return
-	var trainer_instance := trainer_scene.instantiate()
-	var controller: Resource = trainer_instance.get("controller") as Resource
-	_check(controller != null, "Delivery Worker trainer should expose a controller.")
-	if controller != null:
+	var trainer_instance := trainer_scene.instantiate() as PFRCharacter
+	var behavior := trainer_instance.npc_behavior as TrainerBehavior
+	_check(behavior != null, "Delivery Worker trainer should expose a direct behavior.")
+	if behavior != null:
 		_check(
-			controller.get("encounter_id") == encounter.encounter_id,
+			behavior.encounter_id == encounter.encounter_id,
 			"Delivery Worker trainer and encounter IDs should match."
 		)
 		_check(
-			controller.get("battle_scene_path")
-			== DELIVERY_WORKER_BATTLE_SCENE_PATH,
+			behavior.battle_scene_path == DELIVERY_WORKER_BATTLE_SCENE_PATH,
 			"Delivery Worker trainer should launch its concrete battle scene."
 		)
 	trainer_instance.free()
@@ -529,16 +521,16 @@ func _test_city_lineup_trainer_mappings() -> void:
 		_check(trainer_scene != null, "%s trainer scene should load." % label)
 		if trainer_scene == null:
 			continue
-		var trainer_instance := trainer_scene.instantiate()
-		var controller: Resource = trainer_instance.get("controller") as Resource
-		_check(controller != null, "%s should expose a trainer controller." % label)
-		if controller != null:
+		var trainer_instance := trainer_scene.instantiate() as PFRCharacter
+		var behavior := trainer_instance.npc_behavior as TrainerBehavior
+		_check(behavior != null, "%s should expose a direct trainer behavior." % label)
+		if behavior != null:
 			_check(
-				controller.get("encounter_id") == spec["encounter_id"],
+				behavior.encounter_id == spec["encounter_id"],
 				"%s trainer and encounter IDs should match." % label
 			)
 			_check(
-				controller.get("battle_scene_path") == spec["battle_scene_path"],
+				behavior.battle_scene_path == spec["battle_scene_path"],
 				"%s trainer should launch its matching battle scene." % label
 			)
 

@@ -82,6 +82,23 @@ func _run() -> void:
 		and CloudSaveSync.get_state() == "synced",
 		"A successful first link should validate, apply, and checkpoint the cloud payload."
 	)
+	var portable_payload := ProgressionAutosave.get_save_payload()
+	var portable_stretch := portable_payload.get("stretch", {}) as Dictionary
+	portable_stretch["balance"] = 5432
+	portable_payload["stretch"] = portable_stretch
+	var linked_save_id := CloudSaveSync.get_save_id()
+	CloudSaveSync._sync_requested = false
+	_check(
+		ProgressionAutosave.import_json_save(
+			JSON.stringify(portable_payload),
+			"cloud-linked JSON fixture"
+		)
+		and StretchGoalSystem.get_balance() == 5432
+		and CloudSaveSync.is_enabled()
+		and CloudSaveSync.get_save_id() == linked_save_id
+		and CloudSaveSync._sync_requested,
+		"JSON import should preserve cloud linkage and queue the imported local change."
+	)
 
 	var request_baseline := ProgressionAutosave.get_save_payload()
 	_prepare_inflight(request_baseline)
@@ -137,7 +154,8 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"Cloud-save sync smoke test passed: private-ID opt-in, validated cloud apply, "
-			+ "safe transition deferral, local checkpoint, and in-flight change rebase verified."
+			+ "linked JSON import, safe transition deferral, local checkpoint, and "
+			+ "in-flight change rebase verified."
 		)
 		get_tree().quit(0)
 		return

@@ -28,9 +28,9 @@ func _run() -> void:
 		^"LookInteraction"
 	) as RNDPlayerInteractionDetector
 	var interaction_button := $GameUI/InteractionButton as Button
-	var trainer_behavior := trainer.controller.npc_behavior as TrainerBehavior
+	var trainer_behavior := trainer.npc_behavior as TrainerBehavior
 	var police_behavior := (
-		police_officer.controller.npc_behavior as TrainerBehavior
+		police_officer.npc_behavior as TrainerBehavior
 	)
 
 	_check(detector != null, "The shared player should own the RND interaction detector.")
@@ -130,7 +130,7 @@ func _check_prototype_trainers_keep_automatic_sight() -> void:
 		var scene_instance := packed_scene.instantiate()
 		var prototype_trainer := scene_instance as PFRCharacter
 		var behavior := (
-			prototype_trainer.controller.npc_behavior as TrainerBehavior
+			prototype_trainer.npc_behavior as TrainerBehavior
 			if prototype_trainer != null
 			else null
 		)

@@ -42,9 +42,9 @@ func _build_trainer_chokepoints() -> void:
 		var route_order := int(trainer.get_meta("route_order", trainer.get_index() + 1))
 		trainer.position.x += float(CHECKPOINT_X_OFFSETS.get(route_order, 0.0))
 		var checkpoint_position := trainer.position
-		var controller := trainer.controller as NPCController
+		var behavior := trainer.npc_behavior as TrainerBehavior
 		var encounter_id: String = (
-			controller.encounter_id if controller != null else ""
+			behavior.encounter_id if behavior != null else ""
 		)
 		trainer.rotation.y = PI
 		trainer.set_meta("route_checkpoint_position", checkpoint_position)

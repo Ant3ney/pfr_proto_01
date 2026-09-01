@@ -53,6 +53,15 @@ flag, raw player-entered ID, random device ID, reset epoch, last cloud revision,
 base section fingerprints, and last successful-sync time. It is never uploaded
 as part of the progression payload.
 
+Portable JSON export contains only the same schema-5 progression payload sent
+under the protocol request's `payload` field; it never contains this linkage
+file or any of its Save ID/device/revision fields. Manual JSON import preserves
+the current linkage and reset epoch, validates through `ProgressionAutosave`,
+re-timestamps each imported section as a new local edit, checkpoints it, and
+queues the ordinary sync path. Consequently an import during an in-flight
+request receives the same local-change rebase protection as gameplay edits,
+and first-time linking still obeys the existing-cloud-pull rule.
+
 Local `ProgressionAutosave` remains authoritative while offline. Schema 5
 stores a `saved_at_ms` clock and independent timestamps for `profile`,
 `collection`, `move_learning`, `stretch`, and `world`. Cloud sync is debounced
@@ -98,7 +107,10 @@ or local disk state.
 The existing three-warning `RESET FOREVER` flow also advances the linked cloud
 epoch. No empty profile is uploaded while the starter picker is pending. The
 new starter checkpoint then replaces the previous cloud generation; an old
-offline device subsequently pulls that newer epoch.
+offline device subsequently pulls that newer epoch. A portable JSON file
+exported before reset is not part of the active local/cloud deletion. Importing
+it after the new starter handoff preserves the advanced epoch and sends the
+restored payload as a fresh local change.
 
 ```bash
 npm run test:cloud-save
@@ -110,6 +122,6 @@ godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tsc
 The Node suite covers first link, causal updates, forced first-link conflicts,
 divergent collection and Stretch merges, and reset epochs. The Godot tests
 cover private-ID validation, opt-in/out, masked UI, schema-5 timestamps, normal
-save validation, and in-flight local-change rebasing. The selected-resource
-export must include `CloudSaveSync.gd`; Netlify deploys the function separately
-from the Web PCK.
+save validation, linked JSON import, and in-flight local-change rebasing. The
+selected-resource export must include `CloudSaveSync.gd`; Netlify deploys the
+function separately from the Web PCK.

@@ -11,15 +11,16 @@ release or web package.
   different behavior resources.
 - Generated routes, gyms, and the Pokemon League contain no opponents.
 - Source-scene interaction and destination smoke tests pass.
-- Inspecting an exported Route 0 instance shows a valid `TrainerKyle` controller
-  whose inherited `npc_behavior` property is null.
+- Inspecting an exported Route 0 `PFRCharacter` shows that its direct
+  `npc_behavior` property is null.
 
 ## Verified Cause
 
-`TrainerKyle._init()` creates a `TrainerBehavior`, but release PackedScene
-deserialization can subsequently restore the inherited exported
-`NPCController.npc_behavior` property to null. A null behavior rejects both
-automatic sight and manual interaction.
+Trainer roles are serialized directly in `PFRCharacter.npc_behavior`. If a
+release PackedScene strips or nulls that Resource, the character has no role and
+therefore rejects both automatic sight and manual interaction. The historical
+custom-controller initialization path is retained only as a hidden legacy
+serialization bridge and is not the current authoring contract.
 
 Generated destinations expose a second edge: they configure a trainer directly
 after `PackedScene.instantiate()` and before `add_child()` can run
@@ -28,21 +29,23 @@ behavior is null, which makes every generated opponent appear to be absent.
 
 ## Current Required Behavior
 
-[`TrainerKyle`](../../overworld/trainer_lake/TrainerKyle.gd) owns
-`_ensure_trainer_behavior()`. Both `_init()` and `prepare_for_character()` call
-it before synchronizing dialog, battle scene, encounter ID, automatic sight,
-and aggression settings. This makes scene-ready Route 0 trainers recover from the
-exported null property without weakening the base behavior boundary.
+Every authored trainer scene directly serializes a scene-local
+[`TrainerBehavior`](../../core/TrainerBehavior.gd) on its `PFRCharacter`,
+including dialog, battle scene, encounter ID, automatic sight, and aggression
+settings. `PFRCharacter.prepare_runtime_composition()` synchronizes that direct
+Resource into a hidden controller compatibility mirror and can adopt the old
+nested format, but current scenes must not depend on a custom trainer controller.
 
-[`StretchDestination`](../../rnd/stretch/worlds/StretchDestination.gd) must call
-`prepare_for_character()` before reading a newly instantiated trainer's
-behavior. Do not rely only on `PFRCharacter._ready()` at this boundary because
-the destination configures and may discard the trainer before adding it to the
-tree.
+[`StretchDestination`](../../rnd/stretch/worlds/StretchDestination.gd) calls
+`prepare_runtime_composition()` before reading a newly instantiated trainer's
+direct behavior and recreates a missing `TrainerBehavior` before configuring
+it. Do not rely only on `PFRCharacter._ready()` at this boundary because the
+destination configures and may discard the trainer before adding it to the tree.
 
 ## Regression Checks
 
 ```sh
+godot --headless --path . --scene res://tests/pfr_character_behavior_composition_smoke_test.tscn
 godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
 godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
 netlify build

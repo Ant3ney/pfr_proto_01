@@ -1,4 +1,4 @@
-# PFR Locomotion Prototype
+# pfr_proto_01
 
 A Godot prototype for reusable 3D character locomotion, player controls, camera behavior, and NPC navigation.
 
@@ -109,7 +109,8 @@ The included Kyle battle is the reference authoring setup:
 - [`trainer_kyle_lake_v1.tres`](battle/encounters/trainer_kyle_lake_v1.tres)
   defines stable encounter and member IDs, canonical species, exact sprites,
   levels, normalized health, and equipped moves.
-- [`TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) passes only the
+- The direct [`TrainerBehavior`](core/TrainerBehavior.gd) resource on
+  [`TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) passes only the
   concrete scene path and stable encounter ID to `GameInstance.startBattle()`.
 
 To author another encounter, duplicate the concrete scene and encounter
@@ -205,7 +206,7 @@ The New Bouffalant City ground wrappers and imported reference assets already in
 
 ## Add a Trainer to a Scene
 
-[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn) demonstrates all seven standard prototype placements in Lv. 3–6 order. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
+[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is a configured trainer example, and [`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn) demonstrates all seven standard prototype placements in Lv. 3–6 order. A trainer is an ordinary `PFRCharacter` with a direct `TrainerBehavior` Resource. The behavior detects the player and asks the character's generic controller to navigate toward them.
 
 A trainer-ready level adds these nodes to the playable-level structure above:
 
@@ -216,17 +217,18 @@ Level (Node3D)
 │       ├── Walkable ground with collision
 │       └── Blocking obstacles with collision
 ├── Player
-└── TrainerKyle (instance of overworld/trainer_lake/TrainerKyle.tscn)
+└── Trainer (PFRCharacter with TrainerBehavior)
 ```
 
 ### Place and Configure a Trainer
 
-1. Instance [`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) under the level root. Keep its scale at `1, 1, 1`, and place its root directly on the walkable surface, inside the navigation mesh.
-2. Rotate the trainer root around the Y axis to face its detection lane. [`core/TrainerBehavior.gd`](core/TrainerBehavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
-3. Keep the player's collision body on physics layer 1, or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
-4. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
-5. Assign a non-empty [`Dialog`](core/Dialog.gd) resource to the trainer's **Dialog** property. The bundled Kyle scene already uses [`trainer_kyle.tres`](overworld/dialogs/trainer_kyle.tres); create another resource with a speaker name and ordered lines for a different trainer.
-6. Run the scene and walk into the trainer's forward sightline. The trainer should lock player movement, create its `NavigationAgent3D` at runtime, navigate around baked obstacles, stop beside the player, and open its dialog. Advancing the last line closes the template and restores player movement. Do not add a `NavigationAgent3D` manually.
+1. Add a `PFRCharacter` from the **Add Child Node** dialog, or make a new scene whose root is `PFRCharacter`. Keep its scale at `1, 1, 1` and place its root directly on the walkable surface.
+2. Add a `CollisionShape3D` child with a foot-aligned capsule, and assign a **Character Art Asset Pack** on the root.
+3. In the root's **NPC Behavior** property, choose **New TrainerBehavior**. Configure its dialog, concrete battle scene path, stable encounter ID, detection, approach, and aggression fields directly. Do not create a trainer-specific controller.
+4. Rotate the character root around the Y axis to face its detection lane. [`core/TrainerBehavior.gd`](core/TrainerBehavior.gd) casts forward along the `Visual` node's local `-Z` axis, from its configured ray height.
+5. Keep the player's collision body on physics layer 1, or update the behavior's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
+6. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
+7. Run the scene and walk into the trainer's forward sightline. The behavior should lock player movement, ask the generic controller to navigate around baked obstacles, stop beside the player, and open its dialog. Advancing the last line starts the configured battle. Do not add a `NavigationAgent3D` manually.
 
 Trainer navigation and physical collision are separate. The `NavigationMesh` supplies a path, while `StaticBody3D`, `GridMap`, and other collision shapes keep the characters out of walls and scenery. A trainer needs both systems to behave correctly.
 
@@ -263,14 +265,14 @@ that destination again restores their forced sight challenge. Standard sight
 consumption is not yet persisted to disk. Avoid overlapping trainer sightlines
 because there is no encounter arbiter for simultaneous detections or UI templates.
 
-To make another trainer type, duplicate the Kyle scene and give it a descriptive name. Keep the `PFRCharacter` root structure, collision capsule, `Visual` node, and character art pack. Duplicate [`overworld/trainer_lake/TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) when that trainer needs different detection distance, ray height, collision mask, stopping buffer, or arrival distance; the controller should continue to extend [`core/NPCController.gd`](core/NPCController.gd) and assign a `TrainerBehavior` resource.
+To make another trainer type, create or reuse a `PFRCharacter`, then assign a unique `TrainerBehavior` directly on it. Configure detection distance, ray height, collision mask, stopping buffer, arrival distance, dialog, and encounter data on that Resource. Create a new behavior subclass only when the gameplay rules differ, not merely to hold different tuning values.
 
 | Problem | Check |
 | --- | --- |
 | The trainer never notices the player | Confirm its `Visual` `-Z` direction faces the player, the player is on the detection mask, and no collider blocks the ray |
 | The trainer reacts but does not move | Confirm a baked navigation map exists, both endpoints are on its reachable surface, and run the navigation height smoke test above |
 | The trainer walks through or catches on scenery | Check physical collision separately from the navigation mesh and leave enough clearance for the 0.32-meter capsule radius |
-| The trainer stops too early or too late | Adjust `stopping_buffer` and `arrival_distance` in that trainer's controller configuration |
+| The trainer stops too early or too late | Adjust `stopping_buffer` and `arrival_distance` on that trainer's direct `TrainerBehavior` |
 | The player remains frozen afterward | Confirm the trainer has a non-empty `Dialog` and that the final action reaches `UITemplate.close()`; cleanup and movement restoration run through its dismiss callback |
 
 ## AI Context

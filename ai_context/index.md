@@ -1,4 +1,4 @@
-# PFR Locomotion Prototype AI Context Index
+# pfr_proto_01 AI Context Index
 
 Read this index first. Use the table to load only the context needed for the current task.
 

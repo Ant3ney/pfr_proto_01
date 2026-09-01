@@ -1,4 +1,4 @@
-# PFR Locomotion Prototype Troubleshooting FAQ
+# pfr_proto_01 Troubleshooting FAQ
 
 Read this index first when diagnosing a recurring project-specific failure. Choose only the narrowest document that matches the observed behavior.
 

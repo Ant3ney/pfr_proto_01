@@ -147,8 +147,8 @@ func _run() -> void:
 		for trainer_value: Node in route_trainers.get_children():
 			var trainer := trainer_value as PFRCharacter
 			var behavior := (
-				trainer.controller.npc_behavior as TrainerBehavior
-				if trainer != null and trainer.controller != null
+				trainer.npc_behavior as TrainerBehavior
+				if trainer != null
 				else null
 			)
 			if trainer == null or behavior == null:
@@ -244,14 +244,9 @@ func _validate_trainer_sequence(trainer_root: Node3D) -> void:
 			"Route trainer difficulty should never decrease while moving deeper into Route 0."
 		)
 		previous_level = expected_level
-		var controller := trainer.controller as TrainerKyle
-		var behavior := (
-			controller.npc_behavior as TrainerBehavior
-			if controller != null
-			else null
-		)
+		var behavior := trainer.npc_behavior as TrainerBehavior
 		_check(
-			controller != null and controller.encounter_id == expected_encounter_id,
+			behavior != null and behavior.encounter_id == expected_encounter_id,
 			"%s should preserve stable encounter ID %s." % [expected_name, expected_encounter_id]
 		)
 		_check(
@@ -261,7 +256,7 @@ func _validate_trainer_sequence(trainer_root: Node3D) -> void:
 			"%s should use one-time standard sight aggression, not Stretchman Highly Aggro."
 			% expected_name
 		)
-		_validate_trainer_battle_level(controller, expected_name, expected_level)
+		_validate_trainer_battle_level(behavior, expected_name, expected_level)
 		_check(trainer.scale.is_equal_approx(Vector3.ONE), "%s should remain at unit scale." % expected_name)
 		_check(is_zero_approx(trainer.position.y), "%s should stand on the route surface." % expected_name)
 		trainer_positions.append(trainer.position)
@@ -286,13 +281,13 @@ func _validate_trainer_sequence(trainer_root: Node3D) -> void:
 
 
 func _validate_trainer_battle_level(
-	controller: TrainerKyle,
+	behavior: TrainerBehavior,
 	trainer_name: StringName,
 	expected_level: int
 ) -> void:
-	if controller == null:
+	if behavior == null:
 		return
-	var battle_packed := load(controller.battle_scene_path) as PackedScene
+	var battle_packed := load(behavior.battle_scene_path) as PackedScene
 	var battle_preview := battle_packed.instantiate() if battle_packed != null else null
 	_check(battle_preview != null, "%s should have an importable battle scene." % trainer_name)
 	if battle_preview == null:

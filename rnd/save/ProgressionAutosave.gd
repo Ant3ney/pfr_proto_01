@@ -20,6 +20,7 @@ const STRETCH_SAVE_SCHEMA_VERSION := 2
 const MOVE_LEARNING_SAVE_SCHEMA_VERSION := 3
 const STARTER_PROFILE_SAVE_SCHEMA_VERSION := 4
 const TIMESTAMPED_SAVE_SCHEMA_VERSION := 5
+const MAX_JSON_TRANSFER_BYTES := 2 * 1024 * 1024
 const SAVE_SECTIONS: Array[String] = [
 	"profile",
 	"collection",
@@ -54,6 +55,7 @@ var _last_payload_fingerprint := ""
 var _last_saved_at_ms := 0
 var _section_updated_at_ms: Dictionary = {}
 var _last_section_fingerprints: Dictionary = {}
+var _last_error := ""
 
 
 func _ready() -> void:
@@ -78,6 +80,7 @@ func _notification(what: int) -> void:
 ## overworld player pose. Public so RND callers can explicitly checkpoint a
 ## milestone in addition to the automatic hooks.
 func save_now(force := false) -> bool:
+	_last_error = ""
 	if _profile_initialization_pending or _reset_in_progress:
 		return false
 	var payload := _build_payload()
@@ -102,6 +105,7 @@ func save_now(force := false) -> bool:
 ## Loads and validates a saved collection atomically through CollectionSystem.
 ## Invalid data leaves the current in-memory collection untouched.
 func load_now() -> bool:
+	_last_error = ""
 	if not FileAccess.file_exists(save_path):
 		return false
 
@@ -121,12 +125,109 @@ func get_save_payload() -> Dictionary:
 	return _build_payload().duplicate(true)
 
 
+## Serializes the exact schema-5 progression payload consumed by cloud sync.
+## Cloud linkage credentials and device metadata live in a separate file and
+## are intentionally never included in a portable export.
+func get_export_json() -> String:
+	_last_error = ""
+	var payload := get_save_payload()
+	if payload.is_empty():
+		_report_save_failure(
+			"A save cannot be exported until the profile has been initialized."
+		)
+		return ""
+	return JSON.stringify(payload, "\t")
+
+
+## Writes a portable JSON backup outside the ordinary user:// checkpoint.
+## This does not emit save_completed because exporting a backup is not a local
+## progression mutation and should not schedule an unnecessary cloud request.
+func write_export_json(path: String) -> bool:
+	_last_error = ""
+	if path.strip_edges().is_empty():
+		return _report_save_failure("No JSON export path was selected.")
+	var source := get_export_json()
+	if source.is_empty():
+		return false
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return _report_save_failure(
+			"Could not open %s for writing: %s"
+			% [path, error_string(FileAccess.get_open_error())]
+		)
+	file.store_string(source)
+	file.flush()
+	return true
+
+
+## Parses a portable backup, applies it through the same validators as local
+## and cloud loads, and checkpoints the accepted result. Imported sections are
+## timestamped as a new local change so an already-linked cloud profile can
+## resolve the import through its normal causal merge rather than ignoring an
+## older backup timestamp.
+func import_json_save(source: String, source_label := "JSON import") -> bool:
+	_last_error = ""
+	if source.to_utf8_buffer().size() > MAX_JSON_TRANSFER_BYTES:
+		return _report_load_failure(
+			"The selected JSON save is larger than the 2 MiB cloud-save limit."
+		)
+	if not _can_replace_progress():
+		return _report_load_failure(
+			"A save cannot be imported during a battle, scene transition, reset, "
+			+ "or starter selection."
+		)
+
+	var json := JSON.new()
+	var parse_error := json.parse(source)
+	if parse_error != OK:
+		return _report_load_failure(
+			"The selected save is not valid JSON (line %d: %s)."
+			% [json.get_error_line(), json.get_error_message()]
+		)
+	if typeof(json.data) != TYPE_DICTIONARY:
+		return _report_load_failure("The selected save is not a JSON object.")
+	var previous_saved_at_ms := _last_saved_at_ms
+	if not _apply_payload(json.data as Dictionary, source_label):
+		return false
+
+	_retimestamp_imported_sections(previous_saved_at_ms)
+	return save_now(true)
+
+
+func get_last_error() -> String:
+	return _last_error
+
+
 ## Applies an already-resolved cloud payload through the same validators used
 ## for disk loading, then immediately checkpoints the accepted result locally.
 func apply_cloud_payload(payload: Dictionary) -> bool:
+	_last_error = ""
 	if not _apply_payload(payload, "cloud sync"):
 		return false
 	return save_now(true)
+
+
+func _can_replace_progress() -> bool:
+	return (
+		BattleSystem.get_state() == BattleSystem.State.IDLE
+		and not GameInstance.is_battle_start_in_progress()
+		and not GameInstance.is_battle_return_in_progress()
+		and not GameInstance.is_scene_transfer_in_progress()
+		and not _profile_initialization_pending
+		and not _reset_in_progress
+	)
+
+
+func _retimestamp_imported_sections(previous_saved_at_ms: int) -> void:
+	_last_saved_at_ms = maxi(
+		maxi(_unix_time_ms(), previous_saved_at_ms + 1),
+		1
+	)
+	_section_updated_at_ms.clear()
+	for section in SAVE_SECTIONS:
+		_section_updated_at_ms[section] = _last_saved_at_ms
+	_last_section_fingerprints.clear()
+	_last_payload_fingerprint = ""
 
 
 func _apply_payload(payload: Dictionary, source_label: String) -> bool:
@@ -617,12 +718,14 @@ func _is_test_scene_path(scene_path: String) -> bool:
 
 
 func _report_save_failure(message: String) -> bool:
+	_last_error = message
 	push_error("RND progression autosave failed: %s" % message)
 	save_failed.emit(message)
 	return false
 
 
 func _report_load_failure(message: String) -> bool:
+	_last_error = message
 	push_error("RND progression load failed: %s" % message)
 	load_failed.emit(message)
 	return false

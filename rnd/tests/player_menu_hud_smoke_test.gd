@@ -69,6 +69,20 @@ func _run() -> void:
 		var held_item_action := menu.find_child("HeldItemAction", true, false) as Button
 		var evolution_prompt := menu.find_child("EvolutionPrompt", true, false) as Control
 		var evolution_choice := menu.find_child("EvolutionChoice", true, false) as OptionButton
+		var save_data_button := menu.find_child("SaveData", true, false) as Button
+		var save_data_prompt := menu.find_child("SaveDataPrompt", true, false) as Control
+		var save_data_status := menu.find_child("SaveDataStatus", true, false) as Label
+		var export_save := menu.find_child("ExportSaveJson", true, false) as Button
+		var import_save := menu.find_child("ImportSaveJson", true, false) as Button
+		var import_confirmation := menu.find_child(
+			"ImportSaveConfirmation", true, false
+		) as Control
+		var import_confirmation_message := menu.find_child(
+			"ImportSaveConfirmationMessage", true, false
+		) as Label
+		var confirm_save_import := menu.find_child(
+			"ConfirmSaveImport", true, false
+		) as Button
 		var cloud_button := menu.find_child("CloudSave", true, false) as Button
 		var cloud_prompt := menu.find_child("CloudSavePrompt", true, false) as Control
 		var cloud_save_id := menu.find_child("CloudSaveId", true, false) as LineEdit
@@ -81,6 +95,36 @@ func _run() -> void:
 			cloud_button != null and cloud_button.focus_mode != Control.FOCUS_NONE,
 			"The player menu should expose keyboard/gamepad cloud-save settings."
 		)
+		_check(
+			save_data_button != null
+			and save_data_button.focus_mode != Control.FOCUS_NONE
+			and export_save != null
+			and import_save != null,
+			"The player menu should expose keyboard/gamepad JSON export and import controls."
+		)
+		menu.open_save_data()
+		_check(
+			save_data_prompt.visible
+			and "Save ID is never included" in save_data_status.text,
+			"Portable-save settings should explain that cloud credentials are excluded."
+		)
+		_check(
+			menu.stage_json_import(
+				ProgressionAutosave.get_export_json(),
+				"player-menu-backup.json"
+			)
+			and import_confirmation.visible
+			and confirm_save_import.has_focus()
+			and "cloud Save ID is not changed" in import_confirmation_message.text,
+			"A valid JSON file should require confirmation before replacing local progress."
+		)
+		import_confirmation.hide()
+		menu.cancel_json_import()
+		_check(
+			"not changed" in save_data_status.text,
+			"Canceling JSON import should clearly retain the current save."
+		)
+		menu.close_save_data()
 		menu.open_cloud_save()
 		_check(
 			cloud_prompt.visible and cloud_save_id.secret,
@@ -289,7 +333,8 @@ func _run() -> void:
 		print(
 			"R&D player menu HUD smoke test passed: persistent button, retained search "
 			+ "focus, leveled evolution choices, held-item transfers, Party/PC swaps, bag "
-			+ "management, cloud opt-in/out, complete Pokedex, GIF art, focus, and cleanup verified."
+			+ "management, JSON transfer, cloud opt-in/out, complete Pokedex, GIF art, "
+			+ "focus, and cleanup verified."
 		)
 		get_tree().quit(0)
 		return

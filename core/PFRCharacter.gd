@@ -1,14 +1,32 @@
 class_name PFRCharacter
 extends CharacterBody3D
 
-## Reusable character locomotion. The active controller supplies world-space
-## move targets to the shared movement system.
+## Reusable character locomotion and behavior composition. The controller owns
+## movement/navigation state while the optional NPC behavior owns gameplay.
 
 @export_group("Movement")
 @export var character_movement: CharacterMovement = CharacterMovement.new()
 
-@export_group("Controller")
-@export var controller: NPCController = NPCController.new()
+@export_group("Movement & Navigation")
+@export var controller: NPCController = NPCController.new():
+	set(value):
+		controller = value
+		if controller == null:
+			return
+		if npc_behavior == null and controller.npc_behavior != null:
+			# Adopt scenes serialized with behavior nested in their controller.
+			npc_behavior = controller.npc_behavior
+		else:
+			_sync_behavior_to_controller()
+
+@export_group("NPC Behavior")
+## Optional gameplay behavior composed directly onto this character.
+## Assign TownNpcBehavior, TrainerBehavior, PokemonCenterHealerBehavior, or any
+## other NPCBehavior subclass here. Player characters normally leave it empty.
+@export var npc_behavior: NPCBehavior:
+	set(value):
+		npc_behavior = value
+		_sync_behavior_to_controller()
 
 @export_group("Character Art")
 @export var character_art_asset_pack: PFRCharacterArtAssetPack
@@ -27,11 +45,7 @@ var _current_animation: StringName
 
 func _ready() -> void:
 	add_to_group(&"pfr_characters")
-	if not character_movement:
-		character_movement = CharacterMovement.new()
-	if not controller:
-		controller = NPCController.new()
-	controller.prepare_for_character(self)
+	prepare_runtime_composition()
 
 	if not _load_character_art_asset_pack():
 		set_physics_process(false)
@@ -46,24 +60,29 @@ func _ready() -> void:
 
 func can_interact(interactor: PlayerCharacter) -> bool:
 	return (
-		controller != null
-		and controller.can_interact(self, interactor)
+		npc_behavior != null
+		and controller != null
+		and npc_behavior.can_interact(self, controller, interactor)
 	)
 
 
 func interact(interactor: PlayerCharacter) -> bool:
-	if controller == null:
+	if npc_behavior == null or controller == null:
 		return false
-	return controller.interact(self, interactor)
+	if not npc_behavior.can_interact(self, controller, interactor):
+		return false
+	return npc_behavior.interact(self, controller, interactor)
 
 
 func get_interaction_prompt(interactor: PlayerCharacter) -> String:
-	if controller == null:
+	if npc_behavior == null or controller == null:
 		return ""
-	return controller.get_interaction_prompt(self, interactor)
+	return npc_behavior.get_interaction_prompt(self, controller, interactor)
 
 
 func _physics_process(delta: float) -> void:
+	if npc_behavior != null:
+		npc_behavior.process_behavior(self, controller)
 	character_movement.process_movement(
 		self,
 		visual,
@@ -71,6 +90,29 @@ func _physics_process(delta: float) -> void:
 		delta
 	)
 	_update_animation()
+
+
+## Resolves direct authoring and the serialized pre-composition controller
+## format before runtime code inspects this character. Runtime spawners may call
+## this before adding a character to the tree.
+func prepare_runtime_composition() -> void:
+	if not character_movement:
+		character_movement = CharacterMovement.new()
+	if not controller:
+		controller = NPCController.new()
+
+	controller.prepare_for_character(self)
+	if npc_behavior == null and controller.npc_behavior != null:
+		# Compatibility for scenes saved before behavior moved onto PFRCharacter.
+		npc_behavior = controller.npc_behavior
+	else:
+		_sync_behavior_to_controller()
+
+
+func _sync_behavior_to_controller() -> void:
+	if controller != null:
+		# Kept as a serialized compatibility mirror for older scenes and scripts.
+		controller.npc_behavior = npc_behavior
 
 
 func _load_character_art_asset_pack() -> bool:

@@ -217,8 +217,8 @@ func _test_scary_reset_warnings() -> void:
 	var acknowledge_pokemon := menu.find_child(
 		"AcknowledgePokemonDeletion", true, false
 	) as CheckButton
-	var acknowledge_recovery := menu.find_child(
-		"AcknowledgeNoRecovery", true, false
+	var acknowledge_backup := menu.find_child(
+		"AcknowledgeBackupRequirement", true, false
 	) as CheckButton
 	var phrase := menu.find_child("ResetConfirmationPhrase", true, false) as LineEdit
 	var final_button := menu.find_child("ConfirmProgressReset", true, false) as Button
@@ -237,13 +237,15 @@ func _test_scary_reset_warnings() -> void:
 	)
 	_check(
 		not menu.advance_reset_warning(),
-		"Warning two should block progress until both irreversible acknowledgements are checked."
+		"Warning two should block progress until both deletion acknowledgements are checked."
 	)
 	acknowledge_pokemon.button_pressed = true
-	acknowledge_recovery.button_pressed = true
+	acknowledge_backup.button_pressed = true
 	_check(
-		menu.advance_reset_warning() and menu.get_reset_warning_step() == 3,
-		"Both acknowledgements should unlock the final point-of-no-return warning."
+		"JSON backup" in acknowledge_backup.text
+		and menu.advance_reset_warning()
+		and menu.get_reset_warning_step() == 3,
+		"Both acknowledgements should unlock the truthful final deletion warning."
 	)
 	phrase.release_focus()
 	phrase.unedit()

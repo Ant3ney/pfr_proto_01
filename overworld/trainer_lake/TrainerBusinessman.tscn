@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://core/PFRCharacter.gd" id="1_character"]
-[ext_resource type="Script" path="res://overworld/trainer_lake/TrainerKyle.gd" id="2_controller"]
+[ext_resource type="Script" path="res://core/TrainerBehavior.gd" id="2_behavior"]
 [ext_resource type="Resource" path="res://art/characters/za_city_businessman/za_city_businessman.tres" id="3_art_pack"]
 [ext_resource type="PackedScene" path="res://art/characters/za_city_businessman/models/model.glb" id="4_model"]
 [ext_resource type="Resource" path="res://overworld/dialogs/trainer_businessman.tres" id="5_dialog"]
@@ -12,14 +12,14 @@ height = 1.6
 
 [sub_resource type="Resource" id="Resource_trainer"]
 resource_local_to_scene = true
-script = ExtResource("2_controller")
+script = ExtResource("2_behavior")
 dialog = ExtResource("5_dialog")
 battle_scene_path = "res://battle/businessman_battle_scene.tscn"
 encounter_id = "trainer-businessman-city-v1"
 
 [node name="Businessman" type="CharacterBody3D"]
 script = ExtResource("1_character")
-controller = SubResource("Resource_trainer")
+npc_behavior = SubResource("Resource_trainer")
 character_art_asset_pack = ExtResource("3_art_pack")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

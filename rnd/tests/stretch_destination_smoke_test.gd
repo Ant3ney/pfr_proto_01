@@ -107,7 +107,7 @@ func _run() -> void:
 		"Each route choke should sit immediately before its trainer across the local winding path."
 	)
 	for trainer in _stretch_trainers(world):
-		var behavior := trainer.controller.npc_behavior as TrainerBehavior
+		var behavior := trainer.npc_behavior as TrainerBehavior
 		_check(behavior != null and behavior.automatic_sight_encounter, "Route trainers should use automatic sight encounters.")
 		_check(
 			behavior != null and behavior.is_highly_aggro(),
@@ -130,7 +130,7 @@ func _run() -> void:
 	if route_player != null and not route_trainers.is_empty():
 		var first_route_trainer := route_trainers[0]
 		var first_route_behavior := (
-			first_route_trainer.controller.npc_behavior as TrainerBehavior
+			first_route_trainer.npc_behavior as TrainerBehavior
 		)
 		var trainer_forward := _trainer_forward(first_route_trainer)
 		route_player.global_position = first_route_trainer.global_position + trainer_forward * 6.0
@@ -166,7 +166,7 @@ func _run() -> void:
 	if route_player != null and not route_trainers.is_empty():
 		var repeated_route_trainer := route_trainers[0]
 		var repeated_route_behavior := (
-			repeated_route_trainer.controller.npc_behavior as TrainerBehavior
+			repeated_route_trainer.npc_behavior as TrainerBehavior
 		)
 		var repeated_forward := _trainer_forward(repeated_route_trainer)
 		route_player.global_position = repeated_route_trainer.global_position + repeated_forward * 6.0
@@ -236,7 +236,7 @@ func _run() -> void:
 		else null
 	)
 	if gym_player != null and gym_leader != null:
-		var gym_behavior := gym_leader.controller.npc_behavior as TrainerBehavior
+		var gym_behavior := gym_leader.npc_behavior as TrainerBehavior
 		gym_behavior.automatic_sight_encounter = false
 		gym_player.global_position = gym_leader.global_position + Vector3(0.0, 0.0, 2.0)
 		var player_visual := gym_player.get_node_or_null(^"Visual") as Node3D
@@ -357,7 +357,7 @@ func _check_trainer_resource_isolation() -> void:
 			continue
 		var completed_trainer := trainer_scene.instantiate() as PFRCharacter
 		var completed_behavior := (
-			completed_trainer.controller.npc_behavior as TrainerBehavior
+			completed_trainer.npc_behavior as TrainerBehavior
 			if completed_trainer != null
 			else null
 		)
@@ -373,7 +373,7 @@ func _check_trainer_resource_isolation() -> void:
 
 		var fresh_trainer := trainer_scene.instantiate() as PFRCharacter
 		var fresh_behavior := (
-			fresh_trainer.controller.npc_behavior as TrainerBehavior
+			fresh_trainer.npc_behavior as TrainerBehavior
 			if fresh_trainer != null
 			else null
 		)
@@ -409,7 +409,7 @@ func _check_release_export_pre_spawn_repair() -> void:
 			destination.free()
 		return
 
-	trainer.controller.npc_behavior = null
+	trainer.npc_behavior = null
 	var configured: bool = bool(destination.call(
 		"_configure_existing_trainer",
 		trainer,
@@ -419,13 +419,13 @@ func _check_release_export_pre_spawn_repair() -> void:
 			"display_name": "Export Repair Trainer",
 		}
 	))
-	var repaired_behavior := trainer.controller.npc_behavior as TrainerBehavior
+	var repaired_behavior := trainer.npc_behavior as TrainerBehavior
 	_check(
 		configured
 		and repaired_behavior != null
 		and repaired_behavior.encounter_id == "web-export-repair-test"
 		and repaired_behavior.is_highly_aggro(),
-		"A generated destination should repair a release-exported null trainer behavior before spawning."
+		"A generated destination should repair a release-exported null direct behavior before spawning."
 	)
 	trainer.free()
 	destination.free()

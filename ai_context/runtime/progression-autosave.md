@@ -110,7 +110,13 @@ away from an editor-run or intentionally selected scene.
 confirmation-gated `reset_all_progress()` are the ordinary RND checkpoint API.
 `get_save_payload()` returns the same timestamped data without a Save ID;
 `apply_cloud_payload()` runs an already-resolved cloud result through the normal
-validators and immediately checkpoints it locally. See
+validators and immediately checkpoints it locally. `get_export_json()` and
+`write_export_json(path)` serialize that same credential-free schema-5 payload
+for portable backups. `import_json_save(source, source_label)` accepts at most
+2 MiB, reuses the disk/cloud validators, immediately replaces the local
+checkpoint, and re-timestamps every section as a fresh monotonic local change.
+It preserves the separate cloud linkage and is refused while a battle,
+transition, reset, or starter handoff makes replacement unsafe. See
 [`cloud-save.md`](cloud-save.md) for the optional sync owner and conflict rules.
 Reset deletes the old file and all progression owners, returns to the main
 scene, and suppresses saving until a new starter is chosen. Automatic disk I/O
@@ -141,7 +147,8 @@ The test uses a dedicated temporary `user://` filename and removes it after
 verifying disk write, validated collection reload, a pending level-up move
 choice, a held Exp. Share, a claimed world gift, and same-scene pose restore.
 It also verifies Stretchman economy restoration and the Route 0 clear/Route 1
-unlock from the same checkpoint, schema-5 section timestamps, and validated
-cloud-payload application. The starter test covers schema-5 profile creation
-and complete destructive reset; the cloud test covers in-flight local-change
-rebasing without contacting an external service.
+unlock from the same checkpoint, schema-5 section timestamps, credential-free
+JSON export, JSON round-trip replacement, and validated cloud-payload
+application. The starter test covers schema-5 profile creation and complete
+destructive reset; the cloud test covers linked JSON-import synchronization and
+in-flight local-change rebasing without contacting an external service.

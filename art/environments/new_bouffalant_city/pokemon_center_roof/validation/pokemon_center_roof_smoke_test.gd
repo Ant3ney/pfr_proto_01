@@ -1,7 +1,7 @@
 extends Node
 
 const WRAPPER_SCENE := preload("res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_with_roof.tscn")
-const MODULAR_GROUND_SCENE := preload("res://demo/primary_development_enviroment.tscn")
+const NEW_BOUFFALANT_CITY_SCENE := preload("res://demo/primary_development_enviroment.tscn")
 const WRAPPER_PATH := "res://art/environments/new_bouffalant_city/pokemon_center_roof/pokemon_center_with_roof.tscn"
 const EXPECTED_WORLD_POSITION := Vector3(-1.0, 0.0, -17.0)
 const MAX_ROOF_TRIANGLES := 256
@@ -155,15 +155,15 @@ func _ready() -> void:
 		_fail("Door sets no longer fit both measured street entrances: %s" % [door_fit])
 		return
 
-	var modular_ground := MODULAR_GROUND_SCENE.instantiate() as Node3D
-	if modular_ground == null:
-		_fail("Modular ground scene could not be instantiated.")
+	var new_bouffalant_city := NEW_BOUFFALANT_CITY_SCENE.instantiate() as Node3D
+	if new_bouffalant_city == null:
+		_fail("New Bouffalant City scene could not be instantiated.")
 		return
-	add_child(modular_ground)
+	add_child(new_bouffalant_city)
 	await get_tree().process_frame
-	var placed_center := modular_ground.get_node_or_null("T1BPokemonCenterOut") as Node3D
+	var placed_center := new_bouffalant_city.get_node_or_null("T1BPokemonCenterOut") as Node3D
 	if placed_center == null:
-		_fail("modular_ground_scene is missing T1BPokemonCenterOut.")
+		_fail("New Bouffalant City scene is missing T1BPokemonCenterOut.")
 		return
 	if placed_center.scene_file_path != WRAPPER_PATH:
 		_fail("T1BPokemonCenterOut is not instancing the fitted roof wrapper.")
@@ -181,9 +181,9 @@ func _ready() -> void:
 	):
 		_fail("Placed Pokemon Center is missing a wrapper child.")
 		return
-	var sun := modular_ground.get_node_or_null("Sun") as DirectionalLight3D
+	var sun := new_bouffalant_city.get_node_or_null("Sun") as DirectionalLight3D
 	if sun == null or not sun.shadow_enabled:
-		_fail("Modular ground's basic directional shadows are not enabled.")
+		_fail("New Bouffalant City scene's basic directional shadows are not enabled.")
 		return
 
 	print(

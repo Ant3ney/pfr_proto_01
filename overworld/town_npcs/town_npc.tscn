@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://core/PFRCharacter.gd" id="1_character"]
-[ext_resource type="Script" path="res://core/NPCController.gd" id="2_controller"]
 [ext_resource type="Script" path="res://overworld/town_npcs/TownNpcBehavior.gd" id="3_behavior"]
 [ext_resource type="Resource" path="res://art/characters/za_city_adult_a_01/za_city_adult_a_01.tres" id="4_default_art"]
 
@@ -13,14 +12,9 @@ height = 1.6
 resource_local_to_scene = true
 script = ExtResource("3_behavior")
 
-[sub_resource type="Resource" id="Resource_town_npc_controller"]
-resource_local_to_scene = true
-script = ExtResource("2_controller")
-npc_behavior = SubResource("Resource_town_npc_behavior")
-
 [node name="TownNpc" type="CharacterBody3D"]
 script = ExtResource("1_character")
-controller = SubResource("Resource_town_npc_controller")
+npc_behavior = SubResource("Resource_town_npc_behavior")
 character_art_asset_pack = ExtResource("4_default_art")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

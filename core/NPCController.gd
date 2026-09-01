@@ -1,11 +1,12 @@
 class_name NPCController
 extends Resource
 
-## Supplies a persistent map-coordinate target to a PFRCharacter.
+## Supplies movement and navigation state to a PFRCharacter.
 
-@export_group("Behavior")
-## NPC-specific behavior. Accepts NPCBehavior resources and their subclasses.
-@export var npc_behavior: NPCBehavior
+## Serialized compatibility mirror for scenes authored before PFRCharacter
+## directly owned its NPC behavior. New content must assign
+## PFRCharacter.npc_behavior instead.
+@export_storage var npc_behavior: NPCBehavior
 
 @export_group("Navigation")
 ## Last requested destination. Merely deserializing this stored value must not
@@ -29,9 +30,6 @@ func prepare_for_character(_character: CharacterBody3D) -> void:
 
 
 func get_move_target(character: CharacterBody3D) -> Vector3:
-	if npc_behavior:
-		npc_behavior.process_behavior(character, self)
-
 	if not _has_move_target:
 		return character.global_position
 

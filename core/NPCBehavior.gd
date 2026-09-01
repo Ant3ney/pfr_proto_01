@@ -2,7 +2,7 @@ class_name NPCBehavior
 extends Resource
 
 ## Base resource for NPC-specific behavior.
-## Extend this class to create behaviors that can be assigned to an NPCController.
+## Extend this class to create behaviors assigned directly to PFRCharacter.
 
 
 func _init() -> void:

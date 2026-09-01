@@ -99,13 +99,19 @@ To start a battle, you call a function on the game instance class. You pass in t
 
 #### NPCController
 
-Specify a point on the map and the NPC will use it's  npc controller to manage the logic to go there.
+Specify a point on the map and the NPC will use its controller's navigation and
+movement helpers to go there. The controller owns movement state, not the
+character's gameplay role.
 
 Can spcifify and make logic saying that this is the kind of character that sits in one spot and looks forward untill the player enters in front of him and then runs to the player and starts a battle.
 
 #### NPC Behavior Script
 
-This is a type script that you can pas int the NPC cotroller and it will controll what the NPC does. The NPC controller simply provides a large ammount of helper functions the NPC behavior can call on for help.
+This is a Resource assigned directly to `PFRCharacter.npc_behavior`. It controls
+what an NPC does and can call the character's supplied `NPCController` for
+movement and navigation help. Town conversation, roaming, trainer, Center
+attendant, and Stretchman roles use separate behavior subclasses without
+requiring separate character or controller types.
 
 #### Player controller
 
@@ -117,7 +123,8 @@ Entities that impliment this interface will be have access to a lot of objects w
 
 The current RND implementation attaches a forward target detector to the shared
 player and a touch-friendly interaction button to `GameUI`. `PFRCharacter`
-delegates the request through `NPCController` to the owning `NPCBehavior`, so
+delegates the request directly to its owning `NPCBehavior` and supplies its
+movement controller as behavior context, so
 trainer dialog/battle and Center healing retain their own sequence state and
 cleanup. See [`runtime/interaction-hud.md`](runtime/interaction-hud.md).
 

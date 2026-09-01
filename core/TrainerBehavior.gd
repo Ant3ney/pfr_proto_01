@@ -36,9 +36,10 @@ var stopping_buffer := 0.15
 @export_range(0.01, 1.0, 0.01, "or_greater", "suffix:m")
 var arrival_distance := 0.15
 
-var dialog: Dialog
-var battle_scene_path := ""
-var encounter_id := ""
+@export_group("Encounter")
+@export var dialog: Dialog
+@export_file("*.tscn") var battle_scene_path := ""
+@export var encounter_id := ""
 
 var _approach_state := ApproachState.WAITING
 var _approach_target := Vector3.ZERO

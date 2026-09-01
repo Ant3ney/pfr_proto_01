@@ -81,9 +81,9 @@ restores player movement and, only after normal final-line completion, hands
 control to `GameInstance.startBattle()` for a trainer encounter. See
 [`sequences.md`](sequences.md) for the control-state contract.
 
-Trainer dialog data is assigned through the exported `dialog` property on
-[`TrainerKyle`](../../overworld/trainer_lake/TrainerKyle.gd); the lake trainer
-scene demonstrates that resource assignment in
+Trainer dialog data is assigned through the exported `dialog` property on the
+direct [`TrainerBehavior`](../../core/TrainerBehavior.gd) resource owned by a
+`PFRCharacter`; the lake trainer scene demonstrates that resource assignment in
 [`TrainerKyle.tscn`](../../overworld/trainer_lake/TrainerKyle.tscn).
 
 [`PokemonCenterHealerBehavior`](../../core/PokemonCenterHealerBehavior.gd) is
