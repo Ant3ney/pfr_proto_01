@@ -25,20 +25,11 @@ selection or dispatch behavior.
 
 ## Behavior dispatch boundary
 
-`PFRCharacter` directly exports one optional `npc_behavior: NPCBehavior` and
-dispatches `can_interact`, `get_interaction_prompt`, `interact`, and per-physics
-behavior processing to it. The character passes its `NPCController` into those
-calls as movement/navigation infrastructure; the controller does not own new
-gameplay behavior authoring. The base behavior rejects interaction. An
-implementing behavior remains the owner of its dialog, battle launch, movement
-lock, and cleanup; the detector and HUD do not interpret gameplay data.
-
-The intended Inspector workflow is to add a `PFRCharacter`, assign its art and
-collision, then create a `TownNpcBehavior`, `RoamingTownNpcBehavior`,
-`TrainerBehavior`, `PokemonCenterHealerBehavior`, or another subclass directly
-in the character's **NPC Behavior** property. Trainer dialog, battle scene,
-encounter ID, detection, and aggression fields are exported by
-`TrainerBehavior`; no trainer-specific controller is required.
+`PFRCharacter` delegates `can_interact`, `get_interaction_prompt`, and
+`interact` to `NPCController`, which delegates to its `NPCBehavior`. The base
+behavior rejects interaction. An implementing behavior remains the owner of
+its dialog, battle launch, movement lock, and cleanup; the detector and HUD do
+not interpret gameplay data.
 
 `TrainerBehavior` accepts interaction only from `WAITING`. A trainer with dialog
 opens that dialog and starts its configured battle after the final line. A
@@ -52,16 +43,17 @@ their sight challenge again after the player leaves and starts that destination
 anew. The HUD remains an alternate way to talk while a trainer is `WAITING`,
 such as when the player approaches from the side or behind.
 
-Every authored stateful behavior subresource is explicitly
-`resource_local_to_scene`, and `NPCBehavior._init()` applies the same rule to
-runtime-created behaviors. `PFRCharacter.prepare_runtime_composition()` keeps a
-hidden serialized controller mirror only for compatibility: it adopts behavior
-from a pre-migration controller when needed, while direct character authoring is
-authoritative for current scenes. Generated destinations configure the direct
-`TrainerBehavior` before adding the character to the tree and recreate it if a
-release export stripped the resource. Do not remove the scene-local ownership or
-pre-spawn repair: shared behavior resources leak `COMPLETE` between trainers,
-and a null exported behavior makes generated opponents disappear.
+Every stateful NPC scene explicitly marks its controller resource
+`resource_local_to_scene`, and `NPCBehavior._init()` makes runtime-created
+behaviors scene-local. `PFRCharacter._ready()` calls
+`NPCController.prepare_for_character()` so `TrainerKyle` can recreate an
+exported null behavior and re-synchronize its dialog, battle path, encounter ID,
+and aggression mode after Godot duplicates the controller. Generated
+destinations call the same preparation hook before inspecting a trainer that has
+not entered the tree yet. Do not remove these ownership and repair steps: shared
+resources leak `COMPLETE` between trainers, an unsynchronized duplicate launches
+the generic no-encounter battle preview, and a release-exported null behavior
+makes Route 0 trainers inert while generated opponents are discarded.
 
 `PokemonCenterHealerBehavior` exposes the same dispatcher through
 `start_healing_sequence()`. The behavior still supports legacy automatic
@@ -84,7 +76,6 @@ cobblestone and grants the persistent one-time Exp. Share gift.
 ## Regression checks
 
 ```bash
-godot --headless --path . --scene res://tests/pfr_character_behavior_composition_smoke_test.tscn
 godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
 godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
 godot --headless --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn

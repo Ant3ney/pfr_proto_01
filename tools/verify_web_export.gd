@@ -67,11 +67,12 @@ func _verify_route_trainers() -> void:
 		var trainer := route.get_node_or_null(
 			NodePath("RouteTrainers/%s" % trainer_name)
 		) as Node3D
-		var behavior := trainer.get("npc_behavior") as Resource if trainer != null else null
+		var controller := trainer.get("controller") as Resource if trainer != null else null
+		var behavior := controller.get("npc_behavior") as Resource if controller != null else null
 		_check(trainer != null, "The exported Route 0 scene should contain %s." % trainer_name)
 		_check(
 			behavior != null,
-			"The exported %s character should retain its direct trainer behavior." % trainer_name
+			"The exported %s controller should repair its trainer behavior." % trainer_name
 		)
 		_check(
 			trainer != null
@@ -112,7 +113,8 @@ func _verify_destination_pre_spawn_repair() -> void:
 
 	var trainer := trainer_scene.instantiate()
 	var destination := destination_scene.instantiate()
-	trainer.set("npc_behavior", null)
+	var controller := trainer.get("controller") as Resource
+	controller.set("npc_behavior", null)
 	var configured: bool = bool(destination.call(
 		"_configure_existing_trainer",
 		trainer,
@@ -122,7 +124,7 @@ func _verify_destination_pre_spawn_repair() -> void:
 			"display_name": "Web Export Trainer",
 		}
 	))
-	var repaired_behavior := trainer.get("npc_behavior") as Resource
+	var repaired_behavior := controller.get("npc_behavior") as Resource
 	_check(
 		configured
 		and repaired_behavior != null

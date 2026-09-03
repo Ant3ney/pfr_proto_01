@@ -125,13 +125,12 @@ offsets where scenery formerly blocked a sight ray. These trainers retain
 standard one-time automatic sight and manual rematches; they do not become
 Highly Aggro. A glowing physical completion gate is placed at Route 0's far end.
 
-Generated opponents do not have an R&D character, controller, behavior, or
-battle-launch subclass. The destination instances the existing authored
-trainer scenes from `overworld/trainer_lake/`, retains their direct
-`PFRCharacter.npc_behavior` using the exact `core/TrainerBehavior.gd`, and
-configures dialog, sight distance,
+Generated opponents do not have an R&D trainer script, controller, behavior,
+or battle-launch override. The destination instances the existing authored
+trainer scenes from `overworld/trainer_lake/`, retains their `NPCController` and
+the exact `core/TrainerBehavior.gd`, and configures dialog, sight distance,
 normal `0.15 m` stopping distance, battle scene path, stable encounter ID, and
-the shared behavior's `HIGHLY_AGGRO` mode. Authored trainer behavior resources
+the shared behavior's `HIGHLY_AGGRO` mode. Authored trainer controller resources
 are scene-local, so an opponent completed earlier in a long play session cannot
 poison a later generated instance. Highly Aggro ignores standard trainers'
 session-level sight consumption; the immediate return remains suppressed to

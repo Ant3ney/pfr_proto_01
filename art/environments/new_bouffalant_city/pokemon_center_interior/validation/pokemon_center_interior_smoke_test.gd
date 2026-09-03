@@ -156,7 +156,7 @@ func _ready() -> void:
 		healer == null
 		or nurse_spawn == null
 		or not healer.position.is_equal_approx(nurse_spawn.position)
-		or not healer.npc_behavior is PokemonCenterHealerBehavior
+		or not healer.controller.npc_behavior is PokemonCenterHealerBehavior
 	):
 		_fail("The staffed healer must occupy NurseSpawn and use PokemonCenterHealerBehavior.")
 		return

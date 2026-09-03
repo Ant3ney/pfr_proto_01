@@ -23,9 +23,8 @@ GameInstance.startBattle({
 
 `TrainerBehavior` closes its dialog through the normal `UITemplate.close()`
 lifecycle, releases its dialog lock, and transfers control to `startBattle()`.
-Each trainer's direct `TrainerBehavior` supplies only its stable ID and matching
-concrete scene path. Kyle uses `trainer-kyle-lake-v1` with
-`kyle_battle_scene.tscn`. The city
+Each trainer controller supplies only its stable ID and matching concrete scene
+path. Kyle uses `trainer-kyle-lake-v1` with `kyle_battle_scene.tscn`. The city
 lineup uses stable `trainer-<role>-city-v1` IDs with matching concrete battle
 scenes for Delivery Worker, Police Officer, Businessman, Backpacker, Jogger,
 and Tourist. Every lineup trainer owns an independent encounter resource even

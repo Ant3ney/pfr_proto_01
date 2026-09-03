@@ -529,13 +529,17 @@ func _configure_existing_trainer(
 	trainer: PFRCharacter,
 	encounter: Dictionary
 ) -> bool:
-	trainer.prepare_runtime_composition()
-	var trainer_behavior := trainer.npc_behavior as TrainerBehavior
+	var trainer_controller := trainer.controller as NPCController
+	if trainer_controller != null:
+		trainer_controller.prepare_for_character(trainer)
+	var trainer_behavior := (
+		trainer_controller.npc_behavior as TrainerBehavior
+		if trainer_controller != null
+		else null
+	)
 	if trainer_behavior == null:
-		# Dynamic destinations can repair a stripped release-exported behavior
-		# before the character enters the tree.
-		trainer_behavior = TrainerBehavior.new()
-		trainer.npc_behavior = trainer_behavior
+		push_error("Authored trainer scene is missing its existing TrainerBehavior.")
+		return false
 
 	var encounter_id := String(encounter.get("encounter_id", "")).strip_edges()
 	var battle_scene_path := String(encounter.get("battle_scene_path", "")).strip_edges()
@@ -548,11 +552,11 @@ func _configure_existing_trainer(
 	challenge_dialog.dialog_lines = [
 		"This route has no shortcuts. Clear my checkpoint to keep climbing!",
 	]
-	trainer_behavior.automatic_sight_encounter = true
-	trainer_behavior.aggression_mode = TrainerBehavior.AggressionMode.HIGHLY_AGGRO
-	trainer_behavior.dialog = challenge_dialog
-	trainer_behavior.battle_scene_path = battle_scene_path
-	trainer_behavior.encounter_id = encounter_id
+	trainer_controller.automatic_sight_encounter = true
+	trainer_controller.aggression_mode = TrainerBehavior.AggressionMode.HIGHLY_AGGRO
+	trainer_controller.dialog = challenge_dialog
+	trainer_controller.battle_scene_path = battle_scene_path
+	trainer_controller.encounter_id = encounter_id
 	trainer_behavior.detection_distance = 8.0
 	trainer_behavior.ray_height = 0.8
 	trainer_behavior.detection_collision_mask = 1

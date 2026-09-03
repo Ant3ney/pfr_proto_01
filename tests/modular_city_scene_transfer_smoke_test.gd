@@ -372,7 +372,8 @@ class TransferWatcher:
 		) as Marker3D
 		_check(
 			stretchman != null
-			and stretchman.npc_behavior is RNDStretchmanBehavior,
+			and stretchman.controller != null
+			and stretchman.controller.npc_behavior is RNDStretchmanBehavior,
 			"Miare Station should contain the interactive Stretchman hub NPC."
 		)
 		_check(

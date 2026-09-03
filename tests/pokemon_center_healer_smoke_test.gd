@@ -30,7 +30,7 @@ func _run() -> void:
 	if healer_character != null:
 		add_child(healer_character)
 		await get_tree().process_frame
-		var behavior := healer_character.npc_behavior as PokemonCenterHealerBehavior
+		var behavior := healer_character.controller.npc_behavior as PokemonCenterHealerBehavior
 		_check(behavior != null, "The Center clerk should use PokemonCenterHealerBehavior.")
 		_check(
 			healer_character.character_art_asset_pack != null

@@ -50,7 +50,7 @@ func _run() -> void:
 		if resident == null:
 			continue
 		resident_names.append(String(resident.name))
-		var behavior := resident.npc_behavior
+		var behavior := resident.controller.npc_behavior if resident.controller != null else null
 		_check(
 			behavior is TownNpcBehavior and not behavior is TrainerBehavior,
 			"%s should talk without owning trainer or battle behavior." % resident.name
@@ -98,7 +98,7 @@ func _run() -> void:
 	var mara := residents.get_node_or_null(^"Mara") as PFRCharacter
 	_check(player != null and mara != null, "The conversation fixture should find the player and Mara.")
 	if player != null and mara != null:
-		var mara_behavior := mara.npc_behavior as TownNpcBehavior
+		var mara_behavior := mara.controller.npc_behavior as TownNpcBehavior
 		_check(
 			mara.can_interact(player) and mara.get_interaction_prompt(player) == "Talk to Mara",
 			"A nearby resident should advertise a Talk interaction rather than a battle."
@@ -132,7 +132,7 @@ func _run() -> void:
 				"Researcher Lumen should stand on authored cobblestone instead of the grass underlay."
 			)
 	if player != null and lumen != null:
-		var lumen_behavior := lumen.npc_behavior as TownNpcBehavior
+		var lumen_behavior := lumen.controller.npc_behavior as TownNpcBehavior
 		_check(lumen.interact(player), "Researcher Lumen should accept the first conversation.")
 		_check(
 			StretchGoalSystem.get_item_count(StretchGoalSystem.XP_SHARE_ITEM_KEY) == 1
@@ -152,8 +152,8 @@ func _run() -> void:
 		await get_tree().process_frame
 
 	var cam := residents.get_node_or_null(^"Cam") as PFRCharacter
-	if cam != null and cam.npc_behavior is RoamingTownNpcBehavior:
-		var roaming := cam.npc_behavior as RoamingTownNpcBehavior
+	if cam != null and cam.controller.npc_behavior is RoamingTownNpcBehavior:
+		var roaming := cam.controller.npc_behavior as RoamingTownNpcBehavior
 		roaming.minimum_pause_seconds = 0.0
 		roaming.maximum_pause_seconds = 0.0
 		cam.controller.stop_moving(cam)

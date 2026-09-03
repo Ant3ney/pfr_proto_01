@@ -45,9 +45,8 @@ Use `pokemon_center_interior/pokemon_center_interior.tscn` as the playable main 
 The city has 10 authored contact-triggered exterior openings. `PokemonCenterSouthEntranceTrigger` targets the main clinic, while `PokemonCenterEastEntranceTrigger` targets the distinct `pokemon_center_annex/pokemon_center_annex.tscn` service environment. The other eight openings cover three City Hall approaches, the Miare Station double doors, the sole city-facing Gate Building door, two tenant doors, and the museum doors. Rouge Tower and garage transition triggers and return markers are absent. The two tenant instances use distinct scenes so neither can return to the other building. Miare Station instances the R&D-only `Stretchman` hub and `StretchmanReturnSpawn`; generated destinations return there. Entering the Gate Building places the player well beyond its narrow front exit threshold. Its illuminated `ROUTE 0` rear door uses contact transfer with no interaction prop, while Route 0 places a red interactive return object beside `Route0Start` that targets the adjacent `Route0ReturnSpawn` in the rear room. The front `CITY EXIT` label and blue floor guide make the way back outside explicit.
 
 The main city scene also owns a seven-member `TownResidents` group. These
-`PFRCharacter` instances own direct non-battling repeatable conversation
-behavior resources, three use women art packs, and three use the bounded
-local-roaming subclass. Their dialog builds
+characters use non-battling repeatable conversation behavior, three use women
+art packs, and three use the bounded local-roaming subclass. Their dialog builds
 regional, borough, council, Miare Station, and Team Bastion lore. Researcher
 Lumen is fixed to an interior cobblestone plaza tile at `(10, 0, 5)` and grants
 the one-time Exp. Share; the focused town test verifies his surface placement

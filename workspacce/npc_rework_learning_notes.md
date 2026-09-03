@@ -5,6 +5,30 @@ I don't like how each NPC needs to have a children in them and they hold things 
 
 One think i may be able to change is the fact so many resources are assigned to the "prefab" that is a pfr character. Perhaps it just has the one character resouuce and that one resouce, you define the sub resouuces like behavior, NPCController, movement, and the asset pack. Still, that may still be a symptop of my UE5 way of thinking
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # PResentation
 AI made MVP of game and now it's full of techical slop. Not tecnical debt, tecnical slop.
 It's just missing items. If you use items in a pokemon game then your a nerd.
