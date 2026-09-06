@@ -1,11 +1,11 @@
 {
   "format_version": 1,
   "style_id": "hopeful_civic_adventure_v1",
-  "source_note": "Pokemon ZA field geometry with decoded UV-mapped source albedo and PBR detail, presented with Pokemon Fracture/Revolt hopeful civic-adventure lighting and semantic fallback materials where a source map is absent. Exact 4 m project route tiles use decoded Pokemon ZA grass/soil maps and exact 2 m city cobble tiles use shared UV-mapped PBR textures. Both are explicitly separated from complete source-authored map sections.",
-  "runtime_pack_note": "All 147 GLBs contain embedded image data. Godot's Extract Textures import mode materializes 1,831 equivalent companion PNGs beside the models; keep those PNGs and their import metadata with this directory. The only textures outside the model directory are the four files used by the six route-tile scenes. The five city-cobble entries reuse the canonical ground_tile resources in this environment pack.",
+  "source_note": "Pokemon ZA field geometry with decoded UV-mapped source albedo and PBR detail, presented with Pokemon Fracture/Revolt hopeful civic-adventure lighting and semantic fallback materials where a source map is absent. Exact 4 m project route tiles use decoded Pokemon ZA grass/soil maps. Exact 2 m city cobble and grass/dirt tiles use shared UV-mapped PBR resources and are explicitly separated from complete source-authored map sections.",
+  "runtime_pack_note": "All 147 GLBs contain embedded image data. Godot's Extract Textures import mode materializes 1,831 equivalent companion PNGs beside the models; keep those PNGs and their import metadata with this directory. Ten additional shared textures serve the six route scenes and six grass/dirt scenes. The eleven directly placeable 2 m ground wrappers reuse the canonical ground_tile resources in this environment pack.",
   "runtime_import_scale": 0.75,
   "dimensions_note": "GLB dimensions are source-space bounds and use runtime_import_scale at runtime. Authored scene dimensions are already runtime dimensions.",
-  "asset_count": 158,
+  "asset_count": 164,
   "assets": [
     {
       "id": "t1_b_cityhall",
@@ -12056,6 +12056,366 @@
       },
       "removed_shadow_triangles": 0,
       "output_bytes": 11156
+    },
+    {
+      "id": "grass_dirt_flat_02x02",
+      "title": "Grass/Dirt Flat — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_flat_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 14,
+      "vertices": 25,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 2118
+    },
+    {
+      "id": "grass_dirt_straight_02x02",
+      "title": "Grass/Dirt Straight — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_straight_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_straight_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 58,
+      "vertices": 73,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 4745
+    },
+    {
+      "id": "grass_dirt_corner_02x02",
+      "title": "Grass/Dirt L Intersection — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_lintersection_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_corner_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 76,
+      "vertices": 91,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 5571
+    },
+    {
+      "id": "grass_dirt_t_junction_02x02",
+      "title": "Grass/Dirt T Intersection — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_tintersection_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_t_junction_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 82,
+      "vertices": 99,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 5919
+    },
+    {
+      "id": "grass_dirt_cross_02x02",
+      "title": "Grass/Dirt Junction — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_junction_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_cross_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 102,
+      "vertices": 121,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 6883
+    },
+    {
+      "id": "grass_dirt_end_02x02",
+      "title": "Grass/Dirt End — 2×2 m",
+      "category": "Modular Ground",
+      "kind": "modular_ground",
+      "source_archive": "Project-authored Blender grass/dirt kit",
+      "source_path": "source_assets/grass_dirt_path_kit_01.blend#GND_Flat_02x02_grass_dirt_end_A",
+      "model_path": "res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_end_02x02.tscn",
+      "dimensions": [
+        2.0,
+        0.25,
+        2.0
+      ],
+      "triangles": 66,
+      "vertices": 79,
+      "mesh_objects": 1,
+      "materials": {
+        "Muted Grass": {
+          "textures": {
+            "albedo": "grass_dirt_grass_albedo.png",
+            "normal": "grass_dirt_grass_normal.png",
+            "roughness": "grass_dirt_grass_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.2,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Warm Dirt": {
+          "textures": {
+            "albedo": "grass_dirt_dirt_albedo.png",
+            "normal": "grass_dirt_dirt_normal.png",
+            "roughness": "grass_dirt_dirt_roughness.png"
+          },
+          "fallback_albedo": null,
+          "fallback_roughness": null,
+          "fallback_metallic": 0.0,
+          "normal_scale": 0.16,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        },
+        "Dark Soil": {
+          "textures": {},
+          "fallback_albedo": [
+            0.2601,
+            0.206,
+            0.1517,
+            1.0
+          ],
+          "fallback_roughness": 0.95,
+          "fallback_metallic": 0.0,
+          "alpha_type": "Opaque",
+          "alpha_test": false
+        }
+      },
+      "removed_shadow_triangles": 0,
+      "output_bytes": 5032
     }
   ],
   "failures": []

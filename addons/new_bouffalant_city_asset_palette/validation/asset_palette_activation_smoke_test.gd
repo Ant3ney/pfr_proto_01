@@ -16,6 +16,9 @@ func _run() -> void:
 	if assets.is_empty():
 		_fail("Could not load catalog assets.")
 		return
+	if assets.size() != 164:
+		_fail("Palette loaded %d assets; expected 164." % assets.size())
+		return
 
 	var dock := AssetPaletteDock.new()
 	root.add_child(dock)
@@ -48,10 +51,14 @@ func _run() -> void:
 	if not dock.start_placement_for_asset("t1_b_gate_building"):
 		_fail("Programmatic Gate Building placement could not be activated.")
 		return
+	if not dock.start_placement_for_asset("grass_dirt_end_02x02"):
+		_fail("Grass/dirt ground placement could not be activated.")
+		return
 
 	print(
 		"Bouffalant palette activation smoke test passed: Gate Building, Museum, and "
-		+ "Tenant Building double-click into normal Forward+ viewport placement."
+		+ "Tenant Building double-click into normal Forward+ viewport placement; the "
+		+ "164-entry catalog includes placeable grass/dirt ground."
 	)
 	quit(0)
 

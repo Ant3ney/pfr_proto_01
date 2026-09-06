@@ -141,7 +141,7 @@ func _ready() -> void:
 		_fail("Interior fill lights must exist and remain shadow-free for mobile performance.")
 		return
 
-	var camera := interior.get_node_or_null(^"Runtime/Camera3D") as Camera3D
+	var camera := interior.get_node_or_null(^"Player/Camera3D") as Camera3D
 	if camera == null or not camera.current or camera.fov < 51.5 or camera.fov > 52.5:
 		_fail("Interior gameplay camera no longer matches the authored lower-view composition.")
 		return

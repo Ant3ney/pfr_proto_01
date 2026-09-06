@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_straight_a.tres" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(2, 0.25, 2)
+
+[node name="GrassDirtStraight02x02" type="Node3D"]
+editor_description = "Exact 2 x 2 meter grass/dirt straight with 1.65 m north/south openings. Pivot is centered on the walkable surface; slab extends to Y = -0.25."
+
+[node name="Model" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, -0.125, 0)
+shape = SubResource("BoxShape3D_ground")
+

@@ -88,7 +88,7 @@ func _run() -> void:
 		"Resident conversations should build civic history, regional division, and Team Bastion lore."
 	)
 
-	var player := city.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+	var player := city.get_node_or_null(^"Player") as PlayerCharacter
 	var mara := residents.get_node_or_null(^"Mara") as PFRCharacter
 	_check(player != null and mara != null, "The conversation fixture should find the player and Mara.")
 	if player != null and mara != null:

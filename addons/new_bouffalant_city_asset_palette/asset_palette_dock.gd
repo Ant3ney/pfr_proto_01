@@ -156,7 +156,10 @@ func _build_interface() -> void:
 	add_child(heading)
 
 	var intro := Label.new()
-	intro.text = "Search the 158-asset catalog, then place scene instances directly in the 3D viewport."
+	intro.text = (
+		"Search the %d-asset catalog, then place scene instances directly in the 3D viewport."
+		% _assets.size()
+	)
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(intro)
 
@@ -296,13 +299,15 @@ func _build_interface() -> void:
 	var browser_row := HBoxContainer.new()
 	var ground_button := Button.new()
 	ground_button.text = "Ground Grid"
-	ground_button.tooltip_text = "Open the 2 × 2 m cobble GridMap workspace."
+	ground_button.tooltip_text = "Open the 2 × 2 m cobble and grass/dirt GridMap workspace."
 	ground_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ground_button.pressed.connect(func() -> void: open_ground_workspace_requested.emit())
 	browser_row.add_child(ground_button)
 	var showcase_button := Button.new()
 	showcase_button.text = "Metric Browser"
-	showcase_button.tooltip_text = "Open the complete 158-asset scale-reference scene."
+	showcase_button.tooltip_text = (
+		"Open the complete %d-asset scale-reference scene." % _assets.size()
+	)
 	showcase_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	showcase_button.pressed.connect(func() -> void: open_showcase_requested.emit())
 	browser_row.add_child(showcase_button)
@@ -530,7 +535,10 @@ func _select_list_index(index: int) -> void:
 	_selected_asset = _asset_list.get_item_metadata(index)
 	var note := "Collision: %s. Author navigation and interaction boundaries per scene." % _collision_summary(_selected_asset)
 	if String(_selected_asset.get("category", "")) == "Modular Ground":
-		note = "Collision: 0.25 m ground slab included. Use Ground Grid for rapid 2 × 2 cobble painting."
+		note = (
+			"Collision: 0.25 m ground slab included. Use Ground Grid for rapid 2 × 2 "
+			+ "cobble and grass/dirt painting."
+		)
 	elif String(_selected_asset.get("category", "")) == "Complete Environment Sections":
 		note = "Large source-authored section with %s; use as an assembly, not a GridMap tile." % _collision_summary(_selected_asset).to_lower()
 	if RuntimeContract.is_performance_sensitive(_selected_asset):

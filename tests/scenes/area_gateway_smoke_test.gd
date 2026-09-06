@@ -31,7 +31,7 @@ class GatewayWatcher:
 			_finish()
 			return
 
-		var city_player := city.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+		var city_player := city.get_node_or_null(^"Player") as PlayerCharacter
 		var city_entrance := city.get_node_or_null(
 			^"Gameplay/Transitions/GateBuildingFrontEntranceTrigger"
 		) as SceneTransferTrigger
@@ -76,7 +76,7 @@ class GatewayWatcher:
 		var return_spawn := gatehouse.get_node_or_null(
 			^"Gameplay/Transitions/Route0ExitRoom/Route0ReturnSpawn"
 		) as Marker3D
-		var player := gatehouse.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+		var player := gatehouse.get_node_or_null(^"Player") as PlayerCharacter
 		var front_entry := gatehouse.get_node_or_null(^"Markers/FrontEntrySpawn") as Marker3D
 		var front_exit := gatehouse.get_node_or_null(^"Gameplay/Transitions/ExitFront") as SceneTransferTrigger
 		var city_exit_label := gatehouse.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/CityExitLabel") as Label3D
@@ -142,7 +142,7 @@ class GatewayWatcher:
 		var trainer_root := route.get_node_or_null(^"Gameplay/Actors/RouteTrainers") as Node3D
 		if trainer_root != null:
 			trainer_root.process_mode = Node.PROCESS_MODE_DISABLED
-		var route_player := route.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+		var route_player := route.get_node_or_null(^"Player") as PlayerCharacter
 		var route_start := route.get_node_or_null(^"Markers/Route0Start") as Marker3D
 		var return_gateway := route.get_node_or_null(
 			^"Gameplay/Transitions/Route0ReturnGateway"
@@ -198,7 +198,7 @@ class GatewayWatcher:
 		)
 		_check(gatehouse_return_applied, "The red return should apply Route0ReturnSpawn.")
 		if returned_gatehouse != null and returned_gatehouse.scene_file_path == GATEHOUSE_PATH:
-			var returned_player := returned_gatehouse.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+			var returned_player := returned_gatehouse.get_node_or_null(^"Player") as PlayerCharacter
 			var returned_marker := returned_gatehouse.get_node_or_null(
 				^"Gameplay/Transitions/Route0ExitRoom/Route0ReturnSpawn"
 			) as Marker3D

@@ -27,7 +27,7 @@ func _run() -> void:
 	var detector := player.get_node_or_null(
 		^"LookInteraction"
 	) as PlayerInteractionDetector
-	var interaction_button := $GameUI/InteractionButton as Button
+	var interaction_button := $Player/GameUI/InteractionButton as Button
 	var trainer_behavior := trainer.controller.npc_behavior as TrainerBehavior
 	var police_behavior := (
 		police_officer.controller.npc_behavior as TrainerBehavior

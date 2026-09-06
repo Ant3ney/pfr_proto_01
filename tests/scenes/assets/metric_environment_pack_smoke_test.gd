@@ -25,6 +25,7 @@ const CATEGORY_NODES := {
 const SNAP_METERS := 0.5
 const EXPECTED_PERFORMANCE_SENSITIVE_ASSET_COUNT := 44
 const EXPECTED_VULKAN_SAFE_MESH_IMPORT_COUNT := 3
+const EXPECTED_MODULAR_GROUND_ASSET_COUNT := 17
 
 
 func _ready() -> void:
@@ -150,7 +151,7 @@ func _ready() -> void:
 			+ "147 GLBs baked to 0.75 at node scale 1; 44 high-load entries classified; "
 			+ "3 buildings use Vulkan-safe original mesh buffers; "
 			+ "119 mesh, 8 box, 7 trunk, "
-			+ "13 pass-through, and 11 ground collisions validated."
+			+ "13 pass-through, and 17 ground collisions validated."
 		)
 		% [asset_count, SNAP_METERS]
 	)
@@ -192,6 +193,7 @@ func _load_and_validate_catalog() -> Dictionary:
 	var seen_catalog_ids := {}
 	var performance_sensitive_count := 0
 	var vulkan_safe_mesh_import_count := 0
+	var modular_ground_count := 0
 	for raw_asset: Variant in raw_assets:
 		if not (raw_asset is Dictionary):
 			_fail("Catalog contains a non-dictionary asset entry.")
@@ -236,6 +238,7 @@ func _load_and_validate_catalog() -> Dictionary:
 				_fail("Metric Modular Architecture contains an oversized authored section: %s" % asset_id)
 				return {}
 		if category == "Modular Ground":
+			modular_ground_count += 1
 			if str(entry.get("kind", "")) != "modular_ground":
 				_fail("Metric Modular Ground contains a non-modular asset: %s" % asset_id)
 				return {}
@@ -259,6 +262,12 @@ func _load_and_validate_catalog() -> Dictionary:
 		_fail(
 			"Vulkan-safe mesh import scope has %d entries; expected %d."
 			% [vulkan_safe_mesh_import_count, EXPECTED_VULKAN_SAFE_MESH_IMPORT_COUNT]
+		)
+		return {}
+	if modular_ground_count != EXPECTED_MODULAR_GROUND_ASSET_COUNT:
+		_fail(
+			"Modular Ground has %d assets; expected %d."
+			% [modular_ground_count, EXPECTED_MODULAR_GROUND_ASSET_COUNT]
 		)
 		return {}
 	for expected_heavy_id: String in ["t3_road_line_e", "t1_g17_1", "t1_b_school"]:

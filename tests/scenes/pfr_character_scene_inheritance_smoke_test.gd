@@ -95,8 +95,9 @@ func _ready() -> void:
 
 	if _failures.is_empty():
 		print(
-			"PFRCharacter scene inheritance smoke test passed: player, reusable NPCs, "
-			+ "all trainer prefabs, and the navigation fixture share one scene foundation."
+			"PFRCharacter scene inheritance smoke test passed: the complete player "
+			+ "(camera and GameUI), reusable NPCs, all trainer prefabs, and the "
+			+ "navigation fixture share one scene foundation."
 		)
 		get_tree().quit(0)
 		return
@@ -140,6 +141,18 @@ func _check_character_scene(spec: Dictionary) -> void:
 		_check(
 			character.controller is PlayerController,
 			"The Player scene should retain its PlayerController input source."
+		)
+		var camera := character.get_node_or_null(^"Camera3D") as PlayerCamera
+		var game_ui := character.get_node_or_null(^"GameUI") as CanvasLayer
+		_check(
+			camera != null
+				and camera.current
+				and camera.target_path == NodePath(".."),
+			"The Player scene should own its current camera targeting the parent Player."
+		)
+		_check(
+			game_ui != null,
+			"The Player scene should own the complete overworld GameUI."
 		)
 	else:
 		_check(character.controller != null, "%s should retain its NPC controller." % label)

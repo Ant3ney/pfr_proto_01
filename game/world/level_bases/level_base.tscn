@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/world/level_bases/world_level.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://game/actors/player/player.tscn" id="2_player"]
+[ext_resource type="MeshLibrary" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/ground_tile_mesh_library.tres" id="3_ground_tiles"]
+
+[node name="PFRWorldLevel" type="Node3D"]
+editor_description = "Canonical editable hierarchy for every playable city, route, gym, challenge, and interior. Inherit this scene and author level-specific content in the labeled containers."
+script = ExtResource("1_level")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="Environment" type="Node3D" parent="."]
+editor_description = "Place level-specific lights and WorldEnvironment nodes here."
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+editor_description = "Assign this level's NavigationMesh and keep navigable world geometry below WorldGeometry."
+
+[node name="WorldGeometry" type="Node3D" parent="NavigationRegion3D"]
+editor_description = "Organizes the level's ground, structures, props, and blocking boundaries."
+
+[node name="Ground" type="Node3D" parent="NavigationRegion3D/WorldGeometry"]
+editor_description = "Paint modular terrain in ModularGroundGrid or place other walkable ground instances here."
+
+[node name="ModularGroundGrid" type="GridMap" parent="NavigationRegion3D/WorldGeometry/Ground" unique_id=1781286088]
+editor_description = "Optional empty 2 x 2 meter modular-ground canvas. Paint level-specific cells in the inherited scene."
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+mesh_library = ExtResource("3_ground_tiles")
+cell_size = Vector3(2, 0.25, 2)
+cell_center_y = false
+
+[node name="Structures" type="Node3D" parent="NavigationRegion3D/WorldGeometry"]
+editor_description = "Place buildings, rooms, and other major level structures here."
+
+[node name="Props" type="Node3D" parent="NavigationRegion3D/WorldGeometry"]
+editor_description = "Place level-specific scenery and decorative props here."
+
+[node name="Boundaries" type="Node3D" parent="NavigationRegion3D/WorldGeometry"]
+editor_description = "Place walls and other blocking collision boundaries here."
+
+[node name="Gameplay" type="Node3D" parent="."]
+editor_description = "Organizes actors, encounters, interactions, transitions, and objectives."
+
+[node name="Actors" type="Node3D" parent="Gameplay"]
+editor_description = "Place NPCs and other level-specific actors here."
+
+[node name="Encounters" type="Node3D" parent="Gameplay"]
+editor_description = "Place wild-encounter zones and other encounter triggers here."
+
+[node name="Interactions" type="Node3D" parent="Gameplay"]
+editor_description = "Place non-actor interaction nodes here."
+
+[node name="Transitions" type="Node3D" parent="Gameplay"]
+editor_description = "Place doors, gateways, and scene-transfer triggers here."
+
+[node name="Objectives" type="Node3D" parent="Gameplay"]
+editor_description = "Place completion gates and other level objectives here."
+
+[node name="Markers" type="Node3D" parent="."]
+editor_description = "Place stable spawn, arrival, and other gameplay markers here."
+
+[node name="Backdrop" type="Node3D" parent="."]
+editor_description = "Place non-gameplay background scenery here."

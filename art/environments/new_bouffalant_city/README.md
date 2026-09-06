@@ -1,15 +1,15 @@
 # New Bouffalant City Environment Pack
 
-This directory is the runtime-ready environment asset root for New Bouffalant City. One Godot unit remains one meter, and every asset should normally be instanced at `Vector3(1, 1, 1)`. The 147 transferred GLBs bake a `0.75` source-to-runtime calibration into their imports so they fit the 1.67 m player without per-instance scaling; the 11 authored ground modules retain their exact project dimensions.
+This directory is the runtime-ready environment asset root for New Bouffalant City. One Godot unit remains one meter, and every asset should normally be instanced at `Vector3(1, 1, 1)`. The 147 transferred GLBs bake a `0.75` source-to-runtime calibration into their imports so they fit the 1.67 m player without per-instance scaling; the 17 authored ground modules retain their exact project dimensions.
 
 ## Contents
 
-- `ground_tile/` contains the canonical 2 × 2 m city-cobble MeshLibrary, its shared meshes/materials/textures, and five directly placeable scene wrappers used by the transferred atlas. The MeshLibrary also contains the project's additional cobble end tile.
+- `ground_tile/` stores the canonical 2 × 2 m cobble and grass/dirt runtime textures and import metadata. Reusable native meshes, three shared grass/dirt materials, eleven directly placeable wrappers, and the twelve-item shared MeshLibrary live under `game/world/level_kits/terrain/new_bouffalant_city/ground/`. IDs 0–5 remain the city-cobble set; IDs 6–11 are the matching grass/dirt set.
 - `route_tile/` contains six exact 4 × 4 m meadow/dirt-path scenes, shared materials, four runtime textures, and full-slab static collision. Place these as snapped `Node3D` instances; do not put them in the 2 × 2 m GridMap library.
 - `reference_city_pack/models/` contains 147 grounded GLBs plus 1,831 companion PNGs materialized by Godot's Extract Textures import mode. Their `.glb.import` files bake the `0.75` calibration and run the pack's collision post-import script, so the complete directory and its import metadata are the transferable unit.
 - `reference_city_pack/collision/` contains the collision profiles, the GLB post-import generator, and the maintenance command that enforces scale and collision settings on every model import.
-- `reference_city_pack/catalog.json` is the authoritative 158-entry index. It records display names, categories, source provenance, source dimensions for GLBs, runtime dimensions for authored scenes, mesh statistics, material metadata, and current `res://` paths.
-- `reference_city_pack/showcase/building_ground_metric_showcase.tscn` is the editor-visible asset browser. It includes all 147 GLBs and all 11 modular ground scenes, a 0.5 m grid, dimensions, and 1.67 m player references.
+- `reference_city_pack/catalog.json` is the authoritative 164-entry index. It records display names, categories, source provenance, source dimensions for GLBs, runtime dimensions for authored scenes, mesh statistics, material metadata, and current `res://` paths.
+- [`../../../tests/manual/new_bouffalant_city/building_ground_metric_showcase.tscn`](../../../tests/manual/new_bouffalant_city/building_ground_metric_showcase.tscn) is the editor-visible asset browser. It includes all 147 GLBs and all 17 modular ground scenes, a 0.5 m grid, dimensions, and 1.67 m player references. The `reference_city_pack/showcase/` directory intentionally has no duplicate scene.
 - `reference_city_pack/validation/` contains the automated catalog/scene integrity check.
 - `pokemon_center_roof/` contains the fitted, mobile-safe tiered roof, two street-facing automatic door sets, and a unit-scale wrapper around the unchanged reference Pokemon Center. Use its wrapper instead of editing or rescaling the source GLB.
 - `pokemon_center_interior/` contains the playable five-sided Pokemon Center level, its two-draw classical brick-and-limestone environment, simplified authored collision, bright restrained lighting, player/camera/UI composition, and gameplay markers.
@@ -18,7 +18,7 @@ This directory is the runtime-ready environment asset root for New Bouffalant Ci
 
 ## Editor Placement Palette
 
-The enabled [`New Bouffalant City Asset Palette`](../../../addons/new_bouffalant_city_asset_palette/README.md) exposes all 158 catalog entries as thumbnail cards in the **Bouffalant Assets** editor dock. It provides search, category filtering, 0.5/2/4 m XZ snapping, 90-degree rotation, upward-surface detection, an explicit fallback Y level, and undoable click-to-place scene instances.
+The enabled [`New Bouffalant City Asset Palette`](../../../addons/new_bouffalant_city_asset_palette/README.md) exposes all 164 catalog entries as thumbnail cards in the **Bouffalant Assets** editor dock. It provides search, category filtering, 0.5/2/4 m XZ snapping, 90-degree rotation, upward-surface detection, an explicit fallback Y level, and undoable click-to-place scene instances.
 
 1. Open the 3D scene you want to build. If necessary, reopen the dock through **Editor → Editor Docks → Bouffalant Assets**.
 2. Select an asset, choose the snap and elevation settings, and enable **Place in 3D View**.
@@ -28,7 +28,7 @@ Placed instances are grouped under `NewBouffalantCityAssets` in the edited scene
 
 The dock identifies whole environment sections plus exceptionally wide or dense entries as high-load, but that label is advisory. Museum and Gate Building are the only confirmed triggers for the Intel Vulkan/Forward+ driver hang on this workstation, so only those two entries and the metric browser are intercepted on that renderer. Their GLBs validate and render correctly on both supported paths. Double-clicking either asset offers to save and restart in Intel OpenGL Compatibility, then automatically resumes placement for that asset. The manual launchers remain `./addons/new_bouffalant_city_asset_palette/open_editor_compatibility.sh`, which matches `project.godot`, and `./addons/new_bouffalant_city_asset_palette/open_editor_nvidia.sh` for NVIDIA Vulkan.
 
-Keep using `ModularGroundGrid` and its MeshLibrary palette for repeated 2 × 2 m city-cobble painting. The editor dock is the corresponding workflow for 4 × 4 m route scenes, buildings, props, vegetation, architecture, and large sections, which cannot safely share one GridMap cell contract.
+Keep using `ModularGroundGrid` and its shared MeshLibrary palette for repeated 2 × 2 m city-cobble or grass/dirt painting. Use IDs 0–5 for cobble and 6–11 for grass/dirt; their identity transforms, collision slabs, and navigation settings share one cell contract. The editor dock exposes the eleven wrappers when direct scene placement is preferable and remains the workflow for 4 × 4 m route scenes, buildings, props, vegetation, architecture, and large sections.
 
 ## Placement Contract
 
@@ -46,7 +46,7 @@ Collision is generated inside each imported GLB by `reference_city_pack/collisio
 - Hedges, bushes, shrubs, and topiary use simple box volumes so individual leaf planes do not snag the player.
 - Trees, bamboo, and the stump use central cylinder volumes; their canopies and branches remain pass-through.
 - Grass, flower patches, the loose-soil patch, the fissure overlay, and water-only source sections remain pass-through by design and rely on supporting terrain where appropriate.
-- The 11 modular ground scenes keep their authored 0.25 m slab collision.
+- The 17 modular ground scenes keep their authored 0.25 m slab collision.
 
 These are static environment colliders, not collision for moving rigid bodies. They do not create a `NavigationMesh`; bake or update navigation after laying out a level. After adding GLBs or changing collision profiles, run:
 
@@ -57,6 +57,8 @@ godot --headless --path . --import
 
 If the pack-wide calibration changes, also refresh the browser annotations with `godot --headless --path . --script res://tools/new_bouffalant_city_import/update_runtime_scale_annotations.gd`.
 
+The six grass/dirt textures are extracted from the packed images in `source_assets/grass_dirt_path_kit_01.blend` into `ground_tile/textures/`. They remain separate from the four route textures, use 512 × 512 source resolution, and keep OpenGL normal maps uninverted. The Blender file is authoritative and unchanged. Each collection is converted through an uncompressed temporary GLB into a native `ArrayMesh`; axis conversion is baked into its vertices, and temporary GLBs are not retained.
+
 Open the metric browser in Godot and select an asset's `Model` child to inspect it. The catalog is the quickest way to search by category, source ID, dimensions, or kind.
 
 ## Validation
@@ -66,6 +68,7 @@ From the repository root, run:
 ```sh
 godot --headless --path . --import
 godot --headless --path . --editor --quit
+godot --headless --path . --scene res://tests/scenes/assets/grass_dirt_gridmap_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/assets/metric_environment_pack_smoke_test.tscn
 godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_roof_smoke_test.tscn
 godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_interior_smoke_test.tscn
@@ -74,7 +77,7 @@ godot --headless --rendering-method gl_compatibility --path . --scene res://test
 godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/modular_city_scene_transfer_smoke_test.tscn
 ```
 
-The editor startup check loads the placement plugin and its dock. The environment smoke test verifies all 158 catalog paths and thumbnails, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract. The focused Pokemon Center tests protect the exterior roof/door fit; both interiors' two-draw geometry, collision, gameplay markers, cameras, and restrained shadow-light setups; and real bidirectional travel from the south storefront to the main clinic and from the east storefront to the service annex without an arrival loop. The modular-city transfer test additionally validates all 10 live exterior openings, proves the Rouge Tower, garage, and duplicate Gate Building transitions stay absent, and checks Stretchman in Miare Station. The Route 0 gateway test holds an arriving player idle inside the Gate Building, validates clear exit signage, walks through its rear door, and uses the red interactive Route 0 return object.
+The editor startup check loads the placement plugin and its dock. The grass/dirt test verifies MeshLibrary IDs 6–11, exact pivots and bounds, shared materials, texture imports, native mesh budgets, scene and GridMap collisions, the preserved 270-cell city layout, all four rotations, exact 1.65 m openings, full boundary coverage, and representative route transitions. The environment smoke test verifies all 164 catalog paths and thumbnails, 17 ground collisions, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract. The focused Pokemon Center tests protect the exterior roof/door fit; both interiors' two-draw geometry, collision, gameplay markers, cameras, and restrained shadow-light setups; and real bidirectional travel from the south storefront to the main clinic and from the east storefront to the service annex without an arrival loop. The modular-city transfer test additionally validates all 10 live exterior openings, proves the Rouge Tower, garage, and duplicate Gate Building transitions stay absent, and checks Stretchman in Miare Station. The Route 0 gateway test holds an arriving player idle inside the Gate Building, validates clear exit signage, walks through its rear door, and uses the red interactive Route 0 return object.
 
 ## Provenance And Production Status
 

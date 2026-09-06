@@ -32,4 +32,5 @@ See this poject. This is the project came before this. It has lots of issues but
   transition function that transition the player into the battle and takes in the data needed to start the battle. Use that function to pass in the pokemon battling.
 
 
-
+<!-- AI Agents should not read this file -->
+You did good work but I don't like the base level scenes. You over engineered it. There should be just 1 level_bases scene and in that, it has the modular ground grid like how it is in new buffalant city scene. Other than the tiles placed, the base should have the same settings. Also, give it the same notes used for organization but don't include any of the clildren used for populating the scene with propes and / or NPCs.

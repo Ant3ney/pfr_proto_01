@@ -190,7 +190,7 @@ class LifecycleWatcher:
 
 		await _wait_for_state(BattleSystem.State.IDLE)
 		if trainer:
-			var player := get_tree().current_scene.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+			var player := get_tree().current_scene.get_node_or_null(^"Player") as PlayerCharacter
 			_check(
 				player != null and trainer.can_interact(player),
 				"Kyle should remain interactable for a manual rematch."

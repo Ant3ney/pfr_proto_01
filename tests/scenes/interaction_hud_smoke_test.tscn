@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://tests/scenes/interaction_hud_smoke_test.gd" id="1_test"]
 [ext_resource type="PackedScene" path="res://game/actors/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_delivery_worker.tscn" id="3_trainer"]
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_police_officer.tscn" id="4_police"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/game_ui.tscn" id="5_ui"]
 
 [node name="InteractionHudSmokeTest" type="Node3D"]
 script = ExtResource("1_test")
@@ -17,5 +16,3 @@ position = Vector3(0, 0, -2.4)
 [node name="PoliceOfficer" parent="." instance=ExtResource("4_police")]
 position = Vector3(6, 0, -0.75)
 rotation = Vector3(0, 3.1415927, 0)
-
-[node name="GameUI" parent="." instance=ExtResource("5_ui")]

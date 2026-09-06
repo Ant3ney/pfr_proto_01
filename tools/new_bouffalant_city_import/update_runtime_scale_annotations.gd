@@ -2,10 +2,7 @@ extends SceneTree
 
 const RuntimeContract := preload("res://game/world/level_kits/structures/new_bouffalant_city/runtime_contract.gd")
 const CATALOG_PATH := "res://art/environments/new_bouffalant_city/reference_city_pack/catalog.json"
-const SHOWCASE_PATH := (
-	"res://art/environments/new_bouffalant_city/reference_city_pack/showcase/"
-	+ "building_ground_metric_showcase.tscn"
-)
+const SHOWCASE_PATH := "res://tests/manual/new_bouffalant_city/building_ground_metric_showcase.tscn"
 
 
 func _initialize() -> void:
@@ -70,7 +67,7 @@ func _initialize() -> void:
 			line = (
 				"editor_description = \"Player-calibrated environment atlas. The 147 transferred "
 				+ "GLBs bake a 0.75 import factor while every instance remains scale 1,1,1; "
-				+ "the 11 authored ground modules retain exact 2/4 m dimensions. Wrappers use "
+				+ "the 17 authored ground modules retain exact 2/4 m dimensions. Wrappers use "
 				+ "the 0.5 m grid and cyan capsules are 1.67 m player references.\""
 			)
 

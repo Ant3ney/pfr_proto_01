@@ -3,6 +3,7 @@ extends SceneTree
 const CATALOG_PATH := (
 	"res://game/world/levels/standalone_areas/standalone_area_catalog.tres"
 )
+const LEVEL_BASE_PATH := "res://game/world/level_bases/level_base.tscn"
 const ROUTE_SCENE_PATH := (
 	"res://game/world/levels/standalone_areas/routes/route_00/route_00.tscn"
 )
@@ -34,6 +35,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	await process_frame
+	_verify_level_base()
 	_verify_standalone_catalog()
 	await _verify_route_zero()
 	_verify_stretchman()
@@ -41,14 +43,41 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"Web export verification passed: 49 editable standalone areas, static Route 0 "
-			+ "trainers, ordinary menu-NPC Stretchman, and schema-6 domain services verified."
+			"Web export verification passed: the canonical level base, 49 editable "
+			+ "standalone areas, static Route 0 trainers, ordinary menu-NPC "
+			+ "Stretchman, and schema-6 domain services verified."
 		)
 		quit(0)
 		return
 	for failure in _failures:
 		push_error("Web export verification failed: %s" % failure)
 	quit(1)
+
+
+func _verify_level_base() -> void:
+	var packed := load(LEVEL_BASE_PATH) as PackedScene
+	_check(packed != null, "The exported canonical level base should load.")
+	if packed == null:
+		return
+	var level := packed.instantiate()
+	_check(level != null, "The exported level base should instantiate.")
+	if level == null:
+		return
+	var grid := level.get_node_or_null(
+		^"NavigationRegion3D/WorldGeometry/Ground/ModularGroundGrid"
+	) as GridMap
+	_check(
+		level.get_node_or_null(^"Runtime") == null
+		and level.get_node_or_null(^"Player") is CharacterBody3D
+		and level.get_node_or_null(^"Player/Camera3D") is Camera3D
+		and level.get_node_or_null(^"Player/GameUI") is CanvasLayer,
+		"The exported level base should retain the direct Player/camera/GameUI hierarchy."
+	)
+	_check(
+		grid != null and grid.get_used_cells().is_empty(),
+		"The exported base ModularGroundGrid should remain empty."
+	)
+	level.free()
 
 
 func _verify_standalone_catalog() -> void:
@@ -85,6 +114,11 @@ func _verify_route_zero() -> void:
 	if packed_route == null:
 		return
 	var route := packed_route.instantiate()
+	var inherited_base := packed_route.get_state().get_node_instance(0)
+	_check(
+		inherited_base != null and inherited_base.resource_path == LEVEL_BASE_PATH,
+		"Exported Route 0 should inherit the canonical level base directly."
+	)
 	var trainer_root := route.get_node_or_null(^"Gameplay/Actors/RouteTrainers")
 	if trainer_root != null:
 		trainer_root.process_mode = Node.PROCESS_MODE_DISABLED
@@ -92,11 +126,13 @@ func _verify_route_zero() -> void:
 	await process_frame
 	await physics_frame
 
-	var player := route.get_node_or_null(^"Runtime/Player") as Node3D
+	var player := route.get_node_or_null(^"Player") as Node3D
 	var marker := route.get_node_or_null(^"Markers/Route0Start") as Marker3D
 	_check(player != null and marker != null, "Route 0 should retain its player and entry marker.")
 	_check(
-		route.get_node_or_null(^"Runtime/Camera3D") != null
+		route.get_node_or_null(^"Player/Camera3D") != null
+		and route.get_node_or_null(^"Player/GameUI") != null
+		and route.get_node_or_null(^"Runtime") == null
 		and route.get_node_or_null(^"NavigationRegion3D/WorldGeometry") != null
 		and route.get_node_or_null(^"Gameplay/Encounters/TallGrassFields") != null,
 		"Route 0 should retain the common editable level hierarchy."

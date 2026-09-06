@@ -1,0 +1,32 @@
+[gd_resource type="ArrayMesh" format=4 uid="uid://by8h5xseywd6i"]
+
+[ext_resource type="Material" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/materials/grass_dirt_grass.tres" id="1_d6v6h"]
+[ext_resource type="Material" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/materials/grass_dirt_soil.tres" id="2_qfoa1"]
+
+[resource]
+resource_name = "Grass/Dirt - Flat"
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 2, 1e-05, 2),
+"attribute_data": PackedByteArray("AACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8="),
+"format": 34359742487,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": ExtResource("1_d6v6h"),
+"name": "MAT_Grass_Muted",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AACAPwAAAAAAAIA/AACAvwAAAAAAAIC/AACAPwAAAAAAAIC/AACAvwAAAAAAAIA/AID//////78AgP//////vwCA//////+/AID//////78=")
+}, {
+"aabb": AABB(-1, -0.25, -1, 2, 0.25, 2),
+"attribute_data": PackedByteArray("AAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAgD8AAAA/AAAAPwAAAAAAAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUABAAGAAgABAAIAAcACQAKAAsACQAMAAoADQAOAA8ADQAQAA4AEQASABMAEQAUABIA"),
+"material": ExtResource("2_qfoa1"),
+"name": "MAT_Soil_Dark",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 21,
+"vertex_data": PackedByteArray("AACAvwAAAAAAAIA/AACAPwAAgL4AAIA/AACAvwAAgL4AAIA/AACAPwAAAAAAAIA/AAAAAAAAgL4AAACAAACAvwAAgL4AAIA/AACAPwAAgL4AAIA/AACAvwAAgL4AAIC/AACAPwAAgL4AAIC/AACAPwAAAAAAAIA/AACAPwAAgL4AAIC/AACAPwAAgL4AAIA/AACAPwAAAAAAAIC/AACAPwAAAAAAAIC/AACAvwAAgL4AAIC/AACAPwAAgL4AAIC/AACAvwAAAAAAAIC/AACAvwAAAAAAAIC/AACAvwAAgL4AAIA/AACAvwAAgL4AAIC/AACAvwAAAAAAAIA//3//f////z//f/9/////P/9//3////8//3//f////z8AgAAA////PwCAAAD///8/AIAAAP///z8AgAAA////PwCAAAD///8///8AgP///7///wCA////v///AID///+///8AgP///7//////////P/////////8//////////z//////////PwAAAID///+/AAAAgP///78AAACA////vwAAAID///+/")
+}]

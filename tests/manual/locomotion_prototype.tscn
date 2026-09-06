@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://qw7g3ypkn2pu"]
 
 [ext_resource type="PackedScene" path="res://game/actors/player/player.tscn" id="1_player"]
-[ext_resource type="Script" uid="uid://blrikxuvft36v" path="res://game/actors/player/player_camera.gd" id="2_camera"]
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_kyle.tscn" id="3_trainer_kyle"]
-[ext_resource type="PackedScene" path="res://game/ui/hud/game_ui.tscn" id="6_game_ui"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 sky_top_color = Color(0.25, 0.56, 0.78, 1)
@@ -144,16 +142,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.04, -6)
 mesh = SubResource("CylinderMesh_destination")
 
 [node name="Player" parent="." unique_id=1402740587 instance=ExtResource("1_player")]
-
-[node name="Camera" type="Camera3D" parent="." unique_id=1440839287]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.5, 8.5)
-current = true
-near = 0.2
-far = 60.0
-script = ExtResource("2_camera")
-target_path = NodePath("../Player")
-
-[node name="GameUI" parent="." unique_id=581396812 instance=ExtResource("6_game_ui")]
 
 [node name="TrainerKyle" parent="." unique_id=45351473 instance=ExtResource("3_trainer_kyle")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -5, 0, -2)

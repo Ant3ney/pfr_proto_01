@@ -1,4 +1,4 @@
-[gd_scene load_steps=172 format=3]
+[gd_scene load_steps=178 format=3]
 
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_cityhall.glb" id="1_model"]
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_bank.glb" id="2_model"]
@@ -158,6 +158,12 @@
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/city_cobble_corner_02x02.tscn" id="156_model"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/city_cobble_t_junction_02x02.tscn" id="157_model"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/city_cobble_cross_02x02.tscn" id="158_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_flat_02x02.tscn" id="159_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_straight_02x02.tscn" id="160_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_corner_02x02.tscn" id="161_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_t_junction_02x02.tscn" id="162_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_cross_02x02.tscn" id="163_model"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/scenes/grass_dirt_end_02x02.tscn" id="164_model"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_metric"]
 sky_top_color = Color(0.16, 0.42, 0.7, 1)
@@ -221,7 +227,7 @@ material = SubResource("Material_metric_tile")
 size = Vector3(8, 0.25, 8)
 
 [node name="BuildingGroundMetricShowcase" type="Node3D"]
-editor_description = "Player-calibrated environment atlas. The 147 transferred GLBs bake a 0.75 import factor while every instance remains scale 1,1,1; the 11 authored ground modules retain exact 2/4 m dimensions. Wrappers use the 0.5 m grid and cyan capsules are 1.67 m player references."
+editor_description = "Player-calibrated environment atlas. The 147 transferred GLBs bake a 0.75 import factor while every instance remains scale 1,1,1; the 17 authored ground modules retain exact 2/4 m dimensions. Wrappers use the 0.5 m grid and cyan capsules are 1.67 m player references."
 metadata/meters_per_godot_unit = 1.0
 metadata/imported_glb_baked_scale = 0.75
 metadata/placement_snap_m = 0.5
@@ -3003,6 +3009,168 @@ mesh = SubResource("CapsuleMesh_player_reference")
 [node name="DimensionsLabel" type="Label3D" parent="ModularGround/City Cobble Cross — 2×2 m"]
 position = Vector3(0, 2.7, 3.2)
 text = "City Cobble Cross — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt Flat — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(102, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_flat_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_flat_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt Flat — 2×2 m" instance=ExtResource("159_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt Flat — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt Flat — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt Flat — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt Straight — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(118, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_straight_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_straight_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt Straight — 2×2 m" instance=ExtResource("160_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt Straight — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt Straight — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt Straight — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt L Intersection — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(134, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_corner_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_corner_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt L Intersection — 2×2 m" instance=ExtResource("161_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt L Intersection — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt L Intersection — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt L Intersection — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt T Intersection — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(150, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_t_junction_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_t_junction_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt T Intersection — 2×2 m" instance=ExtResource("162_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt T Intersection — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt T Intersection — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt T Intersection — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt Junction — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(166, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_cross_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_cross_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt Junction — 2×2 m" instance=ExtResource("163_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt Junction — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt Junction — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt Junction — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
+font_size = 34
+outline_size = 8
+pixel_size = 0.025
+modulate = Color(0.82, 0.94, 1, 1)
+outline_modulate = Color(0.01, 0.02, 0.03, 0.96)
+billboard = 1
+no_depth_test = false
+
+[node name="Grass-Dirt End — 2×2 m" type="Node3D" parent="ModularGround" groups=["metric_scale_asset"]]
+position = Vector3(182, 0, 836)
+rotation_degrees = Vector3(0, 0, 0)
+editor_description = "grass_dirt_end_02x02: native bounds 2.00 × 0.25 × 2.00 m (X/Y/Z). Metric wrapper is snapped to 0.5 m; model scale is 1,1,1."
+metadata/asset_id = "grass_dirt_end_02x02"
+metadata/native_dimensions_m = Vector3(2, 0.25, 2)
+metadata/instance_scale = Vector3(1, 1, 1)
+metadata/placement_snap_m = 0.5
+
+[node name="Model" parent="ModularGround/Grass-Dirt End — 2×2 m" instance=ExtResource("164_model")]
+scale = Vector3(1, 1, 1)
+
+[node name="PlayerScaleReference" type="MeshInstance3D" parent="ModularGround/Grass-Dirt End — 2×2 m"]
+position = Vector3(-2.25, 0.835, 2.25)
+mesh = SubResource("CapsuleMesh_player_reference")
+
+[node name="DimensionsLabel" type="Label3D" parent="ModularGround/Grass-Dirt End — 2×2 m"]
+position = Vector3(0, 2.7, 3.2)
+text = "Grass/Dirt End — 2×2 m\n2.0 × 0.3 × 2.0 m  |  scale 1:1"
 font_size = 34
 outline_size = 8
 pixel_size = 0.025

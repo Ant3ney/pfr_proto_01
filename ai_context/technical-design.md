@@ -26,13 +26,13 @@ from undoing a confirmed reset. See
 
 Walkable worlds are authored as native Godot inherited scenes with modular
 assets, the FileSystem dock, the Scene tree, Inspector resources, and
-drag-and-drop. Every playable city, route, gym, Champion challenge, and interior
-inherits a base beneath
-[`game/world/level_bases/`](../game/world/level_bases/). `PFRWorldLevel`
-provides `get_player()` and `find_spawn_marker()` and warns when the required
-Runtime, Environment, NavigationRegion3D/WorldGeometry, Gameplay, Markers, or
-Backdrop hierarchy is incomplete. Production code must not assume Player is a
-direct root child.
+drag-and-drop. All 60 playable cities, routes, gyms, Champion areas, and
+interiors inherit the single canonical
+[`level_base.tscn`](../game/world/level_bases/level_base.tscn) directly.
+`PFRWorldLevel` provides `get_player()` and `find_spawn_marker()` and warns when
+the required direct `Player`, `Player/Camera3D`, `Player/GameUI`, Environment,
+NavigationRegion3D/WorldGeometry, Gameplay, Markers, or Backdrop hierarchy is
+incomplete. `player.tscn` owns the camera and HUD; there is no Runtime wrapper.
 
 New Bouffalant City and its directly connected interiors live together under
 [`new_bouffalant_city/`](../game/world/levels/new_bouffalant_city/). The 49
@@ -165,6 +165,22 @@ dependencies for bidirectional doors; selected-resource export presets must
 explicitly include every destination scene. See the
 [`Scene Transfer Trigger` guide](../game/world/level_kits/gameplay/transitions/scene_transfer_trigger.md) and its
 focused smoke tests for the editor and runtime contracts.
+
+The default editor workflow for a new transition is to find the reusable
+packed scene in Godot's FileSystem dock, drag it into the level's
+`Gameplay/Transitions` node, and configure that new instance in the Inspector.
+Future authoring help should lead with this workflow, not with duplicating a
+placed trigger, embedded resource, or scene content from another authored
+level. Drag the destination `.tscn` from the FileSystem dock into **Destination
+Scene Path**, enter the exact target marker name in **Destination Spawn
+Marker**, and place or rotate that `Marker3D` in the target scene to determine
+the player's arrival transform. Keep the `Area3D` and `CollisionShape3D` node
+scales at `Vector3.ONE`; for per-door bounds, enable editable children on the
+instance, assign its `CollisionShape3D` a new local shape resource, and edit the
+shape's dimensions directly. Existing city instances that encode bounds with
+non-uniform root scale describe current data, not the preferred example for new
+authoring. Place every arrival marker clear of geometry and outside the reverse
+trigger so entering a scene cannot immediately transfer the player back.
 
 The modular city currently authors 10 contact-triggered exterior openings. Two
 serve the Pokemon Center; the other eight serve three City Hall doors, Miare

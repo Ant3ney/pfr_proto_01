@@ -45,6 +45,8 @@ godot --headless --main-pack /tmp/pfr-web-check.pck --script "$PWD/tools/verify_
 ```
 
 The source checks cover behavior reconstruction and all 49 authored area
-scenes. The pack checker requires exactly 49 standalone scene resources. The
-packaged runtime verifier loads Route 0 and requires all seven static trainers
-to retain Inspector-authored encounter data and accept manual interaction.
+scenes. The pack checker requires the canonical `level_base.tscn`, exactly 49
+standalone scene resources, and the absence of all four removed base/runtime
+scenes. The packaged runtime verifier loads the canonical base and Route 0, then
+requires all seven static trainers to retain Inspector-authored encounter data
+and accept manual interaction.

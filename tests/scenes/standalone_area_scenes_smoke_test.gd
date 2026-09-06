@@ -1,8 +1,7 @@
 extends Node
 
 const CATALOG_PATH := "res://game/world/levels/standalone_areas/standalone_area_catalog.tres"
-const OUTDOOR_BASE_PATH := "res://game/world/level_bases/outdoor_level_base.tscn"
-const INTERIOR_BASE_PATH := "res://game/world/level_bases/interior_level_base.tscn"
+const LEVEL_BASE_PATH := "res://game/world/level_bases/level_base.tscn"
 
 var _failures: Array[String] = []
 
@@ -36,7 +35,7 @@ func _run() -> void:
 		seen_scene_paths[scene_path] = true
 		_check(scene_path.get_base_dir().path_join("area_definition.tres") == area.resource_path, "%s should keep area_definition.tres beside its scene." % area.area_id)
 		_check(ResourceLoader.exists(scene_path, "PackedScene"), "%s should reference a loadable PackedScene." % area.area_id)
-		_check(_source_uses_expected_base(area, scene_path), "%s should inherit the shared outdoor/interior level base." % area.area_id)
+		_check(_source_uses_level_base(scene_path), "%s should inherit the canonical level base directly." % area.area_id)
 		_check_area_scene(area)
 
 	for route_index in 40:
@@ -57,19 +56,22 @@ func _check_area_scene(area: StandaloneAreaDefinition) -> void:
 	_check(world.area_id == area.area_id, "%s should expose its stable area_id on the level root." % area.area_id)
 	_check(world.entry_spawn_marker == area.entry_spawn_marker, "%s should use the definition's entry marker." % area.area_id)
 	for required_path in [
-		^"Runtime/Player",
-		^"Runtime/Camera3D",
-		^"Runtime/GameUI",
+		^"Player",
+		^"Player/Camera3D",
+		^"Player/GameUI",
 		^"Environment",
+		^"NavigationRegion3D/WorldGeometry/Ground/ModularGroundGrid",
 		^"NavigationRegion3D/WorldGeometry/Ground",
 		^"NavigationRegion3D/WorldGeometry/Structures",
 		^"NavigationRegion3D/WorldGeometry/Props",
 		^"NavigationRegion3D/WorldGeometry/Boundaries",
 		^"Gameplay/Actors",
 		^"Gameplay/Encounters",
+		^"Gameplay/Interactions",
 		^"Gameplay/Transitions",
 		^"Gameplay/Objectives",
 		^"Markers",
+		^"Backdrop",
 	]:
 		_check(world.get_node_or_null(required_path) != null, "%s should expose common level node %s." % [area.area_id, required_path])
 	_check(world.find_spawn_marker(area.entry_spawn_marker) != null, "%s should contain its Inspector-selected entry marker." % area.area_id)
@@ -103,9 +105,12 @@ func _check_area_scene(area: StandaloneAreaDefinition) -> void:
 	world.free()
 
 
-func _source_uses_expected_base(area: StandaloneAreaDefinition, scene_path: String) -> bool:
-	var expected := OUTDOOR_BASE_PATH if area.category == StandaloneAreaDefinition.Category.ROUTE else INTERIOR_BASE_PATH
-	return expected in FileAccess.get_file_as_string(scene_path)
+func _source_uses_level_base(scene_path: String) -> bool:
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		return false
+	var inherited_base := packed.get_state().get_node_instance(0)
+	return inherited_base != null and inherited_base.resource_path == LEVEL_BASE_PATH
 
 
 func _encounter_list_has_id(encounters: Array[BattleEncounterDefinition], encounter_id: String) -> bool:
@@ -117,7 +122,7 @@ func _encounter_list_has_id(encounters: Array[BattleEncounterDefinition], encoun
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("Standalone area scene smoke test passed: exactly 49 independent inherited scenes, local definitions, static trainers, grass, gates, encounters, and common level structure verified.")
+		print("Standalone area scene smoke test passed: exactly 49 independent scenes inherit the canonical level base with local definitions, static trainers, grass, gates, encounters, and common level structure verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

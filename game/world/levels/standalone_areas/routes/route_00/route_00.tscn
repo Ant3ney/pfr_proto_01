@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://game/world/level_bases/outdoor_level_base.tscn" id="1_n652x"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_n652x"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_meadow_04x04.tscn" id="2_xto03"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_end_04x04.tscn" id="3_a5s8i"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_straight_04x04.tscn" id="4_q7sjc"]
@@ -392,7 +392,7 @@ directional_shadow_max_distance = 42.0
 [node name="NavigationRegion3D" parent="." index="2"]
 navigation_mesh = SubResource("NavigationMesh_route4")
 
-[node name="Player" parent="Runtime" index="0"]
+[node name="Player" parent="." index="0"]
 position = Vector3(-2, 0, 21)
 
 [node name="GroundTiles" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=2072113443]

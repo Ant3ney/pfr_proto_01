@@ -182,27 +182,29 @@ export verification.
 
 [`pfr_character.tscn`](game/actors/character/pfr_character.tscn) is the shared scene foundation
 for every player and NPC. It owns the `PFRCharacter` body, standard capsule, and
-`Visual` pivot. Role scenes inherit that foundation: the reusable player is
-[`player.tscn`](game/actors/player/player.tscn), while town residents, trainers, healers,
-and Stretchman add their own controller, behavior, art, and interaction data.
+`Visual` pivot. Role scenes inherit that foundation: the complete reusable player
+is [`player.tscn`](game/actors/player/player.tscn), which also owns `Camera3D`
+and `GameUI`, while town residents, trainers, healers, and Stretchman add their
+own controller, behavior, art, and interaction data.
 Instance the role scene instead of rebuilding the character hierarchy in a
 level. Assign character appearance through one `PFRCharacterArtAssetPack`;
 the shared character creates the matching `CharacterArt` model at runtime and
 as a non-persistent editor preview.
 
-A playable level inherits an outdoor or interior base and keeps this common
-structure:
+Every playable level inherits the single
+[`level_base.tscn`](game/world/level_bases/level_base.tscn) directly and keeps
+this common structure:
 
 ```text
 PFRWorldLevel
-├── Runtime
-│   ├── Player
+├── Player
 │   ├── Camera3D
 │   └── GameUI
 ├── Environment
 ├── NavigationRegion3D
 │   └── WorldGeometry
 │       ├── Ground
+│       │   └── ModularGroundGrid
 │       ├── Structures
 │       ├── Props
 │       └── Boundaries
@@ -219,9 +221,8 @@ PFRWorldLevel
 ### Set Up the Level
 
 1. In the FileSystem dock, right-click
-   [`outdoor_level_base.tscn`](game/world/level_bases/outdoor_level_base.tscn)
-   or [`interior_level_base.tscn`](game/world/level_bases/interior_level_base.tscn)
-   and create a native inherited scene.
+   [`level_base.tscn`](game/world/level_bases/level_base.tscn) and create a
+   native inherited scene.
 2. Set the root's level identity and entry marker in the Inspector. Keep the
    inherited player at unit scale and place its foot-level root on the walkable
    surface. The included capsule is 1.6 meters tall and centered at `Y = 0.8`.
@@ -231,14 +232,15 @@ PFRWorldLevel
 4. Keep actors, encounter volumes, interaction objects, transitions, and
    objectives under their corresponding `Gameplay` branches, and put stable
    arrival points under `Markers`.
-5. Configure the inherited camera's player target and author lighting or
-   `WorldEnvironment` beneath `Environment`/`Backdrop` as appropriate.
-6. Retain inherited `GameUI` for the floating joystick, interaction prompt, and
+5. Adjust composition on `Player/Camera3D` when needed, keeping its target on
+   the parent Player, and author lighting or `WorldEnvironment` beneath
+   `Environment`/`Backdrop` as appropriate.
+6. Retain `Player/GameUI` for the floating joystick, interaction prompt, and
    permanent player menu. Keyboard and gamepad locomotion do not depend on the
    joystick control.
 
 Use `PFRWorldLevel.get_player()` and `find_spawn_marker()` in production scripts;
-do not assume the player is a direct child of the level root.
+the canonical Player path is the direct root child `Player`.
 
 The project registers [`game_instance.gd`](game/runtime/game_instance.gd) as the `GameInstance` autoload. Keep that autoload enabled because `PlayerController` checks it before accepting movement. A `NavigationRegion3D` is not required for player movement; navigation meshes are used by NPC controllers.
 
@@ -248,7 +250,7 @@ The controller currently moves only on the XZ plane and does not apply gravity. 
 
 - **Keyboard:** `WASD` or the arrow keys.
 - **Gamepad:** left stick on the first connected controller.
-- **Touch or mouse:** press or click away from other controls and drag when `GameUI` is present.
+- **Touch or mouse:** press or click away from other controls and drag when `Player/GameUI` is present.
 
 Run the current scene with Godot's **Run Current Scene** command. Use **Debug → Visible Collision Shapes** when checking level collision.
 
@@ -278,14 +280,16 @@ A trainer-ready level adds these nodes to the playable-level structure above:
 
 ```text
 PFRWorldLevel
+├── Player
+│   ├── Camera3D
+│   └── GameUI
 ├── NavigationRegion3D
 │   └── WorldGeometry
 │       ├── Ground
+│       │   └── ModularGroundGrid
 │       ├── Structures
 │       ├── Props
 │       └── Boundaries
-├── Runtime
-│   └── Player
 └── Gameplay
     └── Actors
         └── TrainerKyle (inherited trainer preset instance)
@@ -354,6 +358,7 @@ levels.
 Run the shared-scene regression whenever character scene composition changes:
 
 ```sh
+godot --headless --path . --scene res://tests/scenes/level_base_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/pfr_character_scene_inheritance_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/player_input_movement_smoke_test.tscn
 godot --headless --editor --path . --script res://tests/scenes/pfr_character_editor_preview_smoke_test.gd

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="PackedScene" path="res://game/world/level_bases/world_level_base.tscn" id="1_world"]
-
-[node name="InteriorLevel" instance=ExtResource("1_world")]
-editor_description = "Base for authored interiors, gyms, and indoor challenge scenes."

@@ -73,9 +73,7 @@ const requiredPaths = [
   'game/world/levels/standalone_areas/standalone_area_catalog.tres.remap',
   'game/world/levels/standalone_areas/standalone_area_definition.gd.remap',
   'game/world/levels/standalone_areas/standalone_area_catalog.gd.remap',
-  'game/world/level_bases/world_level_base.tscn.remap',
-  'game/world/level_bases/outdoor_level_base.tscn.remap',
-  'game/world/level_bases/interior_level_base.tscn.remap',
+  'game/world/level_bases/level_base.tscn.remap',
   'game/actors/character/pfr_character.tscn.remap',
   'game/actors/npcs/residents/resident_base.tscn.remap',
   'game/actors/npcs/residents/stretchman/stretchman.tscn.remap',
@@ -112,6 +110,16 @@ for (const required of requiredPaths) {
   if (!packPaths.has(required)) throw new Error(`Export is missing ${required}.`);
 }
 
+const removedBasePaths = [
+  'game/world/level_bases/world_level_base.tscn.remap',
+  'game/world/level_bases/outdoor_level_base.tscn.remap',
+  'game/world/level_bases/interior_level_base.tscn.remap',
+  'game/world/level_bases/overworld_runtime.tscn.remap',
+];
+for (const removed of removedBasePaths) {
+  if (packPaths.has(removed)) throw new Error(`Export retains removed level base: ${removed}.`);
+}
+
 const standaloneScenePaths = [...packPaths].filter((entry) => (
   /^game\/world\/levels\/standalone_areas\/(?:routes\/route_\d{2}\/route_\d{2}|gyms\/gym_\d{2}\/gym_\d{2}|champion\/champion_challenge\/champion_challenge)\.tscn\.remap$/.test(entry)
 ));
@@ -139,6 +147,7 @@ console.log(JSON.stringify({
   standaloneAreaScenes: standaloneScenePaths.length,
   atlasImports: atlasImports.size,
   timingManifests: timingManifests.size,
+  canonicalLevelBasePresent: true,
   rawGifSourcesPresent: false,
   battleServerPresent: false,
   legacyRuntimeRootsPresent: false,

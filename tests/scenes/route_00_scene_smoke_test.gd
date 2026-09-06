@@ -66,7 +66,7 @@ func _run() -> void:
 	await get_tree().process_frame
 
 	var start := route.get_node_or_null(^"Markers/Route0Start") as Marker3D
-	var player := route.get_node_or_null(^"Runtime/Player") as PlayerCharacter
+	var player := route.get_node_or_null(^"Player") as PlayerCharacter
 	_check(start != null, "Route 0 should expose its named start marker.")
 	_check(player != null, "Route 0 should contain the playable character.")
 	if start != null and player != null:
@@ -75,7 +75,7 @@ func _run() -> void:
 			"The authored player spawn should match Route0Start."
 		)
 
-	var camera := route.get_node_or_null(^"Runtime/Camera3D") as Camera3D
+	var camera := route.get_node_or_null(^"Player/Camera3D") as Camera3D
 	var sun := route.get_node_or_null(^"Environment/Sun") as DirectionalLight3D
 	var environment := route.get_node_or_null(^"Environment/WorldEnvironment") as WorldEnvironment
 	_check(camera != null and camera.current and camera.far >= 80.0, "The route should have a camera sized for its full depth.")

@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://tga8ypmug0gs"]
 
-[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_pgwn5"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_pgwn5"]
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
@@ -95,7 +95,7 @@ destination_spawn_marker = &"RougeTowerNorthReturn"
 
 [node name="ExitEast" parent="Gameplay/Transitions" index="2" unique_id=1073540574 instance=ExtResource("5_transfer")]
 transform = Transform3D(3.9239558e-07, 0, 0.85, 0, 1, 0, -1.25, 0, 2.66829e-07, 4.35, 0, 1.55)
-destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_scene_path = "uid://c0axijbu5s5tg"
 destination_spawn_marker = &"RougeTowerEastReturn"
 
 [node name="SouthEntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=2135276328]

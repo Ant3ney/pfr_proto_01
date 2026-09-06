@@ -13,7 +13,7 @@ follow the [editor-dock learning guide](LEARNING_GUIDE.md).
 4. Enable **Place in 3D View**, then left-click in a 3D viewport. Use `Q` and `E` to rotate by 90 degrees. Press `Escape` or right-click to stop.
 5. Use Godot undo/redo normally. Placed scenes are organized below a `NewBouffalantCityAssets` node and retain their source `PackedScene` connection.
 
-Double-clicking a catalog row starts placement. **Add at Scene Origin** is useful when an asset is large or difficult to aim. The **Ground Grid** button opens the strict 2 × 2 m `GridMap` workspace, and **Metric Browser** opens the full scale-reference scene.
+Double-clicking a catalog row starts placement. **Add at Scene Origin** is useful when an asset is large or difficult to aim. The **Ground Grid** button opens the strict 2 × 2 m cobble and grass/dirt `GridMap` workspace, and **Metric Browser** opens the tracked 164-asset scale-reference scene under `tests/manual/new_bouffalant_city/`.
 
 Placed roots intentionally appear as `Scale = (1, 1, 1)`. The transferred GLBs already bake their player-calibrated `0.75` factor into the import, while the authored 2 × 2 m and 4 × 4 m ground scenes retain their exact dimensions. Do not scale a placed GLB to `0.75` again.
 
@@ -35,7 +35,7 @@ NVIDIA Vulkan keeps Forward+ on the discrete GPU:
 ./addons/new_bouffalant_city_asset_palette/open_editor_nvidia.sh
 ```
 
-Every current catalog entry has a bundled 192 × 192 render. The dock loads those renders first, so cards are available without waiting for Godot to synthesize a scene preview. To regenerate every thumbnail from a graphical desktop, run:
+Every one of the 164 catalog entries has a bundled 192 × 192 render. The dock loads those renders first, so cards are available without waiting for Godot to synthesize a scene preview. To regenerate every thumbnail from a graphical desktop, run:
 
 ```sh
 godot --path . --script res://addons/new_bouffalant_city_asset_palette/generate_thumbnails.gd
@@ -43,10 +43,11 @@ godot --path . --script res://addons/new_bouffalant_city_asset_palette/generate_
 
 Pass asset IDs after `--` to render only those cards, for example `-- t1_b_cityhall t1_pl024`. The renderer requires a working 3D display/renderer and is not a headless task.
 
-The palette places scene instances; it does not convert irregular buildings or complete environment sections into grid cells. Continue using `ModularGroundGrid` for fast 2 × 2 m cobble painting. Imported assets already carry their configured static collision, but navigation meshes and interaction boundaries remain scene-authoring responsibilities. See the [environment pack guide](../../art/environments/new_bouffalant_city/README.md) for collision profiles, scale, performance classification, and provenance constraints.
+The palette places scene instances; it does not convert irregular buildings or complete environment sections into grid cells. Continue using the shared `ModularGroundGrid` MeshLibrary for fast 2 × 2 m cobble (IDs 0–5) and grass/dirt (IDs 6–11) painting; use the dock's eleven direct wrappers when a scene instance is more convenient. Imported assets already carry their configured static collision, but navigation meshes and interaction boundaries remain scene-authoring responsibilities. See the [environment pack guide](../../art/environments/new_bouffalant_city/README.md) for collision profiles, texture storage, scale, performance classification, and provenance constraints.
 
 The normal double-click path for all three protected imports can be checked headlessly with:
 
 ```sh
 godot --headless --path . --script res://addons/new_bouffalant_city_asset_palette/validation/asset_palette_activation_smoke_test.gd
+godot --headless --path . --scene res://tests/scenes/assets/grass_dirt_gridmap_smoke_test.tscn
 ```

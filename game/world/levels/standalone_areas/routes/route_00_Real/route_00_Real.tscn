@@ -1,0 +1,704 @@
+[gd_scene format=3 uid="uid://vj38upntsh8d"]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_c5p5d"]
+[ext_resource type="Script" uid="uid://bgcyqdinri1px" path="res://game/actors/character/character_movement.gd" id="2_ftbry"]
+[ext_resource type="Script" uid="uid://jxb8otmsn8l6" path="res://game/actors/player/player_controller.gd" id="3_4xrtj"]
+[ext_resource type="PackedScene" uid="uid://c5w4ml3jpu580" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl032.glb" id="4_bkw3d"]
+[ext_resource type="PackedScene" uid="uid://op2ksk8ppvqw" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl002.glb" id="5_ftbry"]
+[ext_resource type="PackedScene" uid="uid://db7ioskvvenvt" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/field_item302a.glb" id="6_4xrtj"]
+
+[sub_resource type="Resource" id="Resource_x7w3y"]
+resource_local_to_scene = true
+script = ExtResource("2_ftbry")
+
+[sub_resource type="Resource" id="Resource_mipu5"]
+resource_local_to_scene = true
+script = ExtResource("3_4xrtj")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_c5p5d"]
+sky_top_color = Color(0.18, 0.52, 0.88, 1)
+sky_horizon_color = Color(0.82, 0.94, 1, 1)
+ground_bottom_color = Color(0.36, 0.28, 0.22, 1)
+ground_horizon_color = Color(0.78, 0.86, 0.78, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_modular_ground"]
+sky_material = SubResource("ProceduralSkyMaterial_c5p5d")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_ftbry"]
+background_mode = 2
+sky = SubResource("Sky_modular_ground")
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.82, 0.95, 1)
+ambient_light_energy = 0.28
+reflected_light_source = 1
+tonemap_mode = 2
+tonemap_exposure = 0.85
+
+[node name="PFRWorldLevel" unique_id=951319905 instance=ExtResource("1_c5p5d")]
+
+[node name="Player" parent="." index="0"]
+character_movement = SubResource("Resource_x7w3y")
+controller = SubResource("Resource_mipu5")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=173052358]
+environment = SubResource("Environment_ftbry")
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" index="1" unique_id=373451653]
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 0, 0)
+light_color = Color(1, 0.93, 0.82, 1)
+light_energy = 0.72
+shadow_enabled = true
+shadow_opacity = 0.58
+directional_shadow_mode = 0
+directional_shadow_max_distance = 32.0
+
+[node name="ModularGroundGrid" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=1781286088]
+data = {
+"cells": PackedInt32Array(0, 65534, 7, 0, 65533, 655371, 0, 65532, 655366, 65535, 65532, 655366, 65535, 65533, 655366, 65535, 65534, 655366, 65535, 65535, 655366, 65534, 65535, 655366, 65534, 65534, 6, 65534, 65533, 655366, 65534, 65532, 655366, 1, 65535, 655366, 1, 65534, 655366, 1, 65533, 6, 1, 65532, 655366, 0, 65535, 655367, 0, 0, 655367, 65535, 0, 655366, 65534, 0, 655366, 1, 0, 655366, 2, 65535, 655366, 2, 0, 655366, 2, 65534, 655366, 2, 65533, 655366, 2, 65532, 655366, 3, 65533, 6, 3, 65534, 6, 3, 65535, 6, 3, 0, 6, 3, 65532, 6, 65534, 65531, 6, 65535, 65531, 6, 0, 65531, 6, 1, 65531, 6, 2, 65531, 6, 3, 65531, 6, 65534, 65530, 6, 65535, 65530, 6, 65534, 65529, 6, 65534, 65528, 6, 65534, 65527, 6, 65535, 65527, 6, 0, 65527, 1441798, 1, 65527, 6, 2, 65527, 6, 3, 65527, 6, 4, 65527, 6, 4, 65528, 6, 4, 65529, 6, 4, 65530, 6, 3, 65530, 6, 2, 65530, 6, 1, 65530, 6, 0, 65530, 6, 0, 65529, 6, 65535, 65529, 6, 65535, 65528, 6, 0, 65528, 6, 1, 65528, 6, 1, 65529, 6, 2, 65529, 6, 2, 65528, 6, 3, 65528, 6, 3, 65529, 6, 5, 65526, 6, 4, 65526, 6, 3, 65526, 6, 2, 65526, 6, 5, 65527, 6, 5, 65528, 6, 5, 65529, 6, 5, 65530, 6, 5, 65531, 6, 5, 65532, 6, 4, 65532, 6, 4, 65533, 6, 4, 65534, 6, 4, 65535, 6, 4, 0, 6, 65533, 0, 6, 65533, 65535, 6, 65533, 65534, 6, 65532, 65534, 6, 65532, 65533, 6, 65532, 65532, 6, 65532, 0, 6, 65532, 65535, 6, 65531, 65532, 6, 65531, 65531, 6, 65531, 65533, 6, 65531, 65534, 6, 65531, 65535, 6, 65531, 0, 6, 65533, 65533, 6, 65533, 65532, 6, 65533, 65531, 6, 65532, 65531, 6, 65532, 65530, 6, 65531, 65530, 6, 65531, 65529, 6, 65531, 65528, 6, 65531, 65527, 1441798, 65532, 65527, 6, 65533, 65527, 6, 65533, 65528, 6, 65533, 65529, 6, 65533, 65530, 6, 65532, 65529, 6, 65532, 65528, 6, 1, 65526, 1441798, 0, 65526, 1441798, 65535, 65526, 1441798, 65534, 65526, 1441798, 65533, 65526, 1441798, 65532, 65526, 1441798, 65531, 65526, 1441798)
+}
+
+[node name="T1Pl002" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=994137364 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl007" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=871575758 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl017" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=1440751719 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl018" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=888587528 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl019" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=872925275 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl003" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=462118998 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -13.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl004" parent="NavigationRegion3D/WorldGeometry/Props" index="6" unique_id=1196209238 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl005" parent="NavigationRegion3D/WorldGeometry/Props" index="7" unique_id=658135801 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl020" parent="NavigationRegion3D/WorldGeometry/Props" index="8" unique_id=1034567947 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl021" parent="NavigationRegion3D/WorldGeometry/Props" index="9" unique_id=137857920 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl022" parent="NavigationRegion3D/WorldGeometry/Props" index="10" unique_id=1423556220 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl023" parent="NavigationRegion3D/WorldGeometry/Props" index="11" unique_id=532072472 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl024" parent="NavigationRegion3D/WorldGeometry/Props" index="12" unique_id=1367541742 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl025" parent="NavigationRegion3D/WorldGeometry/Props" index="13" unique_id=65550614 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -19.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl026" parent="NavigationRegion3D/WorldGeometry/Props" index="14" unique_id=426545651 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -19.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl027" parent="NavigationRegion3D/WorldGeometry/Props" index="15" unique_id=1256420023 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -19.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl028" parent="NavigationRegion3D/WorldGeometry/Props" index="16" unique_id=1057830905 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -19.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl029" parent="NavigationRegion3D/WorldGeometry/Props" index="17" unique_id=1773654287 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -21.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl030" parent="NavigationRegion3D/WorldGeometry/Props" index="18" unique_id=445369472 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -21.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl031" parent="NavigationRegion3D/WorldGeometry/Props" index="19" unique_id=1216818989 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -21.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl032" parent="NavigationRegion3D/WorldGeometry/Props" index="20" unique_id=2136742517 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -21.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl033" parent="NavigationRegion3D/WorldGeometry/Props" index="21" unique_id=1458647237 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -23.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl034" parent="NavigationRegion3D/WorldGeometry/Props" index="22" unique_id=1341859848 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -23.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl035" parent="NavigationRegion3D/WorldGeometry/Props" index="23" unique_id=375839560 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -23.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl036" parent="NavigationRegion3D/WorldGeometry/Props" index="24" unique_id=1623193276 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -23.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl037" parent="NavigationRegion3D/WorldGeometry/Props" index="25" unique_id=515178686 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -25.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl038" parent="NavigationRegion3D/WorldGeometry/Props" index="26" unique_id=425204842 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -25.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl039" parent="NavigationRegion3D/WorldGeometry/Props" index="27" unique_id=1576389554 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -25.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl040" parent="NavigationRegion3D/WorldGeometry/Props" index="28" unique_id=466290501 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -25.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl006" parent="NavigationRegion3D/WorldGeometry/Props" index="29" unique_id=437313274 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl008" parent="NavigationRegion3D/WorldGeometry/Props" index="30" unique_id=1026672851 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl009" parent="NavigationRegion3D/WorldGeometry/Props" index="31" unique_id=981295576 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl010" parent="NavigationRegion3D/WorldGeometry/Props" index="32" unique_id=684427772 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl011" parent="NavigationRegion3D/WorldGeometry/Props" index="33" unique_id=1847715734 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl012" parent="NavigationRegion3D/WorldGeometry/Props" index="34" unique_id=1046378711 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl013" parent="NavigationRegion3D/WorldGeometry/Props" index="35" unique_id=914600655 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl014" parent="NavigationRegion3D/WorldGeometry/Props" index="36" unique_id=847452292 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl015" parent="NavigationRegion3D/WorldGeometry/Props" index="37" unique_id=735486490 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="T1Pl016" parent="NavigationRegion3D/WorldGeometry/Props" index="38" unique_id=483323225 instance=ExtResource("5_ftbry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl002"
+
+[node name="Node3D" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1457480353]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="T1Pl032" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="0" unique_id=701214694 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl034" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="1" unique_id=1343854657 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl035" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="2" unique_id=1482052 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl036" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="3" unique_id=2005891085 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl037" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="4" unique_id=1530929458 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl038" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="5" unique_id=1202022541 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl039" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="6" unique_id=801782024 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl047" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="7" unique_id=171542387 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl048" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="8" unique_id=1354905123 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl049" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="9" unique_id=1041619553 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl050" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="10" unique_id=73888841 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl051" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="11" unique_id=1017773147 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl052" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="12" unique_id=238428423 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl053" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="13" unique_id=639887382 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl059" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="14" unique_id=2005282202 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl060" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="15" unique_id=1133241650 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl061" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="16" unique_id=596184790 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl106" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="17" unique_id=1300336806 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4, 0, -12)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl107" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="18" unique_id=496177664 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl108" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="19" unique_id=443064695 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4, 0, -11)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl062" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="20" unique_id=2000075503 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl063" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="21" unique_id=983119533 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl066" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="22" unique_id=369690124 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl067" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="23" unique_id=1356724085 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl068" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="24" unique_id=823534376 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl069" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="25" unique_id=898892853 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl070" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="26" unique_id=866735292 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl071" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="27" unique_id=1664862119 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl072" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="28" unique_id=1935682968 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl073" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="29" unique_id=2146659298 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl074" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="30" unique_id=1494424877 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl075" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="31" unique_id=574597714 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl076" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="32" unique_id=1625979568 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl077" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="33" unique_id=397980022 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl078" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="34" unique_id=1003473585 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl079" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="35" unique_id=1341035475 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl080" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="36" unique_id=2063433485 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl081" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="37" unique_id=545924728 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl082" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="38" unique_id=1104241763 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl083" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="39" unique_id=123317529 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl084" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="40" unique_id=634281217 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl085" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="41" unique_id=1162052757 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl086" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="42" unique_id=1895977163 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl087" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="43" unique_id=1932050579 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl088" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="44" unique_id=115825315 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl089" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="45" unique_id=480170478 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl090" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="46" unique_id=1198414462 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl091" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="47" unique_id=1078136070 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl092" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="48" unique_id=489074077 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl093" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="49" unique_id=1006083034 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl094" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="50" unique_id=1482891550 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl095" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="51" unique_id=1514438072 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl096" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="52" unique_id=1394577285 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl097" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="53" unique_id=1010411003 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl098" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="54" unique_id=484578205 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl099" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="55" unique_id=1096254653 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl100" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="56" unique_id=33851072 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl101" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="57" unique_id=829784536 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -19)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl102" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="58" unique_id=983207291 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -19)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl103" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="59" unique_id=526483448 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -19)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl104" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="60" unique_id=1927873047 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -19)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl105" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="61" unique_id=1385622806 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -19)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl064" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="62" unique_id=1716493030 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl065" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="63" unique_id=382170381 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl054" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="64" unique_id=629012872 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl055" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="65" unique_id=2041201895 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl056" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="66" unique_id=2029881030 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl057" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="67" unique_id=2047671349 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl058" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="68" unique_id=1854199010 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl109" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="69" unique_id=826565051 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl110" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="70" unique_id=1792153895 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl111" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="71" unique_id=2060034007 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl112" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="72" unique_id=1113401121 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl113" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="73" unique_id=1700442716 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl114" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="74" unique_id=1852253207 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl115" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="75" unique_id=2040560551 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl116" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="76" unique_id=608284937 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl117" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="77" unique_id=6702570 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl118" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="78" unique_id=1086664579 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -6.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl119" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="79" unique_id=423769995 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl120" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="80" unique_id=986675616 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl121" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="81" unique_id=1634001645 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl122" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="82" unique_id=1814125287 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl123" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="83" unique_id=95250173 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl124" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="84" unique_id=1529855378 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl125" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="85" unique_id=2120741990 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl126" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="86" unique_id=1586794900 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl127" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="87" unique_id=156866990 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl128" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="88" unique_id=1395012099 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl129" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="89" unique_id=1086996305 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl130" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="90" unique_id=712941276 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl131" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="91" unique_id=39144708 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl132" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="92" unique_id=1366673250 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl133" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="93" unique_id=1171187461 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl040" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="94" unique_id=1265612180 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl041" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="95" unique_id=984473114 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl042" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="96" unique_id=650377192 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl043" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="97" unique_id=14115129 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl044" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="98" unique_id=1957378403 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl045" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="99" unique_id=869807283 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl046" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="100" unique_id=874391646 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="T1Pl033" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="101" unique_id=1877290675 instance=ExtResource("4_bkw3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -1.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="FieldItem302a" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="102" unique_id=539130637 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a5" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="103" unique_id=1510513469 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -10)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a6" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="104" unique_id=1616606565 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -10)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a7" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="105" unique_id=30613749 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -10)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a9" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="106" unique_id=1288293390 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a10" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="107" unique_id=320947200 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a8" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="108" unique_id=2142211065 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -10)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a11" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="109" unique_id=1619441797 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -11.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a12" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="110" unique_id=2093561906 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a13" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="111" unique_id=1416244369 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a14" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="112" unique_id=1528121737 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a15" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="113" unique_id=2072717970 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -14.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a16" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="114" unique_id=1062250141 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -16)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a17" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="115" unique_id=328184336 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -16)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a18" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="116" unique_id=1063800613 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a19" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="117" unique_id=955106316 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -17.5)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a2" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="118" unique_id=306521961 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a3" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="119" unique_id=1314195509 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="FieldItem302a4" parent="NavigationRegion3D/WorldGeometry/Boundaries/Node3D" index="120" unique_id=294822134 instance=ExtResource("6_4xrtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -13)
+metadata/new_bouffalant_city_asset_id = "field_item302a"

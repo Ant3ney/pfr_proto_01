@@ -6,11 +6,23 @@
 [ext_resource type="ArrayMesh" uid="uid://dpkmtw3h6pxa8" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_city_cobble_t_intersection_a.tres" id="4_os2rw"]
 [ext_resource type="ArrayMesh" uid="uid://cmtcgk6id0ify" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_city_cobble_junction_a.tres" id="5_ojpjy"]
 [ext_resource type="ArrayMesh" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_city_cobble_end_a.tres" id="6_end"]
+[ext_resource type="ArrayMesh" uid="uid://by8h5xseywd6i" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_a.tres" id="7_grass_flat"]
+[ext_resource type="ArrayMesh" uid="uid://b4jtcd1bf4cj5" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_straight_a.tres" id="8_grass_straight"]
+[ext_resource type="ArrayMesh" uid="uid://bj0hmycvj3lql" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_l_intersection_a.tres" id="9_grass_corner"]
+[ext_resource type="ArrayMesh" uid="uid://bl5yum8282on5" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_t_intersection_a.tres" id="10_grass_t"]
+[ext_resource type="ArrayMesh" uid="uid://dwpcporccip2r" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_junction_a.tres" id="11_grass_cross"]
+[ext_resource type="ArrayMesh" uid="uid://dqs66es4jxxta" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/meshes/gnd_flat_02x02_grass_dirt_end_a.tres" id="12_grass_end"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3xiwh"]
 size = Vector3(2, 0.25, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ntgxv"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_cross"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_end"]
 size = Vector3(2, 0.25, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_d5ms6"]
@@ -23,6 +35,18 @@ size = Vector3(2, 0.25, 2)
 size = Vector3(2, 0.25, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_flat"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_straight"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_corner"]
+size = Vector3(2, 0.25, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_grass_t"]
 size = Vector3(2, 0.25, 2)
 
 [resource]
@@ -69,3 +93,45 @@ item/5/mesh_cast_shadow = 1
 item/5/shapes = [SubResource("BoxShape3D_end"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
 item/5/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/5/navigation_layers = 1
+item/6/name = "Grass/Dirt - Flat"
+item/6/mesh = ExtResource("7_grass_flat")
+item/6/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/mesh_cast_shadow = 1
+item/6/shapes = [SubResource("BoxShape3D_grass_flat"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/6/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/navigation_layers = 1
+item/7/name = "Grass/Dirt - Straight"
+item/7/mesh = ExtResource("8_grass_straight")
+item/7/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/7/mesh_cast_shadow = 1
+item/7/shapes = [SubResource("BoxShape3D_grass_straight"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/7/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/7/navigation_layers = 1
+item/8/name = "Grass/Dirt - L Intersection"
+item/8/mesh = ExtResource("9_grass_corner")
+item/8/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/8/mesh_cast_shadow = 1
+item/8/shapes = [SubResource("BoxShape3D_grass_corner"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/8/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/8/navigation_layers = 1
+item/9/name = "Grass/Dirt - T Intersection"
+item/9/mesh = ExtResource("10_grass_t")
+item/9/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/9/mesh_cast_shadow = 1
+item/9/shapes = [SubResource("BoxShape3D_grass_t"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/9/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/9/navigation_layers = 1
+item/10/name = "Grass/Dirt - Junction"
+item/10/mesh = ExtResource("11_grass_cross")
+item/10/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/10/mesh_cast_shadow = 1
+item/10/shapes = [SubResource("BoxShape3D_grass_cross"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/10/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/10/navigation_layers = 1
+item/11/name = "Grass/Dirt - End"
+item/11/mesh = ExtResource("12_grass_end")
+item/11/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/11/mesh_cast_shadow = 1
+item/11/shapes = [SubResource("BoxShape3D_grass_end"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, 0)]
+item/11/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/11/navigation_layers = 1
