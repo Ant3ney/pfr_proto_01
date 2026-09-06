@@ -89,7 +89,26 @@ touch button before returning to the Gate Building rear marker.
 
 ### Character
 
-Can be a player or NPC. Takes a input represented as the player controller component or  a NPC controller that decides what it does and where it goes.
+[`core/PFRCharacter.tscn`](../core/PFRCharacter.tscn) is the single authored
+scene foundation for players and NPCs. It owns the `PFRCharacter` body, standard
+capsule, and `Visual` pivot. `demo/player.tscn` and every reusable NPC role scene
+inherit it, then assign their role-specific controller, behavior, art pack,
+and interaction children. The art pack is the only model-selection source: the
+shared tool script creates a non-persistent editor preview and instantiates the
+same model at runtime. Levels instance those reusable role scenes; they do not
+rebuild or copy the character hierarchy. Some roles override only the inherited
+capsule resource to retain a narrower collision radius.
+
+`demo/player.tscn` explicitly overrides the inherited `controller` property
+with a scene-local `PlayerController`. Do not rely only on
+`PlayerCharacter._init()` for that assignment: applying the packed base scene
+can restore its default `NPCController`, which leaves both keyboard and floating
+joystick input unable to produce player movement. The player-input smoke test
+covers this inherited-scene boundary.
+
+The root can be a player or NPC. It takes input represented by the player
+controller component or an NPC controller that decides what it does and where
+it goes.
 
 ### Controllers
 

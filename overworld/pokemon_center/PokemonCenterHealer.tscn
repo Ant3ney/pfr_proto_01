@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
-[ext_resource type="Script" path="res://core/PFRCharacter.gd" id="1_character"]
+[ext_resource type="PackedScene" path="res://core/PFRCharacter.tscn" id="1_character"]
 [ext_resource type="Script" path="res://core/NPCController.gd" id="2_controller"]
 [ext_resource type="Script" path="res://core/PokemonCenterHealerBehavior.gd" id="3_behavior"]
 [ext_resource type="Resource" path="res://art/characters/za_city_waiter/za_city_waiter.tres" id="4_waiter"]
-[ext_resource type="PackedScene" path="res://art/characters/za_city_waiter/models/model.glb" id="5_waiter_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_healer"]
 radius = 0.28
@@ -23,12 +22,11 @@ resource_local_to_scene = true
 script = ExtResource("2_controller")
 npc_behavior = SubResource("Resource_healer_behavior")
 
-[node name="PokemonCenterHealer" type="CharacterBody3D"]
-script = ExtResource("1_character")
+[node name="PokemonCenterHealer" instance=ExtResource("1_character")]
 controller = SubResource("Resource_healer_controller")
 character_art_asset_pack = ExtResource("4_waiter")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" parent="." index="0"]
 position = Vector3(0, 0.8, 0)
 shape = SubResource("CapsuleShape_healer")
 
@@ -40,8 +38,3 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
 position = Vector3(0, 0.8, 0)
 shape = SubResource("SphereShape_interaction")
-
-[node name="Visual" type="Node3D" parent="."]
-
-[node name="CharacterArt" parent="Visual" instance=ExtResource("5_waiter_model")]
-rotation = Vector3(0, 3.1415927, 0)

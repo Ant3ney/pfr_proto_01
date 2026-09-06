@@ -1,3 +1,4 @@
+@tool
 class_name PFRCharacter
 extends CharacterBody3D
 
@@ -11,7 +12,10 @@ extends CharacterBody3D
 @export var controller: NPCController = NPCController.new()
 
 @export_group("Character Art")
-@export var character_art_asset_pack: PFRCharacterArtAssetPack
+@export var character_art_asset_pack: PFRCharacterArtAssetPack:
+	set(value):
+		character_art_asset_pack = value
+		_queue_editor_art_preview_refresh()
 
 @export_group("Animation")
 @export_range(0.0, 1.0, 0.01) var animation_blend_time := 0.15
@@ -23,9 +27,17 @@ var animation_player: AnimationPlayer
 var _idle_playback_animation: StringName
 var _run_playback_animation: StringName
 var _current_animation: StringName
+var _editor_art_preview_refresh_queued := false
+
+const EDITOR_ART_PREVIEW_META := &"_pfr_character_editor_art_preview"
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_physics_process(false)
+		_refresh_editor_art_preview()
+		return
+
 	add_to_group(&"pfr_characters")
 	if not character_movement:
 		character_movement = CharacterMovement.new()
@@ -42,6 +54,78 @@ func _ready() -> void:
 		return
 
 	_play_animation(_idle_playback_animation)
+
+
+func _queue_editor_art_preview_refresh() -> void:
+	if (
+		not Engine.is_editor_hint()
+		or not is_inside_tree()
+		or _editor_art_preview_refresh_queued
+	):
+		return
+	_editor_art_preview_refresh_queued = true
+	call_deferred(&"_refresh_editor_art_preview")
+
+
+func _refresh_editor_art_preview() -> void:
+	_editor_art_preview_refresh_queued = false
+	if not Engine.is_editor_hint() or not is_inside_tree():
+		return
+
+	var preview_parent := get_node_or_null(^"Visual") as Node3D
+	if preview_parent == null:
+		return
+	var existing_art := preview_parent.get_node_or_null(^"CharacterArt") as Node3D
+	var desired_scene := (
+		character_art_asset_pack.character_scene
+		if character_art_asset_pack != null
+		else null
+	)
+	if desired_scene == null:
+		_remove_editor_art_preview(preview_parent, existing_art)
+		return
+
+	var desired_path := desired_scene.resource_path
+	if existing_art != null:
+		var is_generated_preview := bool(
+			existing_art.get_meta(EDITOR_ART_PREVIEW_META, false)
+		)
+		if not is_generated_preview:
+			# Authored character art remains the source of truth for a specialized
+			# role scene. Level-configured generic NPCs have no authored child and
+			# receive the non-persistent preview below.
+			existing_art.rotation_degrees = (
+				character_art_asset_pack.character_scene_rotation_degrees
+			)
+			return
+		if existing_art.scene_file_path == desired_path:
+			existing_art.rotation_degrees = (
+				character_art_asset_pack.character_scene_rotation_degrees
+			)
+			return
+		_remove_editor_art_preview(preview_parent, existing_art)
+
+	var preview_instance := desired_scene.instantiate()
+	if not preview_instance is Node3D:
+		preview_instance.free()
+		return
+	var preview_art := preview_instance as Node3D
+	preview_art.name = "CharacterArt"
+	preview_art.rotation_degrees = (
+		character_art_asset_pack.character_scene_rotation_degrees
+	)
+	preview_art.set_meta(EDITOR_ART_PREVIEW_META, true)
+	preview_parent.add_child(preview_art)
+
+
+func _remove_editor_art_preview(parent: Node3D, candidate: Node3D) -> void:
+	if (
+		candidate == null
+		or not bool(candidate.get_meta(EDITOR_ART_PREVIEW_META, false))
+	):
+		return
+	parent.remove_child(candidate)
+	candidate.free()
 
 
 func can_interact(interactor: PlayerCharacter) -> bool:

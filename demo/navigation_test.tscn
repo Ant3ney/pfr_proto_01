@@ -1,7 +1,7 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://demo/NavigationTest.gd" id="1_test"]
-[ext_resource type="Script" path="res://core/PFRCharacter.gd" id="2_character"]
+[ext_resource type="PackedScene" path="res://core/PFRCharacter.tscn" id="2_character"]
 [ext_resource type="Resource" path="res://art/characters/zach/zach.tres" id="3_zach"]
 [ext_resource type="PackedScene" path="res://demo/player.tscn" id="4_player"]
 
@@ -47,10 +47,6 @@ material = SubResource("StandardMaterial_destination")
 top_radius = 0.4
 bottom_radius = 0.4
 height = 0.08
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape_npc"]
-radius = 0.32
-height = 1.6
 
 [node name="NavigationTest" type="Node3D"]
 script = ExtResource("1_test")
@@ -104,16 +100,9 @@ shape = SubResource("BoxShape_vertical_limit")
 position = Vector3(6, 0.04, 0)
 mesh = SubResource("CylinderMesh_destination")
 
-[node name="NPC" type="CharacterBody3D" parent="."]
+[node name="NPC" parent="." instance=ExtResource("2_character")]
 position = Vector3(-6, 0, 0)
-script = ExtResource("2_character")
 character_art_asset_pack = ExtResource("3_zach")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NPC"]
-position = Vector3(0, 0.8, 0)
-shape = SubResource("CapsuleShape_npc")
-
-[node name="Visual" type="Node3D" parent="NPC"]
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 position = Vector3(-6, 0, -2)

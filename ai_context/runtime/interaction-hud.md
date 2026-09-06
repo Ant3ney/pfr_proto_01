@@ -7,11 +7,21 @@ or changing the touch/keyboard interaction prompt during the RND phase.
 
 The shared [`player.tscn`](../../demo/player.tscn) owns
 [`RNDPlayerInteractionDetector`](../../rnd/interaction/PlayerInteractionDetector.gd).
-Every `PFRCharacter` joins the `pfr_characters` group at runtime. While player
+The player scene and every reusable NPC role scene inherit the common
+[`PFRCharacter.tscn`](../../core/PFRCharacter.tscn) scene, which owns their
+shared body, capsule, and `Visual` pivot. Every `PFRCharacter` joins the
+`pfr_characters` group at runtime. While player
 movement is free, the detector chooses one behavior-approved non-player
 character within 3.25 m, a 38-degree forward half-angle, and a clear layer-1
 line of sight at 1.35 m. The elevated sight line reaches an attendant over the
 Pokemon Center counter while ordinary walls still block selection.
+
+`PFRCharacterArtAssetPack` is the single appearance assignment. In the editor,
+the shared tool script adds an unowned `Visual/CharacterArt` preview matching
+that pack, including art-pack overrides authored on a level instance. Runtime
+instantiates the same packed model and prepares its locomotion animations.
+Specialized player, trainer, healer, and Stretchman scenes do not separately
+serialize a second GLB reference.
 
 [`GameUI`](../../demo/GameUI.gd) binds to that detector and reveals its shared
 bottom-right `InteractionButton` only while a target is available. Touch/click,
@@ -76,6 +86,9 @@ cobblestone and grants the persistent one-time Exp. Share gift.
 ## Regression checks
 
 ```bash
+godot --headless --path . --scene res://tests/pfr_character_scene_inheritance_smoke_test.tscn
+godot --headless --path . --scene res://tests/player_input_movement_smoke_test.tscn
+godot --headless --editor --path . --script res://tests/pfr_character_editor_preview_smoke_test.gd
 godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
 godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
 godot --headless --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn

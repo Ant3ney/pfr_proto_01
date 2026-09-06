@@ -157,7 +157,15 @@ See the complete [UI Template System guide](core/ui/README.md) for single messag
 
 ## Place the Player in a Traversable Scene
 
-[`demo/primary_development_enviroment.tscn`](demo/primary_development_enviroment.tscn) is the project main scene and complete city development environment. The reusable player is [`demo/player.tscn`](demo/player.tscn); instance that scene instead of rebuilding its character body, collision capsule, controller, art, and animation setup in every level.
+[`core/PFRCharacter.tscn`](core/PFRCharacter.tscn) is the shared scene foundation
+for every player and NPC. It owns the `PFRCharacter` body, standard capsule, and
+`Visual` pivot. Role scenes inherit that foundation: the reusable player is
+[`demo/player.tscn`](demo/player.tscn), while town residents, trainers, healers,
+and Stretchman add their own controller, behavior, art, and interaction data.
+Instance the role scene instead of rebuilding the character hierarchy in a
+level. Assign character appearance through one `PFRCharacterArtAssetPack`;
+the shared character creates the matching `CharacterArt` model at runtime and
+as a non-persistent editor preview.
 
 A playable level normally has this structure:
 
@@ -205,7 +213,15 @@ The New Bouffalant City ground wrappers and imported reference assets already in
 
 ## Add a Trainer to a Scene
 
-[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) is the current trainer template, and [`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn) demonstrates all seven standard prototype placements in Lv. 3–6 order. A trainer uses the same character body, collision, movement, art-pack, and animation system as the player, but its controller waits for a line-of-sight detection and then navigates toward the player.
+All trainer prefabs inherit
+[`core/PFRCharacter.tscn`](core/PFRCharacter.tscn).
+[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn)
+is the reference trainer role scene, and
+[`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn)
+demonstrates all seven standard prototype placements in Lv. 3–6 order. A
+trainer uses the same character body, collision, movement, art-pack, and
+animation system as the player, but its controller waits for a line-of-sight
+detection and then navigates toward the player.
 
 A trainer-ready level adds these nodes to the playable-level structure above:
 
@@ -221,7 +237,11 @@ Level (Node3D)
 
 ### Place and Configure a Trainer
 
-1. Instance [`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn) under the level root. Keep its scale at `1, 1, 1`, and place its root directly on the walkable surface, inside the navigation mesh.
+1. In the FileSystem dock, drag the required reusable trainer scene from
+   [`overworld/trainer_lake/`](overworld/trainer_lake/) into the level's Scene
+   tree. Do not copy its node hierarchy into the level. Keep its scale at
+   `1, 1, 1`, and place its root directly on the walkable surface, inside the
+   navigation mesh.
 2. Rotate the trainer root around the Y axis to face its detection lane. [`core/TrainerBehavior.gd`](core/TrainerBehavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
 3. Keep the player's collision body on physics layer 1, or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
 4. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
@@ -263,7 +283,25 @@ that destination again restores their forced sight challenge. Standard sight
 consumption is not yet persisted to disk. Avoid overlapping trainer sightlines
 because there is no encounter arbiter for simultaneous detections or UI templates.
 
-To make another trainer type, duplicate the Kyle scene and give it a descriptive name. Keep the `PFRCharacter` root structure, collision capsule, `Visual` node, and character art pack. Duplicate [`overworld/trainer_lake/TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) when that trainer needs different detection distance, ray height, collision mask, stopping buffer, or arrival distance; the controller should continue to extend [`core/NPCController.gd`](core/NPCController.gd) and assign a `TrainerBehavior` resource.
+To author a genuinely new reusable character role, create an inherited scene
+from [`core/PFRCharacter.tscn`](core/PFRCharacter.tscn); do not duplicate an
+existing character scene. Preserve the inherited `CollisionShape3D` and
+`Visual` nodes, override the capsule shape only when the role needs a different
+radius, and assign a `PFRCharacterArtAssetPack` on the root. Do not separately
+add the pack's GLB beneath `Visual`; the inherited character owns both its
+editor preview and runtime instantiation. A trainer assigns a scene-local
+[`TrainerKyle`](overworld/trainer_lake/TrainerKyle.gd) controller, its `Dialog`,
+concrete battle-scene path, and matching encounter ID. Save that role scene
+under `overworld/`, then drag instances of it from the FileSystem dock into
+levels.
+
+Run the shared-scene regression whenever character scene composition changes:
+
+```sh
+godot --headless --path . --scene res://tests/pfr_character_scene_inheritance_smoke_test.tscn
+godot --headless --path . --scene res://tests/player_input_movement_smoke_test.tscn
+godot --headless --editor --path . --script res://tests/pfr_character_editor_preview_smoke_test.gd
+```
 
 | Problem | Check |
 | --- | --- |

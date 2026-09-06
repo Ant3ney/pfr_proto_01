@@ -530,6 +530,7 @@ func _test_city_lineup_trainer_mappings() -> void:
 		if trainer_scene == null:
 			continue
 		var trainer_instance := trainer_scene.instantiate()
+		add_child(trainer_instance)
 		var controller: Resource = trainer_instance.get("controller") as Resource
 		_check(controller != null, "%s should expose a trainer controller." % label)
 		if controller != null:
@@ -555,7 +556,7 @@ func _test_city_lineup_trainer_mappings() -> void:
 			_check(
 				expected_scene != null
 				and character_art.scene_file_path == expected_scene.resource_path,
-				"%s art pack and preview model should match." % label
+				"%s art pack and runtime model should match." % label
 			)
 			var animation_player := character_art.get_node_or_null(
 				art_pack.get("animation_player_path")
@@ -573,6 +574,7 @@ func _test_city_lineup_trainer_mappings() -> void:
 					animation_player.has_animation(art_pack.get("run_animation")),
 					"%s character art should contain its run animation." % label
 				)
+		remove_child(trainer_instance)
 		trainer_instance.free()
 
 
