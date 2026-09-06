@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_cruo0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_06/encounters/route_06_trainer_01.tres" id="2_5g0ka"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_06/encounters/route_06_trainer_02.tres" id="3_h57ui"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_06/encounters/route_06_trainer_03.tres" id="4_dtp5e"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_06/encounters/route_06_trainer_04.tres" id="5_lvy1h"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_06/route_06.tscn" id="6_tmtem"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_3bixk"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_06/encounters/route_06_wild.tres" id="8_nuxwg"]
+
+[resource]
+script = ExtResource("7_3bixk")
+area_id = "route_06"
+numeric_order = 6
+display_name = "Route 6 — Amber Savanna"
+description = "Dry Savanna dungeon route with 4 mandatory trainer checkpoints, 4 tall-grass fields, and a twisting 96 m path (Lv. 7–14). Reach the end to unlock the next route."
+biome = "dry savanna"
+destination = ExtResource("6_tmtem")
+suggested_level_min = 7
+suggested_level_max = 14
+battle_encounters = Array[ExtResource("1_cruo0")]([ExtResource("2_5g0ka"), ExtResource("3_h57ui"), ExtResource("4_dtp5e"), ExtResource("5_lvy1h")])
+wild_encounters = Array[ExtResource("1_cruo0")]([ExtResource("8_nuxwg")])
+route_completion_prerequisite = "route_05"

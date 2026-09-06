@@ -1,0 +1,138 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_ua4b7"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_walnut"]
+albedo_color = Color(0.17, 0.085, 0.045, 1)
+roughness = 0.78
+
+[sub_resource type="BoxMesh" id="Mesh_desk"]
+material = SubResource("Material_walnut")
+size = Vector3(5.6, 1.08, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="Material_limestone"]
+albedo_color = Color(0.76, 0.71, 0.6, 1)
+roughness = 0.84
+
+[sub_resource type="BoxMesh" id="Mesh_desk_top"]
+material = SubResource("Material_limestone")
+size = Vector3(5.9, 0.13, 1.42)
+
+[sub_resource type="StandardMaterial3D" id="Material_blue"]
+albedo_color = Color(0.12, 0.31, 0.48, 1)
+roughness = 0.72
+
+[sub_resource type="BoxMesh" id="Mesh_aisle"]
+material = SubResource("Material_blue")
+size = Vector3(2.5, 0.035, 5.8)
+
+[sub_resource type="BoxMesh" id="Mesh_bench"]
+material = SubResource("Material_walnut")
+size = Vector3(3.1, 0.58, 0.82)
+
+[sub_resource type="BoxMesh" id="Mesh_banner_blue"]
+material = SubResource("Material_blue")
+size = Vector3(1.15, 1.8, 0.055)
+
+[sub_resource type="StandardMaterial3D" id="Material_red"]
+albedo_color = Color(0.52, 0.08, 0.095, 1)
+roughness = 0.76
+
+[sub_resource type="BoxMesh" id="Mesh_banner_red"]
+material = SubResource("Material_red")
+size = Vector3(1.15, 1.8, 0.055)
+
+[sub_resource type="BoxShape3D" id="Shape_desk"]
+size = Vector3(5.9, 1.15, 1.42)
+
+[sub_resource type="BoxShape3D" id="Shape_bench"]
+size = Vector3(3.1, 0.58, 0.82)
+
+[node name="CityHallInterior" unique_id=817495486 instance=ExtResource("1_ua4b7")]
+editor_description = "Classical civic reception hall with worn brick, limestone trim, walnut service furniture, paired faction banners, three authored entrances, and low-cost mobile-web lighting."
+level_id = "city_hall_interior"
+area_id = "city_hall_interior"
+entry_spawn_marker = &"FrontEntrySpawn"
+metadata/mobile_web_level = true
+metadata/interior_id = "city_hall"
+
+[node name="Lighting" parent="Environment" index="0" unique_id=2113411902 instance=ExtResource("2_lighting")]
+
+[node name="Room" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=2054247565 instance=ExtResource("1_room")]
+transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="ReceptionDesk" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=335924111]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54, -2.65)
+mesh = SubResource("Mesh_desk")
+
+[node name="ReceptionDeskTop" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=131850885]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.11, -2.65)
+mesh = SubResource("Mesh_desk_top")
+
+[node name="CentralAisle" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=1137138737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0.65)
+mesh = SubResource("Mesh_aisle")
+
+[node name="WaitingBenchLeft" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=1780418330]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -4.45, 0.29, 0.7)
+mesh = SubResource("Mesh_bench")
+
+[node name="WaitingBenchRight" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=790640577]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 4.45, 0.29, 0.7)
+mesh = SubResource("Mesh_bench")
+
+[node name="FractureBanner" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=1008993819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 2.1, -4.78)
+mesh = SubResource("Mesh_banner_blue")
+
+[node name="RevoltBanner" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="6" unique_id=383060887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 2.1, -4.78)
+mesh = SubResource("Mesh_banner_red")
+
+[node name="RearDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="7" unique_id=264516255 instance=ExtResource("4_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.78)
+
+[node name="SideDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="8" unique_id=146050994 instance=ExtResource("4_door")]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -7.02, 0, 1.5)
+
+[node name="FurnitureCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1257452128]
+
+[node name="ReceptionDesk" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="0" unique_id=297190111]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.575, -2.65)
+shape = SubResource("Shape_desk")
+
+[node name="WaitingBenchLeft" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="1" unique_id=1945431557]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -4.45, 0.29, 0.7)
+shape = SubResource("Shape_bench")
+
+[node name="WaitingBenchRight" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="2" unique_id=443902301]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 4.45, 0.29, 0.7)
+shape = SubResource("Shape_bench")
+
+[node name="ExitFront" parent="Gameplay/Transitions" index="0" unique_id=1043727036 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 0.9, 0, 0, 4.68)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"CityHallFrontReturn"
+
+[node name="ExitRear" parent="Gameplay/Transitions" index="1" unique_id=1129582319 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 0.9, 0, 0, -4.45)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"CityHallRearReturn"
+
+[node name="ExitSide" parent="Gameplay/Transitions" index="2" unique_id=96886457 instance=ExtResource("5_transfer")]
+transform = Transform3D(4.2378724e-07, 0, 0.9, 0, 1, 0, -1.35, 0, 2.825248e-07, -6.62, 0, 1.5)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"CityHallSideReturn"
+
+[node name="FrontEntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=1682969192]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0, 0, 3.35)
+
+[node name="RearEntrySpawn" type="Marker3D" parent="Markers" index="1" unique_id=775569555]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.25)
+
+[node name="SideEntrySpawn" type="Marker3D" parent="Markers" index="2" unique_id=1639138967]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -5.75, 0, 1.5)

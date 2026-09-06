@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_p58ak"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_01.tres" id="2_spe2h"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_02.tres" id="3_xtfhi"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_03.tres" id="4_ixvnr"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_04.tres" id="5_72ke7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_05.tres" id="6_kkjbx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_06.tres" id="7_l6hld"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_trainer_07.tres" id="8_ksg0x"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_31/route_31.tscn" id="9_21ryn"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_hldom"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_31/encounters/route_31_wild.tres" id="11_voh8v"]
+
+[resource]
+script = ExtResource("10_hldom")
+area_id = "route_31"
+numeric_order = 31
+display_name = "Route 31 — Jade Bamboo Snare"
+description = "Bamboo Grove dungeon route with 7 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 172 m path (Lv. 43–50). Reach the end to unlock the next route."
+biome = "bamboo grove"
+destination = ExtResource("9_21ryn")
+suggested_level_min = 43
+suggested_level_max = 50
+battle_encounters = Array[ExtResource("1_p58ak")]([ExtResource("2_spe2h"), ExtResource("3_xtfhi"), ExtResource("4_ixvnr"), ExtResource("5_72ke7"), ExtResource("6_kkjbx"), ExtResource("7_l6hld"), ExtResource("8_ksg0x")])
+wild_encounters = Array[ExtResource("1_p58ak")]([ExtResource("11_voh8v")])
+route_completion_prerequisite = "route_30"

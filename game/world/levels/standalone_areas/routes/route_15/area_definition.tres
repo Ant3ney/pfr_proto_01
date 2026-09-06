@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_0olij"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_trainer_01.tres" id="2_ikwld"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_trainer_02.tres" id="3_4cb7h"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_trainer_03.tres" id="4_6qyw7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_trainer_04.tres" id="5_hrb38"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_trainer_05.tres" id="6_efkjx"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_15/route_15.tscn" id="7_55ufg"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_ri7rr"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_15/encounters/route_15_wild.tres" id="9_6x7w0"]
+
+[resource]
+script = ExtResource("8_ri7rr")
+area_id = "route_15"
+numeric_order = 15
+display_name = "Route 15 — Copperleaf Rise"
+description = "Autumn Highlands dungeon route with 5 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 124 m path (Lv. 19–26). Reach the end to unlock the next route."
+biome = "autumn highlands"
+destination = ExtResource("7_55ufg")
+suggested_level_min = 19
+suggested_level_max = 26
+battle_encounters = Array[ExtResource("1_0olij")]([ExtResource("2_ikwld"), ExtResource("3_4cb7h"), ExtResource("4_6qyw7"), ExtResource("5_hrb38"), ExtResource("6_efkjx")])
+wild_encounters = Array[ExtResource("1_0olij")]([ExtResource("9_6x7w0")])
+route_completion_prerequisite = "route_14"

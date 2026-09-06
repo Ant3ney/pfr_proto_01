@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_xyhly"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_3i2bc"]
+
+[sub_resource type="Resource" id="Resource_3apgo"]
+script = ExtResource("1_xyhly")
+member_id = "gym-05-leader-member-1"
+pokemon_id = 109
+species = "Koffing"
+sprite_id = "koffing"
+level = 34
+moves = Array[String](["poisongas", "tackle", "smog", "smokescreen"])
+
+[sub_resource type="Resource" id="Resource_whblm"]
+script = ExtResource("1_xyhly")
+member_id = "gym-05-leader-member-2"
+pokemon_id = 110
+species = "Weezing"
+sprite_id = "weezing"
+level = 36
+moves = Array[String](["doublehit", "heatwave", "poisongas", "smog"])
+
+[sub_resource type="Resource" id="Resource_d6yck"]
+script = ExtResource("1_xyhly")
+member_id = "gym-05-leader-member-3"
+pokemon_id = 94
+species = "Gengar"
+sprite_id = "gengar"
+level = 38
+moves = Array[String](["confuseray", "hypnosis", "lick", "meanlook"])
+
+[resource]
+script = ExtResource("2_3i2bc")
+encounter_id = "gym-05-leader"
+display_name = "Leader Vesper"
+api_name = "Leader Vesper"
+members = Array[ExtResource("1_xyhly")]([SubResource("Resource_3apgo"), SubResource("Resource_whblm"), SubResource("Resource_d6yck")])

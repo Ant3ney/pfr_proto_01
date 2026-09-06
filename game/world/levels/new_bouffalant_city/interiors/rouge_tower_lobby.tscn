@@ -1,0 +1,108 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_pgwn5"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_walnut"]
+albedo_color = Color(0.14, 0.07, 0.045, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_directory"]
+material = SubResource("Material_walnut")
+size = Vector3(2.7, 1.1, 1.05)
+
+[sub_resource type="StandardMaterial3D" id="Material_brass"]
+albedo_color = Color(0.66, 0.42, 0.13, 1)
+metallic = 0.4
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_directory_top"]
+material = SubResource("Material_brass")
+size = Vector3(2.95, 0.11, 1.28)
+
+[sub_resource type="StandardMaterial3D" id="Material_rouge"]
+albedo_color = Color(0.46, 0.07, 0.13, 1)
+roughness = 0.73
+
+[sub_resource type="BoxMesh" id="Mesh_runner"]
+material = SubResource("Material_rouge")
+size = Vector3(1.7, 0.035, 5.8)
+
+[sub_resource type="BoxMesh" id="Mesh_elevator"]
+material = SubResource("Material_brass")
+size = Vector3(1.55, 2.55, 0.09)
+
+[sub_resource type="BoxShape3D" id="Shape_directory"]
+size = Vector3(2.95, 1.18, 1.28)
+
+[node name="RougeTowerLobby" unique_id=1617712680 instance=ExtResource("1_pgwn5")]
+editor_description = "Tall civic-tower lobby reduced to a readable walnut directory, brass lift doors, a restrained crimson runner, and three transfer openings."
+level_id = "rouge_tower_lobby"
+area_id = "rouge_tower_lobby"
+entry_spawn_marker = &"SouthEntrySpawn"
+metadata/mobile_web_level = true
+metadata/interior_id = "rouge_tower"
+
+[node name="Lighting" parent="Environment" index="0" unique_id=1763874 instance=ExtResource("2_lighting")]
+
+[node name="Room" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=148153520 instance=ExtResource("1_room")]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 0.9, 0, 0, 0)
+
+[node name="DirectoryDesk" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=1059830339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.45)
+mesh = SubResource("Mesh_directory")
+
+[node name="DirectoryTop" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=238145268]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, -0.45)
+mesh = SubResource("Mesh_directory_top")
+
+[node name="Runner" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=340952131]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 1.1)
+mesh = SubResource("Mesh_runner")
+
+[node name="LiftLeft" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=854125701]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.275, -4.38)
+mesh = SubResource("Mesh_elevator")
+
+[node name="LiftRight" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=1709676266]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 1.275, -4.38)
+mesh = SubResource("Mesh_elevator")
+
+[node name="NorthDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=2065521483 instance=ExtResource("4_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.38)
+
+[node name="EastDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="6" unique_id=1823452573 instance=ExtResource("4_door")]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 4.67, 0, 1.55)
+
+[node name="DirectoryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1920718517]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/DirectoryCollision" index="0" unique_id=1360432347]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, -0.45)
+shape = SubResource("Shape_directory")
+
+[node name="ExitSouth" parent="Gameplay/Transitions" index="0" unique_id=1190257815 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.25, 0, 0, 0, 1, 0, 0, 0, 0.85, 0, 0, 4.15)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"RougeTowerSouthReturn"
+
+[node name="ExitNorth" parent="Gameplay/Transitions" index="1" unique_id=2080823101 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.25, 0, 0, 0, 1, 0, 0, 0, 0.85, 0, 0, -4.08)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"RougeTowerNorthReturn"
+
+[node name="ExitEast" parent="Gameplay/Transitions" index="2" unique_id=1073540574 instance=ExtResource("5_transfer")]
+transform = Transform3D(3.9239558e-07, 0, 0.85, 0, 1, 0, -1.25, 0, 2.66829e-07, 4.35, 0, 1.55)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"RougeTowerEastReturn"
+
+[node name="SouthEntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=2135276328]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0, 0, 2.95)
+
+[node name="NorthEntrySpawn" type="Marker3D" parent="Markers" index="1" unique_id=1871435577]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.85)
+
+[node name="EastEntrySpawn" type="Marker3D" parent="Markers" index="2" unique_id=110354030]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 3.25, 0, 1.55)

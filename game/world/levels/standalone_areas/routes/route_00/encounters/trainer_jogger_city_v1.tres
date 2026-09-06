@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_poffk"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_svxaa"]
+
+[sub_resource type="Resource" id="Resource_w1xlb"]
+script = ExtResource("1_poffk")
+member_id = "jogger-shinx"
+pokemon_id = 403
+species = "Shinx"
+sprite_id = "shinx"
+level = 6
+moves = Array[String](["leer", "tackle", "thundershock", "charge"])
+
+[resource]
+script = ExtResource("2_svxaa")
+encounter_id = "trainer-jogger-city-v1"
+display_name = "Jogger"
+api_name = "Jogger"
+members = Array[ExtResource("1_poffk")]([SubResource("Resource_w1xlb")])

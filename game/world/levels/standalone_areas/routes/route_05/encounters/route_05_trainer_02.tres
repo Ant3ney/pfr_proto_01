@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_tb6t2"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_q8chl"]
+
+[sub_resource type="Resource" id="Resource_3y3nd"]
+script = ExtResource("1_tb6t2")
+member_id = "route-05-trainer-02-member-1"
+pokemon_id = 90
+species = "Shellder"
+sprite_id = "shellder"
+level = 9
+moves = Array[String](["tackle", "watergun", "withdraw", "iceshard"])
+
+[sub_resource type="Resource" id="Resource_pijma"]
+script = ExtResource("1_tb6t2")
+member_id = "route-05-trainer-02-member-2"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 10
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[resource]
+script = ExtResource("2_q8chl")
+encounter_id = "route-05-trainer-02"
+display_name = "Route 5 Trainer 2"
+api_name = "Route 5 Trainer 2"
+members = Array[ExtResource("1_tb6t2")]([SubResource("Resource_3y3nd"), SubResource("Resource_pijma")])

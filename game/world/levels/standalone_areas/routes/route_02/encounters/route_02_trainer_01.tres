@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_8devc"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_378de"]
+
+[sub_resource type="Resource" id="Resource_7ybj4"]
+script = ExtResource("1_8devc")
+member_id = "route-02-trainer-01-member-1"
+pokemon_id = 23
+species = "Ekans"
+sprite_id = "ekans"
+level = 3
+moves = Array[String](["leer", "wrap", "poisonsting", "bite"])
+
+[sub_resource type="Resource" id="Resource_swai0"]
+script = ExtResource("1_8devc")
+member_id = "route-02-trainer-01-member-2"
+pokemon_id = 52
+species = "Meowth"
+sprite_id = "meowth"
+level = 4
+moves = Array[String](["fakeout", "growl", "feint", "scratch"])
+
+[resource]
+script = ExtResource("2_378de")
+encounter_id = "route-02-trainer-01"
+display_name = "Route 2 Trainer 1"
+api_name = "Route 2 Trainer 1"
+members = Array[ExtResource("1_8devc")]([SubResource("Resource_7ybj4"), SubResource("Resource_swai0")])

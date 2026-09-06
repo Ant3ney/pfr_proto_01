@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_4upp7"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_10m3i"]
+
+[sub_resource type="Resource" id="Resource_3k736"]
+script = ExtResource("1_4upp7")
+member_id = "route-21-trainer-04-member-1"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 35
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[sub_resource type="Resource" id="Resource_f8rpc"]
+script = ExtResource("1_4upp7")
+member_id = "route-21-trainer-04-member-2"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 36
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_1ox25"]
+script = ExtResource("1_4upp7")
+member_id = "route-21-trainer-04-member-3"
+pokemon_id = 427
+species = "Buneary"
+sprite_id = "buneary"
+level = 37
+moves = Array[String](["pound", "splash", "defensecurl", "babydolleyes"])
+
+[resource]
+script = ExtResource("2_10m3i")
+encounter_id = "route-21-trainer-04"
+display_name = "Route 21 Trainer 4"
+api_name = "Route 21 Trainer 4"
+members = Array[ExtResource("1_4upp7")]([SubResource("Resource_3k736"), SubResource("Resource_f8rpc"), SubResource("Resource_1ox25")])

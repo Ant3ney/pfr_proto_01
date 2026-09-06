@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_0vrpv"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_01/encounters/route_01_trainer_01.tres" id="2_e3whc"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_01/encounters/route_01_trainer_02.tres" id="3_w101f"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_01/encounters/route_01_trainer_03.tres" id="4_xbt1c"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_01/encounters/route_01_trainer_04.tres" id="5_qkhkj"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_01/route_01.tscn" id="6_e0ypw"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_12obp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_01/encounters/route_01_wild.tres" id="8_dg3y2"]
+
+[resource]
+script = ExtResource("7_12obp")
+area_id = "route_01"
+numeric_order = 1
+display_name = "Route 1 — Sunpetal Prairie"
+description = "Sunflower Prairie dungeon route with 4 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 80 m path (Lv. 3–6). Reach the end to unlock the next route."
+biome = "sunflower prairie"
+destination = ExtResource("6_e0ypw")
+suggested_level_min = 3
+suggested_level_max = 6
+battle_encounters = Array[ExtResource("1_0vrpv")]([ExtResource("2_e3whc"), ExtResource("3_w101f"), ExtResource("4_xbt1c"), ExtResource("5_qkhkj")])
+wild_encounters = Array[ExtResource("1_0vrpv")]([ExtResource("8_dg3y2")])
+route_completion_prerequisite = "route_00"

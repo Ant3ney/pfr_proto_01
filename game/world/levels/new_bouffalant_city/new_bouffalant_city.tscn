@@ -1,0 +1,397 @@
+[gd_scene format=3]
+
+[ext_resource type="MeshLibrary" path="res://game/world/level_kits/terrain/new_bouffalant_city/ground/ground_tile_mesh_library.tres" id="1_ground_tiles"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/outdoor_level_base.tscn" id="1_ly3am"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_cityhall.glb" id="4_tvn6g"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_rouge_tower.glb" id="5_s2551"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_miare_station.glb" id="6_0n3ur"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/structures/pokemon_center/pokemon_center_with_roof.tscn" id="6_tuh08"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_garage.glb" id="7_fk01r"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_gate_building.glb" id="8_81ntd"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_tenant_building.glb" id="9_qw6eg"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_b_museum.glb" id="10_7auug"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl012.glb" id="11_qw6eg"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="12_transfer"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/resident_base.tscn" id="20_town_npc"]
+[ext_resource type="Script" path="res://game/actors/npcs/shared/npc_controller.gd" id="21_npc_controller"]
+[ext_resource type="Script" path="res://game/actors/npcs/residents/behaviors/town_npc_behavior.gd" id="22_town_behavior"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_tr0007_friend_f.tres" id="23_mara_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_old_man.tres" id="24_theo_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_tr0010_nu_boss_f.tres" id="25_nia_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_collector.tres" id="26_bram_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_tr0006_secretary.tres" id="27_iris_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_operator.tres" id="28_cam_art"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_elite.tres" id="29_lumen_art"]
+[ext_resource type="Script" path="res://game/actors/npcs/residents/behaviors/roaming_town_npc_behavior.gd" id="30_roaming_behavior"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_modular_ground"]
+sky_top_color = Color(0.18, 0.52, 0.88, 1)
+sky_horizon_color = Color(0.82, 0.94, 1, 1)
+ground_bottom_color = Color(0.36, 0.28, 0.22, 1)
+ground_horizon_color = Color(0.78, 0.86, 0.78, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_modular_ground"]
+sky_material = SubResource("ProceduralSkyMaterial_modular_ground")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_modular_ground"]
+background_mode = 2
+sky = SubResource("Sky_modular_ground")
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.82, 0.95, 1)
+ambient_light_energy = 0.28
+reflected_light_source = 1
+tonemap_mode = 2
+tonemap_exposure = 0.85
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_d5sq5"]
+vertices = PackedVector3Array(-40.5, 0.5, -40.5, -40.5, 0.5, 18.5, 30.5, 0.5, 18.5, 30.5, 0.5, -40.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d5sq5"]
+albedo_color = Color(1, 0.2901961, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_myi6a"]
+material = SubResource("StandardMaterial3D_d5sq5")
+
+[sub_resource type="Resource" id="TownNpcBehavior_mara"]
+resource_local_to_scene = true
+script = ExtResource("30_roaming_behavior")
+speaker_name = "Mara"
+dialog_lines = Array[String](["My grandmother says this plaza was laid where two rival borough roads once met.", "They set the stones in two colors so neither neighborhood had to surrender its history. People call that compromise old-fashioned now, but the plaza is still here."])
+roaming_radius = 2.2
+minimum_pause_seconds = 1.0
+maximum_pause_seconds = 3.0
+
+[sub_resource type="Resource" id="TownNpcController_mara"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_mara")
+
+[sub_resource type="Resource" id="TownNpcBehavior_theo"]
+resource_local_to_scene = true
+script = ExtResource("22_town_behavior")
+speaker_name = "Theo"
+dialog_lines = Array[String](["The Gate Building used to close at sunset, back when the outer roads belonged to feuding districts.", "A Champion ordered it kept open to every traveler. That small decree did more for unity than a hundred speeches."])
+
+[sub_resource type="Resource" id="TownNpcController_theo"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_theo")
+
+[sub_resource type="Resource" id="TownNpcBehavior_nia"]
+resource_local_to_scene = true
+script = ExtResource("30_roaming_behavior")
+speaker_name = "Nia"
+dialog_lines = Array[String](["Blue-and-silver ribbons used to mean stability. Red-and-gold meant reform. Lately, people decide what you believe before you have even spoken.", "My family hangs both colors over our table. It makes every dinner complicated—and honest."])
+roaming_radius = 1.8
+minimum_pause_seconds = 2.0
+maximum_pause_seconds = 4.5
+
+[sub_resource type="Resource" id="TownNpcController_nia"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_nia")
+
+[sub_resource type="Resource" id="TownNpcBehavior_bram"]
+resource_local_to_scene = true
+script = ExtResource("22_town_behavior")
+speaker_name = "Bram"
+dialog_lines = Array[String](["Miare Station is supposed to be neutral ground. Workers, officials, protesters—everyone needs the same trains.", "The old station bell rings whenever a public argument becomes a public danger. We have heard it more often this year."])
+
+[sub_resource type="Resource" id="TownNpcController_bram"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_bram")
+
+[sub_resource type="Resource" id="TownNpcBehavior_iris"]
+resource_local_to_scene = true
+script = ExtResource("22_town_behavior")
+speaker_name = "Iris"
+dialog_lines = Array[String](["Team Bastion once recruited in daylight, promising order to neighborhoods that felt forgotten.", "Some of my neighbors applauded. Others shut their curtains. Making Bastion outlaws ended the rallies, but it did not end the argument."])
+
+[sub_resource type="Resource" id="TownNpcController_iris"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_iris")
+
+[sub_resource type="Resource" id="TownNpcBehavior_cam"]
+resource_local_to_scene = true
+script = ExtResource("30_roaming_behavior")
+speaker_name = "Cam"
+dialog_lines = Array[String](["People here act indifferent because choosing a side can cost a friendship—or a job.", "Still, every morning someone leaves food at the station for stranded travelers. New Bouffalant cares more than it admits."])
+roaming_radius = 2.5
+minimum_pause_seconds = 0.8
+maximum_pause_seconds = 2.5
+
+[sub_resource type="Resource" id="TownNpcController_cam"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_cam")
+
+[sub_resource type="Resource" id="TownNpcBehavior_lumen"]
+resource_local_to_scene = true
+script = ExtResource("22_town_behavior")
+speaker_name = "Researcher Lumen"
+dialog_lines = Array[String](["A Pokémon watching from the sidelines still feels the courage of its team. Bonds carry lessons farther than any classroom can."])
+gift_id = "new-bouffalant-lumen-exp-share"
+gift_item_key = "exp-share"
+gift_dialog_lines = Array[String](["I study how a Pokémon watching from the sidelines still grows through its bond with the team.", "The League once funded this work to keep young partners from being left behind. Funding vanished when the regional councils fractured, but the research survived.", "Take this Exp. Share. Give it to the party member you want to train.", "You received an Exp. Share!"])
+claimed_gift_dialog_lines = Array[String](["The League may be divided, but knowledge does not have to be.", "A Pokémon holding that Exp. Share can stay out of battle and still receive half of its normal XP reward."])
+
+[sub_resource type="Resource" id="TownNpcController_lumen"]
+resource_local_to_scene = true
+script = ExtResource("21_npc_controller")
+npc_behavior = SubResource("TownNpcBehavior_lumen")
+
+[node name="NewBouffalantCity" unique_id=1918448001 instance=ExtResource("1_ly3am")]
+editor_description = "Primary authored city level. Connected interiors remain local city scenes; Adventure Menu destinations live under standalone_areas."
+level_id = "new_bouffalant_city"
+area_id = "new_bouffalant_city"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=1207756975]
+environment = SubResource("Environment_modular_ground")
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" index="1" unique_id=802841057]
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 0, 0)
+light_color = Color(1, 0.93, 0.82, 1)
+light_energy = 0.72
+shadow_enabled = true
+shadow_opacity = 0.58
+directional_shadow_mode = 0
+directional_shadow_max_distance = 32.0
+
+[node name="NavigationRegion3D" parent="." index="2"]
+navigation_mesh = SubResource("NavigationMesh_d5sq5")
+
+[node name="Player" parent="Runtime" index="0"]
+position = Vector3(7, 0, 1)
+
+[node name="ModularGroundGrid" type="GridMap" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=1781286088]
+editor_description = "New Bouffalant City modular ground workspace. Six 2 x 2 meter tile variants are available in the MeshLibrary palette."
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 0, -1)
+mesh_library = ExtResource("1_ground_tiles")
+cell_size = Vector3(2, 0.25, 2)
+cell_center_y = false
+data = {
+"cells": PackedInt32Array(0, 0, 0, 1, 0, 1, 1, 65535, 655361, 1, 65534, 1441795, 0, 65534, 4, 0, 65535, 1441794, 65535, 65535, 1048578, 65535, 65534, 655362, 65535, 65533, 2, 65534, 65533, 1441793, 65533, 65533, 1441793, 65532, 65533, 1441793, 65531, 65533, 1441793, 1, 65531, 1, 1, 65532, 1, 1, 65533, 1, 0, 65531, 1, 0, 65532, 1, 0, 65533, 1, 65535, 0, 655365, 0, 1, 655360, 65535, 1, 655360, 65534, 65534, 655360, 65534, 65535, 655360, 65534, 0, 655360, 65534, 1, 655360, 65533, 1, 655360, 65533, 0, 655360, 65533, 65535, 655360, 65533, 65534, 655360, 65532, 65534, 655360, 65532, 65535, 655360, 65532, 0, 655360, 65532, 1, 655360, 65531, 65534, 655360, 65531, 65535, 0, 65531, 0, 0, 65531, 1, 655360, 0, 65530, 5, 1, 65530, 5, 1, 1, 655365, 65530, 65533, 1048581, 65535, 65530, 0, 65535, 65531, 0, 65535, 65532, 0, 65534, 65532, 0, 65534, 65531, 0, 65534, 65530, 0, 65533, 65530, 0, 65533, 65531, 0, 65533, 65532, 0, 65532, 65532, 0, 65532, 65531, 0, 65532, 65530, 0, 65531, 65530, 0, 65531, 65531, 0, 65531, 65532, 0, 65530, 65532, 0, 65530, 65531, 0, 65530, 65530, 0, 65530, 65534, 0, 65530, 65535, 0, 65530, 0, 0, 65530, 1, 0, 2, 1, 0, 2, 0, 0, 2, 65535, 0, 2, 65534, 0, 2, 65533, 0, 2, 65532, 0, 2, 65531, 0, 2, 65530, 0, 3, 65530, 0, 4, 65530, 0, 5, 65530, 0, 6, 65530, 0, 6, 65531, 0, 6, 65532, 0, 6, 65533, 0, 6, 65534, 0, 6, 65535, 0, 6, 0, 0, 6, 1, 0, 5, 1, 0, 4, 1, 0, 3, 1, 0, 3, 0, 0, 3, 65535, 0, 3, 65534, 0, 3, 65533, 0, 3, 65532, 0, 4, 65532, 0, 4, 65531, 0, 3, 65531, 0, 5, 65531, 0, 5, 65532, 0, 5, 65533, 0, 5, 65534, 0, 5, 65535, 0, 5, 0, 0, 4, 0, 0, 4, 65535, 0, 4, 65534, 0, 4, 65533, 0, 6, 2, 0, 6, 3, 0, 6, 4, 0, 5, 4, 0, 4, 4, 0, 3, 4, 0, 2, 4, 0, 1, 4, 0, 0, 4, 0, 65535, 4, 0, 65534, 4, 0, 65533, 4, 0, 65532, 4, 0, 65531, 4, 0, 65530, 4, 0, 65530, 3, 0, 65530, 2, 0, 65531, 2, 0, 65532, 2, 0, 65533, 2, 0, 65534, 2, 0, 65535, 2, 0, 0, 2, 0, 1, 2, 0, 2, 2, 0, 3, 2, 0, 4, 2, 0, 5, 2, 0, 5, 3, 0, 4, 3, 0, 3, 3, 0, 2, 3, 0, 1, 3, 0, 0, 3, 0, 65535, 3, 0, 65534, 3, 0, 65533, 3, 0, 65532, 3, 0, 65531, 3, 0, 6, 65529, 0, 6, 65528, 0, 6, 65527, 0, 6, 65526, 0, 5, 65526, 0, 4, 65526, 0, 3, 65526, 0, 2, 65526, 0, 1, 65526, 0, 0, 65526, 0, 65535, 65526, 0, 65534, 65526, 0, 65533, 65526, 0, 65532, 65526, 0, 65531, 65526, 0, 65530, 65526, 0, 65529, 65526, 0, 65528, 65526, 0, 65527, 65526, 0, 65526, 65526, 0, 65526, 65527, 0, 65526, 65528, 0, 65526, 65529, 0, 65526, 65530, 0, 65525, 65531, 0, 65525, 65532, 0, 65525, 65533, 0, 65525, 65534, 0, 65526, 65534, 0, 65526, 65535, 0, 65525, 65535, 0, 65525, 0, 0, 65525, 1, 0, 65525, 2, 0, 65525, 3, 0, 65525, 4, 0, 65526, 4, 0, 65527, 4, 0, 65528, 4, 0, 65529, 4, 0, 65525, 65530, 0, 65525, 65529, 0, 65525, 65528, 0, 65525, 65527, 0, 65525, 65526, 0, 65526, 3, 0, 65527, 3, 0, 65528, 3, 0, 65529, 3, 0, 65529, 2, 0, 65528, 2, 0, 65527, 2, 0, 65526, 2, 0, 65526, 1, 0, 65526, 0, 0, 65527, 0, 0, 65527, 1, 0, 65528, 1, 0, 65529, 1, 0, 65529, 0, 0, 65528, 0, 0, 65529, 65535, 0, 65528, 65535, 0, 65527, 65535, 0, 65527, 65534, 0, 65527, 65533, 0, 65526, 65533, 0, 65526, 65532, 0, 65526, 65531, 0, 65527, 65531, 0, 65527, 65530, 0, 65527, 65529, 0, 65527, 65528, 0, 65527, 65527, 0, 65528, 65527, 0, 65529, 65527, 0, 65530, 65527, 0, 65531, 65527, 0, 65532, 65527, 0, 65533, 65527, 0, 65534, 65527, 0, 65535, 65527, 0, 0, 65527, 0, 1, 65527, 0, 2, 65527, 0, 3, 65527, 0, 4, 65527, 0, 5, 65527, 0, 5, 65528, 0, 5, 65529, 0, 4, 65529, 0, 4, 65528, 0, 3, 65528, 0, 2, 65528, 0, 1, 65528, 0, 0, 65528, 0, 65535, 65528, 0, 65534, 65528, 0, 65533, 65528, 0, 65532, 65528, 0, 65531, 65528, 0, 65530, 65528, 0, 65529, 65528, 0, 65528, 65528, 0, 65528, 65529, 0, 65528, 65530, 0, 65528, 65531, 0, 65528, 65532, 0, 65527, 65532, 0, 65528, 65533, 0, 65528, 65534, 0, 65529, 65534, 0, 65529, 65533, 0, 65529, 65532, 0, 65529, 65531, 0, 65529, 65530, 0, 65529, 65529, 0, 65530, 65529, 0, 65531, 65529, 0, 65532, 65529, 0, 65533, 65529, 0, 65534, 65529, 0, 65535, 65529, 0, 0, 65529, 0, 1, 65529, 0, 2, 65529, 0, 3, 65529, 0)
+}
+
+[node name="NewBouffalantCityAssets2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=657950639]
+editor_description = "Instances placed by the New Bouffalant City Asset Palette. Keep instances at unit scale; normal placement uses 0.5 m snapping and 90° rotations."
+metadata/new_bouffalant_city_asset_container = true
+
+[node name="T1BCityhall" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="0" unique_id=771757553 instance=ExtResource("4_tvn6g")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 20, 0, -6)
+metadata/new_bouffalant_city_asset_id = "t1_b_cityhall"
+
+[node name="T1BRougeTower" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="1" unique_id=6623939 instance=ExtResource("5_s2551")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -1)
+metadata/new_bouffalant_city_asset_id = "t1_b_rouge_tower"
+
+[node name="T1BMiareStation" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="2" unique_id=97565464 instance=ExtResource("6_0n3ur")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -24)
+metadata/new_bouffalant_city_asset_id = "t1_b_miare_station"
+
+[node name="T1BGarage" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="3" unique_id=1377187823 instance=ExtResource("7_fk01r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -18.5)
+metadata/new_bouffalant_city_asset_id = "t1_b_garage"
+
+[node name="T1BGateBuilding" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="4" unique_id=2092443404 instance=ExtResource("8_81ntd")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -25, 0, -8.5)
+metadata/new_bouffalant_city_asset_id = "t1_b_gate_building"
+
+[node name="T1BTenantBuilding" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="5" unique_id=657705444 instance=ExtResource("9_qw6eg")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -18, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_b_tenant_building"
+
+[node name="T1BMuseum" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="6" unique_id=739276518 instance=ExtResource("10_7auug")]
+transform = Transform3D(-1.0000001, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, -1.0000001, 10, 0, 17.5)
+metadata/new_bouffalant_city_asset_id = "t1_b_museum"
+
+[node name="T1BTenantBuilding2" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="7" unique_id=1420520610 instance=ExtResource("9_qw6eg")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.5, 0, 8)
+metadata/new_bouffalant_city_asset_id = "t1_b_tenant_building"
+
+[node name="T1Pl013" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="8" unique_id=1402282345 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 0, -9)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="T1Pl012" parent="NavigationRegion3D/WorldGeometry/Structures/NewBouffalantCityAssets2" index="9" unique_id=292243295 instance=ExtResource("11_qw6eg")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 1)
+metadata/new_bouffalant_city_asset_id = "t1_pl012"
+
+[node name="NewBouffalantCityAssets" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Structures" index="1" unique_id=1906562664]
+editor_description = "Instances placed by the New Bouffalant City Asset Palette. Keep instances at unit scale; normal placement uses 0.5 m snapping and 90° rotations."
+metadata/new_bouffalant_city_asset_container = true
+
+[node name="T1BPokemonCenterOut" parent="NavigationRegion3D/WorldGeometry/Structures" index="2" unique_id=1597381595 instance=ExtResource("6_tuh08")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -17)
+
+[node name="Node" type="Node" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=358121094]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=1491279312]
+transform = Transform3D(-3.9599998, 0, -9.5115986e-08, 0, 0.099999964, 0, 3.4619418e-07, 0, -1.0880002, -1, 0, -13.5)
+mesh = SubResource("BoxMesh_myi6a")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=463154655]
+transform = Transform3D(5.1929123e-07, 0, -2.2195206, 0, 0.099999964, 0, 3.9599998, 0, 2.91055e-07, 2, 0, -17.5)
+mesh = SubResource("BoxMesh_myi6a")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=821124745]
+transform = Transform3D(5.192912e-07, 0, -3.551233, 0, 0.099999964, 0, 3.9599996, 0, 4.6568798e-07, 9, 0, -20.5)
+mesh = SubResource("BoxMesh_myi6a")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=1292699311]
+transform = Transform3D(-1.5736099e-07, 0, 1.7000003, 0, 0.099999964, 0, -3.6, 0, -7.430937e-08, -21, 0, -8.5)
+mesh = SubResource("BoxMesh_myi6a")
+
+[node name="TownResidents" type="Node3D" parent="Gameplay/Actors" index="0" unique_id=1962193573]
+
+[node name="Mara" parent="Gameplay/Actors/TownResidents" index="0" unique_id=2114664598 instance=ExtResource("20_town_npc")]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 5, 0, 4)
+controller = SubResource("TownNpcController_mara")
+character_art_asset_pack = ExtResource("23_mara_art")
+
+[node name="Theo" parent="Gameplay/Actors/TownResidents" index="1" unique_id=122253258 instance=ExtResource("20_town_npc")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14, 0, 3)
+controller = SubResource("TownNpcController_theo")
+character_art_asset_pack = ExtResource("24_theo_art")
+
+[node name="Nia" parent="Gameplay/Actors/TownResidents" index="2" unique_id=1488550444 instance=ExtResource("20_town_npc")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -3, 0, -7)
+controller = SubResource("TownNpcController_nia")
+character_art_asset_pack = ExtResource("25_nia_art")
+
+[node name="Bram" parent="Gameplay/Actors/TownResidents" index="3" unique_id=991856509 instance=ExtResource("20_town_npc")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 4, 0, -12)
+controller = SubResource("TownNpcController_bram")
+character_art_asset_pack = ExtResource("26_bram_art")
+
+[node name="Iris" parent="Gameplay/Actors/TownResidents" index="4" unique_id=115740115 instance=ExtResource("20_town_npc")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -14, 0, 7)
+controller = SubResource("TownNpcController_iris")
+character_art_asset_pack = ExtResource("27_iris_art")
+
+[node name="Cam" parent="Gameplay/Actors/TownResidents" index="5" unique_id=1360670516 instance=ExtResource("20_town_npc")]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 14, 0, -13)
+controller = SubResource("TownNpcController_cam")
+character_art_asset_pack = ExtResource("28_cam_art")
+
+[node name="ResearcherLumen" parent="Gameplay/Actors/TownResidents" index="6" unique_id=652448823 instance=ExtResource("20_town_npc")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10, 0, 5)
+controller = SubResource("TownNpcController_lumen")
+character_art_asset_pack = ExtResource("29_lumen_art")
+
+[node name="PokemonCenterSouthEntranceTrigger" parent="Gameplay/Transitions" index="0" unique_id=1155880281 instance=ExtResource("12_transfer")]
+transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 0.9, -1.263, 0, -13.7)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "pokemon_center_south"
+metadata/approach_position = Vector3(-1.263, 0, -13.55)
+
+[node name="PokemonCenterEastEntranceTrigger" parent="Gameplay/Transitions" index="1" unique_id=505249656 instance=ExtResource("12_transfer")]
+transform = Transform3D(5.33658e-07, 0, 0.9, 0, 1, 0, -1.7, 0, 2.825248e-07, 2.5, 0, -17.263)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "pokemon_center_east"
+metadata/approach_position = Vector3(2.65, 0, -17.263)
+
+[node name="CityHallFrontEntranceTrigger" parent="Gameplay/Transitions" index="2" unique_id=86784576 instance=ExtResource("12_transfer")]
+transform = Transform3D(3.4530814e-07, 0, 0.35, 0, 1, 0, -1.1, 0, 1.0987076e-07, 28.35, 0, -6)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/city_hall_interior.tscn"
+destination_spawn_marker = &"FrontEntrySpawn"
+metadata/exterior_entry_id = "city_hall_front"
+metadata/approach_position = Vector3(28.35, 0, -6)
+
+[node name="CityHallRearEntranceTrigger" parent="Gameplay/Transitions" index="3" unique_id=2052756555 instance=ExtResource("12_transfer")]
+transform = Transform3D(3.4530814e-07, 0, 0.35, 0, 1, 0, -1.1, 0, 1.0987076e-07, 11.65, 0, -6)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/city_hall_interior.tscn"
+destination_spawn_marker = &"RearEntrySpawn"
+metadata/exterior_entry_id = "city_hall_rear"
+metadata/approach_position = Vector3(11.65, 0, -6)
+
+[node name="CityHallSideEntranceTrigger" parent="Gameplay/Transitions" index="4" unique_id=1416170060 instance=ExtResource("12_transfer")]
+transform = Transform3D(0.85, 0, 0, 0, 1, 0, 0, 0, 0.35, 20, 0, 6.35)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/city_hall_interior.tscn"
+destination_spawn_marker = &"SideEntrySpawn"
+metadata/exterior_entry_id = "city_hall_side"
+metadata/approach_position = Vector3(20, 0, 6.35)
+
+[node name="MiareStationEntranceTrigger" parent="Gameplay/Transitions" index="5" unique_id=911494702 instance=ExtResource("12_transfer")]
+transform = Transform3D(1.1, 0, 0, 0, 1, 0, 0, 0, 0.35, 9, 0, -18.55)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/miare_station_concourse.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "miare_station_front"
+metadata/approach_position = Vector3(9, 0, -18.55)
+
+[node name="GateBuildingFrontEntranceTrigger" parent="Gameplay/Transitions" index="6" unique_id=1587643972 instance=ExtResource("12_transfer")]
+transform = Transform3D(3.1391647e-07, 0, 0.35, 0, 1, 0, -1, 0, 1.0987076e-07, -20.15, 0, -8.5)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/gatehouse_interior.tscn"
+destination_spawn_marker = &"FrontEntrySpawn"
+metadata/exterior_entry_id = "gate_building_city"
+metadata/approach_position = Vector3(-20.15, 0, -8.5)
+
+[node name="WestTenantEntranceTrigger" parent="Gameplay/Transitions" index="7" unique_id=1267937037 instance=ExtResource("12_transfer")]
+transform = Transform3D(0.75, 0, 0, 0, 1, 0, 0, 0, 0.35, -18.75, 0, -5.35)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/west_tenant_lobby.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "west_tenant"
+metadata/approach_position = Vector3(-18.75, 0, -5.35)
+
+[node name="MuseumEntranceTrigger" parent="Gameplay/Transitions" index="8" unique_id=2036952534 instance=ExtResource("12_transfer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.35, 12.7, 0, 10.5)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/museum_gallery.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "museum_front"
+metadata/approach_position = Vector3(12.7, 0, 10.5)
+
+[node name="NorthTenantEntranceTrigger" parent="Gameplay/Transitions" index="9" unique_id=1600877127 instance=ExtResource("12_transfer")]
+transform = Transform3D(2.3543735e-07, 0, 0.35, 0, 1, 0, -0.75, 0, 1.0987076e-07, -5.85, 0, 8.75)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/north_tenant_lobby.tscn"
+destination_spawn_marker = &"EntrySpawn"
+metadata/exterior_entry_id = "north_tenant"
+metadata/approach_position = Vector3(-5.85, 0, 8.75)
+
+[node name="PokemonCenterEntrance" type="Marker3D" parent="Markers" index="0" unique_id=1238888391]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, -1.263, 0, -12.8)
+
+[node name="PokemonCenterEastEntrance" type="Marker3D" parent="Markers" index="1" unique_id=1413099109]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, 3.4, 0, -17.263)
+
+[node name="CityHallFrontReturn" type="Marker3D" parent="Markers" index="2" unique_id=1456122825]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, 29.5, 0, -6)
+metadata/entry_id = "city_hall_front"
+
+[node name="CityHallRearReturn" type="Marker3D" parent="Markers" index="3" unique_id=650182719]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 10.5, 0, -6)
+metadata/entry_id = "city_hall_rear"
+
+[node name="CityHallSideReturn" type="Marker3D" parent="Markers" index="4" unique_id=1065738426]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 20, 0, 7.8)
+metadata/entry_id = "city_hall_side"
+
+[node name="MiareStationReturn" type="Marker3D" parent="Markers" index="5" unique_id=662825719]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 9, 0, -17)
+metadata/entry_id = "miare_station_front"
+
+[node name="GateBuildingFrontReturn" type="Marker3D" parent="Markers" index="6" unique_id=2043088168]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -18.7, 0, -8.5)
+metadata/entry_id = "gate_building_city"
+
+[node name="WestTenantReturn" type="Marker3D" parent="Markers" index="7" unique_id=1152602745]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.75, 0, -6.7)
+metadata/entry_id = "west_tenant"
+
+[node name="MuseumReturn" type="Marker3D" parent="Markers" index="8" unique_id=1374143573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.7, 0, 8.9)
+metadata/entry_id = "museum_front"
+
+[node name="NorthTenantReturn" type="Marker3D" parent="Markers" index="9" unique_id=352289452]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -7.2, 0, 8.75)
+metadata/entry_id = "north_tenant"
+
+[node name="EntrySpawn" type="Marker3D" parent="Markers" index="10" unique_id=262423528]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 1)

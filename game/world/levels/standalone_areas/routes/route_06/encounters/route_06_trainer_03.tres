@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_lsije"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_opvid"]
+
+[sub_resource type="Resource" id="Resource_rv1nv"]
+script = ExtResource("1_lsije")
+member_id = "route-06-trainer-03-member-1"
+pokemon_id = 307
+species = "Meditite"
+sprite_id = "meditite"
+level = 12
+moves = Array[String](["confusion", "workup", "detect", "endure"])
+
+[sub_resource type="Resource" id="Resource_2f1nf"]
+script = ExtResource("1_lsije")
+member_id = "route-06-trainer-03-member-2"
+pokemon_id = 522
+species = "Blitzle"
+sprite_id = "blitzle"
+level = 13
+moves = Array[String](["quickattack", "tailwhip", "charge", "shockwave"])
+
+[resource]
+script = ExtResource("2_opvid")
+encounter_id = "route-06-trainer-03"
+display_name = "Route 6 Trainer 3"
+api_name = "Route 6 Trainer 3"
+members = Array[ExtResource("1_lsije")]([SubResource("Resource_rv1nv"), SubResource("Resource_2f1nf")])

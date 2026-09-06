@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_xsg7q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_trainer_01.tres" id="2_r6mm6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_trainer_02.tres" id="3_6fhaf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_trainer_03.tres" id="4_0l46f"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_trainer_04.tres" id="5_kgqyp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_trainer_05.tres" id="6_fgkrp"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_14/route_14.tscn" id="7_4t68d"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_d5af8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_14/encounters/route_14_wild.tres" id="9_ggvv5"]
+
+[resource]
+script = ExtResource("8_d5af8")
+area_id = "route_14"
+numeric_order = 14
+display_name = "Route 14 — Sirocco Ruins"
+description = "Desert Ruins dungeon route with 5 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 120 m path (Lv. 19–26). Reach the end to unlock the next route."
+biome = "desert ruins"
+destination = ExtResource("7_4t68d")
+suggested_level_min = 19
+suggested_level_max = 26
+battle_encounters = Array[ExtResource("1_xsg7q")]([ExtResource("2_r6mm6"), ExtResource("3_6fhaf"), ExtResource("4_0l46f"), ExtResource("5_kgqyp"), ExtResource("6_fgkrp")])
+wild_encounters = Array[ExtResource("1_xsg7q")]([ExtResource("9_ggvv5")])
+route_completion_prerequisite = "route_13"

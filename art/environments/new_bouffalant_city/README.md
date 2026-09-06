@@ -51,11 +51,11 @@ Collision is generated inside each imported GLB by `reference_city_pack/collisio
 These are static environment colliders, not collision for moving rigid bodies. They do not create a `NavigationMesh`; bake or update navigation after laying out a level. After adding GLBs or changing collision profiles, run:
 
 ```sh
-godot --headless --path . --script res://art/environments/new_bouffalant_city/reference_city_pack/collision/apply_model_import_settings.gd
+godot --headless --path . --script res://tools/new_bouffalant_city_import/apply_model_import_settings.gd
 godot --headless --path . --import
 ```
 
-If the pack-wide calibration changes, also refresh the browser annotations with `godot --headless --path . --script res://art/environments/new_bouffalant_city/reference_city_pack/showcase/update_runtime_scale_annotations.gd`.
+If the pack-wide calibration changes, also refresh the browser annotations with `godot --headless --path . --script res://tools/new_bouffalant_city_import/update_runtime_scale_annotations.gd`.
 
 Open the metric browser in Godot and select an asset's `Model` child to inspect it. The catalog is the quickest way to search by category, source ID, dimensions, or kind.
 
@@ -66,12 +66,12 @@ From the repository root, run:
 ```sh
 godot --headless --path . --import
 godot --headless --path . --editor --quit
-godot --headless --path . --scene res://art/environments/new_bouffalant_city/reference_city_pack/validation/metric_environment_pack_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_roof/validation/pokemon_center_roof_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_interior/validation/pokemon_center_interior_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_annex/validation/pokemon_center_annex_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_scene_transfer_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/modular_city_scene_transfer_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/assets/metric_environment_pack_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_roof_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_interior_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_annex_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/modular_city_scene_transfer_smoke_test.tscn
 ```
 
 The editor startup check loads the placement plugin and its dock. The environment smoke test verifies all 158 catalog paths and thumbnails, showcase IDs, unit node transforms, the baked `0.75` GLB bounds, the 44-entry high-load classification, the two confirmed Intel Vulkan triggers and three known controls, 0.5 m placement, collision import settings, every collision profile and shape type, representative live physics hits, and the modular-ground 2/4/8 m contract. The focused Pokemon Center tests protect the exterior roof/door fit; both interiors' two-draw geometry, collision, gameplay markers, cameras, and restrained shadow-light setups; and real bidirectional travel from the south storefront to the main clinic and from the east storefront to the service annex without an arrival loop. The modular-city transfer test additionally validates all 10 live exterior openings, proves the Rouge Tower, garage, and duplicate Gate Building transitions stay absent, and checks Stretchman in Miare Station. The Route 0 gateway test holds an arriving player idle inside the Gate Building, validates clear exit signage, walks through its rear door, and uses the red interactive Route 0 return object.

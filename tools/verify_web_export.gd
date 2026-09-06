@@ -1,8 +1,20 @@
 extends SceneTree
 
-const ROUTE_SCENE_PATH := "res://overworld/route_0/route_0.tscn"
-const DESTINATION_SCENE_PATH := "res://rnd/stretch/worlds/stretch_destination.tscn"
-const TRAINER_SCENE_PATH := "res://overworld/trainer_lake/TrainerKyle.tscn"
+const CATALOG_PATH := (
+	"res://game/world/levels/standalone_areas/standalone_area_catalog.tres"
+)
+const ROUTE_SCENE_PATH := (
+	"res://game/world/levels/standalone_areas/routes/route_00/route_00.tscn"
+)
+const STRETCHMAN_SCENE_PATH := (
+	"res://game/actors/npcs/residents/stretchman/stretchman.tscn"
+)
+const MENU_BEHAVIOR_PATH := (
+	"res://game/actors/npcs/shared/menu_npc_behavior.gd"
+)
+const ADVENTURE_MENU_PATH := (
+	"res://game/ui/adventure_menu/adventure_menu.tscn"
+)
 const TRAINER_NAMES := [
 	"TrainerKyle",
 	"PoliceOfficer",
@@ -22,79 +34,105 @@ func _initialize() -> void:
 
 func _run() -> void:
 	await process_frame
-	await _verify_route_trainers()
-	_verify_destination_pre_spawn_repair()
-	_verify_cloud_save_runtime()
+	_verify_standalone_catalog()
+	await _verify_route_zero()
+	_verify_stretchman()
+	_verify_domain_autoloads()
 
 	if _failures.is_empty():
-		print("Web export trainer verification passed.")
+		print(
+			"Web export verification passed: 49 editable standalone areas, static Route 0 "
+			+ "trainers, ordinary menu-NPC Stretchman, and schema-6 domain services verified."
+		)
 		quit(0)
 		return
 	for failure in _failures:
-		push_error("Web export trainer verification failed: %s" % failure)
+		push_error("Web export verification failed: %s" % failure)
 	quit(1)
 
 
-func _verify_route_trainers() -> void:
+func _verify_standalone_catalog() -> void:
+	var catalog := load(CATALOG_PATH)
+	_check(catalog != null, "The exported standalone-area catalog should load.")
+	if catalog == null:
+		return
+	var areas: Array = catalog.get("areas")
+	_check(areas.size() == 49, "The exported catalog should contain exactly 49 areas.")
+	var seen_ids: Dictionary = {}
+	for area_value: Variant in areas:
+		var area := area_value as Resource
+		if area == null:
+			_check(false, "Every exported catalog entry should be a Resource.")
+			continue
+		var area_id := String(area.get("area_id"))
+		var destination := area.get("destination") as PackedScene
+		_check(not area_id.is_empty() and not seen_ids.has(area_id), "Exported area IDs should be unique.")
+		seen_ids[area_id] = true
+		_check(
+			destination != null and not destination.resource_path.is_empty(),
+			"Exported area %s should retain its editable PackedScene." % area_id
+		)
+	for route_index in 40:
+		_check(seen_ids.has("route_%02d" % route_index), "The export is missing a route area.")
+	for gym_index in range(1, 9):
+		_check(seen_ids.has("gym_%02d" % gym_index), "The export is missing a gym area.")
+	_check(seen_ids.has("champion_challenge"), "The export is missing the champion challenge.")
+
+
+func _verify_route_zero() -> void:
 	var packed_route := load(ROUTE_SCENE_PATH) as PackedScene
 	_check(packed_route != null, "The exported Route 0 scene should load.")
 	if packed_route == null:
 		return
-
 	var route := packed_route.instantiate()
+	var trainer_root := route.get_node_or_null(^"Gameplay/Actors/RouteTrainers")
+	if trainer_root != null:
+		trainer_root.process_mode = Node.PROCESS_MODE_DISABLED
 	root.add_child(route)
 	await process_frame
 	await physics_frame
-	var player := route.get_node_or_null(^"Player") as Node3D
-	_check(player != null, "The exported Route 0 scene should contain its player.")
-	var checkpoint_root := route.get_node_or_null(^"TrainerChokepoints")
+
+	var player := route.get_node_or_null(^"Runtime/Player") as Node3D
+	var marker := route.get_node_or_null(^"Markers/Route0Start") as Marker3D
+	_check(player != null and marker != null, "Route 0 should retain its player and entry marker.")
+	_check(
+		route.get_node_or_null(^"Runtime/Camera3D") != null
+		and route.get_node_or_null(^"NavigationRegion3D/WorldGeometry") != null
+		and route.get_node_or_null(^"Gameplay/Encounters/TallGrassFields") != null,
+		"Route 0 should retain the common editable level hierarchy."
+	)
+	var checkpoint_root := route.get_node_or_null(
+		^"NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints"
+	)
 	_check(
 		checkpoint_root != null
 		and checkpoint_root.find_children(
 			"TrainerGate*", "StaticBody3D", false, false
 		).size() == 14,
-		"The exported Route 0 scene should retain all seven mandatory trainer chokes."
+		"Route 0 should retain all seven mandatory trainer chokes."
 	)
-	var completion_gate := route.get_node_or_null(^"Route0CompletionGate") as Area3D
+	var completion_gate := route.get_node_or_null(
+		^"Gameplay/Objectives/Route0CompletionGate"
+	) as Area3D
 	_check(
 		completion_gate != null and int(completion_gate.get("route_index")) == 0,
-		"The exported Route 0 scene should retain its far-end progression gate."
+		"Route 0 should retain its far-end progression gate."
 	)
-
-	var sight_trainer: Node3D
-	var sight_behavior: Resource
+	_check(trainer_root != null and trainer_root.get_child_count() == 7, "Route 0 should retain seven static trainers.")
 	for trainer_name in TRAINER_NAMES:
 		var trainer := route.get_node_or_null(
-			NodePath("RouteTrainers/%s" % trainer_name)
+			NodePath("Gameplay/Actors/RouteTrainers/%s" % trainer_name)
 		) as Node3D
 		var controller := trainer.get("controller") as Resource if trainer != null else null
 		var behavior := controller.get("npc_behavior") as Resource if controller != null else null
-		_check(trainer != null, "The exported Route 0 scene should contain %s." % trainer_name)
+		_check(trainer != null, "Route 0 should contain %s." % trainer_name)
 		_check(
-			behavior != null,
-			"The exported %s controller should repair its trainer behavior." % trainer_name
+			behavior != null and not String(controller.get("encounter_id")).is_empty(),
+			"Exported trainer %s should retain Inspector-authored encounter data." % trainer_name
 		)
 		_check(
-			trainer != null
-			and player != null
-			and bool(trainer.call("can_interact", player)),
-			"The exported %s trainer should accept manual interaction." % trainer_name
-		)
-		if trainer_name == "TrainerKyle":
-			sight_trainer = trainer
-			sight_behavior = behavior
-
-	if player != null and sight_trainer != null and sight_behavior != null:
-		var forward: Vector3 = sight_behavior.call(
-			"_get_forward_direction",
-			sight_trainer
-		)
-		player.global_position = sight_trainer.global_position + forward * 5.0
-		for _frame in 4:
-			await physics_frame
-		_check(
-			int(sight_behavior.get("_approach_state")) != 0,
-			"An exported Route 0 trainer should detect a player in its sight line."
+			trainer != null and player != null and bool(trainer.call("can_interact", player)),
+			"Exported trainer %s should accept manual interaction." % trainer_name
 		)
 
 	var game_instance := root.get_node_or_null(^"GameInstance")
@@ -103,55 +141,47 @@ func _verify_route_trainers() -> void:
 	route.free()
 
 
-func _verify_destination_pre_spawn_repair() -> void:
-	var trainer_scene := load(TRAINER_SCENE_PATH) as PackedScene
-	var destination_scene := load(DESTINATION_SCENE_PATH) as PackedScene
-	_check(trainer_scene != null, "The exported trainer template should load dynamically.")
-	_check(destination_scene != null, "The exported destination scene should load dynamically.")
-	if trainer_scene == null or destination_scene == null:
+func _verify_stretchman() -> void:
+	var packed := load(STRETCHMAN_SCENE_PATH) as PackedScene
+	_check(packed != null, "The exported Stretchman scene should load.")
+	if packed == null:
 		return
-
-	var trainer := trainer_scene.instantiate()
-	var destination := destination_scene.instantiate()
-	var controller := trainer.get("controller") as Resource
-	controller.set("npc_behavior", null)
-	var configured: bool = bool(destination.call(
-		"_configure_existing_trainer",
-		trainer,
-		{
-			"encounter_id": "web-export-verification",
-			"battle_scene_path": "res://rnd/stretch/battle/stretch_battle_scene.tscn",
-			"display_name": "Web Export Trainer",
-		}
-	))
-	var repaired_behavior := controller.get("npc_behavior") as Resource
+	var stretchman := packed.instantiate()
+	var controller := stretchman.get("controller") as Resource
+	var behavior := controller.get("npc_behavior") as Resource if controller != null else null
+	var menu_scene := behavior.get("menu_scene") as PackedScene if behavior != null else null
+	_check(controller != null and behavior != null, "Stretchman should retain an NPC controller and behavior.")
 	_check(
-		configured
-		and repaired_behavior != null
-		and String(repaired_behavior.get("encounter_id")) == "web-export-verification",
-		"An exported route, gym, or League trainer should be repaired before spawning."
+		behavior != null
+		and behavior.get_script() is Script
+		and (behavior.get_script() as Script).resource_path == MENU_BEHAVIOR_PATH,
+		"Stretchman should use the reusable MenuNpcBehavior."
 	)
-	trainer.free()
-	destination.free()
+	_check(
+		menu_scene != null and menu_scene.resource_path == ADVENTURE_MENU_PATH,
+		"Stretchman's menu_scene Inspector property should target Adventure Menu."
+	)
+	stretchman.free()
 
 
-func _verify_cloud_save_runtime() -> void:
+func _verify_domain_autoloads() -> void:
 	var autosave := root.get_node_or_null(^"ProgressionAutosave")
-	var cloud_sync := root.get_node_or_null(^"CloudSaveSync")
 	var autosave_constants: Dictionary = {}
 	if autosave != null and autosave.get_script() is Script:
 		autosave_constants = (autosave.get_script() as Script).get_script_constant_map()
 	_check(
-		autosave != null and int(autosave_constants.get("SAVE_SCHEMA_VERSION", 0)) == 5,
-		"The exported progression owner should use timestamped schema 5."
+		autosave != null and int(autosave_constants.get("SAVE_SCHEMA_VERSION", 0)) == 6,
+		"The exported progression owner should use domain-split schema 6."
 	)
-	_check(
-		cloud_sync != null
-		and cloud_sync.has_method("enable_with_save_id")
-		and cloud_sync.has_method("disable_cloud_sync")
-		and cloud_sync.has_method("request_sync"),
-		"The exported project should retain the optional cloud-save coordinator."
-	)
+	for service_name in [
+		&"EconomySystem",
+		&"ShopSystem",
+		&"InventorySystem",
+		&"ChallengeProgressionSystem",
+		&"BattleRewardSystem",
+	]:
+		_check(root.get_node_or_null(NodePath(String(service_name))) != null, "%s should be exported." % service_name)
+	_check(root.get_node_or_null(^"StretchGoalSystem") == null, "The removed StretchGoalSystem must not be exported.")
 
 
 func _check(condition: bool, message: String) -> void:

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_emw3r"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ygc4e"]
+
+[sub_resource type="Resource" id="Resource_nx4fr"]
+script = ExtResource("1_emw3r")
+member_id = "route-25-trainer-03-member-1"
+pokemon_id = 320
+species = "Wailmer"
+sprite_id = "wailmer"
+level = 39
+moves = Array[String](["splash", "growl", "astonish", "watergun"])
+
+[sub_resource type="Resource" id="Resource_brk6o"]
+script = ExtResource("1_emw3r")
+member_id = "route-25-trainer-03-member-2"
+pokemon_id = 72
+species = "Tentacool"
+sprite_id = "tentacool"
+level = 40
+moves = Array[String](["poisonsting", "watergun", "acid", "wrap"])
+
+[sub_resource type="Resource" id="Resource_j4gk0"]
+script = ExtResource("1_emw3r")
+member_id = "route-25-trainer-03-member-3"
+pokemon_id = 90
+species = "Shellder"
+sprite_id = "shellder"
+level = 41
+moves = Array[String](["tackle", "watergun", "withdraw", "iceshard"])
+
+[sub_resource type="Resource" id="Resource_pdtg1"]
+script = ExtResource("1_emw3r")
+member_id = "route-25-trainer-03-member-4"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 42
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[resource]
+script = ExtResource("2_ygc4e")
+encounter_id = "route-25-trainer-03"
+display_name = "Route 25 Trainer 3"
+api_name = "Route 25 Trainer 3"
+members = Array[ExtResource("1_emw3r")]([SubResource("Resource_nx4fr"), SubResource("Resource_brk6o"), SubResource("Resource_j4gk0"), SubResource("Resource_pdtg1")])

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_doeyw"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cf64r"]
+
+[sub_resource type="Resource" id="Resource_xi2ld"]
+script = ExtResource("1_doeyw")
+member_id = "route-13-trainer-02-member-1"
+pokemon_id = 93
+species = "Haunter"
+sprite_id = "haunter"
+level = 21
+moves = Array[String](["shadowpunch", "confuseray", "hypnosis", "lick"])
+
+[sub_resource type="Resource" id="Resource_78x0k"]
+script = ExtResource("1_doeyw")
+member_id = "route-13-trainer-02-member-2"
+pokemon_id = 200
+species = "Misdreavus"
+sprite_id = "misdreavus"
+level = 22
+moves = Array[String](["confusion", "growl", "astonish", "confuseray"])
+
+[sub_resource type="Resource" id="Resource_r4vev"]
+script = ExtResource("1_doeyw")
+member_id = "route-13-trainer-02-member-3"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 23
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[resource]
+script = ExtResource("2_cf64r")
+encounter_id = "route-13-trainer-02"
+display_name = "Route 13 Trainer 2"
+api_name = "Route 13 Trainer 2"
+members = Array[ExtResource("1_doeyw")]([SubResource("Resource_xi2ld"), SubResource("Resource_78x0k"), SubResource("Resource_r4vev")])

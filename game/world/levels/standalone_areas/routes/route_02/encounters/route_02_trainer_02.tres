@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ic3sn"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_0f0q6"]
+
+[sub_resource type="Resource" id="Resource_g5fpn"]
+script = ExtResource("1_ic3sn")
+member_id = "route-02-trainer-02-member-1"
+pokemon_id = 41
+species = "Zubat"
+sprite_id = "zubat"
+level = 4
+moves = Array[String](["absorb", "supersonic", "astonish", "meanlook"])
+
+[sub_resource type="Resource" id="Resource_wb42i"]
+script = ExtResource("1_ic3sn")
+member_id = "route-02-trainer-02-member-2"
+pokemon_id = 43
+species = "Oddish"
+sprite_id = "oddish"
+level = 5
+moves = Array[String](["absorb", "growth", "acid", "sweetscent"])
+
+[resource]
+script = ExtResource("2_0f0q6")
+encounter_id = "route-02-trainer-02"
+display_name = "Route 2 Trainer 2"
+api_name = "Route 2 Trainer 2"
+members = Array[ExtResource("1_ic3sn")]([SubResource("Resource_g5fpn"), SubResource("Resource_wb42i")])

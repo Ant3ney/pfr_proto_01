@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_wy2eo"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_s1o5j"]
+
+[sub_resource type="Resource" id="Resource_dswfc"]
+script = ExtResource("1_wy2eo")
+member_id = "route-35-trainer-06-member-1"
+pokemon_id = 198
+species = "Murkrow"
+sprite_id = "murkrow"
+level = 54
+moves = Array[String](["astonish", "peck", "gust", "haze"])
+
+[sub_resource type="Resource" id="Resource_q1r2h"]
+script = ExtResource("1_wy2eo")
+member_id = "route-35-trainer-06-member-2"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 55
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[sub_resource type="Resource" id="Resource_mmnhj"]
+script = ExtResource("1_wy2eo")
+member_id = "route-35-trainer-06-member-3"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 56
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_q5spc"]
+script = ExtResource("1_wy2eo")
+member_id = "route-35-trainer-06-member-4"
+pokemon_id = 335
+species = "Zangoose"
+sprite_id = "zangoose"
+level = 56
+moves = Array[String](["bellydrum", "counter", "curse", "disable"])
+
+[resource]
+script = ExtResource("2_s1o5j")
+encounter_id = "route-35-trainer-06"
+display_name = "Route 35 Trainer 6"
+api_name = "Route 35 Trainer 6"
+members = Array[ExtResource("1_wy2eo")]([SubResource("Resource_dswfc"), SubResource("Resource_q1r2h"), SubResource("Resource_mmnhj"), SubResource("Resource_q5spc")])

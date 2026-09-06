@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_5f1d2"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_0i6t4"]
+
+[sub_resource type="Resource" id="Resource_de0un"]
+script = ExtResource("1_5f1d2")
+member_id = "route-19-trainer-03-member-1"
+pokemon_id = 447
+species = "Riolu"
+sprite_id = "riolu"
+level = 28
+moves = Array[String](["endure", "quickattack", "feint", "metalclaw"])
+
+[sub_resource type="Resource" id="Resource_h30kx"]
+script = ExtResource("1_5f1d2")
+member_id = "route-19-trainer-03-member-2"
+pokemon_id = 633
+species = "Deino"
+sprite_id = "deino"
+level = 29
+moves = Array[String](["focusenergy", "tackle", "dragonbreath", "bite"])
+
+[sub_resource type="Resource" id="Resource_r4ull"]
+script = ExtResource("1_5f1d2")
+member_id = "route-19-trainer-03-member-3"
+pokemon_id = 636
+species = "Larvesta"
+sprite_id = "larvesta"
+level = 30
+moves = Array[String](["ember", "stringshot", "flamecharge", "strugglebug"])
+
+[resource]
+script = ExtResource("2_0i6t4")
+encounter_id = "route-19-trainer-03"
+display_name = "Route 19 Trainer 3"
+api_name = "Route 19 Trainer 3"
+members = Array[ExtResource("1_5f1d2")]([SubResource("Resource_de0un"), SubResource("Resource_h30kx"), SubResource("Resource_r4ull")])

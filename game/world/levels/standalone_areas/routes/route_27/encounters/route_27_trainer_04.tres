@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_idxut"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_pkvet"]
+
+[sub_resource type="Resource" id="Resource_6lp6e"]
+script = ExtResource("1_idxut")
+member_id = "route-27-trainer-04-member-1"
+pokemon_id = 324
+species = "Torkoal"
+sprite_id = "torkoal"
+level = 41
+moves = Array[String](["ember", "smog", "withdraw", "rapidspin"])
+
+[sub_resource type="Resource" id="Resource_1to0d"]
+script = ExtResource("1_idxut")
+member_id = "route-27-trainer-04-member-2"
+pokemon_id = 37
+species = "Vulpix"
+sprite_id = "vulpix"
+level = 42
+moves = Array[String](["ember", "tailwhip", "disable", "quickattack"])
+
+[sub_resource type="Resource" id="Resource_vobsi"]
+script = ExtResource("1_idxut")
+member_id = "route-27-trainer-04-member-3"
+pokemon_id = 58
+species = "Growlithe"
+sprite_id = "growlithe"
+level = 43
+moves = Array[String](["ember", "leer", "howl", "bite"])
+
+[sub_resource type="Resource" id="Resource_n8xql"]
+script = ExtResource("1_idxut")
+member_id = "route-27-trainer-04-member-4"
+pokemon_id = 77
+species = "Ponyta"
+sprite_id = "ponyta"
+level = 44
+moves = Array[String](["growl", "tackle", "tailwhip", "ember"])
+
+[resource]
+script = ExtResource("2_pkvet")
+encounter_id = "route-27-trainer-04"
+display_name = "Route 27 Trainer 4"
+api_name = "Route 27 Trainer 4"
+members = Array[ExtResource("1_idxut")]([SubResource("Resource_6lp6e"), SubResource("Resource_1to0d"), SubResource("Resource_vobsi"), SubResource("Resource_n8xql")])

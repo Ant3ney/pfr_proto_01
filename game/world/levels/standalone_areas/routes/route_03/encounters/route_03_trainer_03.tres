@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_sdnig"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ckkal"]
+
+[sub_resource type="Resource" id="Resource_i63ep"]
+script = ExtResource("1_sdnig")
+member_id = "route-03-trainer-03-member-1"
+pokemon_id = 129
+species = "Magikarp"
+sprite_id = "magikarp"
+level = 5
+moves = Array[String](["splash", "tackle", "flail"])
+
+[sub_resource type="Resource" id="Resource_vgelm"]
+script = ExtResource("1_sdnig")
+member_id = "route-03-trainer-03-member-2"
+pokemon_id = 90
+species = "Shellder"
+sprite_id = "shellder"
+level = 6
+moves = Array[String](["tackle", "watergun", "withdraw", "iceshard"])
+
+[resource]
+script = ExtResource("2_ckkal")
+encounter_id = "route-03-trainer-03"
+display_name = "Route 3 Trainer 3"
+api_name = "Route 3 Trainer 3"
+members = Array[ExtResource("1_sdnig")]([SubResource("Resource_i63ep"), SubResource("Resource_vgelm")])

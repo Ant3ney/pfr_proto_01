@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_udhwq"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_i3vhh"]
+
+[sub_resource type="Resource" id="Resource_qnk8q"]
+script = ExtResource("1_udhwq")
+member_id = "route-03-trainer-01-member-1"
+pokemon_id = 60
+species = "Poliwag"
+sprite_id = "poliwag"
+level = 3
+moves = Array[String](["hypnosis", "watergun", "pound", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_fs6u8"]
+script = ExtResource("1_udhwq")
+member_id = "route-03-trainer-01-member-2"
+pokemon_id = 72
+species = "Tentacool"
+sprite_id = "tentacool"
+level = 4
+moves = Array[String](["poisonsting", "watergun", "acid", "wrap"])
+
+[resource]
+script = ExtResource("2_i3vhh")
+encounter_id = "route-03-trainer-01"
+display_name = "Route 3 Trainer 1"
+api_name = "Route 3 Trainer 1"
+members = Array[ExtResource("1_udhwq")]([SubResource("Resource_qnk8q"), SubResource("Resource_fs6u8")])

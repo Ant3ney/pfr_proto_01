@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_gn40k"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_k7sti"]
+
+[sub_resource type="Resource" id="Resource_b174t"]
+script = ExtResource("1_gn40k")
+member_id = "route-38-trainer-05-member-1"
+pokemon_id = 221
+species = "Piloswine"
+sprite_id = "piloswine"
+level = 58
+moves = Array[String](["icefang", "ancientpower", "flail", "mudslap"])
+
+[sub_resource type="Resource" id="Resource_w5h6d"]
+script = ExtResource("1_gn40k")
+member_id = "route-38-trainer-05-member-2"
+pokemon_id = 225
+species = "Delibird"
+sprite_id = "delibird"
+level = 59
+moves = Array[String](["present", "drillpeck"])
+
+[sub_resource type="Resource" id="Resource_o2bwh"]
+script = ExtResource("1_gn40k")
+member_id = "route-38-trainer-05-member-3"
+pokemon_id = 361
+species = "Snorunt"
+sprite_id = "snorunt"
+level = 60
+moves = Array[String](["astonish", "headbutt", "powdersnow", "leer"])
+
+[sub_resource type="Resource" id="Resource_opgfp"]
+script = ExtResource("1_gn40k")
+member_id = "route-38-trainer-05-member-4"
+pokemon_id = 362
+species = "Glalie"
+sprite_id = "glalie"
+level = 60
+moves = Array[String](["freezedry", "astonish", "doubleteam", "headbutt"])
+
+[resource]
+script = ExtResource("2_k7sti")
+encounter_id = "route-38-trainer-05"
+display_name = "Route 38 Trainer 5"
+api_name = "Route 38 Trainer 5"
+members = Array[ExtResource("1_gn40k")]([SubResource("Resource_b174t"), SubResource("Resource_w5h6d"), SubResource("Resource_o2bwh"), SubResource("Resource_opgfp")])

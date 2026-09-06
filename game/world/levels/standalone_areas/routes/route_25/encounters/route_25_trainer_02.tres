@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_nyscl"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_3xu6e"]
+
+[sub_resource type="Resource" id="Resource_5uis8"]
+script = ExtResource("1_nyscl")
+member_id = "route-25-trainer-02-member-1"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 38
+moves = Array[String](["tailwhip", "watergun", "raindance", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_jign1"]
+script = ExtResource("1_nyscl")
+member_id = "route-25-trainer-02-member-2"
+pokemon_id = 278
+species = "Wingull"
+sprite_id = "wingull"
+level = 39
+moves = Array[String](["growl", "watergun", "quickattack", "supersonic"])
+
+[sub_resource type="Resource" id="Resource_docbi"]
+script = ExtResource("1_nyscl")
+member_id = "route-25-trainer-02-member-3"
+pokemon_id = 320
+species = "Wailmer"
+sprite_id = "wailmer"
+level = 40
+moves = Array[String](["splash", "growl", "astonish", "watergun"])
+
+[sub_resource type="Resource" id="Resource_pd3jv"]
+script = ExtResource("1_nyscl")
+member_id = "route-25-trainer-02-member-4"
+pokemon_id = 72
+species = "Tentacool"
+sprite_id = "tentacool"
+level = 41
+moves = Array[String](["poisonsting", "watergun", "acid", "wrap"])
+
+[resource]
+script = ExtResource("2_3xu6e")
+encounter_id = "route-25-trainer-02"
+display_name = "Route 25 Trainer 2"
+api_name = "Route 25 Trainer 2"
+members = Array[ExtResource("1_nyscl")]([SubResource("Resource_5uis8"), SubResource("Resource_jign1"), SubResource("Resource_docbi"), SubResource("Resource_pd3jv")])

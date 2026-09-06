@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_f410a"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ohccf"]
+
+[sub_resource type="Resource" id="Resource_2f3h7"]
+script = ExtResource("1_f410a")
+member_id = "delivery-worker-wooper"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 3
+moves = Array[String](["watergun", "tailwhip"])
+
+[sub_resource type="Resource" id="Resource_hpvfu"]
+script = ExtResource("1_f410a")
+member_id = "delivery-worker-magikarp"
+pokemon_id = 129
+species = "Magikarp"
+sprite_id = "magikarp"
+level = 3
+moves = Array[String](["splash"])
+
+[resource]
+script = ExtResource("2_ohccf")
+encounter_id = "trainer-delivery-worker-city-v1"
+display_name = "Delivery Worker"
+api_name = "DeliveryWorker"
+members = Array[ExtResource("1_f410a")]([SubResource("Resource_2f3h7"), SubResource("Resource_hpvfu")])

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_fnqyu"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_l27yh"]
+
+[sub_resource type="Resource" id="Resource_v1wyp"]
+script = ExtResource("1_fnqyu")
+member_id = "route-24-trainer-03-member-1"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 39
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_uqius"]
+script = ExtResource("1_fnqyu")
+member_id = "route-24-trainer-03-member-2"
+pokemon_id = 77
+species = "Ponyta"
+sprite_id = "ponyta"
+level = 40
+moves = Array[String](["growl", "tackle", "tailwhip", "ember"])
+
+[sub_resource type="Resource" id="Resource_hpsd3"]
+script = ExtResource("1_fnqyu")
+member_id = "route-24-trainer-03-member-3"
+pokemon_id = 58
+species = "Growlithe"
+sprite_id = "growlithe"
+level = 41
+moves = Array[String](["ember", "leer", "howl", "bite"])
+
+[sub_resource type="Resource" id="Resource_fwe3r"]
+script = ExtResource("1_fnqyu")
+member_id = "route-24-trainer-03-member-4"
+pokemon_id = 111
+species = "Rhyhorn"
+sprite_id = "rhyhorn"
+level = 42
+moves = Array[String](["tackle", "tailwhip", "smackdown", "bulldoze"])
+
+[resource]
+script = ExtResource("2_l27yh")
+encounter_id = "route-24-trainer-03"
+display_name = "Route 24 Trainer 3"
+api_name = "Route 24 Trainer 3"
+members = Array[ExtResource("1_fnqyu")]([SubResource("Resource_v1wyp"), SubResource("Resource_uqius"), SubResource("Resource_hpsd3"), SubResource("Resource_fwe3r")])

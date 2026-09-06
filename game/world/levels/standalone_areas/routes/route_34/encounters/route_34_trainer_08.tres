@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_keove"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_vuwo2"]
+
+[sub_resource type="Resource" id="Resource_cex5s"]
+script = ExtResource("1_keove")
+member_id = "route-34-trainer-08-member-1"
+pokemon_id = 111
+species = "Rhyhorn"
+sprite_id = "rhyhorn"
+level = 56
+moves = Array[String](["tackle", "tailwhip", "smackdown", "bulldoze"])
+
+[sub_resource type="Resource" id="Resource_p3cho"]
+script = ExtResource("1_keove")
+member_id = "route-34-trainer-08-member-2"
+pokemon_id = 328
+species = "Trapinch"
+sprite_id = "trapinch"
+level = 56
+moves = Array[String](["astonish", "sandattack", "bite", "mudslap"])
+
+[sub_resource type="Resource" id="Resource_r50r7"]
+script = ExtResource("1_keove")
+member_id = "route-34-trainer-08-member-3"
+pokemon_id = 331
+species = "Cacnea"
+sprite_id = "cacnea"
+level = 56
+moves = Array[String](["leer", "poisonsting", "absorb", "growth"])
+
+[sub_resource type="Resource" id="Resource_u2f3u"]
+script = ExtResource("1_keove")
+member_id = "route-34-trainer-08-member-4"
+pokemon_id = 449
+species = "Hippopotas"
+sprite_id = "hippopotas"
+level = 56
+moves = Array[String](["sandattack", "tackle", "bite", "yawn"])
+
+[resource]
+script = ExtResource("2_vuwo2")
+encounter_id = "route-34-trainer-08"
+display_name = "Route 34 Trainer 8"
+api_name = "Route 34 Trainer 8"
+members = Array[ExtResource("1_keove")]([SubResource("Resource_cex5s"), SubResource("Resource_p3cho"), SubResource("Resource_r50r7"), SubResource("Resource_u2f3u")])

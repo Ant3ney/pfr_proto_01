@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_8i3m2"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_01.tres" id="2_fpnmq"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_02.tres" id="3_xllb2"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_03.tres" id="4_l4ek5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_04.tres" id="5_hs6so"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_05.tres" id="6_ibpbx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_06.tres" id="7_ta3ri"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_07.tres" id="8_7vyxj"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_trainer_08.tres" id="9_jkg2r"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_36/route_36.tscn" id="10_ffrxq"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_ihfdb"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_36/encounters/route_36_wild.tres" id="12_2tyre"]
+
+[resource]
+script = ExtResource("11_ihfdb")
+area_id = "route_36"
+numeric_order = 36
+display_name = "Route 36 — Mangrove Tangle"
+description = "Mangrove Delta dungeon route with 8 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 184 m path (Lv. 55–60). Reach the end to unlock the next route."
+biome = "mangrove delta"
+destination = ExtResource("10_ffrxq")
+suggested_level_min = 55
+suggested_level_max = 60
+battle_encounters = Array[ExtResource("1_8i3m2")]([ExtResource("2_fpnmq"), ExtResource("3_xllb2"), ExtResource("4_l4ek5"), ExtResource("5_hs6so"), ExtResource("6_ibpbx"), ExtResource("7_ta3ri"), ExtResource("8_7vyxj"), ExtResource("9_jkg2r")])
+wild_encounters = Array[ExtResource("1_8i3m2")]([ExtResource("12_2tyre")])
+route_completion_prerequisite = "route_35"

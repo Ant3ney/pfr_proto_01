@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_prhgx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_trainer_01.tres" id="2_i22uw"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_trainer_02.tres" id="3_ne015"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_trainer_03.tres" id="4_gtuw2"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_trainer_04.tres" id="5_kx2a8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_trainer_05.tres" id="6_28fno"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_08/route_08.tscn" id="7_f0pkv"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_d82dh"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_08/encounters/route_08_wild.tres" id="9_a3nkb"]
+
+[resource]
+script = ExtResource("8_d82dh")
+area_id = "route_08"
+numeric_order = 8
+display_name = "Route 8 — Static Yard"
+description = "Storm Powered Industrial Yard dungeon route with 5 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 100 m path (Lv. 13–20). Reach the end to unlock the next route."
+biome = "storm-powered industrial yard"
+destination = ExtResource("7_f0pkv")
+suggested_level_min = 13
+suggested_level_max = 20
+battle_encounters = Array[ExtResource("1_prhgx")]([ExtResource("2_i22uw"), ExtResource("3_ne015"), ExtResource("4_gtuw2"), ExtResource("5_kx2a8"), ExtResource("6_28fno")])
+wild_encounters = Array[ExtResource("1_prhgx")]([ExtResource("9_a3nkb")])
+route_completion_prerequisite = "route_07"

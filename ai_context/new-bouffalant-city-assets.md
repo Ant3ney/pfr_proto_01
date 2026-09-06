@@ -72,22 +72,22 @@ The reference-city GLBs are derived from Pokémon Z-A field assets. The catalog 
 After changing paths or contents, refresh imports and run:
 
 ```sh
-godot --headless --rendering-method gl_compatibility --path . --script res://art/environments/new_bouffalant_city/reference_city_pack/collision/apply_model_import_settings.gd
+godot --headless --rendering-method gl_compatibility --path . --script res://tools/new_bouffalant_city_import/apply_model_import_settings.gd
 godot --headless --path . --import
 godot --headless --path . --editor --quit
 godot --headless --path . --script res://addons/new_bouffalant_city_asset_palette/validation/asset_palette_activation_smoke_test.gd
-godot --headless --path . --scene res://art/environments/new_bouffalant_city/reference_city_pack/validation/metric_environment_pack_smoke_test.tscn
-godot --headless --path . --scene res://tests/route_4_scene_smoke_test.tscn
-godot --headless --path . --scene res://tests/tall_grass_encounter_zone_smoke_test.tscn
-godot --headless --path . --scene res://tests/route_4_gateway_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_roof/validation/pokemon_center_roof_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_interior/validation/pokemon_center_interior_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_annex/validation/pokemon_center_annex_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_scene_transfer_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/modular_city_scene_transfer_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn
-godot --headless --path . --scene res://tests/town_npc_smoke_test.tscn
-godot --headless --editor --path . --script res://tests/pfr_character_editor_preview_smoke_test.gd
+godot --headless --path . --scene res://tests/scenes/assets/metric_environment_pack_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/route_00_scene_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/tall_grass_encounter_zone_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/area_gateway_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_roof_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_interior_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_annex_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/modular_city_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_healer_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/town_npc_smoke_test.tscn
+godot --headless --editor --path . --script res://tests/scenes/pfr_character_editor_preview_smoke_test.gd
 ```
 
 On a steady-state rerun, the import-settings tool should report `0 updated, 147 already configured`; it may report up to three updates when a refresh has reset the targeted settings. The palette activation test verifies that Gate Building, Museum, and Tenant Building double-click directly into normal viewport placement even when the dock is initialized as Intel Forward+. The environment test checks catalog and thumbnail completeness, category membership, the 44-entry advisory performance classification, all three targeted `.glb.import` settings, absence of generated LOD and optimized shadow buffers in the loaded meshes, retained textured materials, unit node transforms, baked `0.75` GLB bounds, configured collisions, representative live physics queries, and modular-ground dimensions and slabs. The editor startup check parses and initializes the placement plugin. The focused exterior Pokemon Center check verifies original unit-scale placement; the 201-triangle roof's full overhang, facade-icon clearance, fitted bounds, opaque palette, and absent collision; both street entrances in the 56-triangle door mesh, their measured opening fits, opaque palette, and absent collision; and enabled directional shadows. The main-interior check verifies the 1,948-triangle two-draw environment, compact opaque textures, 12 × 10 m bounds, collision, staffed-attendant clearance, interaction area, camera, south-return contract, and light setup. The healer test verifies the waiter character scene, touch confirmation, one-update party-only healing, healthy and empty branches, template cleanup, and movement-lock ownership. The annex check verifies the corresponding 1,962-triangle two-draw environment, compact opaque textures, 10 × 9 m bounds, 13 collision shapes, required markers, east-return contract, and light setup. The Pokemon Center transfer check traverses the south/main and east/annex routes independently. The modular-city transfer check validates all 10 live destination/spawn/exit/return contracts, requires all eight non-Pokemon-Center triggers to ignore the nearby player before confirming live overlap at each collision-free threshold, proves removed Rouge Tower, garage, and duplicate Gate Building nodes stay absent, traverses Miare Station, and checks its Stretchman hub. The Route 0 gateway test then holds the player idle after entering the Gate Building, verifies both illuminated exit guides, walks through the rear door, and uses the red Route 0 object to return safely without a loop.

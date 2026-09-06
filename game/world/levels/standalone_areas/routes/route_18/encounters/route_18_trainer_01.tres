@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_augf2"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_qfs1g"]
+
+[sub_resource type="Resource" id="Resource_dwuwc"]
+script = ExtResource("1_augf2")
+member_id = "route-18-trainer-01-member-1"
+pokemon_id = 459
+species = "Snover"
+sprite_id = "snover"
+level = 25
+moves = Array[String](["leer", "powdersnow", "leafage", "mist"])
+
+[sub_resource type="Resource" id="Resource_68qkc"]
+script = ExtResource("1_augf2")
+member_id = "route-18-trainer-01-member-2"
+pokemon_id = 613
+species = "Cubchoo"
+sprite_id = "cubchoo"
+level = 26
+moves = Array[String](["growl", "powdersnow", "endure", "furyswipes"])
+
+[sub_resource type="Resource" id="Resource_bhlh1"]
+script = ExtResource("1_augf2")
+member_id = "route-18-trainer-01-member-3"
+pokemon_id = 124
+species = "Jynx"
+sprite_id = "jynx"
+level = 27
+moves = Array[String](["copycat", "lick", "pound", "powdersnow"])
+
+[resource]
+script = ExtResource("2_qfs1g")
+encounter_id = "route-18-trainer-01"
+display_name = "Route 18 Trainer 1"
+api_name = "Route 18 Trainer 1"
+members = Array[ExtResource("1_augf2")]([SubResource("Resource_dwuwc"), SubResource("Resource_68qkc"), SubResource("Resource_bhlh1")])

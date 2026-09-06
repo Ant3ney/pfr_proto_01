@@ -1,0 +1,144 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_riki6"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_desk"]
+albedo_color = Color(0.15, 0.08, 0.045, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_checkpoint"]
+material = SubResource("Material_desk")
+size = Vector3(3.4, 1.02, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_green"]
+albedo_color = Color(0.28, 0.38, 0.13, 1)
+roughness = 0.76
+
+[sub_resource type="BoxMesh" id="Mesh_map"]
+material = SubResource("Material_green")
+size = Vector3(2.6, 1.6, 0.07)
+
+[sub_resource type="StandardMaterial3D" id="Material_brass"]
+albedo_color = Color(0.65, 0.43, 0.13, 1)
+metallic = 0.38
+roughness = 0.52
+
+[sub_resource type="BoxMesh" id="Mesh_barrier"]
+material = SubResource("Material_brass")
+size = Vector3(2.8, 0.12, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="Material_city_exit"]
+albedo_color = Color(0.12, 0.68, 0.95, 1)
+roughness = 0.48
+emission_enabled = true
+emission = Color(0.025, 0.22, 0.46, 1)
+emission_energy_multiplier = 0.85
+
+[sub_resource type="BoxMesh" id="Mesh_city_exit_guide"]
+material = SubResource("Material_city_exit")
+size = Vector3(2.7, 0.04, 0.72)
+
+[sub_resource type="BoxShape3D" id="Shape_checkpoint"]
+size = Vector3(3.4, 1.02, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_route_exit"]
+albedo_color = Color(0.12, 0.92, 0.38, 1)
+roughness = 0.48
+emission_enabled = true
+emission = Color(0.02, 0.38, 0.11, 1)
+emission_energy_multiplier = 0.85
+
+[sub_resource type="BoxMesh" id="Mesh_route_exit_guide"]
+material = SubResource("Material_route_exit")
+size = Vector3(2.7, 0.04, 0.72)
+
+[node name="GatehouseInterior" unique_id=1520341748 instance=ExtResource("1_riki6")]
+editor_description = "Narrow classical checkpoint room with a walnut inspection desk, civic map, brass lane bars, a clearly marked city exit, and a walk-through Route 0 door in the rear exit room."
+level_id = "gatehouse_interior"
+area_id = "gatehouse_interior"
+entry_spawn_marker = &"FrontEntrySpawn"
+metadata/mobile_web_level = true
+metadata/interior_id = "gatehouse"
+
+[node name="Lighting" parent="Environment" index="0" unique_id=1274905162 instance=ExtResource("2_lighting")]
+
+[node name="Room" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=705598519 instance=ExtResource("1_room")]
+transform = Transform3D(0.75, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 0, 0)
+
+[node name="CheckpointDesk" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=702140223]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51, -0.35)
+mesh = SubResource("Mesh_checkpoint")
+
+[node name="CivicMap" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=1115848566]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3.86)
+mesh = SubResource("Mesh_map")
+
+[node name="BarrierLeft" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=1069244248]
+transform = Transform3D(0.96105546, 0, 0.27635565, 0, 1, 0, -0.27635565, 0, 0.96105546, -2.7, 0.82, 1.35)
+mesh = SubResource("Mesh_barrier")
+
+[node name="BarrierRight" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=1198739725]
+transform = Transform3D(0.96105546, 0, 0.27635565, 0, 1, 0, -0.27635565, 0, 0.96105546, 2.7, 0.82, -1.35)
+mesh = SubResource("Mesh_barrier")
+
+[node name="FrontDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=2056727220 instance=ExtResource("4_door")]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0, 0, 3.86)
+
+[node name="CityExitLabel" type="Label3D" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=400718757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.34, 3.42)
+billboard = 1
+modulate = Color(0.72, 0.91, 1, 1)
+outline_modulate = Color(0.015, 0.09, 0.18, 1)
+text = "CITY EXIT"
+font_size = 42
+outline_size = 9
+
+[node name="CityExitGuide" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="6" unique_id=301825003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 2.9)
+mesh = SubResource("Mesh_city_exit_guide")
+
+[node name="CheckpointCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1784432588]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/CheckpointCollision" index="0" unique_id=1972445349]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51, -0.35)
+shape = SubResource("Shape_checkpoint")
+
+[node name="Route0ExitRoom" type="Node3D" parent="Gameplay/Transitions" index="0" unique_id=595482134]
+editor_description = "The Gate Building's rear room is the sole authored city entrance to Route 0."
+
+[node name="RearDoor" parent="Gameplay/Transitions/Route0ExitRoom" index="0" unique_id=1336421104 instance=ExtResource("4_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.86)
+
+[node name="Route0DoorLabel" type="Label3D" parent="Gameplay/Transitions/Route0ExitRoom" index="1" unique_id=948562849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.34, -3.42)
+billboard = 1
+modulate = Color(0.72, 1, 0.8, 1)
+outline_modulate = Color(0.01, 0.16, 0.05, 1)
+text = "ROUTE 0"
+font_size = 42
+outline_size = 9
+
+[node name="Route0DoorGuide" type="MeshInstance3D" parent="Gameplay/Transitions/Route0ExitRoom" index="2" unique_id=1021939146]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -2.9)
+mesh = SubResource("Mesh_route_exit_guide")
+
+[node name="ExitToRoute0" parent="Gameplay/Transitions/Route0ExitRoom" index="3" unique_id=1843778823 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.55, 0, 0, 0, 1, 0, 0, 0, 0.55, 0, 0, -3.7)
+destination_scene_path = "res://game/world/levels/standalone_areas/routes/route_00/route_00.tscn"
+destination_spawn_marker = &"Route0Start"
+
+[node name="Route0ReturnSpawn" type="Marker3D" parent="Gameplay/Transitions/Route0ExitRoom" index="4" unique_id=1149981813]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0, 0, -1.55)
+metadata/entry_id = "route_0_gatehouse_return"
+
+[node name="ExitFront" parent="Gameplay/Transitions" index="1" unique_id=717995325 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.55, 0, 0, 0, 1, 0, 0, 0, 0.55, 0, 0, 3.7)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"GateBuildingFrontReturn"
+
+[node name="FrontEntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=132842470]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.65)

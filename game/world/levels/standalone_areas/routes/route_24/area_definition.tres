@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_m17o6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_01.tres" id="2_2f5jp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_02.tres" id="3_53b3w"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_03.tres" id="4_mlny0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_04.tres" id="5_j8ukt"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_05.tres" id="6_no3lw"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_06.tres" id="7_1qhkg"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_trainer_07.tres" id="8_lyf0m"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_24/route_24.tscn" id="9_bjl6x"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_hbwa7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_24/encounters/route_24_wild.tres" id="11_oyy7w"]
+
+[resource]
+script = ExtResource("10_hbwa7")
+area_id = "route_24"
+numeric_order = 24
+display_name = "Route 24 — Redrock Crucible"
+description = "Redrock Canyon dungeon route with 7 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 148 m path (Lv. 37–44). Reach the end to unlock the next route."
+biome = "redrock canyon"
+destination = ExtResource("9_bjl6x")
+suggested_level_min = 37
+suggested_level_max = 44
+battle_encounters = Array[ExtResource("1_m17o6")]([ExtResource("2_2f5jp"), ExtResource("3_53b3w"), ExtResource("4_mlny0"), ExtResource("5_j8ukt"), ExtResource("6_no3lw"), ExtResource("7_1qhkg"), ExtResource("8_lyf0m")])
+wild_encounters = Array[ExtResource("1_m17o6")]([ExtResource("11_oyy7w")])
+route_completion_prerequisite = "route_23"

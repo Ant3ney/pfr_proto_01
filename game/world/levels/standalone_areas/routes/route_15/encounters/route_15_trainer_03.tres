@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_cfie8"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_7nr08"]
+
+[sub_resource type="Resource" id="Resource_jrwhf"]
+script = ExtResource("1_cfie8")
+member_id = "route-15-trainer-03-member-1"
+pokemon_id = 128
+species = "Tauros"
+sprite_id = "tauros"
+level = 23
+moves = Array[String](["tackle", "tailwhip", "workup", "payback"])
+
+[sub_resource type="Resource" id="Resource_qm5pt"]
+script = ExtResource("1_cfie8")
+member_id = "route-15-trainer-03-member-2"
+pokemon_id = 190
+species = "Aipom"
+sprite_id = "aipom"
+level = 24
+moves = Array[String](["scratch", "tailwhip", "sandattack", "astonish"])
+
+[sub_resource type="Resource" id="Resource_aq5ja"]
+script = ExtResource("1_cfie8")
+member_id = "route-15-trainer-03-member-3"
+pokemon_id = 198
+species = "Murkrow"
+sprite_id = "murkrow"
+level = 25
+moves = Array[String](["astonish", "peck", "gust", "haze"])
+
+[resource]
+script = ExtResource("2_7nr08")
+encounter_id = "route-15-trainer-03"
+display_name = "Route 15 Trainer 3"
+api_name = "Route 15 Trainer 3"
+members = Array[ExtResource("1_cfie8")]([SubResource("Resource_jrwhf"), SubResource("Resource_qm5pt"), SubResource("Resource_aq5ja")])

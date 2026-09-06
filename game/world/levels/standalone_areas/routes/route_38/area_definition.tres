@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_vamvf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_01.tres" id="2_a7pg2"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_02.tres" id="3_ch56x"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_03.tres" id="4_ra687"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_04.tres" id="5_gvbh0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_05.tres" id="6_ofyq8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_06.tres" id="7_nrbqs"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_07.tres" id="8_8j5dp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_trainer_08.tres" id="9_as7rj"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_38/route_38.tscn" id="10_8hs2i"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_8rhw8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_38/encounters/route_38_wild.tres" id="12_b0yhs"]
+
+[resource]
+script = ExtResource("11_8rhw8")
+area_id = "route_38"
+numeric_order = 38
+display_name = "Route 38 — Aurora Crevasse"
+description = "Aurora Tundra dungeon route with 8 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 192 m path (Lv. 55–60). Reach the end to unlock the next route."
+biome = "aurora tundra"
+destination = ExtResource("10_8hs2i")
+suggested_level_min = 55
+suggested_level_max = 60
+battle_encounters = Array[ExtResource("1_vamvf")]([ExtResource("2_a7pg2"), ExtResource("3_ch56x"), ExtResource("4_ra687"), ExtResource("5_gvbh0"), ExtResource("6_ofyq8"), ExtResource("7_nrbqs"), ExtResource("8_8j5dp"), ExtResource("9_as7rj")])
+wild_encounters = Array[ExtResource("1_vamvf")]([ExtResource("12_b0yhs")])
+route_completion_prerequisite = "route_37"

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_iigrc"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_v3svm"]
+
+[sub_resource type="Resource" id="Resource_4y5tt"]
+script = ExtResource("1_iigrc")
+member_id = "route-17-trainer-04-member-1"
+pokemon_id = 208
+species = "Steelix"
+sprite_id = "steelix"
+level = 29
+moves = Array[String](["bind", "crunch", "firefang", "harden"])
+
+[sub_resource type="Resource" id="Resource_4kxsi"]
+script = ExtResource("1_iigrc")
+member_id = "route-17-trainer-04-member-2"
+pokemon_id = 229
+species = "Houndoom"
+sprite_id = "houndoom"
+level = 30
+moves = Array[String](["ember", "howl", "leer", "nastyplot"])
+
+[sub_resource type="Resource" id="Resource_82nax"]
+script = ExtResource("1_iigrc")
+member_id = "route-17-trainer-04-member-3"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 31
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[resource]
+script = ExtResource("2_v3svm")
+encounter_id = "route-17-trainer-04"
+display_name = "Route 17 Trainer 4"
+api_name = "Route 17 Trainer 4"
+members = Array[ExtResource("1_iigrc")]([SubResource("Resource_4y5tt"), SubResource("Resource_4kxsi"), SubResource("Resource_82nax")])

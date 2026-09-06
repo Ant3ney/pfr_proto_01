@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_x48yp"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_lfvso"]
+
+[sub_resource type="Resource" id="Resource_10ri7"]
+script = ExtResource("1_x48yp")
+member_id = "route-28-trainer-01-member-1"
+pokemon_id = 123
+species = "Scyther"
+sprite_id = "scyther"
+level = 43
+moves = Array[String](["leer", "quickattack", "furycutter", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_881o4"]
+script = ExtResource("1_x48yp")
+member_id = "route-28-trainer-01-member-2"
+pokemon_id = 125
+species = "Electabuzz"
+sprite_id = "electabuzz"
+level = 44
+moves = Array[String](["charge", "leer", "quickattack", "thundershock"])
+
+[sub_resource type="Resource" id="Resource_gxtgt"]
+script = ExtResource("1_x48yp")
+member_id = "route-28-trainer-01-member-3"
+pokemon_id = 126
+species = "Magmar"
+sprite_id = "magmar"
+level = 45
+moves = Array[String](["ember", "leer", "smog", "smokescreen"])
+
+[sub_resource type="Resource" id="Resource_fagbo"]
+script = ExtResource("1_x48yp")
+member_id = "route-28-trainer-01-member-4"
+pokemon_id = 135
+species = "Jolteon"
+sprite_id = "jolteon"
+level = 46
+moves = Array[String](["thundershock", "batonpass", "bite", "charm"])
+
+[resource]
+script = ExtResource("2_lfvso")
+encounter_id = "route-28-trainer-01"
+display_name = "Route 28 Trainer 1"
+api_name = "Route 28 Trainer 1"
+members = Array[ExtResource("1_x48yp")]([SubResource("Resource_10ri7"), SubResource("Resource_881o4"), SubResource("Resource_gxtgt"), SubResource("Resource_fagbo")])

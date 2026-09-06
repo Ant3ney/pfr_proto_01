@@ -1,0 +1,2095 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/outdoor_level_base.tscn" id="1_sy0w1"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_backpacker.tscn" id="2_qwapw"]
+[ext_resource type="Script" path="res://game/actors/character/pfr_character.gd" id="3_e4jqk"]
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="4_s8pln"]
+[ext_resource type="Script" path="res://game/dialogue/dialog.gd" id="5_xb4dq"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_behavior.gd" id="6_xavgh"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="7_2jak0"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_backpacker.tres" id="8_8kb38"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_businessman.tscn" id="9_hl8fc"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_businessman.tres" id="10_omeig"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_delivery_worker.tscn" id="11_322lr"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_delivery_worker.tres" id="12_hdw7x"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_jogger.tscn" id="13_r8gyi"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_jogger.tres" id="14_h3dv6"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_police_officer.tscn" id="15_tfwui"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_police_officer.tres" id="16_vfvlu"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_tourist.tscn" id="17_tairi"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_tourist.tres" id="18_nbltb"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.tscn" id="19_x0yda"]
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd" id="20_merdg"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.tscn" id="21_ojcud"]
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.gd" id="22_gsquy"]
+
+[sub_resource type="Environment" id="Environment_17l50"]
+background_mode = 1
+background_color = Color(0.43137255, 0.62352943, 0.6039216, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.7176471, 0.81960785, 0.70980394, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_ft4ow"]
+vertices = PackedVector3Array(-11.15, 0, -71.65, -11.15, 0, 71.65, 11.15, 0, 71.65, 11.15, 0, -71.65)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rjlp2"]
+albedo_color = Color(0.19215687, 0.37254903, 0.22352941, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_imjv5"]
+material = SubResource("StandardMaterial3D_rjlp2")
+size = Vector3(23, 0.2, 144)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mu0ar"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_cndt4"]
+material = SubResource("StandardMaterial3D_mu0ar")
+size = Vector3(9.2, 0.026, 11.323812)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v5yum"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_10rh4"]
+material = SubResource("StandardMaterial3D_v5yum")
+size = Vector3(9.2, 0.026, 11.311986)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_im2oo"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_0sfyw"]
+material = SubResource("StandardMaterial3D_im2oo")
+size = Vector3(9.2, 0.026, 11.758455)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g15dr"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_vvums"]
+material = SubResource("StandardMaterial3D_g15dr")
+size = Vector3(9.2, 0.026, 11.371009)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yorjm"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_jukkn"]
+material = SubResource("StandardMaterial3D_yorjm")
+size = Vector3(9.2, 0.026, 13.1848345)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sc25l"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ewnmf"]
+material = SubResource("StandardMaterial3D_sc25l")
+size = Vector3(9.2, 0.026, 11.307887)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c4coy"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_8tvno"]
+material = SubResource("StandardMaterial3D_c4coy")
+size = Vector3(9.2, 0.026, 11.893805)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hnmna"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_0xetc"]
+material = SubResource("StandardMaterial3D_hnmna")
+size = Vector3(9.2, 0.026, 11.453392)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nimd0"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_fdj5o"]
+material = SubResource("StandardMaterial3D_nimd0")
+size = Vector3(9.2, 0.026, 11.355812)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8rda7"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_4nk8m"]
+material = SubResource("StandardMaterial3D_8rda7")
+size = Vector3(9.2, 0.026, 12.313328)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u3l2l"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_yethp"]
+material = SubResource("StandardMaterial3D_u3l2l")
+size = Vector3(9.2, 0.026, 11.327177)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w7xr0"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_4abbr"]
+material = SubResource("StandardMaterial3D_w7xr0")
+size = Vector3(9.2, 0.026, 11.642059)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ueaed"]
+albedo_color = Color(0.45490196, 0.3372549, 0.21960784, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_37nyj"]
+material = SubResource("StandardMaterial3D_ueaed")
+size = Vector3(9.2, 0.026, 11.315502)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jltgc"]
+size = Vector3(23, 0.2, 144)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lsnl6"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4an8b"]
+material = SubResource("StandardMaterial3D_lsnl6")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qtyvy"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_2eryn"]
+material = SubResource("StandardMaterial3D_qtyvy")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dtvcy"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k8v23"]
+material = SubResource("StandardMaterial3D_dtvcy")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tk5gp"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_4i32h"]
+material = SubResource("StandardMaterial3D_tk5gp")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dw8is"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3re6p"]
+material = SubResource("StandardMaterial3D_dw8is")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghr07"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_l6hu0"]
+material = SubResource("StandardMaterial3D_ghr07")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w5pjx"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7vu7o"]
+material = SubResource("StandardMaterial3D_w5pjx")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h42wh"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_s6s5v"]
+material = SubResource("StandardMaterial3D_h42wh")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4lf67"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_854vk"]
+material = SubResource("StandardMaterial3D_4lf67")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dj3cb"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_3owvs"]
+material = SubResource("StandardMaterial3D_dj3cb")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_avg43"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6c8ja"]
+material = SubResource("StandardMaterial3D_avg43")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ggx41"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_xpbhx"]
+material = SubResource("StandardMaterial3D_ggx41")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bdu4f"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_63yny"]
+material = SubResource("StandardMaterial3D_bdu4f")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ib8c1"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_s7ppw"]
+material = SubResource("StandardMaterial3D_ib8c1")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7f3gp"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6anej"]
+material = SubResource("StandardMaterial3D_7f3gp")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q88qe"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_lklav"]
+material = SubResource("StandardMaterial3D_q88qe")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7kmqw"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_85j6a"]
+material = SubResource("StandardMaterial3D_7kmqw")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xb2lv"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_cwm7q"]
+material = SubResource("StandardMaterial3D_xb2lv")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y4jk3"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8d1rd"]
+material = SubResource("StandardMaterial3D_y4jk3")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w0irt"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_mxdqh"]
+material = SubResource("StandardMaterial3D_w0irt")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s4m0s"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_67thr"]
+material = SubResource("StandardMaterial3D_s4m0s")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m688g"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_gknu2"]
+material = SubResource("StandardMaterial3D_m688g")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnv8o"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jft5b"]
+material = SubResource("StandardMaterial3D_lnv8o")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ol0gx"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_n2jry"]
+material = SubResource("StandardMaterial3D_ol0gx")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ofnqy"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_r8iop"]
+material = SubResource("StandardMaterial3D_ofnqy")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kaeh"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_stxo6"]
+material = SubResource("StandardMaterial3D_5kaeh")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_niv51"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6nb8s"]
+material = SubResource("StandardMaterial3D_niv51")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rmnk2"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_fnpfe"]
+material = SubResource("StandardMaterial3D_rmnk2")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qvw0w"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ackfy"]
+material = SubResource("StandardMaterial3D_qvw0w")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c5esm"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_g8008"]
+material = SubResource("StandardMaterial3D_c5esm")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e8rxd"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bysqk"]
+material = SubResource("StandardMaterial3D_e8rxd")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mpnvh"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_5tffl"]
+material = SubResource("StandardMaterial3D_mpnvh")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n624y"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mlnre"]
+material = SubResource("StandardMaterial3D_n624y")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_45h77"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_kjnos"]
+material = SubResource("StandardMaterial3D_45h77")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aamju"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7e6k4"]
+material = SubResource("StandardMaterial3D_aamju")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nc781"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_hu8je"]
+material = SubResource("StandardMaterial3D_nc781")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tdxhy"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_sy5aa"]
+material = SubResource("StandardMaterial3D_tdxhy")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yxfn3"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_dipo4"]
+material = SubResource("StandardMaterial3D_yxfn3")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dtlyw"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k4lgj"]
+material = SubResource("StandardMaterial3D_dtlyw")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_horbl"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_chlb7"]
+material = SubResource("StandardMaterial3D_horbl")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_067ji"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gp16d"]
+material = SubResource("StandardMaterial3D_067ji")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_43k1c"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_8uflc"]
+material = SubResource("StandardMaterial3D_43k1c")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q4mkh"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rhchx"]
+material = SubResource("StandardMaterial3D_q4mkh")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_msqfx"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_mkjvv"]
+material = SubResource("StandardMaterial3D_msqfx")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fpmfu"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tvjge"]
+material = SubResource("StandardMaterial3D_fpmfu")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqq82"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_d4dqu"]
+material = SubResource("StandardMaterial3D_wqq82")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ln4ot"]
+albedo_color = Color(0.3, 0.18, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_slew1"]
+material = SubResource("StandardMaterial3D_ln4ot")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.55
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s1d3l"]
+albedo_color = Color(0.18039216, 0.45490196, 0.2509804, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_aljyn"]
+material = SubResource("StandardMaterial3D_s1d3l")
+radius = 0.86
+height = 1.72
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jpun"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_c3iuf"]
+material = SubResource("StandardMaterial3D_4jpun")
+size = Vector3(0.3, 2.4, 144)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cvwgo"]
+size = Vector3(0.3, 2.4, 144)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_emtqg"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_57kq2"]
+material = SubResource("StandardMaterial3D_emtqg")
+size = Vector3(0.3, 2.4, 144)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eklt1"]
+size = Vector3(0.3, 2.4, 144)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iw6bp"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_radsr"]
+material = SubResource("StandardMaterial3D_iw6bp")
+size = Vector3(23, 2.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mk48w"]
+size = Vector3(23, 2.4, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_77n2b"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_sxwjn"]
+material = SubResource("StandardMaterial3D_77n2b")
+size = Vector3(23, 2.4, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_777s6"]
+size = Vector3(23, 2.4, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ck416"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_8mbwq"]
+material = SubResource("StandardMaterial3D_ck416")
+size = Vector3(0.6, 2.1, 12.523811)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dgjso"]
+size = Vector3(0.6, 2.1, 12.523811)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6drqu"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_jfnhi"]
+material = SubResource("StandardMaterial3D_6drqu")
+size = Vector3(0.6, 2.1, 12.523811)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2r1qi"]
+size = Vector3(0.6, 2.1, 12.523811)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2a8en"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_kdt8g"]
+material = SubResource("StandardMaterial3D_2a8en")
+size = Vector3(0.6, 2.1, 12.511986)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_omhrw"]
+size = Vector3(0.6, 2.1, 12.511986)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dcphc"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_64l1k"]
+material = SubResource("StandardMaterial3D_dcphc")
+size = Vector3(0.6, 2.1, 12.511986)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g7lhr"]
+size = Vector3(0.6, 2.1, 12.511986)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_numjh"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_iyvq1"]
+material = SubResource("StandardMaterial3D_numjh")
+size = Vector3(0.6, 2.1, 12.958455)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sni2i"]
+size = Vector3(0.6, 2.1, 12.958455)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u67to"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_rq1ym"]
+material = SubResource("StandardMaterial3D_u67to")
+size = Vector3(0.6, 2.1, 12.958455)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j3cja"]
+size = Vector3(0.6, 2.1, 12.958455)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6iaw"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_dphxv"]
+material = SubResource("StandardMaterial3D_p6iaw")
+size = Vector3(0.6, 2.1, 12.571009)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lucpr"]
+size = Vector3(0.6, 2.1, 12.571009)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dbanc"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_355yp"]
+material = SubResource("StandardMaterial3D_dbanc")
+size = Vector3(0.6, 2.1, 12.571009)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ncnrf"]
+size = Vector3(0.6, 2.1, 12.571009)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cvjbr"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_flx0f"]
+material = SubResource("StandardMaterial3D_cvjbr")
+size = Vector3(0.6, 2.1, 14.384834)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2p1yv"]
+size = Vector3(0.6, 2.1, 14.384834)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ys0h"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_quyce"]
+material = SubResource("StandardMaterial3D_7ys0h")
+size = Vector3(0.6, 2.1, 14.384834)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7hjjx"]
+size = Vector3(0.6, 2.1, 14.384834)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vlosg"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ihqve"]
+material = SubResource("StandardMaterial3D_vlosg")
+size = Vector3(0.6, 2.1, 12.507887)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y3jc1"]
+size = Vector3(0.6, 2.1, 12.507887)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xck8m"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_mj2aq"]
+material = SubResource("StandardMaterial3D_xck8m")
+size = Vector3(0.6, 2.1, 12.507887)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ie4em"]
+size = Vector3(0.6, 2.1, 12.507887)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nwlf4"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ijlsn"]
+material = SubResource("StandardMaterial3D_nwlf4")
+size = Vector3(0.6, 2.1, 13.093804)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uw1mm"]
+size = Vector3(0.6, 2.1, 13.093804)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ml25h"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_y8ky0"]
+material = SubResource("StandardMaterial3D_ml25h")
+size = Vector3(0.6, 2.1, 13.093804)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8mar0"]
+size = Vector3(0.6, 2.1, 13.093804)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mtp2"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_aa2kd"]
+material = SubResource("StandardMaterial3D_7mtp2")
+size = Vector3(0.6, 2.1, 12.653392)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mtut6"]
+size = Vector3(0.6, 2.1, 12.653392)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xcbg6"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_yv11o"]
+material = SubResource("StandardMaterial3D_xcbg6")
+size = Vector3(0.6, 2.1, 12.653392)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1f43b"]
+size = Vector3(0.6, 2.1, 12.653392)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g8t1h"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_p68dn"]
+material = SubResource("StandardMaterial3D_g8t1h")
+size = Vector3(0.6, 2.1, 12.555812)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tvsgw"]
+size = Vector3(0.6, 2.1, 12.555812)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ro40"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_g4v6a"]
+material = SubResource("StandardMaterial3D_6ro40")
+size = Vector3(0.6, 2.1, 12.555812)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_30vew"]
+size = Vector3(0.6, 2.1, 12.555812)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nqf48"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_cld6m"]
+material = SubResource("StandardMaterial3D_nqf48")
+size = Vector3(0.6, 2.1, 13.513328)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2yi0g"]
+size = Vector3(0.6, 2.1, 13.513328)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e4lcu"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wrbqh"]
+material = SubResource("StandardMaterial3D_e4lcu")
+size = Vector3(0.6, 2.1, 13.513328)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c6g4t"]
+size = Vector3(0.6, 2.1, 13.513328)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ba0gq"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_yrdgq"]
+material = SubResource("StandardMaterial3D_ba0gq")
+size = Vector3(0.6, 2.1, 12.527177)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iogng"]
+size = Vector3(0.6, 2.1, 12.527177)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4elwe"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_fo8qy"]
+material = SubResource("StandardMaterial3D_4elwe")
+size = Vector3(0.6, 2.1, 12.527177)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ukvp7"]
+size = Vector3(0.6, 2.1, 12.527177)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xg5iq"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_d84jc"]
+material = SubResource("StandardMaterial3D_xg5iq")
+size = Vector3(0.6, 2.1, 12.842059)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jbd4o"]
+size = Vector3(0.6, 2.1, 12.842059)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_df0c0"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ghyc3"]
+material = SubResource("StandardMaterial3D_df0c0")
+size = Vector3(0.6, 2.1, 12.842059)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gi05u"]
+size = Vector3(0.6, 2.1, 12.842059)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_myj7h"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_t4a2t"]
+material = SubResource("StandardMaterial3D_myj7h")
+size = Vector3(0.6, 2.1, 12.515502)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_03ple"]
+size = Vector3(0.6, 2.1, 12.515502)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6pw5o"]
+albedo_color = Color(0.09019608, 0.23529412, 0.14901961, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_130d7"]
+material = SubResource("StandardMaterial3D_6pw5o")
+size = Vector3(0.6, 2.1, 12.515502)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ao41d"]
+size = Vector3(0.6, 2.1, 12.515502)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tuxul"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_osvga"]
+material = SubResource("StandardMaterial3D_tuxul")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0mxqn"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2x4ee"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_eh2e1"]
+material = SubResource("StandardMaterial3D_2x4ee")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8o7n1"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0y7jy"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_vqaxn"]
+material = SubResource("StandardMaterial3D_0y7jy")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d4cdh"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgogj"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_sronh"]
+material = SubResource("StandardMaterial3D_dgogj")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5kr0t"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xghov"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_h0ufb"]
+material = SubResource("StandardMaterial3D_xghov")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_aj2cc"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rtdvs"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_iqqpe"]
+material = SubResource("StandardMaterial3D_rtdvs")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_44gb4"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fu3u7"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_hankp"]
+material = SubResource("StandardMaterial3D_fu3u7")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c7470"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dwd3h"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wt6ya"]
+material = SubResource("StandardMaterial3D_dwd3h")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lso7k"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mi52w"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_5xolf"]
+material = SubResource("StandardMaterial3D_mi52w")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3gydf"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y3nwx"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_mty38"]
+material = SubResource("StandardMaterial3D_y3nwx")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f1nv5"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ddad8"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_owd7w"]
+material = SubResource("StandardMaterial3D_ddad8")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dyjpc"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w3jn0"]
+albedo_color = Color(0.1629804, 0.29647058, 0.21709804, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_004c8"]
+material = SubResource("StandardMaterial3D_w3jn0")
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1cu86"]
+size = Vector3(4.15, 1.4, 0.38)
+
+[sub_resource type="Resource" id="Resource_micg3"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_3xiuk"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 1"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_nrxcm"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_k5wcn"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_3xiuk")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-01"
+npc_behavior = SubResource("Resource_nrxcm")
+
+[sub_resource type="Resource" id="Resource_coi8h"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_vh86p"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 2"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_amr6o"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_bit64"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_vh86p")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-02"
+npc_behavior = SubResource("Resource_amr6o")
+
+[sub_resource type="Resource" id="Resource_m4d1c"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_2m5xa"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 3"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_rluq1"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_w7qfy"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_2m5xa")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-03"
+npc_behavior = SubResource("Resource_rluq1")
+
+[sub_resource type="Resource" id="Resource_lvh55"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_p12ib"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 4"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_bt8ws"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_dcnah"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_p12ib")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-04"
+npc_behavior = SubResource("Resource_bt8ws")
+
+[sub_resource type="Resource" id="Resource_gs5p6"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_sgnv0"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 5"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_u6ja8"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_rhqvc"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_sgnv0")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-05"
+npc_behavior = SubResource("Resource_u6ja8")
+
+[sub_resource type="Resource" id="Resource_ur18f"]
+resource_local_to_scene = true
+script = ExtResource("4_s8pln")
+
+[sub_resource type="Resource" id="Resource_5kipq"]
+script = ExtResource("5_xb4dq")
+character_name = "Route 22 Trainer 6"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
+
+[sub_resource type="Resource" id="Resource_w4akk"]
+resource_local_to_scene = true
+script = ExtResource("6_xavgh")
+detection_distance = 8.0
+aggression_mode = 1
+
+[sub_resource type="Resource" id="Resource_nnjmi"]
+resource_local_to_scene = true
+script = ExtResource("7_2jak0")
+aggression_mode = 1
+dialog = SubResource("Resource_5kipq")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-trainer-06"
+npc_behavior = SubResource("Resource_w4akk")
+
+[node name="Route22" unique_id=2096555194 instance=ExtResource("1_sy0w1")]
+editor_description = "Editable route standalone area. Layout nodes are materialized and no runtime world generator is required."
+level_id = "route_22"
+area_id = "route_22"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=92178406]
+environment = SubResource("Environment_17l50")
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" index="1" unique_id=1723205406]
+transform = Transform3D(0.9702957, 0.19817083, -0.1387607, 0, 0.57357645, 0.81915206, 0.2419219, -0.7948197, 0.55653876, 0, 0, 0)
+light_color = Color(0.79607844, 0.9102745, 0.69615686, 1)
+light_energy = 1.05
+shadow_enabled = true
+
+[node name="NavigationRegion3D" parent="." index="2"]
+navigation_mesh = SubResource("NavigationMesh_ft4ow")
+
+[node name="Floor" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=1133258931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("BoxMesh_imjv5")
+
+[node name="DirtPath" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="1" unique_id=1590953940]
+
+[node name="PathSegment01" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="0" unique_id=987829206]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, -0.2883347, 0.012, 61.846153)
+mesh = SubResource("BoxMesh_cndt4")
+
+[node name="PathSegment02" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="1" unique_id=37037336]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -0.7254923, 0.012, 51.53846)
+mesh = SubResource("BoxMesh_10rh4")
+
+[node name="PathSegment03" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="2" unique_id=642614928]
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, 0.6664486, 0.012, 41.23077)
+mesh = SubResource("BoxMesh_0sfyw")
+
+[node name="PathSegment04" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="3" unique_id=1222812580]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 2.779333, 0.012, 30.923077)
+mesh = SubResource("BoxMesh_vvums")
+
+[node name="PathSegment05" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="4" unique_id=439599947]
+transform = Transform3D(-0.8459444, 0, -0.53327113, 0, 1, 0, 0.53327113, 0, -0.8459444, 0.102543116, 0.012, 20.615383)
+mesh = SubResource("BoxMesh_jukkn")
+
+[node name="PathSegment06" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="5" unique_id=1054336590]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -3.178134, 0.012, 10.307693)
+mesh = SubResource("BoxMesh_ewnmf")
+
+[node name="PathSegment07" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="6" unique_id=541514996]
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, -1.4473405, 0.012, 0)
+mesh = SubResource("BoxMesh_8tvno")
+
+[node name="PathSegment08" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="7" unique_id=165837574]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 1.1848322, 0.012, -10.307693)
+mesh = SubResource("BoxMesh_0xetc")
+
+[node name="PathSegment09" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="8" unique_id=1877790987]
+transform = Transform3D(-0.9953533, 0, 0.09629033, 0, 1, 0, -0.09629033, 0, -0.9953533, 2.5530279, 0.012, -20.615383)
+mesh = SubResource("BoxMesh_fdj5o")
+
+[node name="PathSegment10" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="9" unique_id=59463021]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 0.7201493, 0.012, -30.923077)
+mesh = SubResource("BoxMesh_4nk8m")
+
+[node name="PathSegment11" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="10" unique_id=313323362]
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, -1.9283444, 0.012, -41.23077)
+mesh = SubResource("BoxMesh_yethp")
+
+[node name="PathSegment12" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="11" unique_id=1344635184]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -0.9220329, 0.012, -51.53846)
+mesh = SubResource("BoxMesh_4abbr")
+
+[node name="PathSegment13" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="12" unique_id=1021195712]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, 0.20065562, 0.012, -61.846153)
+mesh = SubResource("BoxMesh_37nyj")
+
+[node name="FloorCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=372771507]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+
+[node name="@CollisionShape3D@1010" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Props/FloorCollision" index="0" unique_id=2115140363]
+shape = SubResource("BoxShape3D_jltgc")
+
+[node name="BiomeDecorations" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=195680531]
+
+[node name="TreeTrunk01L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="0" unique_id=1592381743]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1681666, 0.78, 56.44866)
+mesh = SubResource("CylinderMesh_4an8b")
+
+[node name="TreeCrown01L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="1" unique_id=1443160228]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1681666, 1.95, 56.44866)
+mesh = SubResource("SphereMesh_2eryn")
+
+[node name="TreeTrunk01R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="2" unique_id=1228020653]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.321505, 0.78, 56.93595)
+mesh = SubResource("CylinderMesh_k8v23")
+
+[node name="TreeCrown01R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="3" unique_id=1115547187]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.321505, 1.95, 56.93595)
+mesh = SubResource("SphereMesh_4i32h")
+
+[node name="TreeTrunk02L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="4" unique_id=1066607772]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8239636, 0.78, 47.154106)
+mesh = SubResource("CylinderMesh_3re6p")
+
+[node name="TreeCrown02L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="5" unique_id=726181373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8239636, 1.95, 47.154106)
+mesh = SubResource("SphereMesh_l6hu0")
+
+[node name="TreeTrunk02R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="6" unique_id=490434811]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.572594, 0.78, 45.615128)
+mesh = SubResource("CylinderMesh_7vu7o")
+
+[node name="TreeCrown02R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="7" unique_id=898844625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.572594, 1.95, 45.615128)
+mesh = SubResource("SphereMesh_s6s5v")
+
+[node name="TreeTrunk03L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="8" unique_id=509608433]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8400908, 0.78, 37.23156)
+mesh = SubResource("CylinderMesh_854vk")
+
+[node name="TreeCrown03L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="9" unique_id=1544165852]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8400908, 1.95, 37.23156)
+mesh = SubResource("SphereMesh_3owvs")
+
+[node name="TreeTrunk03R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="10" unique_id=225270285]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4256659, 0.78, 34.922287)
+mesh = SubResource("CylinderMesh_6c8ja")
+
+[node name="TreeCrown03R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="11" unique_id=307254126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4256659, 1.95, 34.922287)
+mesh = SubResource("SphereMesh_xpbhx")
+
+[node name="TreeTrunk04L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="12" unique_id=686960691]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.916855, 0.78, 24.32396)
+mesh = SubResource("CylinderMesh_63yny")
+
+[node name="TreeCrown04L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="13" unique_id=943888457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.916855, 1.95, 24.32396)
+mesh = SubResource("SphereMesh_s7ppw")
+
+[node name="TreeTrunk04R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="14" unique_id=1913697969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.213947, 0.78, 27.2145)
+mesh = SubResource("CylinderMesh_6anej")
+
+[node name="TreeCrown04R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="15" unique_id=2015557066]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.213947, 1.95, 27.2145)
+mesh = SubResource("SphereMesh_lklav")
+
+[node name="TreeTrunk05L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="16" unique_id=38218716]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3328087, 0.78, 13.717655)
+mesh = SubResource("CylinderMesh_85j6a")
+
+[node name="TreeCrown05L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="17" unique_id=1662492412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3328087, 1.95, 13.717655)
+mesh = SubResource("SphereMesh_cwm7q")
+
+[node name="TreeTrunk05R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="18" unique_id=160269992]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.625545, 0.78, 17.205421)
+mesh = SubResource("CylinderMesh_8d1rd")
+
+[node name="TreeCrown05R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="19" unique_id=400208252]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.625545, 1.95, 17.205421)
+mesh = SubResource("SphereMesh_mxdqh")
+
+[node name="TreeTrunk06L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="20" unique_id=389245285]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4607148, 0.78, 6.106015)
+mesh = SubResource("CylinderMesh_67thr")
+
+[node name="TreeCrown06L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="21" unique_id=1993300714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4607148, 1.95, 6.106015)
+mesh = SubResource("SphereMesh_gknu2")
+
+[node name="TreeTrunk06R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="22" unique_id=1161027876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.880514, 0.78, 4.2016773)
+mesh = SubResource("CylinderMesh_jft5b")
+
+[node name="TreeCrown06R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="23" unique_id=806710584]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.880514, 1.95, 4.2016773)
+mesh = SubResource("SphereMesh_n2jry")
+
+[node name="TreeTrunk07L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="24" unique_id=1366043906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.886441, 0.78, -3.7311788)
+mesh = SubResource("CylinderMesh_r8iop")
+
+[node name="TreeCrown07L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="25" unique_id=151181966]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.886441, 1.95, -3.7311788)
+mesh = SubResource("SphereMesh_stxo6")
+
+[node name="TreeTrunk07R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="26" unique_id=1941276490]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2560034, 0.78, -6.576514)
+mesh = SubResource("CylinderMesh_6nb8s")
+
+[node name="TreeCrown07R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="27" unique_id=1168797477]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2560034, 1.95, -6.576514)
+mesh = SubResource("SphereMesh_fnpfe")
+
+[node name="TreeTrunk08L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="28" unique_id=1951613147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7544518, 0.78, -14.704946)
+mesh = SubResource("CylinderMesh_ackfy")
+
+[node name="TreeCrown08L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="29" unique_id=925708321]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7544518, 1.95, -14.704946)
+mesh = SubResource("SphereMesh_g8008")
+
+[node name="TreeTrunk08R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="30" unique_id=1120635265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6455605, 0.78, -16.21813)
+mesh = SubResource("CylinderMesh_bysqk")
+
+[node name="TreeCrown08R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="31" unique_id=1877121819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6455605, 1.95, -16.21813)
+mesh = SubResource("SphereMesh_5tffl")
+
+[node name="TreeTrunk09L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="32" unique_id=26719902]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.712807, 0.78, -26.775885)
+mesh = SubResource("CylinderMesh_mlnre")
+
+[node name="TreeCrown09L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="33" unique_id=853604017]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.712807, 1.95, -26.775885)
+mesh = SubResource("SphereMesh_kjnos")
+
+[node name="TreeTrunk09R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="34" unique_id=732232825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6095865, 0.78, -24.762575)
+mesh = SubResource("CylinderMesh_7e6k4")
+
+[node name="TreeCrown09R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="35" unique_id=1467877286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6095865, 1.95, -24.762575)
+mesh = SubResource("SphereMesh_hu8je")
+
+[node name="TreeTrunk10L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="36" unique_id=666126539]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9577901, 0.78, -37.507866)
+mesh = SubResource("CylinderMesh_sy5aa")
+
+[node name="TreeCrown10L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="37" unique_id=310514591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9577901, 1.95, -37.507866)
+mesh = SubResource("SphereMesh_dipo4")
+
+[node name="TreeTrunk10R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="38" unique_id=1877506929]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1804132, 0.78, -34.64598)
+mesh = SubResource("CylinderMesh_k4lgj")
+
+[node name="TreeCrown10R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="39" unique_id=336572815]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1804132, 1.95, -34.64598)
+mesh = SubResource("SphereMesh_chlb7")
+
+[node name="TreeTrunk11L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="40" unique_id=511123685]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.477415, 0.78, -45.825916)
+mesh = SubResource("CylinderMesh_gp16d")
+
+[node name="TreeCrown11L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="41" unique_id=980823814]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.477415, 1.95, -45.825916)
+mesh = SubResource("SphereMesh_8uflc")
+
+[node name="TreeTrunk11R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="42" unique_id=2104352410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.968169, 0.78, -46.943317)
+mesh = SubResource("CylinderMesh_rhchx")
+
+[node name="TreeCrown11R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="43" unique_id=1427338737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.968169, 1.95, -46.943317)
+mesh = SubResource("SphereMesh_mkjvv")
+
+[node name="TreeTrunk12L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="44" unique_id=1175439702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.117506, 0.78, -56.069714)
+mesh = SubResource("CylinderMesh_tvjge")
+
+[node name="TreeCrown12L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="45" unique_id=883680003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.117506, 1.95, -56.069714)
+mesh = SubResource("SphereMesh_d4dqu")
+
+[node name="TreeTrunk12R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="46" unique_id=166229172]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.314883, 0.78, -57.3149)
+mesh = SubResource("CylinderMesh_slew1")
+
+[node name="TreeCrown12R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="47" unique_id=2036794985]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.314883, 1.95, -57.3149)
+mesh = SubResource("SphereMesh_aljyn")
+
+[node name="WestBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1677950875]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.65, 1.2, 0)
+mesh = SubResource("BoxMesh_c3iuf")
+
+[node name="WestBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="1" unique_id=1051842676]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.65, 1.2, 0)
+
+[node name="@CollisionShape3D@1011" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/WestBoundaryCollision" index="0" unique_id=346334122]
+shape = SubResource("BoxShape3D_cvwgo")
+
+[node name="EastBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="2" unique_id=1542888522]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.2, 0)
+mesh = SubResource("BoxMesh_57kq2")
+
+[node name="EastBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="3" unique_id=1254070532]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.65, 1.2, 0)
+
+[node name="@CollisionShape3D@1012" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/EastBoundaryCollision" index="0" unique_id=1782754326]
+shape = SubResource("BoxShape3D_eklt1")
+
+[node name="NorthBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="4" unique_id=553478833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -72.15)
+mesh = SubResource("BoxMesh_radsr")
+
+[node name="NorthBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="5" unique_id=1387092315]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -72.15)
+
+[node name="@CollisionShape3D@1013" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/NorthBoundaryCollision" index="0" unique_id=847194679]
+shape = SubResource("BoxShape3D_mk48w")
+
+[node name="SouthBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="6" unique_id=264933179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 72.15)
+mesh = SubResource("BoxMesh_sxwjn")
+
+[node name="SouthBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="7" unique_id=1796201015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 72.15)
+
+[node name="@CollisionShape3D@1014" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/SouthBoundaryCollision" index="0" unique_id=1804459482]
+shape = SubResource("BoxShape3D_777s6")
+
+[node name="RouteWalls" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="8" unique_id=2125706072]
+
+[node name="RouteWall01L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="0" unique_id=543188945]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, 4.6040154, 1.05, 61.57245)
+mesh = SubResource("BoxMesh_8mbwq")
+
+[node name="RouteWall01LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="1" unique_id=1721023223]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, 4.6040154, 1.05, 61.57245)
+
+[node name="@CollisionShape3D@1015" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall01LCollision" index="0" unique_id=219845820]
+shape = SubResource("BoxShape3D_dgjso")
+
+[node name="RouteWall01R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="2" unique_id=734598728]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, -5.180685, 1.05, 62.119858)
+mesh = SubResource("BoxMesh_jfnhi")
+
+[node name="RouteWall01RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="3" unique_id=314036788]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, -5.180685, 1.05, 62.119858)
+
+[node name="@CollisionShape3D@1016" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall01RCollision" index="0" unique_id=651419676]
+shape = SubResource("BoxShape3D_2r1qi")
+
+[node name="RouteWall02L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="4" unique_id=1229502232]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, 4.1724663, 1.05, 51.397026)
+mesh = SubResource("BoxMesh_kdt8g")
+
+[node name="RouteWall02LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="5" unique_id=1578376782]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, 4.1724663, 1.05, 51.397026)
+
+[node name="@CollisionShape3D@1017" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall02LCollision" index="0" unique_id=180852089]
+shape = SubResource("BoxShape3D_omhrw")
+
+[node name="RouteWall02R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="6" unique_id=2120394711]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -5.623451, 1.05, 51.679893)
+mesh = SubResource("BoxMesh_64l1k")
+
+[node name="RouteWall02RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="7" unique_id=1424712892]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -5.623451, 1.05, 51.679893)
+
+[node name="@CollisionShape3D@1018" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall02RCollision" index="0" unique_id=2104590290]
+shape = SubResource("BoxShape3D_g7lhr")
+
+[node name="RouteWall03L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="8" unique_id=450648095]
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, 5.3611465, 1.05, 42.63427)
+mesh = SubResource("BoxMesh_iyvq1")
+
+[node name="RouteWall03LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="9" unique_id=2794713]
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, 5.3611465, 1.05, 42.63427)
+
+[node name="@CollisionShape3D@1019" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall03LCollision" index="0" unique_id=2128866503]
+shape = SubResource("BoxShape3D_sni2i")
+
+[node name="RouteWall03R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="10" unique_id=1773261050]
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, -4.0282493, 1.05, 39.82727)
+mesh = SubResource("BoxMesh_rq1ym")
+
+[node name="RouteWall03RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="11" unique_id=1866789328]
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, -4.0282493, 1.05, 39.82727)
+
+[node name="@CollisionShape3D@1020" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall03RCollision" index="0" unique_id=1631569638]
+shape = SubResource("BoxShape3D_j3cja")
+
+[node name="RouteWall04L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="12" unique_id=969047876]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 7.6494184, 1.05, 31.463697)
+mesh = SubResource("BoxMesh_dphxv")
+
+[node name="RouteWall04LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="13" unique_id=1833225278]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 7.6494184, 1.05, 31.463697)
+
+[node name="@CollisionShape3D@1021" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall04LCollision" index="0" unique_id=518216676]
+shape = SubResource("BoxShape3D_lucpr")
+
+[node name="RouteWall04R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="14" unique_id=607702660]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, -2.0907521, 1.05, 30.382456)
+mesh = SubResource("BoxMesh_355yp")
+
+[node name="RouteWall04RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="15" unique_id=1388507157]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, -2.0907521, 1.05, 30.382456)
+
+[node name="@CollisionShape3D@1022" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall04RCollision" index="0" unique_id=1792959379]
+shape = SubResource("BoxShape3D_ncnrf")
+
+[node name="RouteWall05L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="16" unique_id=1788637081]
+transform = Transform3D(-0.8459444, 0, -0.53327113, 0, 1, 0, 0.53327113, 0, -0.8459444, 4.24767, 1.05, 18.002354)
+mesh = SubResource("BoxMesh_flx0f")
+
+[node name="RouteWall05LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="17" unique_id=680628853]
+transform = Transform3D(-0.8459444, 0, -0.53327113, 0, 1, 0, 0.53327113, 0, -0.8459444, 4.24767, 1.05, 18.002354)
+
+[node name="@CollisionShape3D@1023" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall05LCollision" index="0" unique_id=1144308753]
+shape = SubResource("BoxShape3D_2p1yv")
+
+[node name="RouteWall05R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="18" unique_id=1123295786]
+transform = Transform3D(-0.8459444, 0, -0.53327113, 0, 1, 0, 0.53327113, 0, -0.8459444, -4.0425844, 1.05, 23.228413)
+mesh = SubResource("BoxMesh_quyce")
+
+[node name="RouteWall05RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="19" unique_id=4019450]
+transform = Transform3D(-0.8459444, 0, -0.53327113, 0, 1, 0, 0.53327113, 0, -0.8459444, -4.0425844, 1.05, 23.228413)
+
+[node name="@CollisionShape3D@1024" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall05RCollision" index="0" unique_id=767825950]
+shape = SubResource("BoxShape3D_7hjjx")
+
+[node name="RouteWall06L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="20" unique_id=251150170]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, 1.7217731, 1.05, 10.277492)
+mesh = SubResource("BoxMesh_ihqve")
+
+[node name="RouteWall06LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="21" unique_id=227019587]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, 1.7217731, 1.05, 10.277492)
+
+[node name="@CollisionShape3D@1025" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall06LCollision" index="0" unique_id=123479619]
+shape = SubResource("BoxShape3D_y3jc1")
+
+[node name="RouteWall06R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="22" unique_id=1779283941]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -8.078041, 1.05, 10.3378935)
+mesh = SubResource("BoxMesh_mj2aq")
+
+[node name="RouteWall06RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="23" unique_id=128778774]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -8.078041, 1.05, 10.3378935)
+
+[node name="@CollisionShape3D@1026" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall06RCollision" index="0" unique_id=1221252397]
+shape = SubResource("BoxShape3D_ie4em")
+
+[node name="RouteWall07L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="24" unique_id=1924267631]
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, 3.1890283, 1.05, 1.5855877)
+mesh = SubResource("BoxMesh_ijlsn")
+
+[node name="RouteWall07LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="25" unique_id=557481078]
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, 3.1890283, 1.05, 1.5855877)
+
+[node name="@CollisionShape3D@1027" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall07LCollision" index="0" unique_id=1898031282]
+shape = SubResource("BoxShape3D_uw1mm")
+
+[node name="RouteWall07R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="26" unique_id=1303201926]
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, -6.0837092, 1.05, -1.5855877)
+mesh = SubResource("BoxMesh_y8ky0")
+
+[node name="RouteWall07RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="27" unique_id=682132927]
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, -6.0837092, 1.05, -1.5855877)
+
+[node name="@CollisionShape3D@1028" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall07RCollision" index="0" unique_id=2111060387]
+shape = SubResource("BoxShape3D_8mar0")
+
+[node name="RouteWall08L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="28" unique_id=1534738493]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 6.0165353, 1.05, -9.4924345)
+mesh = SubResource("BoxMesh_aa2kd")
+
+[node name="RouteWall08LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="29" unique_id=1108803493]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 6.0165353, 1.05, -9.4924345)
+
+[node name="@CollisionShape3D@1029" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall08LCollision" index="0" unique_id=376714992]
+shape = SubResource("BoxShape3D_mtut6")
+
+[node name="RouteWall08R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="30" unique_id=1889217348]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, -3.646871, 1.05, -11.122951)
+mesh = SubResource("BoxMesh_yv11o")
+
+[node name="RouteWall08RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="31" unique_id=702363907]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, -3.646871, 1.05, -11.122951)
+
+[node name="@CollisionShape3D@1030" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall08RCollision" index="0" unique_id=623573246]
+shape = SubResource("BoxShape3D_1f43b")
+
+[node name="RouteWall09L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="32" unique_id=1344180584]
+transform = Transform3D(-0.9953533, 0, 0.09629033, 0, 1, 0, -0.09629033, 0, -0.9953533, 7.4302588, 1.05, -20.14356)
+mesh = SubResource("BoxMesh_p68dn")
+
+[node name="RouteWall09LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="33" unique_id=94324827]
+transform = Transform3D(-0.9953533, 0, 0.09629033, 0, 1, 0, -0.09629033, 0, -0.9953533, 7.4302588, 1.05, -20.14356)
+
+[node name="@CollisionShape3D@1031" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall09LCollision" index="0" unique_id=495909330]
+shape = SubResource("BoxShape3D_tvsgw")
+
+[node name="RouteWall09R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="34" unique_id=642974372]
+transform = Transform3D(-0.9953533, 0, 0.09629033, 0, 1, 0, -0.09629033, 0, -0.9953533, -2.3242033, 1.05, -21.087206)
+mesh = SubResource("BoxMesh_g4v6a")
+
+[node name="RouteWall09RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="35" unique_id=456368916]
+transform = Transform3D(-0.9953533, 0, 0.09629033, 0, 1, 0, -0.09629033, 0, -0.9953533, -2.3242033, 1.05, -21.087206)
+
+[node name="@CollisionShape3D@1032" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall09RCollision" index="0" unique_id=1595860521]
+shape = SubResource("BoxShape3D_30vew")
+
+[node name="RouteWall10L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="36" unique_id=1770508377]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 5.1845913, 1.05, -32.94267)
+mesh = SubResource("BoxMesh_cld6m")
+
+[node name="RouteWall10LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="37" unique_id=719996076]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 5.1845913, 1.05, -32.94267)
+
+[node name="@CollisionShape3D@1033" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall10LCollision" index="0" unique_id=2060807110]
+shape = SubResource("BoxShape3D_2yi0g")
+
+[node name="RouteWall10R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="38" unique_id=106870828]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, -3.744293, 1.05, -28.903484)
+mesh = SubResource("BoxMesh_wrbqh")
+
+[node name="RouteWall10RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="39" unique_id=1743410135]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, -3.744293, 1.05, -28.903484)
+
+[node name="@CollisionShape3D@1034" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall10RCollision" index="0" unique_id=1539257327]
+shape = SubResource("BoxShape3D_c6g4t")
+
+[node name="RouteWall11L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="40" unique_id=1582489866]
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, 2.9624114, 1.05, -41.53162)
+mesh = SubResource("BoxMesh_yrdgq")
+
+[node name="RouteWall11LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="41" unique_id=1479641543]
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, 2.9624114, 1.05, -41.53162)
+
+[node name="@CollisionShape3D@1035" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall11LCollision" index="0" unique_id=2089657553]
+shape = SubResource("BoxShape3D_iogng")
+
+[node name="RouteWall11R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="42" unique_id=164742094]
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, -6.8191, 1.05, -40.92992)
+mesh = SubResource("BoxMesh_fo8qy")
+
+[node name="RouteWall11RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="43" unique_id=587147382]
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, -6.8191, 1.05, -40.92992)
+
+[node name="@CollisionShape3D@1036" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall11RCollision" index="0" unique_id=1040844049]
+shape = SubResource("BoxShape3D_ukvp7")
+
+[node name="RouteWall12L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="44" unique_id=931395493]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, 3.8240108, 1.05, -50.319824)
+mesh = SubResource("BoxMesh_d84jc")
+
+[node name="RouteWall12LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="45" unique_id=404078682]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, 3.8240108, 1.05, -50.319824)
+
+[node name="@CollisionShape3D@1037" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall12LCollision" index="0" unique_id=402621919]
+shape = SubResource("BoxShape3D_jbd4o")
+
+[node name="RouteWall12R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="46" unique_id=435220352]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -5.6680765, 1.05, -52.757095)
+mesh = SubResource("BoxMesh_ghyc3")
+
+[node name="RouteWall12RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="47" unique_id=42800816]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -5.6680765, 1.05, -52.757095)
+
+[node name="@CollisionShape3D@1038" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall12RCollision" index="0" unique_id=336959118]
+shape = SubResource("BoxShape3D_gi05u")
+
+[node name="RouteWall13L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="48" unique_id=617011283]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, 5.0969462, 1.05, -62.03678)
+mesh = SubResource("BoxMesh_t4a2t")
+
+[node name="RouteWall13LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="49" unique_id=1133561169]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, 5.0969462, 1.05, -62.03678)
+
+[node name="@CollisionShape3D@1039" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall13LCollision" index="0" unique_id=165766599]
+shape = SubResource("BoxShape3D_03ple")
+
+[node name="RouteWall13R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="50" unique_id=854820930]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, -4.6956353, 1.05, -61.655525)
+mesh = SubResource("BoxMesh_130d7")
+
+[node name="RouteWall13RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="51" unique_id=954301411]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, -4.6956353, 1.05, -61.655525)
+
+[node name="@CollisionShape3D@1040" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall13RCollision" index="0" unique_id=917057342]
+shape = SubResource("BoxShape3D_ao41d")
+
+[node name="TrainerGate1L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="9" unique_id=776664014]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, 1.7109154, 0.7, 48.43399)
+mesh = SubResource("BoxMesh_osvga")
+
+[node name="TrainerGate1LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="10" unique_id=1966529977]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, 1.7109154, 0.7, 48.43399)
+
+[node name="@CollisionShape3D@1041" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate1LCollision" index="0" unique_id=764358281]
+shape = SubResource("BoxShape3D_0mxqn")
+
+[node name="TrainerGate1R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="11" unique_id=1849011212]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -3.3369808, 0.7, 48.579758)
+mesh = SubResource("BoxMesh_eh2e1")
+
+[node name="TrainerGate1RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="12" unique_id=1030285720]
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -3.3369808, 0.7, 48.579758)
+
+[node name="@CollisionShape3D@1042" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate1RCollision" index="0" unique_id=1083211007]
+shape = SubResource("BoxShape3D_8o7n1")
+
+[node name="TrainerGate2L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="13" unique_id=1605884701]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 5.4623976, 0.7, 29.638903)
+mesh = SubResource("BoxMesh_vqaxn")
+
+[node name="TrainerGate2LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="14" unique_id=934066881]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 5.4623976, 0.7, 29.638903)
+
+[node name="@CollisionShape3D@1043" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate2LCollision" index="0" unique_id=1841305473]
+shape = SubResource("BoxShape3D_d4cdh")
+
+[node name="TrainerGate2R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="15" unique_id=1026574024]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 0.44322777, 0.7, 29.081732)
+mesh = SubResource("BoxMesh_sronh")
+
+[node name="TrainerGate2RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="16" unique_id=1332957683]
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 0.44322777, 0.7, 29.081732)
+
+[node name="@CollisionShape3D@1044" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate2RCollision" index="0" unique_id=2115024026]
+shape = SubResource("BoxShape3D_5kr0t")
+
+[node name="TrainerGate3L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="17" unique_id=1397515252]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -0.65371346, 0.7, 10.2058525)
+mesh = SubResource("BoxMesh_h0ufb")
+
+[node name="TrainerGate3LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="18" unique_id=344101119]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -0.65371346, 0.7, 10.2058525)
+
+[node name="@CollisionShape3D@1045" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate3LCollision" index="0" unique_id=1930360154]
+shape = SubResource("BoxShape3D_aj2cc")
+
+[node name="TrainerGate3R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="19" unique_id=1964986214]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -5.703618, 0.7, 10.236979)
+mesh = SubResource("BoxMesh_iqqpe")
+
+[node name="TrainerGate3RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="20" unique_id=2014408724]
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -5.703618, 0.7, 10.236979)
+
+[node name="@CollisionShape3D@1046" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate3RCollision" index="0" unique_id=1272499770]
+shape = SubResource("BoxShape3D_44gb4")
+
+[node name="TrainerGate4L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="21" unique_id=928361950]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 3.4422617, 0.7, -8.510382)
+mesh = SubResource("BoxMesh_hankp")
+
+[node name="TrainerGate4LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="22" unique_id=1063223649]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 3.4422617, 0.7, -8.510382)
+
+[node name="@CollisionShape3D@1047" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate4LCollision" index="0" unique_id=1722938899]
+shape = SubResource("BoxShape3D_c7470")
+
+[node name="TrainerGate4R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="23" unique_id=1107840049]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, -1.5373511, 0.7, -9.350595)
+mesh = SubResource("BoxMesh_wt6ya")
+
+[node name="TrainerGate4RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="24" unique_id=1116204651]
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, -1.5373511, 0.7, -9.350595)
+
+[node name="@CollisionShape3D@1048" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate4RCollision" index="0" unique_id=301635128]
+shape = SubResource("BoxShape3D_lso7k")
+
+[node name="TrainerGate5L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="25" unique_id=1130860721]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 4.2878065, 0.7, -29.162771)
+mesh = SubResource("BoxMesh_5xolf")
+
+[node name="TrainerGate5LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="26" unique_id=273062708]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 4.2878065, 0.7, -29.162771)
+
+[node name="@CollisionShape3D@1049" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate5LCollision" index="0" unique_id=1732397187]
+shape = SubResource("BoxShape3D_3gydf")
+
+[node name="TrainerGate5R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="27" unique_id=1162633787]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, -0.31330252, 0.7, -27.081354)
+mesh = SubResource("BoxMesh_mty38")
+
+[node name="TrainerGate5RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="28" unique_id=736145310]
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, -0.31330252, 0.7, -27.081354)
+
+[node name="@CollisionShape3D@1050" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate5RCollision" index="0" unique_id=37046249]
+shape = SubResource("BoxShape3D_f1nv5")
+
+[node name="TrainerGate6L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="29" unique_id=1232496886]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, 0.41673136, 0.7, -46.599598)
+mesh = SubResource("BoxMesh_owd7w")
+
+[node name="TrainerGate6LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="30" unique_id=636947036]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, 0.41673136, 0.7, -46.599598)
+
+[node name="@CollisionShape3D@1051" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate6LCollision" index="0" unique_id=1475581034]
+shape = SubResource("BoxShape3D_dyjpc")
+
+[node name="TrainerGate6R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="31" unique_id=835517549]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -4.4746, 0.7, -47.855534)
+mesh = SubResource("BoxMesh_004c8")
+
+[node name="TrainerGate6RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="32" unique_id=905184765]
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -4.4746, 0.7, -47.855534)
+
+[node name="@CollisionShape3D@1052" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate6RCollision" index="0" unique_id=602541945]
+shape = SubResource("BoxShape3D_1cu86")
+
+[node name="Route 22 Trainer 1" type="CharacterBody3D" parent="Gameplay/Actors" index="0" unique_id=69937738 instance=ExtResource("2_qwapw")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.99958336, 0, -0.028864102, 0, 1, 0, 0.028864102, 0, -0.99958336, -0.8317944, 0, 47.857143)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_micg3")
+controller = SubResource("Resource_k5wcn")
+character_art_asset_pack = ExtResource("8_8kb38")
+metadata/encounter_id = "route-22-trainer-01"
+metadata/route_progress = 0.14285714285714285
+
+[node name="Route 22 Trainer 2" type="CharacterBody3D" parent="Gameplay/Actors" index="1" unique_id=1123422049 instance=ExtResource("9_hl8fc")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 3.0245278, 0, 28.714285)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_coi8h")
+controller = SubResource("Resource_bit64")
+character_art_asset_pack = ExtResource("10_omeig")
+metadata/encounter_id = "route-22-trainer-02"
+metadata/route_progress = 0.2857142857142857
+
+[node name="Route 22 Trainer 3" type="CharacterBody3D" parent="Gameplay/Actors" index="2" unique_id=1877224611 instance=ExtResource("11_322lr")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.999981, 0, -0.0061634704, 0, 1, 0, 0.0061634704, 0, -0.999981, -3.1826718, 0, 9.571428)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_m4d1c")
+controller = SubResource("Resource_w7qfy")
+character_art_asset_pack = ExtResource("12_hdw7x")
+metadata/encounter_id = "route-22-trainer-03"
+metadata/route_progress = 0.42857142857142855
+
+[node name="Route 22 Trainer 4" type="CharacterBody3D" parent="Gameplay/Actors" index="3" unique_id=1904938118 instance=ExtResource("13_r8gyi")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.9860618, 0, 0.16637927, 0, 1, 0, -0.16637927, 0, -0.9860618, 1.0606017, 0, -9.571428)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_lvh55")
+controller = SubResource("Resource_dcnah")
+character_art_asset_pack = ExtResource("14_h3dv6")
+metadata/encounter_id = "route-22-trainer-04"
+metadata/route_progress = 0.5714285714285714
+
+[node name="Route 22 Trainer 5" type="CharacterBody3D" parent="Gameplay/Actors" index="4" unique_id=1673657858 instance=ExtResource("15_tfwui")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, 1.7193468, 0, -28.714285)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_gs5p6")
+controller = SubResource("Resource_rhqvc")
+character_art_asset_pack = ExtResource("16_vfvlu")
+metadata/encounter_id = "route-22-trainer-05"
+metadata/route_progress = 0.7142857142857143
+
+[node name="Route 22 Trainer 6" type="CharacterBody3D" parent="Gameplay/Actors" index="5" unique_id=1326401969 instance=ExtResource("17_tairi")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-0.96858037, 0, 0.24870075, 0, 1, 0, -0.24870075, 0, -0.96858037, -1.8672787, 0, -47.857143)
+script = ExtResource("3_e4jqk")
+character_movement = SubResource("Resource_ur18f")
+controller = SubResource("Resource_nnjmi")
+character_art_asset_pack = ExtResource("18_nbltb")
+metadata/encounter_id = "route-22-trainer-06"
+metadata/route_progress = 0.8571428571428571
+
+[node name="TallGrassFields" type="Node3D" parent="Gameplay/Encounters" index="0" unique_id=1937315717]
+
+[node name="Route22Grass01" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="0" unique_id=70607375 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.95810163, 0, 0.28642842, 0, 1, 0, -0.28642842, 0, -0.95810163, 0.08756161, 0, 43.167145)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2201
+
+[node name="Route22Grass02" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="1" unique_id=481835304 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.99389493, 0, 0.11033072, 0, 1, 0, -0.11033072, 0, -0.99389493, 2.503898, 0, 33.404285)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2202
+
+[node name="Route22Grass03" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="2" unique_id=1985632002 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, -3.116736, 0, 4.8814287)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2203
+
+[node name="Route22Grass04" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="3" unique_id=1814657604 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.9461976, 0, 0.32358924, 0, 1, 0, -0.32358924, 0, -0.9461976, 0.22205496, 0, -4.8814282)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2204
+
+[node name="Route22Grass05" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="4" unique_id=1213157392 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.91111064, 0, -0.4121619, 0, 1, 0, 0.4121619, 0, -0.91111064, -0.4022827, 0, -33.404285)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2205
+
+[node name="Route22Grass06" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="5" unique_id=633484894 instance=ExtResource("19_x0yda")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(-0.9981134, 0, -0.061397687, 0, 1, 0, 0.061397687, 0, -0.9981134, -2.0474582, 0, -43.167145)
+collision_layer = 0
+monitorable = false
+script = ExtResource("20_merdg")
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-22-wild"
+encounter_name = "Wild Old Growth Forest Pokemon"
+random_seed = 2206
+
+[node name="RouteCompletionGate" type="Area3D" parent="Gameplay/Objectives" index="0" unique_id=1340492048 instance=ExtResource("21_ojcud")]
+transform = Transform3D(-0.99924296, 0, -0.038903818, 0, 1, 0, 0.038903818, 0, -0.99924296, 3.59086e-16, 0, -67)
+collision_layer = 0
+monitorable = false
+script = ExtResource("22_gsquy")
+route_index = 22
+
+[node name="EntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=501911838]
+transform = Transform3D(-0.9984387, 0, -0.055858284, 0, 1, 0, 0.055858284, 0, -0.9984387, 0, 0, 67)

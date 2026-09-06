@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_2wrpx"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_8gfio"]
+
+[sub_resource type="Resource" id="Resource_uh7eu"]
+script = ExtResource("1_2wrpx")
+member_id = "route-39-trainer-05-member-1"
+pokemon_id = 447
+species = "Riolu"
+sprite_id = "riolu"
+level = 58
+moves = Array[String](["endure", "quickattack", "feint", "metalclaw"])
+
+[sub_resource type="Resource" id="Resource_wr1vg"]
+script = ExtResource("1_2wrpx")
+member_id = "route-39-trainer-05-member-2"
+pokemon_id = 633
+species = "Deino"
+sprite_id = "deino"
+level = 59
+moves = Array[String](["focusenergy", "tackle", "dragonbreath", "bite"])
+
+[sub_resource type="Resource" id="Resource_jxikw"]
+script = ExtResource("1_2wrpx")
+member_id = "route-39-trainer-05-member-3"
+pokemon_id = 636
+species = "Larvesta"
+sprite_id = "larvesta"
+level = 60
+moves = Array[String](["ember", "stringshot", "flamecharge", "strugglebug"])
+
+[sub_resource type="Resource" id="Resource_bvu3p"]
+script = ExtResource("1_2wrpx")
+member_id = "route-39-trainer-05-member-4"
+pokemon_id = 359
+species = "Absol"
+sprite_id = "absol"
+level = 60
+moves = Array[String](["leer", "quickattack", "doubleteam", "knockoff"])
+
+[resource]
+script = ExtResource("2_8gfio")
+encounter_id = "route-39-trainer-05"
+display_name = "Route 39 Trainer 5"
+api_name = "Route 39 Trainer 5"
+members = Array[ExtResource("1_2wrpx")]([SubResource("Resource_uh7eu"), SubResource("Resource_wr1vg"), SubResource("Resource_jxikw"), SubResource("Resource_bvu3p")])

@@ -5,7 +5,9 @@ export const CLOUD_SAVE_SECTIONS = Object.freeze([
   "profile",
   "collection",
   "move_learning",
-  "stretch",
+  "economy",
+  "inventory",
+  "challenge_progression",
   "world",
 ]);
 
@@ -114,12 +116,12 @@ function mergeCollection(cloudValue, incomingValue, preferIncoming) {
 function sameActiveRun(first, second) {
   return (
     Number(first?.run_id ?? -1) === Number(second?.run_id ?? -2)
-    && JSON.stringify(first?.active_destination ?? {})
-      === JSON.stringify(second?.active_destination ?? { different: true })
+    && String(first?.active_area_id ?? "")
+      === String(second?.active_area_id ?? "__different__")
   );
 }
 
-function mergeStretch(cloudValue, incomingValue, preferIncoming) {
+function mergeInventory(cloudValue, incomingValue, preferIncoming) {
   const preferred = preferIncoming ? incomingValue : cloudValue;
   const other = preferIncoming ? cloudValue : incomingValue;
   const result = copy(preferred);
@@ -127,6 +129,13 @@ function mergeStretch(cloudValue, incomingValue, preferIncoming) {
     ...(Array.isArray(preferred.claimed_gifts) ? preferred.claimed_gifts : []),
     ...(Array.isArray(other.claimed_gifts) ? other.claimed_gifts : []),
   ]);
+  return result;
+}
+
+function mergeChallengeProgression(cloudValue, incomingValue, preferIncoming) {
+  const preferred = preferIncoming ? incomingValue : cloudValue;
+  const other = preferIncoming ? cloudValue : incomingValue;
+  const result = copy(preferred);
   result.earned_badges = orderedUnique([
     ...(Array.isArray(preferred.earned_badges) ? preferred.earned_badges : []),
     ...(Array.isArray(other.earned_badges) ? other.earned_badges : []),
@@ -135,8 +144,8 @@ function mergeStretch(cloudValue, incomingValue, preferIncoming) {
     Array.isArray(preferred.completed_routes) ? preferred.completed_routes : [],
     Array.isArray(other.completed_routes) ? other.completed_routes : [],
   );
-  result.champion_cleared = Boolean(
-    preferred.champion_cleared || other.champion_cleared,
+  result.champion_completed = Boolean(
+    preferred.champion_completed || other.champion_completed,
   );
   if (sameActiveRun(preferred, other)) {
     result.run_defeated_ids = orderedUnique([
@@ -151,8 +160,11 @@ function mergeSection(section, cloudValue, incomingValue, preferIncoming) {
   if (section === "collection") {
     return mergeCollection(cloudValue, incomingValue, preferIncoming);
   }
-  if (section === "stretch") {
-    return mergeStretch(cloudValue, incomingValue, preferIncoming);
+  if (section === "inventory") {
+    return mergeInventory(cloudValue, incomingValue, preferIncoming);
+  }
+  if (section === "challenge_progression") {
+    return mergeChallengeProgression(cloudValue, incomingValue, preferIncoming);
   }
   return copy(preferIncoming ? incomingValue : cloudValue);
 }
@@ -331,8 +343,8 @@ export function validateCloudSaveRequest(value) {
       return "Conflict sections must also be changed sections.";
     }
   }
-  if (!isPlainObject(value.payload) || value.payload.schema_version !== 5) {
-    return "Cloud sync requires a schema-5 progression payload.";
+  if (!isPlainObject(value.payload) || value.payload.schema_version !== 6) {
+    return "Cloud sync requires a schema-6 progression payload.";
   }
   if (
     !isPlainObject(value.payload.profile)
@@ -346,7 +358,14 @@ export function validateCloudSaveRequest(value) {
   ) {
     return "The progression collection size is invalid.";
   }
-  for (const section of ["move_learning", "stretch", "world", "save_meta"]) {
+  for (const section of [
+    "move_learning",
+    "economy",
+    "inventory",
+    "challenge_progression",
+    "world",
+    "save_meta",
+  ]) {
     if (!isPlainObject(value.payload[section])) {
       return `The ${section} section is invalid.`;
     }

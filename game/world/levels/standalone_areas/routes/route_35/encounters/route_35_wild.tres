@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_43l6c"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_fccjq"]
+
+[sub_resource type="Resource" id="Resource_w26xt"]
+script = ExtResource("1_43l6c")
+member_id = "route-35-wild-member-1"
+pokemon_id = 58
+species = "Growlithe"
+sprite_id = "growlithe"
+level = 53
+moves = Array[String](["ember", "leer", "howl", "bite"])
+
+[resource]
+script = ExtResource("2_fccjq")
+encounter_id = "route-35-wild"
+display_name = "Wild Autumn Highlands Pokemon"
+api_name = "Wild Autumn Highla"
+members = Array[ExtResource("1_43l6c")]([SubResource("Resource_w26xt")])

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_vq745"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_crloe"]
+
+[sub_resource type="Resource" id="Resource_nnntn"]
+script = ExtResource("1_vq745")
+member_id = "route-33-wild-member-1"
+pokemon_id = 425
+species = "Drifloon"
+sprite_id = "drifloon"
+level = 53
+moves = Array[String](["astonish", "minimize", "gust", "focusenergy"])
+
+[resource]
+script = ExtResource("2_crloe")
+encounter_id = "route-33-wild"
+display_name = "Wild Haunted Thicket Pokemon"
+api_name = "Wild Haunted Thick"
+members = Array[ExtResource("1_vq745")]([SubResource("Resource_nnntn")])

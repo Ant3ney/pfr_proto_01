@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_jfss1"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_worktop"]
+albedo_color = Color(0.24, 0.13, 0.075, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="Mesh_workbench"]
+material = SubResource("Material_worktop")
+size = Vector3(6.2, 0.95, 1.15)
+
+[sub_resource type="StandardMaterial3D" id="Material_steel"]
+albedo_color = Color(0.16, 0.19, 0.2, 1)
+metallic = 0.25
+roughness = 0.64
+
+[sub_resource type="BoxMesh" id="Mesh_cabinet"]
+material = SubResource("Material_steel")
+size = Vector3(1.35, 2.1, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="Material_safety"]
+albedo_color = Color(0.72, 0.11, 0.075, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="Mesh_lift_rail"]
+material = SubResource("Material_safety")
+size = Vector3(0.32, 0.16, 5.2)
+
+[sub_resource type="BoxMesh" id="Mesh_lift_crossbar"]
+material = SubResource("Material_steel")
+size = Vector3(4.2, 0.12, 0.42)
+
+[sub_resource type="BoxShape3D" id="Shape_workbench"]
+size = Vector3(6.2, 0.95, 1.15)
+
+[sub_resource type="BoxShape3D" id="Shape_cabinet"]
+size = Vector3(1.35, 2.1, 0.7)
+
+[node name="GarageWorkshop" unique_id=579036574 instance=ExtResource("1_jfss1")]
+editor_description = "Brick-and-mortar municipal workshop with a timber bench, dark steel cabinets, readable red lift rails, and separate office, vehicle-bay, and side-service routes."
+level_id = "garage_workshop"
+area_id = "garage_workshop"
+entry_spawn_marker = &"OfficeEntrySpawn"
+metadata/mobile_web_level = true
+metadata/interior_id = "garage"
+
+[node name="Lighting" parent="Environment" index="0" unique_id=652477628 instance=ExtResource("2_lighting")]
+
+[node name="Room" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=1315721389 instance=ExtResource("1_room")]
+transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="WorkBench" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=626718013]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.475, -3.65)
+mesh = SubResource("Mesh_workbench")
+
+[node name="CabinetLeft" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=748400896]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 1.05, -4.46)
+mesh = SubResource("Mesh_cabinet")
+
+[node name="CabinetRight" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=220453086]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.45, 1.05, -4.46)
+mesh = SubResource("Mesh_cabinet")
+
+[node name="LiftRailLeft" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=522071670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 0.09, 0.25)
+mesh = SubResource("Mesh_lift_rail")
+
+[node name="LiftRailRight" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=200778810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 0.09, 0.25)
+mesh = SubResource("Mesh_lift_rail")
+
+[node name="LiftCrossbar" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=1637161339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.95, 0.14, -1.95)
+mesh = SubResource("Mesh_lift_crossbar")
+
+[node name="SideServiceDoor" parent="NavigationRegion3D/WorldGeometry/Props" index="6" unique_id=1142383512 instance=ExtResource("4_door")]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -7.02, 0, 0)
+
+[node name="FurnitureCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1152087748]
+
+[node name="WorkBench" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="0" unique_id=499013010]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.475, -3.65)
+shape = SubResource("Shape_workbench")
+
+[node name="CabinetLeft" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="1" unique_id=1122904260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 1.05, -4.46)
+shape = SubResource("Shape_cabinet")
+
+[node name="CabinetRight" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="2" unique_id=1662218268]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.45, 1.05, -4.46)
+shape = SubResource("Shape_cabinet")
+
+[node name="ExitOffice" parent="Gameplay/Transitions" index="0" unique_id=354435282 instance=ExtResource("5_transfer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.9, -4.2, 0, 4.68)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"GarageOfficeReturn"
+
+[node name="ExitVehicleBay" parent="Gameplay/Transitions" index="1" unique_id=2033908439 instance=ExtResource("5_transfer")]
+transform = Transform3D(2.25, 0, 0, 0, 1, 0, 0, 0, 0.9, 2.7, 0, 4.68)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"GarageBayReturn"
+
+[node name="ExitSideService" parent="Gameplay/Transitions" index="2" unique_id=1003232590 instance=ExtResource("5_transfer")]
+transform = Transform3D(7.220079e-07, 0, 0.9, 0, 1, 0, -2.3, 0, 2.825248e-07, -6.62, 0, 0)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"GarageSideReturn"
+
+[node name="OfficeEntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=1168762818]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, -4.2, 0, 3.35)
+
+[node name="BayEntrySpawn" type="Marker3D" parent="Markers" index="1" unique_id=1041049079]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 2.7, 0, 3.35)
+
+[node name="SideEntrySpawn" type="Marker3D" parent="Markers" index="2" unique_id=1652355952]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -5.7, 0, 0)

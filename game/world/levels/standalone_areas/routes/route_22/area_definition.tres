@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_5dnc1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_01.tres" id="2_1p70o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_02.tres" id="3_tofj8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_03.tres" id="4_jo8fx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_04.tres" id="5_umt5q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_05.tres" id="6_w34c3"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_trainer_06.tres" id="7_ol2tu"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_22/route_22.tscn" id="8_kohwk"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_gvipm"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_22/encounters/route_22_wild.tres" id="10_0xa54"]
+
+[resource]
+script = ExtResource("9_gvipm")
+area_id = "route_22"
+numeric_order = 22
+display_name = "Route 22 — Bramblewood Depths"
+description = "Old Growth Forest dungeon route with 6 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 144 m path (Lv. 31–38). Reach the end to unlock the next route."
+biome = "old-growth forest"
+destination = ExtResource("8_kohwk")
+suggested_level_min = 31
+suggested_level_max = 38
+battle_encounters = Array[ExtResource("1_5dnc1")]([ExtResource("2_1p70o"), ExtResource("3_tofj8"), ExtResource("4_jo8fx"), ExtResource("5_umt5q"), ExtResource("6_w34c3"), ExtResource("7_ol2tu")])
+wild_encounters = Array[ExtResource("1_5dnc1")]([ExtResource("10_0xa54")])
+route_completion_prerequisite = "route_21"

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_5u0v3"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_5glio"]
+
+[sub_resource type="Resource" id="Resource_iaoxs"]
+script = ExtResource("1_5u0v3")
+member_id = "route-32-trainer-01-member-1"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 49
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_cdeed"]
+script = ExtResource("1_5u0v3")
+member_id = "route-32-trainer-01-member-2"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 50
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[sub_resource type="Resource" id="Resource_lo4op"]
+script = ExtResource("1_5u0v3")
+member_id = "route-32-trainer-01-member-3"
+pokemon_id = 299
+species = "Nosepass"
+sprite_id = "nosepass"
+level = 51
+moves = Array[String](["tackle", "harden", "block", "rockthrow"])
+
+[sub_resource type="Resource" id="Resource_gp6vt"]
+script = ExtResource("1_5u0v3")
+member_id = "route-32-trainer-01-member-4"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 52
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[resource]
+script = ExtResource("2_5glio")
+encounter_id = "route-32-trainer-01"
+display_name = "Route 32 Trainer 1"
+api_name = "Route 32 Trainer 1"
+members = Array[ExtResource("1_5u0v3")]([SubResource("Resource_iaoxs"), SubResource("Resource_cdeed"), SubResource("Resource_lo4op"), SubResource("Resource_gp6vt")])

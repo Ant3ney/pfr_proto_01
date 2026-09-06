@@ -6,7 +6,7 @@ and focused smoke test before changing the schema or lifecycle.
 
 ## Runtime owner and file
 
-[`RNDProgressionAutosave`](../../rnd/save/ProgressionAutosave.gd) is registered
+[`ProgressionAutosaveService`](../../rnd/save/ProgressionAutosave.gd) is registered
 as the `ProgressionAutosave` autoload after the collection, battle,
 starter-selection, move-learning, and Stretch progression owners. It writes
 schema version `5` to
@@ -41,7 +41,7 @@ schema version `5` to
     "last_battle_reward": {}
   },
   "world": {
-    "scene_path": "res://demo/primary_development_enviroment.tscn",
+    "scene_path": "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn",
     "player_position": [0.0, 0.0, 0.0],
     "player_rotation": [0.0, 0.0, 0.0],
     "visual_rotation": [0.0, 0.0, 0.0]
@@ -68,7 +68,7 @@ counts, one-time world gift claims, badges, Champion completion, the contiguous
 Route 0–39 completion sequence, and the active generated run. A later route is
 unlocked only when the preceding route is in `completed_routes`; validation
 rejects skipped route IDs. The `move_learning` payload comes from
-`RNDMoveLearningSystem`, contains only unresolved level-up move choices, and is
+`MoveLearningSystem`, contains only unresolved level-up move choices, and is
 validated against the incoming collection and generated learnset before load.
 The `profile` payload introduced in schema 4 records the original Charmander,
 Froakie, or Treecko choice. Schema 5 adds monotonic local wall-clock metadata
@@ -84,7 +84,7 @@ on load. An untouched legacy R&D balance of `$5,000,000` migrates to the current
 ## Automatic checkpoints
 
 - `CollectionSystem.collection_changed` queues a 0.35-second debounced write.
-- `RNDMoveLearningSystem.progression_changed` uses the same debounced write.
+- `MoveLearningSystem.progression_changed` uses the same debounced write.
 - `StretchGoalSystem.progression_changed` uses the same debounced write.
 - A five-second timer detects and persists changed overworld player poses.
 - Battle start writes while the source player still exists.
@@ -138,9 +138,9 @@ next route stays unlocked after a new run, scene change, or process restart.
 ## Regression check
 
 ```bash
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/starter_selection_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/cloud_save_sync_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
 ```
 
 The test uses a dedicated temporary `user://` filename and removes it after

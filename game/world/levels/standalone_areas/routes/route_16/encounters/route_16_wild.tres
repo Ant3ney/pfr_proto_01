@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_rf06t"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_oqwkj"]
+
+[sub_resource type="Resource" id="Resource_tmkgb"]
+script = ExtResource("1_rf06t")
+member_id = "route-16-wild-member-1"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 29
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[resource]
+script = ExtResource("2_oqwkj")
+encounter_id = "route-16-wild"
+display_name = "Wild Mangrove Delta Pokemon"
+api_name = "Wild Mangrove Delt"
+members = Array[ExtResource("1_rf06t")]([SubResource("Resource_tmkgb")])

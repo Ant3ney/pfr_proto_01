@@ -1,0 +1,181 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex_environment.glb" id="1_environment"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_pnlgv"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_annex"]
+sky_top_color = Color(0.14, 0.34, 0.52, 1)
+sky_horizon_color = Color(0.62, 0.75, 0.76, 1)
+ground_bottom_color = Color(0.08, 0.07, 0.06, 1)
+ground_horizon_color = Color(0.36, 0.34, 0.3, 1)
+
+[sub_resource type="Sky" id="Sky_annex"]
+sky_material = SubResource("ProceduralSkyMaterial_annex")
+
+[sub_resource type="Environment" id="Environment_annex"]
+background_mode = 2
+sky = SubResource("Sky_annex")
+ambient_light_source = 2
+ambient_light_color = Color(0.84, 0.83, 0.78, 1)
+ambient_light_energy = 0.18
+reflected_light_source = 1
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape_floor"]
+size = Vector3(10, 0.2, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape_back_wall"]
+size = Vector3(10, 3.2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_side_wall"]
+size = Vector3(0.3, 3.2, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape_front_segment"]
+size = Vector3(3.8, 0.9, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_counter"]
+size = Vector3(7.5, 1.45, 1.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape_bench"]
+size = Vector3(1, 1.35, 2.55)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape_table"]
+height = 0.86
+radius = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape_locker"]
+size = Vector3(1.25, 1.85, 2.25)
+
+[sub_resource type="BoxShape3D" id="BoxShape_terminal"]
+size = Vector3(1.25, 1.5, 1.1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape_planter"]
+height = 1.5
+radius = 0.44
+
+[node name="PokemonCenterAnnex" unique_id=1920915664 instance=ExtResource("1_pnlgv")]
+editor_description = "Distinct east-door Pokemon Center service annex. The classical brick civic shell contains an apothecary-style dispensary, consultation seating, lockers, sparse mobile-safe collision, and a dedicated return to the east exterior entrance."
+level_id = "pokemon_center_annex"
+area_id = "pokemon_center_annex"
+metadata/mobile_web_level = true
+metadata/environment_triangles = 1962
+metadata/environment_material_draws = 2
+metadata/exterior_opening = "east"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=2121846421]
+environment = SubResource("Environment_annex")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="Environment" index="1" unique_id=506090610]
+transform = Transform3D(0.90630794, 0.32374424, -0.27165347, 0, 0.64278734, 0.7660447, 0.42261797, -0.6942724, 0.5825633, 0, 0, 0)
+light_color = Color(1, 0.91, 0.78, 1)
+light_energy = 0.3
+shadow_enabled = true
+directional_shadow_max_distance = 18.0
+
+[node name="DispensaryFill" type="OmniLight3D" parent="Environment" index="2" unique_id=1106257470]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.6, -1.8)
+light_color = Color(0.72, 0.91, 1, 1)
+light_energy = 0.1
+
+[node name="ConsultationFill" type="OmniLight3D" parent="Environment" index="3" unique_id=220489511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.5, 0.5)
+light_color = Color(1, 0.84, 0.72, 1)
+light_energy = 0.08
+omni_range = 4.6
+
+[node name="Environment" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=1484668016 instance=ExtResource("1_environment")]
+metadata/mobile_web_asset = true
+metadata/collision_authored_separately = true
+
+[node name="Collision" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1886888464]
+
+[node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="0" unique_id=1990025123]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/Floor" index="0" unique_id=728318594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("BoxShape_floor")
+
+[node name="BackWall" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="1" unique_id=1819421386]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/BackWall" index="0" unique_id=943727682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -4.5)
+shape = SubResource("BoxShape_back_wall")
+
+[node name="SideWalls" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="2" unique_id=360009599]
+
+[node name="LeftWall" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/SideWalls" index="0" unique_id=823276690]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.6, 0)
+shape = SubResource("BoxShape_side_wall")
+
+[node name="RightWall" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/SideWalls" index="1" unique_id=2115490025]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.6, 0)
+shape = SubResource("BoxShape_side_wall")
+
+[node name="FrontWalls" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="3" unique_id=1651558828]
+
+[node name="FrontLeft" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/FrontWalls" index="0" unique_id=638419808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1, 0.45, 4.5)
+shape = SubResource("BoxShape_front_segment")
+
+[node name="FrontRight" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/FrontWalls" index="1" unique_id=285904379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1, 0.45, 4.5)
+shape = SubResource("BoxShape_front_segment")
+
+[node name="DispensaryCounter" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="4" unique_id=443630597]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/DispensaryCounter" index="0" unique_id=2068176565]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.725, -2.58)
+shape = SubResource("BoxShape_counter")
+
+[node name="ConsultationBench" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="5" unique_id=312800754]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/ConsultationBench" index="0" unique_id=1460210808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.18, 0.675, 1.15)
+shape = SubResource("BoxShape_bench")
+
+[node name="ConsultationTable" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="6" unique_id=402928886]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/ConsultationTable" index="0" unique_id=490182022]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.35, 0.43, -0.55)
+shape = SubResource("CylinderShape_table")
+
+[node name="AutomatedLocker" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="7" unique_id=1288581644]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/AutomatedLocker" index="0" unique_id=741893950]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.16, 0.925, 0.72)
+shape = SubResource("BoxShape_locker")
+
+[node name="StandingTerminal" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="8" unique_id=1855596197]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/StandingTerminal" index="0" unique_id=1885967726]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.38, 0.75, -1.08)
+shape = SubResource("BoxShape_terminal")
+
+[node name="Planters" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision" index="9" unique_id=585390364]
+
+[node name="EntrancePlanterLeft" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/Planters" index="0" unique_id=1356813266]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0.75, 3.55)
+shape = SubResource("CylinderShape_planter")
+
+[node name="EntrancePlanterRight" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/Planters" index="1" unique_id=279545698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.75, 3.55)
+shape = SubResource("CylinderShape_planter")
+
+[node name="ExitToCity" parent="Gameplay/Transitions" index="0" unique_id=1589401118 instance=ExtResource("5_transfer")]
+transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 0, 4.28)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"PokemonCenterEastEntrance"
+
+[node name="EntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=1069421303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.35)
+metadata/entry_id = "pokemon_center_east"
+
+[node name="ClerkSpawn" type="Marker3D" parent="Markers" index="1" unique_id=679693305]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0.65, 0, -3.55)
+
+[node name="ConsultationVisitorSpawn" type="Marker3D" parent="Markers" index="2" unique_id=1252586837]
+transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -3.15, 0, 1.25)
+
+[node name="LockerVisitorSpawn" type="Marker3D" parent="Markers" index="3" unique_id=1513023461]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 3.1, 0, 0.75)

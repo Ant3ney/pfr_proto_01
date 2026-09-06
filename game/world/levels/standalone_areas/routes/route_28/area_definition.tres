@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_ym0sr"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_01.tres" id="2_88xhx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_02.tres" id="3_qkywr"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_03.tres" id="4_vpk6q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_04.tres" id="5_nekhb"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_05.tres" id="6_8uit5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_06.tres" id="7_m2au4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_trainer_07.tres" id="8_mmrkf"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_28/route_28.tscn" id="9_n1kre"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_e0q5o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_28/encounters/route_28_wild.tres" id="11_rwjrp"]
+
+[resource]
+script = ExtResource("10_e0q5o")
+area_id = "route_28"
+numeric_order = 28
+display_name = "Route 28 — Stormworks Core"
+description = "Storm Powered Industrial Yard dungeon route with 7 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 160 m path (Lv. 43–50). Reach the end to unlock the next route."
+biome = "storm-powered industrial yard"
+destination = ExtResource("9_n1kre")
+suggested_level_min = 43
+suggested_level_max = 50
+battle_encounters = Array[ExtResource("1_ym0sr")]([ExtResource("2_88xhx"), ExtResource("3_qkywr"), ExtResource("4_vpk6q"), ExtResource("5_nekhb"), ExtResource("6_8uit5"), ExtResource("7_m2au4"), ExtResource("8_mmrkf")])
+wild_encounters = Array[ExtResource("1_ym0sr")]([ExtResource("11_rwjrp")])
+route_completion_prerequisite = "route_27"

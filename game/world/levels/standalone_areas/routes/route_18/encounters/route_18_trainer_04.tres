@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_o8tc8"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ndwxm"]
+
+[sub_resource type="Resource" id="Resource_8nrhi"]
+script = ExtResource("1_o8tc8")
+member_id = "route-18-trainer-04-member-1"
+pokemon_id = 361
+species = "Snorunt"
+sprite_id = "snorunt"
+level = 29
+moves = Array[String](["astonish", "headbutt", "powdersnow", "leer"])
+
+[sub_resource type="Resource" id="Resource_0i1or"]
+script = ExtResource("1_o8tc8")
+member_id = "route-18-trainer-04-member-2"
+pokemon_id = 362
+species = "Glalie"
+sprite_id = "glalie"
+level = 30
+moves = Array[String](["freezedry", "astonish", "doubleteam", "headbutt"])
+
+[sub_resource type="Resource" id="Resource_xhgon"]
+script = ExtResource("1_o8tc8")
+member_id = "route-18-trainer-04-member-3"
+pokemon_id = 459
+species = "Snover"
+sprite_id = "snover"
+level = 31
+moves = Array[String](["leer", "powdersnow", "leafage", "mist"])
+
+[resource]
+script = ExtResource("2_ndwxm")
+encounter_id = "route-18-trainer-04"
+display_name = "Route 18 Trainer 4"
+api_name = "Route 18 Trainer 4"
+members = Array[ExtResource("1_o8tc8")]([SubResource("Resource_8nrhi"), SubResource("Resource_0i1or"), SubResource("Resource_xhgon")])

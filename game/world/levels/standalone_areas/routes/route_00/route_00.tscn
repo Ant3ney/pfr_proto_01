@@ -1,0 +1,1432 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/outdoor_level_base.tscn" id="1_n652x"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_meadow_04x04.tscn" id="2_xto03"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_end_04x04.tscn" id="3_a5s8i"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_straight_04x04.tscn" id="4_q7sjc"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_corner_04x04.tscn" id="5_c1ol0"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/terrain/new_bouffalant_city/route/scenes/route_dirt_t_junction_04x04.tscn" id="6_wehva"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl024.glb" id="7_e8jot"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl025.glb" id="8_bks3b"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl015.glb" id="9_pmvy3"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl009.glb" id="10_pw1sw"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl010.glb" id="11_sohln"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl013.glb" id="12_6xycj"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl039.glb" id="13_m3kqv"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl022.glb" id="14_ubiku"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl003.glb" id="15_l4rus"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl012.glb" id="16_51ypr"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl032.glb" id="17_iikwo"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl018.glb" id="18_jkhs8"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl019.glb" id="19_bc83x"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl021.glb" id="20_mvw82"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl020.glb" id="21_a56py"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl023.glb" id="22_jfmvb"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl035.glb" id="23_q418y"]
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/field_item302a.glb" id="24_a5ifn"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_kyle.tscn" id="25_3ydyx"]
+[ext_resource type="Script" path="res://game/actors/character/pfr_character.gd" id="26_f0vsc"]
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="27_k2cnb"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_kyle.tres" id="28_kdp7u"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_behavior.gd" id="29_o54mp"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="30_t7uyb"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/zach.tres" id="31_des0e"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_delivery_worker.tscn" id="32_4ws6j"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_delivery_worker.tres" id="33_45krs"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_delivery_worker.tres" id="34_43h5d"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_police_officer.tscn" id="35_4ptnk"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_police_officer.tres" id="36_v5c03"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_police_officer.tres" id="37_lk4xj"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_businessman.tscn" id="38_ljesl"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_businessman.tres" id="39_xiawc"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_businessman.tres" id="40_bmqcs"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_backpacker.tscn" id="41_hgn4u"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_backpacker.tres" id="42_upnjs"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_backpacker.tres" id="43_38fw0"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_tourist.tscn" id="44_v20r6"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_tourist.tres" id="45_5wko1"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_tourist.tres" id="46_p0ypp"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_jogger.tscn" id="47_8syqd"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_jogger.tres" id="48_e6hxn"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_jogger.tres" id="49_v7rqo"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.tscn" id="50_dbu8a"]
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd" id="51_ex8o7"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/city_return_gateway.tscn" id="52_qenx4"]
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/transitions/area_gateway.gd" id="53_apdg6"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.tscn" id="54_jk4jp"]
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.gd" id="55_2rukr"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_route4"]
+sky_top_color = Color(0.16, 0.48, 0.82, 1)
+sky_horizon_color = Color(0.8, 0.92, 0.96, 1)
+ground_bottom_color = Color(0.22, 0.29, 0.18, 1)
+ground_horizon_color = Color(0.68, 0.79, 0.55, 1)
+sun_angle_max = 16.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_route4"]
+sky_material = SubResource("ProceduralSkyMaterial_route4")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_route4"]
+background_mode = 2
+sky = SubResource("Sky_route4")
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.84, 0.96, 1)
+ambient_light_energy = 0.34
+reflected_light_source = 1
+tonemap_mode = 2
+tonemap_exposure = 0.9
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_route4"]
+vertices = PackedVector3Array(-15.5, 0, -23.5, -15.5, 0, 23.5, 15.5, 0, 23.5, 15.5, 0, -23.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sign_wood"]
+albedo_color = Color(0.28, 0.13, 0.055, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="BoxMesh_sign_post"]
+material = SubResource("StandardMaterial3D_sign_wood")
+size = Vector3(0.16, 1.4, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sign_green"]
+albedo_color = Color(0.07, 0.42, 0.2, 1)
+roughness = 0.68
+
+[sub_resource type="BoxMesh" id="BoxMesh_sign_board"]
+material = SubResource("StandardMaterial3D_sign_green")
+size = Vector3(1.8, 0.78, 0.14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sign"]
+size = Vector3(1.9, 1.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_boundary_horizontal"]
+size = Vector3(32.5, 2.2, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_boundary_vertical"]
+size = Vector3(0.5, 2.2, 48.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5tup7"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_n5lc6"]
+material = SubResource("StandardMaterial3D_5tup7")
+size = Vector3(11.95, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iql8l"]
+size = Vector3(11.95, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ub1y0"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_dpvpr"]
+material = SubResource("StandardMaterial3D_ub1y0")
+size = Vector3(18.95, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nndoe"]
+size = Vector3(18.95, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c4s35"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_l5xnh"]
+material = SubResource("StandardMaterial3D_c4s35")
+size = Vector3(16.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nunwa"]
+size = Vector3(16.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7pes4"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_of8gb"]
+material = SubResource("StandardMaterial3D_7pes4")
+size = Vector3(14.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dluw2"]
+size = Vector3(14.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ljr32"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_ucml1"]
+material = SubResource("StandardMaterial3D_ljr32")
+size = Vector3(18.95, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ibff8"]
+size = Vector3(18.95, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_inj78"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_g3wrw"]
+material = SubResource("StandardMaterial3D_inj78")
+size = Vector3(11.95, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tuat7"]
+size = Vector3(11.95, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3mb35"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_3yri8"]
+material = SubResource("StandardMaterial3D_3mb35")
+size = Vector3(24.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cerci"]
+size = Vector3(24.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23r8k"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_ygom5"]
+material = SubResource("StandardMaterial3D_23r8k")
+size = Vector3(6.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pv6sn"]
+size = Vector3(6.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s7x55"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_o3q2t"]
+material = SubResource("StandardMaterial3D_s7x55")
+size = Vector3(24.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1g0rk"]
+size = Vector3(24.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w40hi"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_4mi1i"]
+material = SubResource("StandardMaterial3D_w40hi")
+size = Vector3(6.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hnpmf"]
+size = Vector3(6.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7fwdj"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_onl5b"]
+material = SubResource("StandardMaterial3D_7fwdj")
+size = Vector3(13.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_284r8"]
+size = Vector3(13.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0f76b"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_b4oso"]
+material = SubResource("StandardMaterial3D_0f76b")
+size = Vector3(17.45, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eum2a"]
+size = Vector3(17.45, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5lbdf"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_0po8x"]
+material = SubResource("StandardMaterial3D_5lbdf")
+size = Vector3(5.7, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0x1w5"]
+size = Vector3(5.7, 1.25, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n4il0"]
+albedo_color = Color(0.12, 0.36, 0.16, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ldwd"]
+material = SubResource("StandardMaterial3D_n4il0")
+size = Vector3(25.2, 1.25, 0.42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qydc4"]
+size = Vector3(25.2, 1.25, 0.42)
+
+[sub_resource type="Resource" id="Resource_u265o"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_28qlq"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_r6jv8"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("28_kdp7u")
+npc_behavior = SubResource("Resource_28qlq")
+
+[sub_resource type="Resource" id="Resource_a50hn"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_1iji5"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_dhwxq"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("33_45krs")
+battle_scene_path = "res://game/battle/scenes/delivery_worker_battle_scene.tscn"
+encounter_id = "trainer-delivery-worker-city-v1"
+npc_behavior = SubResource("Resource_1iji5")
+
+[sub_resource type="Resource" id="Resource_e23nh"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_ds0yg"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_0q8jf"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("36_v5c03")
+battle_scene_path = "res://game/battle/scenes/police_officer_battle_scene.tscn"
+encounter_id = "trainer-police-officer-city-v1"
+npc_behavior = SubResource("Resource_ds0yg")
+
+[sub_resource type="Resource" id="Resource_c437m"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_pojag"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_foxb0"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("39_xiawc")
+battle_scene_path = "res://game/battle/scenes/businessman_battle_scene.tscn"
+encounter_id = "trainer-businessman-city-v1"
+npc_behavior = SubResource("Resource_pojag")
+
+[sub_resource type="Resource" id="Resource_wx3d3"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_wbugl"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_3v6qb"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("42_upnjs")
+battle_scene_path = "res://game/battle/scenes/backpacker_battle_scene.tscn"
+encounter_id = "trainer-backpacker-city-v1"
+npc_behavior = SubResource("Resource_wbugl")
+
+[sub_resource type="Resource" id="Resource_xfl8t"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_4wu1r"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_32t5j"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("45_5wko1")
+battle_scene_path = "res://game/battle/scenes/tourist_battle_scene.tscn"
+encounter_id = "trainer-tourist-city-v1"
+npc_behavior = SubResource("Resource_4wu1r")
+
+[sub_resource type="Resource" id="Resource_8wk4n"]
+resource_local_to_scene = true
+script = ExtResource("27_k2cnb")
+
+[sub_resource type="Resource" id="Resource_pt6j6"]
+resource_local_to_scene = true
+script = ExtResource("29_o54mp")
+
+[sub_resource type="Resource" id="Resource_y157o"]
+resource_local_to_scene = true
+script = ExtResource("30_t7uyb")
+dialog = ExtResource("48_e6hxn")
+battle_scene_path = "res://game/battle/scenes/jogger_battle_scene.tscn"
+encounter_id = "trainer-jogger-city-v1"
+npc_behavior = SubResource("Resource_pt6j6")
+
+[node name="Route00" unique_id=2061688835 instance=ExtResource("1_n652x")]
+editor_description = "Editable route standalone area. Layout nodes are materialized and no runtime world generator is required."
+level_id = "route_00"
+area_id = "route_00"
+entry_spawn_marker = &"Route0Start"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=1174542796]
+environment = SubResource("Environment_route4")
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment" index="1" unique_id=89971339]
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 0, 0)
+light_color = Color(1, 0.925, 0.79, 1)
+light_energy = 0.82
+shadow_enabled = true
+shadow_opacity = 0.56
+directional_shadow_mode = 0
+directional_shadow_max_distance = 42.0
+
+[node name="NavigationRegion3D" parent="." index="2"]
+navigation_mesh = SubResource("NavigationMesh_route4")
+
+[node name="Player" parent="Runtime" index="0"]
+position = Vector3(-2, 0, 21)
+
+[node name="GroundTiles" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=2072113443]
+editor_description = "Exact 4 x 4 m meadow and dirt modules, all placed at unit scale on the project grid."
+
+[node name="Meadow_Xm14_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="0" unique_id=746583241 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -22)
+
+[node name="Meadow_Xm10_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="1" unique_id=266234421 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -22)
+
+[node name="Path_Xm6_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="2" unique_id=992437553 instance=ExtResource("3_a5s8i")]
+editor_description = "Exact 4 x 4 meter dirt-path end. The two-meter exit matches the straight path module."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 0, -22)
+
+[node name="Meadow_Xm2_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="3" unique_id=1466497343 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -22)
+
+[node name="Meadow_Xp2_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="4" unique_id=193681279 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -22)
+
+[node name="Meadow_Xp6_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="5" unique_id=414642743 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -22)
+
+[node name="Meadow_Xp10_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="6" unique_id=1897548584 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -22)
+
+[node name="Meadow_Xp14_Zm22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="7" unique_id=607359879 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -22)
+
+[node name="Meadow_Xm14_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="8" unique_id=910130898 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -18)
+
+[node name="Meadow_Xm10_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="9" unique_id=1461322388 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -18)
+
+[node name="Path_Xm6_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="10" unique_id=246381124 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -18)
+
+[node name="Meadow_Xm2_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="11" unique_id=1624182352 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -18)
+
+[node name="Meadow_Xp2_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="12" unique_id=1834368073 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -18)
+
+[node name="Meadow_Xp6_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="13" unique_id=1479712887 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -18)
+
+[node name="Meadow_Xp10_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="14" unique_id=775537534 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -18)
+
+[node name="Meadow_Xp14_Zm18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="15" unique_id=1132918121 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -18)
+
+[node name="Meadow_Xm14_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="16" unique_id=1457904251 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -14)
+
+[node name="Meadow_Xm10_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="17" unique_id=646375585 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -14)
+
+[node name="Path_Xm6_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="18" unique_id=117386200 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -14)
+
+[node name="Meadow_Xm2_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="19" unique_id=983761386 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -14)
+
+[node name="Meadow_Xp2_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="20" unique_id=459441165 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -14)
+
+[node name="Meadow_Xp6_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="21" unique_id=323992142 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -14)
+
+[node name="Meadow_Xp10_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="22" unique_id=366770328 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -14)
+
+[node name="Meadow_Xp14_Zm14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="23" unique_id=56296847 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -14)
+
+[node name="Meadow_Xm14_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="24" unique_id=144037683 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -10)
+
+[node name="Meadow_Xm10_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="25" unique_id=206947338 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+
+[node name="Path_Xm6_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="26" unique_id=1245867601 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -10)
+
+[node name="Meadow_Xm2_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="27" unique_id=1636486614 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -10)
+
+[node name="Meadow_Xp2_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="28" unique_id=226483269 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -10)
+
+[node name="Meadow_Xp6_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="29" unique_id=906043866 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -10)
+
+[node name="Meadow_Xp10_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="30" unique_id=830917935 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+
+[node name="Meadow_Xp14_Zm10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="31" unique_id=1421011570 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -10)
+
+[node name="Meadow_Xm14_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="32" unique_id=440258757 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -6)
+
+[node name="Meadow_Xm10_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="33" unique_id=1521940530 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -6)
+
+[node name="Path_Xm6_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="34" unique_id=1061204528 instance=ExtResource("5_c1ol0")]
+editor_description = "Exact 4 x 4 meter dirt-path corner. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -6)
+
+[node name="Path_Xm2_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="35" unique_id=85727922 instance=ExtResource("6_wehva")]
+editor_description = "Exact 4 x 4 meter dirt-path T junction. Two-meter path exits match on the modular boundary."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -2, 0, -6)
+
+[node name="Path_Xp2_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="36" unique_id=1394429877 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 2, 0, -6)
+
+[node name="Path_Xp6_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="37" unique_id=1411144503 instance=ExtResource("5_c1ol0")]
+editor_description = "Exact 4 x 4 meter dirt-path corner. Two-meter path exits match on the modular boundary."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6, 0, -6)
+
+[node name="Meadow_Xp10_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="38" unique_id=1913981196 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -6)
+
+[node name="Meadow_Xp14_Zm6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="39" unique_id=2933287 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -6)
+
+[node name="Meadow_Xm14_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="40" unique_id=1633441017 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -2)
+
+[node name="Meadow_Xm10_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="41" unique_id=1978545487 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -2)
+
+[node name="Meadow_Xm6_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="42" unique_id=1435577452 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -2)
+
+[node name="Path_Xm2_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="43" unique_id=322867590 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2)
+
+[node name="Meadow_Xp2_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="44" unique_id=746783892 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -2)
+
+[node name="Path_Xp6_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="45" unique_id=503531480 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -2)
+
+[node name="Meadow_Xp10_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="46" unique_id=132321536 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -2)
+
+[node name="Meadow_Xp14_Zm2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="47" unique_id=1467507356 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -2)
+
+[node name="Meadow_Xm14_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="48" unique_id=811748114 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 2)
+
+[node name="Meadow_Xm10_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="49" unique_id=417294508 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 2)
+
+[node name="Meadow_Xm6_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="50" unique_id=2043613257 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 2)
+
+[node name="Path_Xm2_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="51" unique_id=779242948 instance=ExtResource("3_a5s8i")]
+editor_description = "Exact 4 x 4 meter dirt-path end. The two-meter exit matches the straight path module."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
+
+[node name="Meadow_Xp2_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="52" unique_id=1246349682 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
+
+[node name="Path_Xp6_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="53" unique_id=481043303 instance=ExtResource("6_wehva")]
+editor_description = "Exact 4 x 4 meter dirt-path T junction. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 6, 0, 2)
+
+[node name="Path_Xp10_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="54" unique_id=437731382 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 10, 0, 2)
+
+[node name="Path_Xp14_Zp2" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="55" unique_id=911924766 instance=ExtResource("3_a5s8i")]
+editor_description = "Exact 4 x 4 meter dirt-path end. The two-meter exit matches the straight path module."
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 14, 0, 2)
+
+[node name="Meadow_Xm14_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="56" unique_id=848060383 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 6)
+
+[node name="Meadow_Xm10_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="57" unique_id=122371644 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 6)
+
+[node name="Meadow_Xm6_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="58" unique_id=733746763 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 6)
+
+[node name="Meadow_Xm2_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="59" unique_id=116906237 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 6)
+
+[node name="Meadow_Xp2_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="60" unique_id=1300835273 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 6)
+
+[node name="Path_Xp6_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="61" unique_id=1509156311 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 6)
+
+[node name="Meadow_Xp10_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="62" unique_id=960911895 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 6)
+
+[node name="Meadow_Xp14_Zp6" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="63" unique_id=1846961863 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 6)
+
+[node name="Meadow_Xm14_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="64" unique_id=820294265 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 10)
+
+[node name="Meadow_Xm10_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="65" unique_id=369811243 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+
+[node name="Meadow_Xm6_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="66" unique_id=95331318 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 10)
+
+[node name="Path_Xm2_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="67" unique_id=1777769069 instance=ExtResource("5_c1ol0")]
+editor_description = "Exact 4 x 4 meter dirt-path corner. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, -2, 0, 10)
+
+[node name="Path_Xp2_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="68" unique_id=2035071408 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 2, 0, 10)
+
+[node name="Path_Xp6_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="69" unique_id=1893283435 instance=ExtResource("5_c1ol0")]
+editor_description = "Exact 4 x 4 meter dirt-path corner. Two-meter path exits match on the modular boundary."
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 6, 0, 10)
+
+[node name="Meadow_Xp10_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="70" unique_id=2047020061 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+
+[node name="Meadow_Xp14_Zp10" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="71" unique_id=1862586298 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 10)
+
+[node name="Meadow_Xm14_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="72" unique_id=500009108 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 14)
+
+[node name="Meadow_Xm10_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="73" unique_id=1476291204 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 14)
+
+[node name="Meadow_Xm6_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="74" unique_id=1966459915 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 14)
+
+[node name="Path_Xm2_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="75" unique_id=919271600 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 14)
+
+[node name="Meadow_Xp2_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="76" unique_id=1591806107 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 14)
+
+[node name="Meadow_Xp6_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="77" unique_id=1702053472 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 14)
+
+[node name="Meadow_Xp10_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="78" unique_id=712137604 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 14)
+
+[node name="Meadow_Xp14_Zp14" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="79" unique_id=2104149143 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 14)
+
+[node name="Meadow_Xm14_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="80" unique_id=2079807538 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 18)
+
+[node name="Meadow_Xm10_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="81" unique_id=1222343551 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 18)
+
+[node name="Meadow_Xm6_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="82" unique_id=162992534 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 18)
+
+[node name="Path_Xm2_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="83" unique_id=1795199158 instance=ExtResource("4_q7sjc")]
+editor_description = "Exact 4 x 4 meter dirt-path straight. Two-meter path exits match on the modular boundary."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 18)
+
+[node name="Meadow_Xp2_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="84" unique_id=280121792 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 18)
+
+[node name="Meadow_Xp6_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="85" unique_id=467742837 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 18)
+
+[node name="Meadow_Xp10_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="86" unique_id=93018627 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 18)
+
+[node name="Meadow_Xp14_Zp18" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="87" unique_id=413971307 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 18)
+
+[node name="Meadow_Xm14_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="88" unique_id=1504692861 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 22)
+
+[node name="Meadow_Xm10_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="89" unique_id=2119524577 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 22)
+
+[node name="Meadow_Xm6_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="90" unique_id=299797823 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 22)
+
+[node name="Path_Xm2_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="91" unique_id=1109469590 instance=ExtResource("3_a5s8i")]
+editor_description = "Exact 4 x 4 meter dirt-path end. The two-meter exit matches the straight path module."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 22)
+
+[node name="Meadow_Xp2_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="92" unique_id=1280105494 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 22)
+
+[node name="Meadow_Xp6_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="93" unique_id=2047124574 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 22)
+
+[node name="Meadow_Xp10_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="94" unique_id=2069191782 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 22)
+
+[node name="Meadow_Xp14_Zp22" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground/GroundTiles" index="95" unique_id=1961954074 instance=ExtResource("2_xto03")]
+editor_description = "Exact 4 x 4 meter meadow module. Pivot is centered on the walkable surface at Y = 0; slab extends to Y = -0.25."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 22)
+
+[node name="Route0Sign" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=1827938594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0, 19.8)
+
+[node name="WestPost" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign" index="0" unique_id=1746380249]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.7, 0)
+mesh = SubResource("BoxMesh_sign_post")
+
+[node name="EastPost" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign" index="1" unique_id=915007398]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.7, 0)
+mesh = SubResource("BoxMesh_sign_post")
+
+[node name="Board" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign" index="2" unique_id=263033623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+mesh = SubResource("BoxMesh_sign_board")
+
+[node name="Text" type="Label3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign" index="3" unique_id=157664984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36, 0.08)
+modulate = Color(0.94, 1, 0.92, 1)
+outline_modulate = Color(0.02, 0.13, 0.06, 1)
+text = "ROUTE 0"
+font_size = 42
+outline_size = 8
+
+[node name="Collision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign" index="4" unique_id=371421730]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Structures/Route0Sign/Collision" index="0" unique_id=1651189222]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("BoxShape3D_sign")
+
+[node name="Vegetation" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=2052507206]
+
+[node name="Trees" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="0" unique_id=1113120323]
+
+[node name="WestMature01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="0" unique_id=2094561751 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.9689124, 0, -0.24740396, 0, 1, 0, 0.24740396, 0, 0.9689124, -14.8, 0, 20)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="WestMature02" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="1" unique_id=136550371 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.8525245, 0, 0.52268726, 0, 1, 0, -0.52268726, 0, 0.8525245, -15.1, 0, 13)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="WestSparse" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="2" unique_id=832761148 instance=ExtResource("9_pmvy3")]
+transform = Transform3D(0.7648422, 0, -0.64421767, 0, 1, 0, 0.64421767, 0, 0.7648422, -14.6, 0, 5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="WestMature03" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="3" unique_id=1576315745 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.62161, 0, 0.7833269, 0, 1, 0, -0.7833269, 0, 0.62161, -15, 0, -3)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="WestMature04" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="4" unique_id=1667938540 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.9887711, 0, -0.14943814, 0, 1, 0, 0.14943814, 0, 0.9887711, -14.8, 0, -11)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="WestMature05" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="5" unique_id=1612364555 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.9130889, 0, 0.40776044, 0, 1, 0, -0.40776044, 0, 0.9130889, -14.7, 0, -19)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastMature01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="6" unique_id=522346205 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.9838437, 0, 0.17902958, 0, 1, 0, -0.17902958, 0, 0.9838437, 14.9, 0, 20)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastMature02" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="7" unique_id=1574805856 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.8138785, 0, -0.58103514, 0, 1, 0, 0.58103514, 0, 0.8138785, 15.1, 0, 13)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastSparse" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="8" unique_id=464956859 instance=ExtResource("9_pmvy3")]
+transform = Transform3D(0.7451744, 0, 0.66686964, 0, 1, 0, -0.66686964, 0, 0.7451744, 14.7, 0, 5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastMature03" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="9" unique_id=1559548357 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.9286646, 0, -0.37092048, 0, 1, 0, 0.37092048, 0, 0.9286646, 15, 0, -3)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastMature04" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="10" unique_id=1641110207 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.6674628, 0, 0.7446431, 0, 1, 0, -0.7446431, 0, 0.6674628, 14.8, 0, -11)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="EastMature05" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="11" unique_id=1375371493 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.62161, 0, -0.7833269, 0, 1, 0, 0.7833269, 0, 0.62161, 14.7, 0, -19)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="NorthWestTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="12" unique_id=500179644 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -13, 0, -22.4)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="NorthCenterTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="13" unique_id=1036755172 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.90044713, 0, -0.43496552, 0, 1, 0, 0.43496552, 0, 0.90044713, 0, 0, -22.6)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="NorthEastTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="14" unique_id=858219427 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.7960838, 0, 0.6051864, 0, 1, 0, -0.6051864, 0, 0.7960838, 7, 0, -22.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="NorthFarEastTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="15" unique_id=214410130 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.7648422, 0, -0.64421767, 0, 1, 0, 0.64421767, 0, 0.7648422, 13, 0, -22.4)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="SouthWestTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="16" unique_id=633947818 instance=ExtResource("8_bks3b")]
+transform = Transform3D(0.8960525, 0, 0.44394812, 0, 1, 0, -0.44394812, 0, 0.8960525, -13.5, 0, 22.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="SouthEastTree" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="17" unique_id=1361652179 instance=ExtResource("7_e8jot")]
+transform = Transform3D(0.87758255, 0, -0.47942555, 0, 1, 0, 0.47942555, 0, 0.87758255, 10.5, 0, 22.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="YoungWestEntry" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="18" unique_id=305149869 instance=ExtResource("10_pw1sw")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -9, 0, 18.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="YoungEastEntry" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="19" unique_id=875116064 instance=ExtResource("11_sohln")]
+transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 9, 0, 17)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="YoungWestGrove" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="20" unique_id=1715763921 instance=ExtResource("11_sohln")]
+transform = Transform3D(0.7775727, 0, 0.62879306, 0, 1, 0, -0.62879306, 0, 0.7775727, -10, 0, -8)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="YoungEastGrove" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="21" unique_id=323444031 instance=ExtResource("10_pw1sw")]
+transform = Transform3D(0.8138785, 0, -0.58103514, 0, 1, 0, 0.58103514, 0, 0.8138785, 10, 0, -13)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="YoungNorthCenter" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" index="22" unique_id=1210801903 instance=ExtResource("10_pw1sw")]
+transform = Transform3D(0.9393727, 0, 0.3428978, 0, 1, 0, -0.3428978, 0, 0.9393727, 0, 0, -12)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="Bushes" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="1" unique_id=992372639]
+
+[node name="EntryRoundWest" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="0" unique_id=1194745612 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -5, 0, 18.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EntryRoundEast" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="1" unique_id=1929504621 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 1, 0, 18.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="WestWhite01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="2" unique_id=2112547894 instance=ExtResource("13_m3kqv")]
+transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, -10.5, 0, 14)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="TurnRound01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="3" unique_id=1967528893 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.9689124, 0, -0.24740396, 0, 1, 0, 0.24740396, 0, 0.9689124, -5.5, 0, 12.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="TurnBlue01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="4" unique_id=175095857 instance=ExtResource("14_ubiku")]
+transform = Transform3D(0.7960838, 0, 0.6051864, 0, 1, 0, -0.6051864, 0, 0.7960838, 0.5, 0, 12.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EastDense01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="5" unique_id=1766581575 instance=ExtResource("15_l4rus")]
+transform = Transform3D(0.8253356, 0, -0.5646425, 0, 1, 0, 0.5646425, 0, 0.8253356, 9, 0, 8.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EastRound01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="6" unique_id=1969450094 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.9689124, 0, 0.24740396, 0, 1, 0, -0.24740396, 0, 0.9689124, 9, 0, 4.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EastWhite01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="7" unique_id=2106803369 instance=ExtResource("13_m3kqv")]
+transform = Transform3D(0.9800666, 0, -0.19866933, 0, 1, 0, 0.19866933, 0, 0.9800666, 13.5, 0, 4.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="CenterDense01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="8" unique_id=65583871 instance=ExtResource("15_l4rus")]
+transform = Transform3D(0.87758255, 0, 0.47942555, 0, 1, 0, -0.47942555, 0, 0.87758255, 3.5, 0, -3.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="CenterWhite01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="9" unique_id=959941578 instance=ExtResource("13_m3kqv")]
+transform = Transform3D(0.921061, 0, -0.38941833, 0, 1, 0, 0.38941833, 0, 0.921061, 0, 0, -8.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="WestRound01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="10" unique_id=600573281 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.7518057, 0, 0.65938467, 0, 1, 0, -0.65938467, 0, 0.7518057, -8.5, 0, -4)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="WestBlue01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="11" unique_id=2064981806 instance=ExtResource("14_ubiku")]
+transform = Transform3D(0.9838437, 0, 0.17902958, 0, 1, 0, -0.17902958, 0, 0.9838437, -11, 0, -5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="NorthRound01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="12" unique_id=358207323 instance=ExtResource("12_6xycj")]
+transform = Transform3D(0.9800666, 0, -0.19866933, 0, 1, 0, 0.19866933, 0, 0.9800666, -8.5, 0, -12)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="NorthWhite01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="13" unique_id=502201742 instance=ExtResource("13_m3kqv")]
+transform = Transform3D(0.8869949, 0, 0.46177918, 0, 1, 0, -0.46177918, 0, 0.8869949, -10, 0, -17)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="NorthDense01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="14" unique_id=1486292068 instance=ExtResource("15_l4rus")]
+transform = Transform3D(0.8678192, 0, -0.4968801, 0, 1, 0, 0.4968801, 0, 0.8678192, -3.5, 0, -20)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="NorthBlue01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="15" unique_id=597240251 instance=ExtResource("14_ubiku")]
+transform = Transform3D(0.9427547, 0, 0.3334871, 0, 1, 0, -0.3334871, 0, 0.9427547, 4, 0, -19.5)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EastWhite02" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="16" unique_id=1777995461 instance=ExtResource("13_m3kqv")]
+transform = Transform3D(0.9887711, 0, -0.14943814, 0, 1, 0, 0.14943814, 0, 0.9887711, 11, 0, -17)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="WestDenseEntry" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes" index="17" unique_id=126082339 instance=ExtResource("15_l4rus")]
+transform = Transform3D(0.9553365, 0, 0.29552022, 0, 1, 0, -0.29552022, 0, 0.9553365, -11, 0, 20)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="Hedges" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="2" unique_id=1294343873]
+
+[node name="EntryHedgeWest" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" index="0" unique_id=565788061 instance=ExtResource("16_51ypr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 0, 16)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EntryHedgeEast" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" index="1" unique_id=148663904 instance=ExtResource("16_51ypr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 16)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="EastFieldHedge" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" index="2" unique_id=1121382952 instance=ExtResource("17_iikwo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2, 0, 9)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="WestFieldHedge" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" index="3" unique_id=111823390 instance=ExtResource("17_iikwo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, 0, 8)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="NorthHedge" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" index="4" unique_id=453053323 instance=ExtResource("16_51ypr")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -2, 0, -19.8)
+metadata/new_bouffalant_city_collision_profile = "Simplified solid volume"
+
+[node name="Plants" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="3" unique_id=1227287343]
+
+[node name="PinkEntry01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="0" unique_id=1230596392 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 20)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueEntry01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="1" unique_id=1572908365 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, 3, 0, 19)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="CreamEntry01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="2" unique_id=1017658402 instance=ExtResource("20_mvw82")]
+transform = Transform3D(0.9800666, 0, -0.19866933, 0, 1, 0, 0.19866933, 0, 0.9800666, -7.7, 0, 19.2)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="RedEntry01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="3" unique_id=409949152 instance=ExtResource("21_a56py")]
+transform = Transform3D(0.9689124, 0, 0.24740396, 0, 1, 0, -0.24740396, 0, 0.9689124, 3.7, 0, 18.6)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkWestField01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="4" unique_id=1665060593 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, -7.3, 0, 10)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkWestField02" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="5" unique_id=1770494056 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.9800666, 0, -0.19866933, 0, 1, 0, 0.19866933, 0, 0.9800666, -8, 0, 9.2)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueWestField01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="6" unique_id=850568387 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -7.5, 0, 8.4)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="WildWestField01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="7" unique_id=1167272959 instance=ExtResource("22_jfmvb")]
+transform = Transform3D(0.921061, 0, -0.38941833, 0, 1, 0, 0.38941833, 0, 0.921061, -8.4, 0, 10.4)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="RedCenter01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="8" unique_id=247828361 instance=ExtResource("21_a56py")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -0.5, 0, 4)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="CreamCenter01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="9" unique_id=1621389643 instance=ExtResource("20_mvw82")]
+transform = Transform3D(0.9553365, 0, -0.29552022, 0, 1, 0, 0.29552022, 0, 0.9553365, 0.2, 0, 3.5)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkCenter01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="10" unique_id=1698731340 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.87758255, 0, 0.47942555, 0, 1, 0, -0.47942555, 0, 0.87758255, -0.8, 0, 3)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueCenter01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="11" unique_id=1556649645 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.87758255, 0, -0.47942555, 0, 1, 0, 0.47942555, 0, 0.87758255, 0.4, 0, 2.8)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="WildEast01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="12" unique_id=536283998 instance=ExtResource("22_jfmvb")]
+transform = Transform3D(0.9393727, 0, 0.3428978, 0, 1, 0, -0.3428978, 0, 0.9393727, 12.7, 0, 0.2)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkEast01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="13" unique_id=355669218 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.9800666, 0, -0.19866933, 0, 1, 0, 0.19866933, 0, 0.9800666, 13.4, 0, 0.1)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueEast01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="14" unique_id=367442498 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.8525245, 0, 0.52268726, 0, 1, 0, -0.52268726, 0, 0.8525245, 12, 0, -0.2)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="CreamEast01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="15" unique_id=1338440198 instance=ExtResource("20_mvw82")]
+transform = Transform3D(0.9950042, 0, 0.09983342, 0, 1, 0, -0.09983342, 0, 0.9950042, 13.8, 0, -0.8)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueNorth01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="16" unique_id=174430600 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -1, 0, -13)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkNorth01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="17" unique_id=1752292453 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.921061, 0, -0.38941833, 0, 1, 0, 0.38941833, 0, 0.921061, 0, 0, -13.5)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="WildNorth01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="18" unique_id=437263033 instance=ExtResource("22_jfmvb")]
+transform = Transform3D(0.7960838, 0, 0.6051864, 0, 1, 0, -0.6051864, 0, 0.7960838, 1, 0, -13)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="CreamNorth01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="19" unique_id=1635150423 instance=ExtResource("20_mvw82")]
+transform = Transform3D(0.9950042, 0, -0.09983342, 0, 1, 0, 0.09983342, 0, 0.9950042, 2, 0, -13.7)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="RedNorth01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="20" unique_id=1751411979 instance=ExtResource("21_a56py")]
+transform = Transform3D(0.9393727, 0, 0.3428978, 0, 1, 0, -0.3428978, 0, 0.9393727, 3, 0, -13.1)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="PinkGrove01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="21" unique_id=621664127 instance=ExtResource("18_jkhs8")]
+transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, 8, 0, -15)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="BlueGrove01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="22" unique_id=367945523 instance=ExtResource("19_bc83x")]
+transform = Transform3D(0.921061, 0, -0.38941833, 0, 1, 0, 0.38941833, 0, 0.921061, 9, 0, -15.5)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="WildGrove01" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" index="23" unique_id=101145418 instance=ExtResource("22_jfmvb")]
+transform = Transform3D(0.9950042, 0, 0.09983342, 0, 1, 0, -0.09983342, 0, 0.9950042, 10, 0, -15)
+metadata/new_bouffalant_city_collision_profile = "Pass-through decoration"
+
+[node name="TreeStump" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="4" unique_id=791808018 instance=ExtResource("23_q418y")]
+transform = Transform3D(0.90044713, 0, 0.43496552, 0, 1, 0, -0.43496552, 0, 0.90044713, 8, 0, -9)
+metadata/new_bouffalant_city_collision_profile = "Simplified trunk volume"
+
+[node name="RouteBoulder" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation" index="5" unique_id=598610218 instance=ExtResource("24_a5ifn")]
+transform = Transform3D(0.9286646, 0, -0.37092048, 0, 1, 0, 0.37092048, 0, 0.9286646, -11.5, 0, -13.5)
+metadata/new_bouffalant_city_collision_profile = "Accurate static mesh"
+
+[node name="TerrainBoundaries" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1710884415]
+
+[node name="NorthBoundary" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries" index="0" unique_id=767808134]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -24.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries/NorthBoundary" index="0" unique_id=1817384786]
+shape = SubResource("BoxShape3D_boundary_horizontal")
+
+[node name="SouthBoundary" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries" index="1" unique_id=1631710303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 24.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries/SouthBoundary" index="0" unique_id=562893425]
+shape = SubResource("BoxShape3D_boundary_horizontal")
+
+[node name="WestBoundary" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries" index="2" unique_id=1100815619]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.25, 1.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries/WestBoundary" index="0" unique_id=1806730921]
+shape = SubResource("BoxShape3D_boundary_vertical")
+
+[node name="EastBoundary" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries" index="3" unique_id=1473740452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.25, 1.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries/EastBoundary" index="0" unique_id=1499995327]
+shape = SubResource("BoxShape3D_boundary_vertical")
+
+[node name="TrainerChokepoints" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="1" unique_id=1986646240]
+
+[node name="TrainerGate1L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="0" unique_id=279469408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.025, 0.625, 17.68)
+mesh = SubResource("BoxMesh_n5lc6")
+
+[node name="TrainerGate1LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="1" unique_id=19549741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.025, 0.625, 17.68)
+
+[node name="@CollisionShape3D@12" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate1LCollision" index="0" unique_id=963039834]
+shape = SubResource("BoxShape3D_iql8l")
+
+[node name="TrainerGate1R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="2" unique_id=2078105644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.525, 0.625, 17.68)
+mesh = SubResource("BoxMesh_dpvpr")
+
+[node name="TrainerGate1RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="3" unique_id=961496733]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.525, 0.625, 17.68)
+
+[node name="@CollisionShape3D@13" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate1RCollision" index="0" unique_id=1296639713]
+shape = SubResource("BoxShape3D_nndoe")
+
+[node name="TrainerGate2L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="4" unique_id=658522400]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.775, 0.625, 14.68)
+mesh = SubResource("BoxMesh_l5xnh")
+
+[node name="TrainerGate2LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="5" unique_id=4228287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.775, 0.625, 14.68)
+
+[node name="@CollisionShape3D@14" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate2LCollision" index="0" unique_id=862605969]
+shape = SubResource("BoxShape3D_nunwa")
+
+[node name="TrainerGate2R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="6" unique_id=78459173]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.775, 0.625, 14.68)
+mesh = SubResource("BoxMesh_of8gb")
+
+[node name="TrainerGate2RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="7" unique_id=680458100]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.775, 0.625, 14.68)
+
+[node name="@CollisionShape3D@15" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate2RCollision" index="0" unique_id=1321839019]
+shape = SubResource("BoxShape3D_dluw2")
+
+[node name="TrainerGate3L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="8" unique_id=1955801066]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.525, 0.625, 10.68)
+mesh = SubResource("BoxMesh_ucml1")
+
+[node name="TrainerGate3LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="9" unique_id=743904132]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.525, 0.625, 10.68)
+
+[node name="@CollisionShape3D@16" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate3LCollision" index="0" unique_id=546256312]
+shape = SubResource("BoxShape3D_ibff8")
+
+[node name="TrainerGate3R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="10" unique_id=1219625443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.025, 0.625, 10.68)
+mesh = SubResource("BoxMesh_g3wrw")
+
+[node name="TrainerGate3RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="11" unique_id=1669062819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.025, 0.625, 10.68)
+
+[node name="@CollisionShape3D@17" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate3RCollision" index="0" unique_id=1825977687]
+shape = SubResource("BoxShape3D_tuat7")
+
+[node name="TrainerGate4L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="12" unique_id=500010625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.775, 0.625, 5.68)
+mesh = SubResource("BoxMesh_3yri8")
+
+[node name="TrainerGate4LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="13" unique_id=61570686]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.775, 0.625, 5.68)
+
+[node name="@CollisionShape3D@18" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate4LCollision" index="0" unique_id=366245784]
+shape = SubResource("BoxShape3D_cerci")
+
+[node name="TrainerGate4R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="14" unique_id=853313380]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.775, 0.625, 5.68)
+mesh = SubResource("BoxMesh_ygom5")
+
+[node name="TrainerGate4RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="15" unique_id=893644347]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.775, 0.625, 5.68)
+
+[node name="@CollisionShape3D@19" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate4RCollision" index="0" unique_id=571869408]
+shape = SubResource("BoxShape3D_pv6sn")
+
+[node name="TrainerGate5L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="16" unique_id=343807794]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.775, 0.625, -1.32)
+mesh = SubResource("BoxMesh_o3q2t")
+
+[node name="TrainerGate5LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="17" unique_id=1883680771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.775, 0.625, -1.32)
+
+[node name="@CollisionShape3D@20" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate5LCollision" index="0" unique_id=420039272]
+shape = SubResource("BoxShape3D_1g0rk")
+
+[node name="TrainerGate5R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="18" unique_id=1280604579]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.775, 0.625, -1.32)
+mesh = SubResource("BoxMesh_4mi1i")
+
+[node name="TrainerGate5RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="19" unique_id=115203679]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.775, 0.625, -1.32)
+
+[node name="@CollisionShape3D@21" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate5RCollision" index="0" unique_id=1389862364]
+shape = SubResource("BoxShape3D_hnpmf")
+
+[node name="TrainerGate6L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="20" unique_id=549761295]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.275, 0.625, -9.32)
+mesh = SubResource("BoxMesh_onl5b")
+
+[node name="TrainerGate6LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="21" unique_id=2138000577]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.275, 0.625, -9.32)
+
+[node name="@CollisionShape3D@22" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate6LCollision" index="0" unique_id=361160460]
+shape = SubResource("BoxShape3D_284r8")
+
+[node name="TrainerGate6R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="22" unique_id=542525552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.275, 0.625, -9.32)
+mesh = SubResource("BoxMesh_b4oso")
+
+[node name="TrainerGate6RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="23" unique_id=1968583286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.275, 0.625, -9.32)
+
+[node name="@CollisionShape3D@23" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate6RCollision" index="0" unique_id=917027197]
+shape = SubResource("BoxShape3D_eum2a")
+
+[node name="TrainerGate7L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="24" unique_id=1495482471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.15, 0.625, -14.32)
+mesh = SubResource("BoxMesh_0po8x")
+
+[node name="TrainerGate7LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="25" unique_id=1606250463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.15, 0.625, -14.32)
+
+[node name="@CollisionShape3D@24" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate7LCollision" index="0" unique_id=217422286]
+shape = SubResource("BoxShape3D_0x1w5")
+
+[node name="TrainerGate7R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="26" unique_id=769078609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 0.625, -14.32)
+mesh = SubResource("BoxMesh_4ldwd")
+
+[node name="TrainerGate7RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints" index="27" unique_id=1908385801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 0.625, -14.32)
+
+[node name="@CollisionShape3D@25" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints/TrainerGate7RCollision" index="0" unique_id=1484802532]
+shape = SubResource("BoxShape3D_qydc4")
+
+[node name="RouteTrainers" type="Node3D" parent="Gameplay/Actors" index="0" unique_id=1400527501]
+editor_description = "Standard prototype trainers, scattered along the winding route in nondecreasing authored level order."
+
+[node name="TrainerKyle" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="0" unique_id=794891315 instance=ExtResource("25_3ydyx")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -3.5, 0, 17)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_u265o")
+controller = SubResource("Resource_r6jv8")
+character_art_asset_pack = ExtResource("31_des0e")
+metadata/route_order = 1
+metadata/difficulty_level = 3
+metadata/route_checkpoint_position = Vector3(-3.5, 0, 17)
+
+[node name="DeliveryWorker" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="1" unique_id=69208458 instance=ExtResource("32_4ws6j")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1, 0, 14)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_a50hn")
+controller = SubResource("Resource_dhwxq")
+character_art_asset_pack = ExtResource("34_43h5d")
+metadata/route_order = 2
+metadata/difficulty_level = 3
+metadata/route_checkpoint_position = Vector3(1, 0, 14)
+
+[node name="PoliceOfficer" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="2" unique_id=3333122 instance=ExtResource("35_4ptnk")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.5, 0, 10)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_e23nh")
+controller = SubResource("Resource_0q8jf")
+character_art_asset_pack = ExtResource("37_lk4xj")
+metadata/route_order = 3
+metadata/difficulty_level = 4
+metadata/route_checkpoint_position = Vector3(3.5, 0, 10)
+
+[node name="Businessman" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="3" unique_id=1692694823 instance=ExtResource("38_ljesl")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 9.097897, 0, 5.3833947)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_c437m")
+controller = SubResource("Resource_foxb0")
+character_art_asset_pack = ExtResource("40_bmqcs")
+metadata/route_order = 4
+metadata/difficulty_level = 4
+metadata/route_checkpoint_position = Vector3(9, 0, 5)
+
+[node name="Backpacker" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="4" unique_id=1173662848 instance=ExtResource("41_hgn4u")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 9, 0, -2)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_wx3d3")
+controller = SubResource("Resource_3v6qb")
+character_art_asset_pack = ExtResource("43_38fw0")
+metadata/route_order = 5
+metadata/difficulty_level = 5
+metadata/route_checkpoint_position = Vector3(9, 0, -2)
+
+[node name="Tourist" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="5" unique_id=1286076524 instance=ExtResource("44_v20r6")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -2, 0, -10)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_xfl8t")
+controller = SubResource("Resource_32t5j")
+character_art_asset_pack = ExtResource("46_p0ypp")
+metadata/route_order = 6
+metadata/difficulty_level = 5
+metadata/route_checkpoint_position = Vector3(-2, 0, -10)
+
+[node name="Jogger" type="CharacterBody3D" parent="Gameplay/Actors/RouteTrainers" index="6" unique_id=50458466 instance=ExtResource("47_8syqd")]
+editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -9.75, 0, -15)
+script = ExtResource("26_f0vsc")
+character_movement = SubResource("Resource_8wk4n")
+controller = SubResource("Resource_y157o")
+character_art_asset_pack = ExtResource("49_v7rqo")
+metadata/route_order = 7
+metadata/difficulty_level = 6
+metadata/route_checkpoint_position = Vector3(-9.75, 0, -15)
+
+[node name="TallGrassFields" type="Node3D" parent="Gameplay/Encounters" index="0" unique_id=1221198390]
+
+[node name="WestEntryField" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="0" unique_id=1990921252 instance=ExtResource("50_dbu8a")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, 16)
+collision_layer = 0
+monitorable = false
+script = ExtResource("51_ex8o7")
+battle_scene_path = "res://game/battle/scenes/route_0_wild_battle_scene.tscn"
+encounter_id = "wild-fletchling-route-0-v1"
+encounter_name = "Wild Fletchling"
+
+[node name="WestCentralField" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="1" unique_id=34314644 instance=ExtResource("50_dbu8a")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, 0)
+collision_layer = 0
+monitorable = false
+script = ExtResource("51_ex8o7")
+battle_scene_path = "res://game/battle/scenes/route_0_wild_battle_scene.tscn"
+encounter_id = "wild-fletchling-route-0-v1"
+encounter_name = "Wild Fletchling"
+
+[node name="EastUpperField" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="2" unique_id=1664338155 instance=ExtResource("50_dbu8a")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, 6)
+collision_layer = 0
+monitorable = false
+script = ExtResource("51_ex8o7")
+battle_scene_path = "res://game/battle/scenes/route_0_wild_battle_scene.tscn"
+encounter_id = "wild-fletchling-route-0-v1"
+encounter_name = "Wild Fletchling"
+
+[node name="EastLowerField" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="3" unique_id=1487399197 instance=ExtResource("50_dbu8a")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -2)
+collision_layer = 0
+monitorable = false
+script = ExtResource("51_ex8o7")
+battle_scene_path = "res://game/battle/scenes/route_0_wild_battle_scene.tscn"
+encounter_id = "wild-fletchling-route-0-v1"
+encounter_name = "Wild Fletchling"
+
+[node name="NorthGroveField" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="4" unique_id=875054123 instance=ExtResource("50_dbu8a")]
+editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -16)
+collision_layer = 0
+monitorable = false
+script = ExtResource("51_ex8o7")
+battle_scene_path = "res://game/battle/scenes/route_0_wild_battle_scene.tscn"
+encounter_id = "wild-fletchling-route-0-v1"
+encounter_name = "Wild Fletchling"
+
+[node name="Route0ReturnGateway" type="Area3D" parent="Gameplay/Transitions" index="0" unique_id=248880287 instance=ExtResource("52_qenx4")]
+editor_description = "Bright red Route 0 return marker. Walk close, then press E/Enter/Space, gamepad A, or its touch prompt to return to the Gate Building."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 21)
+collision_layer = 0
+monitorable = false
+script = ExtResource("53_apdg6")
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/gatehouse_interior.tscn"
+destination_spawn_marker = &"Route0ReturnSpawn"
+interaction_text = "Return to Gate Building"
+traveling_text = "Returning to Gate Building..."
+display_text = "GATE BUILDING"
+accent_color = Color(0.96, 0.08, 0.075, 1)
+
+[node name="Route0CompletionGate" type="Area3D" parent="Gameplay/Objectives" index="0" unique_id=788184567 instance=ExtResource("54_jk4jp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -21.1)
+collision_layer = 0
+monitorable = false
+script = ExtResource("55_2rukr")
+
+[node name="Route0Start" type="Marker3D" parent="Markers" index="0" unique_id=254997186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 21)

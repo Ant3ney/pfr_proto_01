@@ -9,7 +9,7 @@ const SHOWCASE_PATH := (
 	"res://art/environments/new_bouffalant_city/reference_city_pack/showcase/"
 	+ "building_ground_metric_showcase.tscn"
 )
-const GROUND_WORKSPACE_PATH := "res://demo/primary_development_enviroment.tscn"
+const GROUND_WORKSPACE_PATH := "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
 const ASSET_CONTAINER_NAME := "NewBouffalantCityAssets"
 const ASSET_CONTAINER_META := "new_bouffalant_city_asset_container"
 const ASSET_ID_META := "new_bouffalant_city_asset_id"

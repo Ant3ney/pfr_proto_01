@@ -48,7 +48,7 @@ After regeneration, refresh Godot imports and run the focused smoke test:
 ```sh
 godot --headless --rendering-method gl_compatibility --path . --import
 godot --headless --rendering-method gl_compatibility --path . \
-    --scene res://art/environments/new_bouffalant_city/pokemon_center_roof/validation/pokemon_center_roof_smoke_test.tscn
+    --scene res://tests/scenes/assets/pokemon_center_roof_smoke_test.tscn
 ```
 
 Review the Hunyuan repository's current license before regenerating or redistributing derived output. The underlying reference building is prototype/reference content with the provenance documented in the city-pack AI Context.

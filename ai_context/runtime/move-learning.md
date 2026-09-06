@@ -28,7 +28,7 @@ copied level-up rows, crossed-level results, move names, or source metadata.
 
 ## Runtime and choice ownership
 
-`RNDMoveLearningSystem` is an autoload backed by
+`MoveLearningSystem` is an autoload backed by
 [`MoveLearningSystem.gd`](../../rnd/move_learning/MoveLearningSystem.gd). It
 observes real `CollectionSystem.collection_changed` level increases and queues
 every learnset threshold crossed, including several levels or several moves at
@@ -66,10 +66,10 @@ move-learning queue.
 
 ```bash
 node rnd/move_learning/tools/generate_move_learnsets.mjs --check
-godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
-godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/integration/move_learning_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/collection_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
 ```
 
 The focused R&D test covers exact-form and fallback catalog selection, crossed

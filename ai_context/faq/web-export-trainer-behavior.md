@@ -43,8 +43,8 @@ tree.
 ## Regression Checks
 
 ```sh
-godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/interaction_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
 netlify build
 ```
 

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_b6087"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_trainer_01.tres" id="2_fyg0j"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_trainer_02.tres" id="3_75k5l"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_trainer_03.tres" id="4_soau4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_trainer_04.tres" id="5_5ovkd"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_trainer_05.tres" id="6_x3kwl"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_11/route_11.tscn" id="7_fhaav"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_to3j4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_11/encounters/route_11_wild.tres" id="9_1augi"]
+
+[resource]
+script = ExtResource("8_to3j4")
+area_id = "route_11"
+numeric_order = 11
+display_name = "Route 11 — Jade Bamboo Run"
+description = "Bamboo Grove dungeon route with 5 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 112 m path (Lv. 13–20). Reach the end to unlock the next route."
+biome = "bamboo grove"
+destination = ExtResource("7_fhaav")
+suggested_level_min = 13
+suggested_level_max = 20
+battle_encounters = Array[ExtResource("1_b6087")]([ExtResource("2_fyg0j"), ExtResource("3_75k5l"), ExtResource("4_soau4"), ExtResource("5_5ovkd"), ExtResource("6_x3kwl")])
+wild_encounters = Array[ExtResource("1_b6087")]([ExtResource("9_1augi")])
+route_completion_prerequisite = "route_10"

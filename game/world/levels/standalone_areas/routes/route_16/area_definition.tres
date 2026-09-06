@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_ah6w3"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_01.tres" id="2_xa72a"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_02.tres" id="3_xytc1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_03.tres" id="4_23qc4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_04.tres" id="5_kqbsu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_05.tres" id="6_ppial"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_trainer_06.tres" id="7_omy5s"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_16/route_16.tscn" id="8_l5qbw"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_kbiwp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_16/encounters/route_16_wild.tres" id="10_h3imr"]
+
+[resource]
+script = ExtResource("9_kbiwp")
+area_id = "route_16"
+numeric_order = 16
+display_name = "Route 16 — Mangrove Delta"
+description = "Mangrove Delta dungeon route with 6 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 124 m path (Lv. 25–32). Reach the end to unlock the next route."
+biome = "mangrove delta"
+destination = ExtResource("8_l5qbw")
+suggested_level_min = 25
+suggested_level_max = 32
+battle_encounters = Array[ExtResource("1_ah6w3")]([ExtResource("2_xa72a"), ExtResource("3_xytc1"), ExtResource("4_23qc4"), ExtResource("5_kqbsu"), ExtResource("6_ppial"), ExtResource("7_omy5s")])
+wild_encounters = Array[ExtResource("1_ah6w3")]([ExtResource("10_h3imr")])
+route_completion_prerequisite = "route_15"

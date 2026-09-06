@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_uoj4p"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_04/encounters/route_04_trainer_01.tres" id="2_ub8ai"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_04/encounters/route_04_trainer_02.tres" id="3_06gbk"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_04/encounters/route_04_trainer_03.tres" id="4_i6ok3"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_04/encounters/route_04_trainer_04.tres" id="5_d3qab"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_04/route_04.tscn" id="6_o06t8"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_f6cm6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_04/encounters/route_04_wild.tres" id="8_mtubt"]
+
+[resource]
+script = ExtResource("7_f6cm6")
+area_id = "route_04"
+numeric_order = 4
+display_name = "Route 4 — Redrock Switchback"
+description = "Redrock Canyon dungeon route with 4 mandatory trainer checkpoints, 4 tall-grass fields, and a twisting 88 m path (Lv. 7–14). Reach the end to unlock the next route."
+biome = "redrock canyon"
+destination = ExtResource("6_o06t8")
+suggested_level_min = 7
+suggested_level_max = 14
+battle_encounters = Array[ExtResource("1_uoj4p")]([ExtResource("2_ub8ai"), ExtResource("3_06gbk"), ExtResource("4_i6ok3"), ExtResource("5_d3qab")])
+wild_encounters = Array[ExtResource("1_uoj4p")]([ExtResource("8_mtubt")])
+route_completion_prerequisite = "route_03"

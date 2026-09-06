@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_830t5"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_b0ps8"]
+
+[sub_resource type="Resource" id="Resource_d870n"]
+script = ExtResource("1_830t5")
+member_id = "route-32-trainer-08-member-1"
+pokemon_id = 525
+species = "Boldore"
+sprite_id = "boldore"
+level = 56
+moves = Array[String](["powergem", "harden", "sandattack", "stealthrock"])
+
+[sub_resource type="Resource" id="Resource_60jsx"]
+script = ExtResource("1_830t5")
+member_id = "route-32-trainer-08-member-2"
+pokemon_id = 703
+species = "Carbink"
+sprite_id = "carbink"
+level = 56
+moves = Array[String](["harden", "tackle", "guardsplit", "smackdown"])
+
+[sub_resource type="Resource" id="Resource_sv3vp"]
+script = ExtResource("1_830t5")
+member_id = "route-32-trainer-08-member-3"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 56
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_sfoat"]
+script = ExtResource("1_830t5")
+member_id = "route-32-trainer-08-member-4"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 56
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[resource]
+script = ExtResource("2_b0ps8")
+encounter_id = "route-32-trainer-08"
+display_name = "Route 32 Trainer 8"
+api_name = "Route 32 Trainer 8"
+members = Array[ExtResource("1_830t5")]([SubResource("Resource_d870n"), SubResource("Resource_60jsx"), SubResource("Resource_sv3vp"), SubResource("Resource_sfoat")])

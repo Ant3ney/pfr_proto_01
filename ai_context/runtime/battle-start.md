@@ -15,7 +15,7 @@ encounter; they never pass player or opponent team DTOs:
 GameInstance.startBattle({
 	"encounter_type": "trainer",
 	"trainer_name": "Trainer Kyle",
-	"battle_scene_path": "res://battle/kyle_battle_scene.tscn",
+	"battle_scene_path": "res://game/battle/scenes/kyle_battle_scene.tscn",
 	"encounter_id": "trainer-kyle-lake-v1",
 	"trainer_aggression_mode": TrainerBehavior.AggressionMode.STANDARD,
 })
@@ -72,7 +72,7 @@ path that reveals the battlefield.
 
 ## Direct visual preview
 
-Opening `res://battle/battle_scene.tscn` directly remains network-free. With no
+Opening `res://game/battle/scenes/battle_scene.tscn` directly remains network-free. With no
 active launch handoff it plays its local intro and shows presentation defaults.
 The legacy default-scene transition path without an encounter ID is also kept
 offline for focused transition smoke tests. Production trainer entry uses a
@@ -124,11 +124,11 @@ state, logs, save data, or scene scripts.
 ## Regression checks
 
 ```bash
-godot --headless --path . --scene res://tests/battle_start_smoke_test.tscn
-godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_system_session_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
-godot --headless --path . --scene res://rnd/tests/battle_return_position_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_return_position_smoke_test.tscn
 ```
 
 These cover the offline preview path, concrete provider discovery, covered

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_2dv2k"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_qj37s"]
+
+[sub_resource type="Resource" id="Resource_k0ggs"]
+script = ExtResource("1_2dv2k")
+member_id = "route-03-wild-member-1"
+pokemon_id = 54
+species = "Psyduck"
+sprite_id = "psyduck"
+level = 5
+moves = Array[String](["scratch", "tailwhip", "watergun", "confusion"])
+
+[resource]
+script = ExtResource("2_qj37s")
+encounter_id = "route-03-wild"
+display_name = "Wild Mist Marsh Pokemon"
+api_name = "Wild Mist Marsh Po"
+members = Array[ExtResource("1_2dv2k")]([SubResource("Resource_k0ggs")])

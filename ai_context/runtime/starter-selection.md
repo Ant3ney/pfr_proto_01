@@ -8,7 +8,7 @@ contract.
 ## Fresh-profile ownership and roster
 
 [`StarterSelectionSystem.gd`](../../rnd/starter_selection/StarterSelectionSystem.gd)
-is the `RNDStarterSelectionSystem` autoload. It does not decide whether a save
+is the `StarterSelectionSystem` autoload. It does not decide whether a save
 is new: `ProgressionAutosave` calls `prepare_new_profile()` only after no valid
 save exists or after an explicitly confirmed reset. The system then blocks
 movement, presents the mandatory picker, validates the selected ID, and creates
@@ -91,9 +91,9 @@ only while battle and scene transitions are idle.
 ## Regression and export checks
 
 ```bash
-godot --headless --path . --scene res://rnd/tests/starter_selection_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
 ```
 
 The focused test verifies exact IDs and regions, multi-frame front animations,

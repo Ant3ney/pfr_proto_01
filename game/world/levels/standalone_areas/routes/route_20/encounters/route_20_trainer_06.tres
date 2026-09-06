@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_arho2"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_o1gvw"]
+
+[sub_resource type="Resource" id="Resource_ybsiv"]
+script = ExtResource("1_arho2")
+member_id = "route-20-trainer-06-member-1"
+pokemon_id = 21
+species = "Spearow"
+sprite_id = "spearow"
+level = 38
+moves = Array[String](["growl", "peck", "leer", "pursuit"])
+
+[sub_resource type="Resource" id="Resource_7t6bm"]
+script = ExtResource("1_arho2")
+member_id = "route-20-trainer-06-member-2"
+pokemon_id = 43
+species = "Oddish"
+sprite_id = "oddish"
+level = 38
+moves = Array[String](["absorb", "growth", "acid", "sweetscent"])
+
+[sub_resource type="Resource" id="Resource_1uqjf"]
+script = ExtResource("1_arho2")
+member_id = "route-20-trainer-06-member-3"
+pokemon_id = 19
+species = "Rattata"
+sprite_id = "rattata"
+level = 38
+moves = Array[String](["tackle", "tailwhip", "quickattack", "focusenergy"])
+
+[resource]
+script = ExtResource("2_o1gvw")
+encounter_id = "route-20-trainer-06"
+display_name = "Route 20 Trainer 6"
+api_name = "Route 20 Trainer 6"
+members = Array[ExtResource("1_arho2")]([SubResource("Resource_ybsiv"), SubResource("Resource_7t6bm"), SubResource("Resource_1uqjf")])

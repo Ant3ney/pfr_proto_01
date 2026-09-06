@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_vy8uf"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_6v4fi"]
+
+[sub_resource type="Resource" id="Resource_vml22"]
+script = ExtResource("1_vy8uf")
+member_id = "businessman-butterfree"
+pokemon_id = 12
+species = "Butterfree"
+sprite_id = "butterfree"
+level = 4
+moves = Array[String](["gust", "bugbite", "harden", "stringshot"])
+
+[sub_resource type="Resource" id="Resource_p8sly"]
+script = ExtResource("1_vy8uf")
+member_id = "businessman-wingull"
+pokemon_id = 278
+species = "Wingull"
+sprite_id = "wingull"
+level = 4
+moves = Array[String](["growl", "watergun", "quickattack", "supersonic"])
+
+[resource]
+script = ExtResource("2_6v4fi")
+encounter_id = "trainer-businessman-city-v1"
+display_name = "Businessman"
+api_name = "Businessman"
+members = Array[ExtResource("1_vy8uf")]([SubResource("Resource_vml22"), SubResource("Resource_p8sly")])

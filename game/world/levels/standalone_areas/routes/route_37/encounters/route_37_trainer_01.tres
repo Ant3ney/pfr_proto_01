@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_gd0t8"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_r8sqg"]
+
+[sub_resource type="Resource" id="Resource_f5h88"]
+script = ExtResource("1_gd0t8")
+member_id = "route-37-trainer-01-member-1"
+pokemon_id = 631
+species = "Heatmor"
+sprite_id = "heatmor"
+level = 55
+moves = Array[String](["lick", "tackle", "furyswipes", "incinerate"])
+
+[sub_resource type="Resource" id="Resource_eoc72"]
+script = ExtResource("1_gd0t8")
+member_id = "route-37-trainer-01-member-2"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 56
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[sub_resource type="Resource" id="Resource_lx3u5"]
+script = ExtResource("1_gd0t8")
+member_id = "route-37-trainer-01-member-3"
+pokemon_id = 208
+species = "Steelix"
+sprite_id = "steelix"
+level = 57
+moves = Array[String](["bind", "crunch", "firefang", "harden"])
+
+[sub_resource type="Resource" id="Resource_xrtn7"]
+script = ExtResource("1_gd0t8")
+member_id = "route-37-trainer-01-member-4"
+pokemon_id = 229
+species = "Houndoom"
+sprite_id = "houndoom"
+level = 58
+moves = Array[String](["ember", "howl", "leer", "nastyplot"])
+
+[resource]
+script = ExtResource("2_r8sqg")
+encounter_id = "route-37-trainer-01"
+display_name = "Route 37 Trainer 1"
+api_name = "Route 37 Trainer 1"
+members = Array[ExtResource("1_gd0t8")]([SubResource("Resource_f5h88"), SubResource("Resource_eoc72"), SubResource("Resource_lx3u5"), SubResource("Resource_xrtn7")])

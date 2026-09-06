@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_2rw4o"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_re6ad"]
+
+[sub_resource type="Resource" id="Resource_hq7p3"]
+script = ExtResource("1_2rw4o")
+member_id = "route-15-wild-member-1"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 23
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[resource]
+script = ExtResource("2_re6ad")
+encounter_id = "route-15-wild"
+display_name = "Wild Autumn Highlands Pokemon"
+api_name = "Wild Autumn Highla"
+members = Array[ExtResource("1_2rw4o")]([SubResource("Resource_hq7p3")])

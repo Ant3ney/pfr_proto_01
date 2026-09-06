@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_f6xir"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_01.tres" id="2_cmep4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_02.tres" id="3_4n3f8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_03.tres" id="4_j0q0v"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_04.tres" id="5_uli7o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_05.tres" id="6_0t5kk"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_trainer_06.tres" id="7_foa1h"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_19/route_19.tscn" id="8_d37mt"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_gpge7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_19/encounters/route_19_wild.tres" id="10_22xqa"]
+
+[resource]
+script = ExtResource("9_gpge7")
+area_id = "route_19"
+numeric_order = 19
+display_name = "Route 19 — Victory Approach"
+description = "Alpine Victory Highlands dungeon route with 6 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 136 m path (Lv. 25–32). Reach the end to unlock the next route."
+biome = "alpine victory highlands"
+destination = ExtResource("8_d37mt")
+suggested_level_min = 25
+suggested_level_max = 32
+battle_encounters = Array[ExtResource("1_f6xir")]([ExtResource("2_cmep4"), ExtResource("3_4n3f8"), ExtResource("4_j0q0v"), ExtResource("5_uli7o"), ExtResource("6_0t5kk"), ExtResource("7_foa1h")])
+wild_encounters = Array[ExtResource("1_f6xir")]([ExtResource("10_22xqa")])
+route_completion_prerequisite = "route_18"

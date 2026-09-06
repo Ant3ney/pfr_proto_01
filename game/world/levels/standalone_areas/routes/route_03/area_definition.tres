@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_pk7jw"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_03/encounters/route_03_trainer_01.tres" id="2_jdpn6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_03/encounters/route_03_trainer_02.tres" id="3_5vvgy"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_03/encounters/route_03_trainer_03.tres" id="4_obx3o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_03/encounters/route_03_trainer_04.tres" id="5_qapbi"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_03/route_03.tscn" id="6_7uuic"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_4ry2n"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_03/encounters/route_03_wild.tres" id="8_tu3gh"]
+
+[resource]
+script = ExtResource("7_4ry2n")
+area_id = "route_03"
+numeric_order = 3
+display_name = "Route 3 — Mistral Fen"
+description = "Mist Marsh dungeon route with 4 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 88 m path (Lv. 3–6). Reach the end to unlock the next route."
+biome = "mist marsh"
+destination = ExtResource("6_7uuic")
+suggested_level_min = 3
+suggested_level_max = 6
+battle_encounters = Array[ExtResource("1_pk7jw")]([ExtResource("2_jdpn6"), ExtResource("3_5vvgy"), ExtResource("4_obx3o"), ExtResource("5_qapbi")])
+wild_encounters = Array[ExtResource("1_pk7jw")]([ExtResource("8_tu3gh")])
+route_completion_prerequisite = "route_02"

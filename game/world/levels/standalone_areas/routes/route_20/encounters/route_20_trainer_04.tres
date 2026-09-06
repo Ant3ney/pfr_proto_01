@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_fuk7i"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_4xeiy"]
+
+[sub_resource type="Resource" id="Resource_bsdki"]
+script = ExtResource("1_fuk7i")
+member_id = "route-20-trainer-04-member-1"
+pokemon_id = 10
+species = "Caterpie"
+sprite_id = "caterpie"
+level = 35
+moves = Array[String](["stringshot", "tackle", "bugbite"])
+
+[sub_resource type="Resource" id="Resource_2rcuh"]
+script = ExtResource("1_fuk7i")
+member_id = "route-20-trainer-04-member-2"
+pokemon_id = 13
+species = "Weedle"
+sprite_id = "weedle"
+level = 36
+moves = Array[String](["poisonsting", "stringshot", "bugbite"])
+
+[sub_resource type="Resource" id="Resource_lypsa"]
+script = ExtResource("1_fuk7i")
+member_id = "route-20-trainer-04-member-3"
+pokemon_id = 29
+species = "Nidoran-F"
+sprite_id = "nidoranf"
+level = 37
+moves = Array[String](["growl", "poisonsting", "scratch", "tailwhip"])
+
+[resource]
+script = ExtResource("2_4xeiy")
+encounter_id = "route-20-trainer-04"
+display_name = "Route 20 Trainer 4"
+api_name = "Route 20 Trainer 4"
+members = Array[ExtResource("1_fuk7i")]([SubResource("Resource_bsdki"), SubResource("Resource_2rcuh"), SubResource("Resource_lypsa")])

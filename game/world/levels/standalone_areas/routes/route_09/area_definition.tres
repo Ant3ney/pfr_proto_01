@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_4f2do"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_trainer_01.tres" id="2_hsb1g"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_trainer_02.tres" id="3_x1esf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_trainer_03.tres" id="4_a2gu0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_trainer_04.tres" id="5_hnmd4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_trainer_05.tres" id="6_qsxqs"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_09/route_09.tscn" id="7_yse2p"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_bu4bq"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_09/encounters/route_09_wild.tres" id="9_qixt7"]
+
+[resource]
+script = ExtResource("8_bu4bq")
+area_id = "route_09"
+numeric_order = 9
+display_name = "Route 9 — Moonlit Walk"
+description = "Moonlit Fen dungeon route with 5 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 104 m path (Lv. 13–20). Reach the end to unlock the next route."
+biome = "moonlit fen"
+destination = ExtResource("7_yse2p")
+suggested_level_min = 13
+suggested_level_max = 20
+battle_encounters = Array[ExtResource("1_4f2do")]([ExtResource("2_hsb1g"), ExtResource("3_x1esf"), ExtResource("4_a2gu0"), ExtResource("5_hnmd4"), ExtResource("6_qsxqs")])
+wild_encounters = Array[ExtResource("1_4f2do")]([ExtResource("9_qixt7")])
+route_completion_prerequisite = "route_08"

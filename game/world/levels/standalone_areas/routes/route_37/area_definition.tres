@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_5sf07"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_01.tres" id="2_25v8t"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_02.tres" id="3_qdoaj"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_03.tres" id="4_0gxxu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_04.tres" id="5_04ltf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_05.tres" id="6_44d4q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_06.tres" id="7_lar58"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_07.tres" id="8_b6216"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_trainer_08.tres" id="9_g3w6b"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_37/route_37.tscn" id="10_2sj0m"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_hcqad"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_37/encounters/route_37_wild.tres" id="12_a8heh"]
+
+[resource]
+script = ExtResource("11_hcqad")
+area_id = "route_37"
+numeric_order = 37
+display_name = "Route 37 — Obsidian Furnace"
+description = "Obsidian Badlands dungeon route with 8 mandatory trainer checkpoints, 9 tall-grass fields, and a twisting 188 m path (Lv. 55–60). Reach the end to unlock the next route."
+biome = "obsidian badlands"
+destination = ExtResource("10_2sj0m")
+suggested_level_min = 55
+suggested_level_max = 60
+battle_encounters = Array[ExtResource("1_5sf07")]([ExtResource("2_25v8t"), ExtResource("3_qdoaj"), ExtResource("4_0gxxu"), ExtResource("5_04ltf"), ExtResource("6_44d4q"), ExtResource("7_lar58"), ExtResource("8_b6216"), ExtResource("9_g3w6b")])
+wild_encounters = Array[ExtResource("1_5sf07")]([ExtResource("12_a8heh")])
+route_completion_prerequisite = "route_36"

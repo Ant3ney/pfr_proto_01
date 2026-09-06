@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_db8md"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_55uic"]
+
+[sub_resource type="Resource" id="Resource_rr074"]
+script = ExtResource("1_db8md")
+member_id = "route-06-trainer-04-member-1"
+pokemon_id = 179
+species = "Mareep"
+sprite_id = "mareep"
+level = 14
+moves = Array[String](["growl", "tackle", "thunderwave", "thundershock"])
+
+[sub_resource type="Resource" id="Resource_iqmov"]
+script = ExtResource("1_db8md")
+member_id = "route-06-trainer-04-member-2"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 14
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[resource]
+script = ExtResource("2_55uic")
+encounter_id = "route-06-trainer-04"
+display_name = "Route 6 Trainer 4"
+api_name = "Route 6 Trainer 4"
+members = Array[ExtResource("1_db8md")]([SubResource("Resource_rr074"), SubResource("Resource_iqmov")])

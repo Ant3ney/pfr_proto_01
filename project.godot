@@ -11,22 +11,26 @@ config_version=5
 [application]
 
 config/name="pfr_proto_01"
-run/main_scene="res://demo/primary_development_enviroment.tscn"
+run/main_scene="res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameInstance="*res://core/GameInstance.gd"
-CreatureSystem="*res://core/CreatureSystem.gd"
-CollectionSystem="*res://core/CollectionSystem.gd"
-UIManager="*res://core/UIManager.gd"
-BattleSystem="*res://battle/system/BattleSystem.gd"
-RNDStarterSelectionSystem="*res://rnd/starter_selection/StarterSelectionSystem.gd"
-RNDMoveLearningSystem="*res://rnd/move_learning/MoveLearningSystem.gd"
-StretchGoalSystem="*res://rnd/stretch/StretchGoalSystem.gd"
-ProgressionAutosave="*res://rnd/save/ProgressionAutosave.gd"
-CloudSaveSync="*res://rnd/save/CloudSaveSync.gd"
+GameInstance="*res://game/runtime/game_instance.gd"
+CreatureSystem="*res://game/progression/creatures/creature_system.gd"
+CollectionSystem="*res://game/progression/collection/collection_system.gd"
+UIManager="*res://game/ui/shared/ui_manager.gd"
+BattleSystem="*res://game/battle/system/battle_system.gd"
+StarterSelectionSystem="*res://game/progression/starter_selection/starter_selection_system.gd"
+MoveLearningSystem="*res://game/progression/move_learning/move_learning_system.gd"
+EconomySystem="*res://game/economy/economy_system.gd"
+ShopSystem="*res://game/economy/shop/shop_system.gd"
+InventorySystem="*res://game/inventory/inventory_system.gd"
+ChallengeProgressionSystem="*res://game/progression/challenges/challenge_progression_system.gd"
+BattleRewardSystem="*res://game/battle/rewards/battle_reward_system.gd"
+ProgressionAutosave="*res://game/save/progression_autosave.gd"
+CloudSaveSync="*res://game/save/cloud_save_sync.gd"
 
 [display]
 

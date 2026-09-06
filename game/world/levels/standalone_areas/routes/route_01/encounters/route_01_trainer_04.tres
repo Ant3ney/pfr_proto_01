@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ty7f7"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_xa87w"]
+
+[sub_resource type="Resource" id="Resource_xp4yv"]
+script = ExtResource("1_ty7f7")
+member_id = "route-01-trainer-04-member-1"
+pokemon_id = 163
+species = "Hoothoot"
+sprite_id = "hoothoot"
+level = 6
+moves = Array[String](["tackle", "growl", "peck", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_h7bt5"]
+script = ExtResource("1_ty7f7")
+member_id = "route-01-trainer-04-member-2"
+pokemon_id = 187
+species = "Hoppip"
+sprite_id = "hoppip"
+level = 6
+moves = Array[String](["splash", "tackle", "tailwhip", "absorb"])
+
+[resource]
+script = ExtResource("2_xa87w")
+encounter_id = "route-01-trainer-04"
+display_name = "Route 1 Trainer 4"
+api_name = "Route 1 Trainer 4"
+members = Array[ExtResource("1_ty7f7")]([SubResource("Resource_xp4yv"), SubResource("Resource_h7bt5")])

@@ -1,0 +1,156 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/transitions/area_gateway.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pedestal"]
+albedo_color = Color(0.035, 0.25, 0.13, 1)
+roughness = 0.72
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beacon"]
+albedo_color = Color(0.08, 0.9, 0.38, 1)
+roughness = 0.35
+emission_enabled = true
+emission = Color(0.015, 0.48, 0.12, 1)
+emission_energy_multiplier = 1.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+material = SubResource("StandardMaterial3D_pedestal")
+top_radius = 0.58
+bottom_radius = 0.66
+height = 0.24
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stem"]
+material = SubResource("StandardMaterial3D_beacon")
+top_radius = 0.17
+bottom_radius = 0.22
+height = 1.08
+radial_segments = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_beacon"]
+material = SubResource("StandardMaterial3D_beacon")
+radius = 0.39
+height = 0.78
+radial_segments = 16
+rings = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cap"]
+material = SubResource("StandardMaterial3D_beacon")
+top_radius = 0.47
+bottom_radius = 0.47
+height = 0.08
+radial_segments = 16
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_interaction"]
+radius = 2.25
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_object"]
+radius = 0.52
+height = 1.75
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+bg_color = Color(0.025, 0.12, 0.075, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.92, 0.42, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.07, 0.42, 0.21, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[node name="AreaGateway" type="Area3D"]
+editor_description = "Bright green Route 4 wayfinder. Walk close, then press E/Enter/Space, gamepad A, or the touch prompt."
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Pedestal" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.12, 0)
+mesh = SubResource("CylinderMesh_base")
+
+[node name="Stem" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.72, 0)
+mesh = SubResource("CylinderMesh_stem")
+
+[node name="Beacon" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 1.48, 0)
+mesh = SubResource("SphereMesh_beacon")
+
+[node name="BeaconCap" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 1.94, 0)
+mesh = SubResource("CylinderMesh_cap")
+
+[node name="RouteLabel" type="Label3D" parent="Visual"]
+position = Vector3(0, 2.42, 0)
+billboard = 1
+text = "ROUTE 4"
+font_size = 44
+outline_size = 10
+modulate = Color(0.82, 1, 0.88, 1)
+outline_modulate = Color(0.015, 0.16, 0.07, 1)
+
+[node name="InteractionShape" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("SphereShape3D_interaction")
+
+[node name="ObjectCollision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ObjectCollision"]
+position = Vector3(0, 0.875, 0)
+shape = SubResource("CylinderShape3D_object")
+
+[node name="InteractionPrompt" type="CanvasLayer" parent="."]
+visible = false
+layer = 18
+
+[node name="PromptMargin" type="MarginContainer" parent="InteractionPrompt"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -96.0
+offset_right = 150.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PromptPanel" type="PanelContainer" parent="InteractionPrompt/PromptMargin"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_prompt")
+
+[node name="PromptPadding" type="MarginContainer" parent="InteractionPrompt/PromptMargin/PromptPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="InteractionButton" type="Button" parent="InteractionPrompt/PromptMargin/PromptPanel/PromptPadding"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.94, 1, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.88, 1, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+text = "Enter Route 4   •   E / A"

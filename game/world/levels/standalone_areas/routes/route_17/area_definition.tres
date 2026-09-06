@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_hjdnn"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_01.tres" id="2_poda8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_02.tres" id="3_xb5j8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_03.tres" id="4_wa3ta"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_04.tres" id="5_enbwu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_05.tres" id="6_pyl6d"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_trainer_06.tres" id="7_hwwjr"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_17/route_17.tscn" id="8_5ogg1"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_h2pi8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_17/encounters/route_17_wild.tres" id="10_wl54y"]
+
+[resource]
+script = ExtResource("9_h2pi8")
+area_id = "route_17"
+numeric_order = 17
+display_name = "Route 17 — Obsidian Wastes"
+description = "Obsidian Badlands dungeon route with 6 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 128 m path (Lv. 25–32). Reach the end to unlock the next route."
+biome = "obsidian badlands"
+destination = ExtResource("8_5ogg1")
+suggested_level_min = 25
+suggested_level_max = 32
+battle_encounters = Array[ExtResource("1_hjdnn")]([ExtResource("2_poda8"), ExtResource("3_xb5j8"), ExtResource("4_wa3ta"), ExtResource("5_enbwu"), ExtResource("6_pyl6d"), ExtResource("7_hwwjr")])
+wild_encounters = Array[ExtResource("1_hjdnn")]([ExtResource("10_wl54y")])
+route_completion_prerequisite = "route_16"

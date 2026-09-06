@@ -25,7 +25,7 @@ The losslessly compressed local snapshot lives in [`data/creatures`](data/creatu
 python3 tools/sync_pokeapi_data.py --verify
 node tools/generate_creature_experience_data.mjs --check
 python3 tools/sync_pokeapi_data.py
-godot --headless --path . --scene res://tests/creature_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/creature_system_smoke_test.tscn
 ```
 
 ## Manage the Player's Collection
@@ -68,7 +68,7 @@ survive schema-5 autosaves. See the
 Run the collection verification with:
 
 ```sh
-godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/collection_system_smoke_test.tscn
 ```
 
 ## Optional Cloud Saves
@@ -90,7 +90,7 @@ and [function deployment notes](netlify/functions/README.md).
 
 ```sh
 npm run test:cloud-save
-godot --headless --path . --scene res://rnd/tests/cloud_save_sync_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
 ```
 
 ## Author and Run PvE Battles
@@ -125,11 +125,11 @@ Run the focused battle gates with:
 node tools/generate_battle_species_mapping.mjs --check
 node tools/generate_creature_experience_data.mjs --check
 node rnd/move_learning/tools/generate_move_learnsets.mjs --check
-godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_system_session_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
-godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/starter_selection_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/integration/move_learning_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
 ```
 
 See the [Godot battle client contract](ai_context/runtime/battle-client.md),
@@ -267,7 +267,7 @@ For predictable baking, keep the `NavigationRegion3D` at scale `1, 1, 1`. Prefer
 To verify the automatic height handling from the repository root, run:
 
 ```sh
-godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
 ```
 
 ### Current Encounter Limits
@@ -298,9 +298,9 @@ levels.
 Run the shared-scene regression whenever character scene composition changes:
 
 ```sh
-godot --headless --path . --scene res://tests/pfr_character_scene_inheritance_smoke_test.tscn
-godot --headless --path . --scene res://tests/player_input_movement_smoke_test.tscn
-godot --headless --editor --path . --script res://tests/pfr_character_editor_preview_smoke_test.gd
+godot --headless --path . --scene res://tests/scenes/pfr_character_scene_inheritance_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_input_movement_smoke_test.tscn
+godot --headless --editor --path . --script res://tests/scenes/pfr_character_editor_preview_smoke_test.gd
 ```
 
 | Problem | Check |

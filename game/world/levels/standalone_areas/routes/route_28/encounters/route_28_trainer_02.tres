@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_6r74n"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_te2q4"]
+
+[sub_resource type="Resource" id="Resource_2wvhe"]
+script = ExtResource("1_6r74n")
+member_id = "route-28-trainer-02-member-1"
+pokemon_id = 126
+species = "Magmar"
+sprite_id = "magmar"
+level = 44
+moves = Array[String](["ember", "leer", "smog", "smokescreen"])
+
+[sub_resource type="Resource" id="Resource_kkjqe"]
+script = ExtResource("1_6r74n")
+member_id = "route-28-trainer-02-member-2"
+pokemon_id = 135
+species = "Jolteon"
+sprite_id = "jolteon"
+level = 45
+moves = Array[String](["thundershock", "batonpass", "bite", "charm"])
+
+[sub_resource type="Resource" id="Resource_gchul"]
+script = ExtResource("1_6r74n")
+member_id = "route-28-trainer-02-member-3"
+pokemon_id = 81
+species = "Magnemite"
+sprite_id = "magnemite"
+level = 46
+moves = Array[String](["tackle", "thundershock", "supersonic", "thunderwave"])
+
+[sub_resource type="Resource" id="Resource_v8oci"]
+script = ExtResource("1_6r74n")
+member_id = "route-28-trainer-02-member-4"
+pokemon_id = 92
+species = "Gastly"
+sprite_id = "gastly"
+level = 47
+moves = Array[String](["confuseray", "lick", "hypnosis", "meanlook"])
+
+[resource]
+script = ExtResource("2_te2q4")
+encounter_id = "route-28-trainer-02"
+display_name = "Route 28 Trainer 2"
+api_name = "Route 28 Trainer 2"
+members = Array[ExtResource("1_6r74n")]([SubResource("Resource_2wvhe"), SubResource("Resource_kkjqe"), SubResource("Resource_gchul"), SubResource("Resource_v8oci")])

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_0mpds"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_wuhq8"]
+
+[sub_resource type="Resource" id="Resource_4rdcg"]
+script = ExtResource("1_0mpds")
+member_id = "route-25-wild-member-1"
+pokemon_id = 278
+species = "Wingull"
+sprite_id = "wingull"
+level = 41
+moves = Array[String](["growl", "watergun", "quickattack", "supersonic"])
+
+[resource]
+script = ExtResource("2_wuhq8")
+encounter_id = "route-25-wild"
+display_name = "Wild Coastal Bluff Pokemon"
+api_name = "Wild Coastal Bluff"
+members = Array[ExtResource("1_0mpds")]([SubResource("Resource_4rdcg")])

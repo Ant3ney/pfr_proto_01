@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_7y8jv"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_07/encounters/route_07_trainer_01.tres" id="2_k62f6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_07/encounters/route_07_trainer_02.tres" id="3_51y4o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_07/encounters/route_07_trainer_03.tres" id="4_3hj8v"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_07/encounters/route_07_trainer_04.tres" id="5_lho8d"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_07/route_07.tscn" id="6_dovpk"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_qohqu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_07/encounters/route_07_wild.tres" id="8_ymv5q"]
+
+[resource]
+script = ExtResource("7_qohqu")
+area_id = "route_07"
+numeric_order = 7
+display_name = "Route 7 — Ember Caldera"
+description = "Volcanic Caldera dungeon route with 4 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 100 m path (Lv. 7–14). Reach the end to unlock the next route."
+biome = "volcanic caldera"
+destination = ExtResource("6_dovpk")
+suggested_level_min = 7
+suggested_level_max = 14
+battle_encounters = Array[ExtResource("1_7y8jv")]([ExtResource("2_k62f6"), ExtResource("3_51y4o"), ExtResource("4_3hj8v"), ExtResource("5_lho8d")])
+wild_encounters = Array[ExtResource("1_7y8jv")]([ExtResource("8_ymv5q")])
+route_completion_prerequisite = "route_06"

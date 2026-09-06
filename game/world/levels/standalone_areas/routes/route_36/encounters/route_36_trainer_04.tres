@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_swloj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_htcjs"]
+
+[sub_resource type="Resource" id="Resource_rci2q"]
+script = ExtResource("1_swloj")
+member_id = "route-36-trainer-04-member-1"
+pokemon_id = 102
+species = "Exeggcute"
+sprite_id = "exeggcute"
+level = 57
+moves = Array[String](["absorb", "hypnosis", "reflect", "leechseed"])
+
+[sub_resource type="Resource" id="Resource_0ty8m"]
+script = ExtResource("1_swloj")
+member_id = "route-36-trainer-04-member-2"
+pokemon_id = 193
+species = "Yanma"
+sprite_id = "yanma"
+level = 58
+moves = Array[String](["tackle", "quickattack", "doubleteam", "aircutter"])
+
+[sub_resource type="Resource" id="Resource_yutpq"]
+script = ExtResource("1_swloj")
+member_id = "route-36-trainer-04-member-3"
+pokemon_id = 270
+species = "Lotad"
+sprite_id = "lotad"
+level = 59
+moves = Array[String](["astonish", "growl", "absorb", "watergun"])
+
+[sub_resource type="Resource" id="Resource_1ngmg"]
+script = ExtResource("1_swloj")
+member_id = "route-36-trainer-04-member-4"
+pokemon_id = 341
+species = "Corphish"
+sprite_id = "corphish"
+level = 60
+moves = Array[String](["harden", "watergun", "leer", "taunt"])
+
+[resource]
+script = ExtResource("2_htcjs")
+encounter_id = "route-36-trainer-04"
+display_name = "Route 36 Trainer 4"
+api_name = "Route 36 Trainer 4"
+members = Array[ExtResource("1_swloj")]([SubResource("Resource_rci2q"), SubResource("Resource_0ty8m"), SubResource("Resource_yutpq"), SubResource("Resource_1ngmg")])

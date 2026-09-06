@@ -1,0 +1,15 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/trainer_base.tscn" id="1_character"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="2_controller"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/zach.tres" id="3_zach"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_kyle.tres" id="5_dialog"]
+
+[sub_resource type="Resource" id="Resource_trainer_kyle"]
+resource_local_to_scene = true
+script = ExtResource("2_controller")
+dialog = ExtResource("5_dialog")
+
+[node name="TrainerKyle" instance=ExtResource("1_character")]
+controller = SubResource("Resource_trainer_kyle")
+character_art_asset_pack = ExtResource("3_zach")

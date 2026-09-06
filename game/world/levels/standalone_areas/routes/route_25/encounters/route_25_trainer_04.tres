@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_hk2wi"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_d6fbo"]
+
+[sub_resource type="Resource" id="Resource_l8brw"]
+script = ExtResource("1_hk2wi")
+member_id = "route-25-trainer-04-member-1"
+pokemon_id = 90
+species = "Shellder"
+sprite_id = "shellder"
+level = 41
+moves = Array[String](["tackle", "watergun", "withdraw", "iceshard"])
+
+[sub_resource type="Resource" id="Resource_75qb7"]
+script = ExtResource("1_hk2wi")
+member_id = "route-25-trainer-04-member-2"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 42
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[sub_resource type="Resource" id="Resource_ee687"]
+script = ExtResource("1_hk2wi")
+member_id = "route-25-trainer-04-member-3"
+pokemon_id = 116
+species = "Horsea"
+sprite_id = "horsea"
+level = 43
+moves = Array[String](["leer", "watergun", "smokescreen", "twister"])
+
+[sub_resource type="Resource" id="Resource_qiaig"]
+script = ExtResource("1_hk2wi")
+member_id = "route-25-trainer-04-member-4"
+pokemon_id = 170
+species = "Chinchou"
+sprite_id = "chinchou"
+level = 44
+moves = Array[String](["supersonic", "watergun", "electroball", "thunderwave"])
+
+[resource]
+script = ExtResource("2_d6fbo")
+encounter_id = "route-25-trainer-04"
+display_name = "Route 25 Trainer 4"
+api_name = "Route 25 Trainer 4"
+members = Array[ExtResource("1_hk2wi")]([SubResource("Resource_l8brw"), SubResource("Resource_75qb7"), SubResource("Resource_ee687"), SubResource("Resource_qiaig")])

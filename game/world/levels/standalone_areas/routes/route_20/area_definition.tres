@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_b4dql"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_01.tres" id="2_hrbki"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_02.tres" id="3_2042r"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_03.tres" id="4_8kh2v"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_04.tres" id="5_8hsmq"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_05.tres" id="6_gi8wt"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_trainer_06.tres" id="7_hoq2g"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_20/route_20.tscn" id="8_pnilx"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_r834o"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_20/encounters/route_20_wild.tres" id="10_hik71"]
+
+[resource]
+script = ExtResource("9_r834o")
+area_id = "route_20"
+numeric_order = 20
+display_name = "Route 20 — Clover Labyrinth"
+description = "Flower Meadow dungeon route with 6 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 136 m path (Lv. 31–38). Reach the end to unlock the next route."
+biome = "flower meadow"
+destination = ExtResource("8_pnilx")
+suggested_level_min = 31
+suggested_level_max = 38
+battle_encounters = Array[ExtResource("1_b4dql")]([ExtResource("2_hrbki"), ExtResource("3_2042r"), ExtResource("4_8kh2v"), ExtResource("5_8hsmq"), ExtResource("6_gi8wt"), ExtResource("7_hoq2g")])
+wild_encounters = Array[ExtResource("1_b4dql")]([ExtResource("10_hik71")])
+route_completion_prerequisite = "route_19"

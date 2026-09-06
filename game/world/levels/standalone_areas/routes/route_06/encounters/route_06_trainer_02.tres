@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_6tldy"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_h1ch0"]
+
+[sub_resource type="Resource" id="Resource_hnch7"]
+script = ExtResource("1_6tldy")
+member_id = "route-06-trainer-02-member-1"
+pokemon_id = 239
+species = "Elekid"
+sprite_id = "elekid"
+level = 9
+moves = Array[String](["leer", "quickattack", "thundershock", "charge"])
+
+[sub_resource type="Resource" id="Resource_yoark"]
+script = ExtResource("1_6tldy")
+member_id = "route-06-trainer-02-member-2"
+pokemon_id = 261
+species = "Poochyena"
+sprite_id = "poochyena"
+level = 10
+moves = Array[String](["tackle", "howl", "sandattack", "bite"])
+
+[resource]
+script = ExtResource("2_h1ch0")
+encounter_id = "route-06-trainer-02"
+display_name = "Route 6 Trainer 2"
+api_name = "Route 6 Trainer 2"
+members = Array[ExtResource("1_6tldy")]([SubResource("Resource_hnch7"), SubResource("Resource_yoark")])

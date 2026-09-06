@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_50vgk"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_fgo8i"]
+
+[sub_resource type="Resource" id="Resource_xmsm1"]
+script = ExtResource("1_50vgk")
+member_id = "route-27-trainer-07-member-1"
+pokemon_id = 219
+species = "Magcargo"
+sprite_id = "magcargo"
+level = 44
+moves = Array[String](["shellsmash", "earthpower", "ember", "rockthrow"])
+
+[sub_resource type="Resource" id="Resource_upggh"]
+script = ExtResource("1_50vgk")
+member_id = "route-27-trainer-07-member-2"
+pokemon_id = 322
+species = "Numel"
+sprite_id = "numel"
+level = 44
+moves = Array[String](["growl", "tackle", "ember", "focusenergy"])
+
+[sub_resource type="Resource" id="Resource_urmcs"]
+script = ExtResource("1_50vgk")
+member_id = "route-27-trainer-07-member-3"
+pokemon_id = 324
+species = "Torkoal"
+sprite_id = "torkoal"
+level = 44
+moves = Array[String](["ember", "smog", "withdraw", "rapidspin"])
+
+[sub_resource type="Resource" id="Resource_tg3vb"]
+script = ExtResource("1_50vgk")
+member_id = "route-27-trainer-07-member-4"
+pokemon_id = 37
+species = "Vulpix"
+sprite_id = "vulpix"
+level = 44
+moves = Array[String](["ember", "tailwhip", "disable", "quickattack"])
+
+[resource]
+script = ExtResource("2_fgo8i")
+encounter_id = "route-27-trainer-07"
+display_name = "Route 27 Trainer 7"
+api_name = "Route 27 Trainer 7"
+members = Array[ExtResource("1_50vgk")]([SubResource("Resource_xmsm1"), SubResource("Resource_upggh"), SubResource("Resource_urmcs"), SubResource("Resource_tg3vb")])

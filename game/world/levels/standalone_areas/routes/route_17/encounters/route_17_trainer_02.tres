@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_0g38o"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_l0o1g"]
+
+[sub_resource type="Resource" id="Resource_lkiiq"]
+script = ExtResource("1_0g38o")
+member_id = "route-17-trainer-02-member-1"
+pokemon_id = 324
+species = "Torkoal"
+sprite_id = "torkoal"
+level = 26
+moves = Array[String](["ember", "smog", "withdraw", "rapidspin"])
+
+[sub_resource type="Resource" id="Resource_d7qhb"]
+script = ExtResource("1_0g38o")
+member_id = "route-17-trainer-02-member-2"
+pokemon_id = 464
+species = "Rhyperior"
+sprite_id = "rhyperior"
+level = 27
+moves = Array[String](["bulldoze", "hammerarm", "smackdown", "tackle"])
+
+[sub_resource type="Resource" id="Resource_vuqgg"]
+script = ExtResource("1_0g38o")
+member_id = "route-17-trainer-02-member-3"
+pokemon_id = 631
+species = "Heatmor"
+sprite_id = "heatmor"
+level = 28
+moves = Array[String](["lick", "tackle", "furyswipes", "incinerate"])
+
+[resource]
+script = ExtResource("2_l0o1g")
+encounter_id = "route-17-trainer-02"
+display_name = "Route 17 Trainer 2"
+api_name = "Route 17 Trainer 2"
+members = Array[ExtResource("1_0g38o")]([SubResource("Resource_lkiiq"), SubResource("Resource_d7qhb"), SubResource("Resource_vuqgg")])

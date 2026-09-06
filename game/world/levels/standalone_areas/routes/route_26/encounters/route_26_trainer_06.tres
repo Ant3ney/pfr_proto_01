@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_xcmnu"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_3ey6k"]
+
+[sub_resource type="Resource" id="Resource_nwu13"]
+script = ExtResource("1_xcmnu")
+member_id = "route-26-trainer-06-member-1"
+pokemon_id = 179
+species = "Mareep"
+sprite_id = "mareep"
+level = 43
+moves = Array[String](["growl", "tackle", "thunderwave", "thundershock"])
+
+[sub_resource type="Resource" id="Resource_v47jc"]
+script = ExtResource("1_xcmnu")
+member_id = "route-26-trainer-06-member-2"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 44
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[sub_resource type="Resource" id="Resource_mgmp1"]
+script = ExtResource("1_xcmnu")
+member_id = "route-26-trainer-06-member-3"
+pokemon_id = 228
+species = "Houndour"
+sprite_id = "houndour"
+level = 44
+moves = Array[String](["ember", "leer", "howl", "smog"])
+
+[sub_resource type="Resource" id="Resource_2sq8y"]
+script = ExtResource("1_xcmnu")
+member_id = "route-26-trainer-06-member-4"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 44
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[resource]
+script = ExtResource("2_3ey6k")
+encounter_id = "route-26-trainer-06"
+display_name = "Route 26 Trainer 6"
+api_name = "Route 26 Trainer 6"
+members = Array[ExtResource("1_xcmnu")]([SubResource("Resource_nwu13"), SubResource("Resource_v47jc"), SubResource("Resource_mgmp1"), SubResource("Resource_2sq8y")])

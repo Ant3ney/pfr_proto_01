@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_jel4b"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_r0gft"]
+
+[sub_resource type="Resource" id="Resource_6cjex"]
+script = ExtResource("1_jel4b")
+member_id = "route-35-trainer-08-member-1"
+pokemon_id = 585
+species = "Deerling"
+sprite_id = "deerling"
+level = 56
+moves = Array[String](["tackle", "growl", "sandattack", "doublekick"])
+
+[sub_resource type="Resource" id="Resource_3fjsv"]
+script = ExtResource("1_jel4b")
+member_id = "route-35-trainer-08-member-2"
+pokemon_id = 58
+species = "Growlithe"
+sprite_id = "growlithe"
+level = 56
+moves = Array[String](["ember", "leer", "howl", "bite"])
+
+[sub_resource type="Resource" id="Resource_q6e1i"]
+script = ExtResource("1_jel4b")
+member_id = "route-35-trainer-08-member-3"
+pokemon_id = 128
+species = "Tauros"
+sprite_id = "tauros"
+level = 56
+moves = Array[String](["tackle", "tailwhip", "workup", "payback"])
+
+[sub_resource type="Resource" id="Resource_lir84"]
+script = ExtResource("1_jel4b")
+member_id = "route-35-trainer-08-member-4"
+pokemon_id = 190
+species = "Aipom"
+sprite_id = "aipom"
+level = 56
+moves = Array[String](["scratch", "tailwhip", "sandattack", "astonish"])
+
+[resource]
+script = ExtResource("2_r0gft")
+encounter_id = "route-35-trainer-08"
+display_name = "Route 35 Trainer 8"
+api_name = "Route 35 Trainer 8"
+members = Array[ExtResource("1_jel4b")]([SubResource("Resource_6cjex"), SubResource("Resource_3fjsv"), SubResource("Resource_q6e1i"), SubResource("Resource_lir84")])

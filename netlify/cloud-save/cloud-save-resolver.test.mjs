@@ -27,25 +27,29 @@ function pokemon(pclID, currentXp, level = 5) {
 
 function payload(timestamp = 1000) {
   return {
-    schema_version: 5,
+    schema_version: 6,
     profile: { starter_pokemon_id: 4 },
     collection: [pokemon("starter", 100)],
     move_learning: { pending: [] },
-    stretch: {
-      economy_version: 2,
+    economy: {
+      version: 2,
       balance: 50,
-      item_inventory: {},
-      claimed_gifts: [],
-      earned_badges: [],
-      champion_cleared: false,
-      completed_routes: [],
-      active_destination: {},
-      run_defeated_ids: [],
-      run_id: 0,
       last_battle_reward: {},
     },
+    inventory: {
+      item_quantities: {},
+      claimed_gifts: [],
+    },
+    challenge_progression: {
+      earned_badges: [],
+      champion_completed: false,
+      completed_routes: [],
+      active_area_id: "",
+      run_defeated_ids: [],
+      run_id: 0,
+    },
     world: {
-      scene_path: "res://demo/primary_development_enviroment.tscn",
+      scene_path: "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn",
     },
     save_meta: {
       saved_at_ms: timestamp,
@@ -84,7 +88,7 @@ function documentFrom(
   };
 }
 
-test("validates schema 5 without accepting short Save IDs", () => {
+test("validates schema 6 without accepting short Save IDs", () => {
   assert.equal(validateCloudSaveRequest(incoming()), "");
   assert.match(
     validateCloudSaveRequest(incoming({ save_id: "too-short" })),
@@ -108,10 +112,10 @@ test("creates a cloud document and first-time links pull cloud", () => {
   assert.equal(created.revision, 1);
   const cloud = documentFrom(created);
   const differentLocal = incoming();
-  differentLocal.payload.stretch.balance = 9999;
+  differentLocal.payload.economy.balance = 9999;
   const linked = resolveCloudSave(cloud, differentLocal, NOW + 100);
   assert.equal(linked.outcome, "cloud_linked");
-  assert.equal(linked.payload.stretch.balance, 50);
+  assert.equal(linked.payload.economy.balance, 50);
 });
 
 test("a causal local section change advances the revision", () => {
@@ -127,7 +131,7 @@ test("a causal local section change advances the revision", () => {
   assert.equal(saved.outcome, "client_saved");
   assert.equal(saved.revision, 2);
   assert.equal(saved.payload.collection[0].instanceStats.currentXp, 250);
-  assert.equal(saved.payload.stretch.balance, 50);
+  assert.equal(saved.payload.economy.balance, 50);
 });
 
 test("an in-flight first-link edit can force a smart section conflict", () => {
@@ -189,16 +193,19 @@ test("divergent collections retain captures and greatest earned XP", () => {
   );
 });
 
-test("Stretch conflicts preserve achievements and newer economy", () => {
+test("domain conflicts preserve achievements, gifts, and newer economy", () => {
   const created = resolveCloudSave(null, incoming(), NOW);
   const cloudChange = incoming({
     base_revision: 1,
-    changed_sections: ["stretch"],
+    changed_sections: ["economy", "inventory", "challenge_progression"],
   });
-  cloudChange.payload.stretch.balance = 25;
-  cloudChange.payload.stretch.completed_routes = [0, 1];
-  cloudChange.payload.stretch.earned_badges = [1];
-  cloudChange.payload.save_meta.section_updated_at_ms.stretch = NOW + 10;
+  cloudChange.payload.economy.balance = 25;
+  cloudChange.payload.inventory.claimed_gifts = ["cloud-gift"];
+  cloudChange.payload.challenge_progression.completed_routes = [0, 1];
+  cloudChange.payload.challenge_progression.earned_badges = [1];
+  for (const section of ["economy", "inventory", "challenge_progression"]) {
+    cloudChange.payload.save_meta.section_updated_at_ms[section] = NOW + 10;
+  }
   const cloudSaved = resolveCloudSave(
     documentFrom(created),
     cloudChange,
@@ -207,19 +214,21 @@ test("Stretch conflicts preserve achievements and newer economy", () => {
 
   const offline = incoming({
     base_revision: 1,
-    changed_sections: ["stretch"],
+    changed_sections: ["economy", "inventory", "challenge_progression"],
   });
-  offline.payload.stretch.balance = 400;
-  offline.payload.stretch.completed_routes = [0, 1, 2];
-  offline.payload.stretch.claimed_gifts = ["exp-share-gift"];
-  offline.payload.save_meta.section_updated_at_ms.stretch = NOW + 30;
+  offline.payload.economy.balance = 400;
+  offline.payload.challenge_progression.completed_routes = [0, 1, 2];
+  offline.payload.inventory.claimed_gifts = ["exp-share-gift"];
+  for (const section of ["economy", "inventory", "challenge_progression"]) {
+    offline.payload.save_meta.section_updated_at_ms[section] = NOW + 30;
+  }
   const merged = resolveCloudSave(documentFrom(cloudSaved), offline, NOW + 40);
-  assert.equal(merged.payload.stretch.balance, 400);
-  assert.deepEqual(merged.payload.stretch.completed_routes, [0, 1, 2]);
-  assert.deepEqual(merged.payload.stretch.earned_badges, [1]);
+  assert.equal(merged.payload.economy.balance, 400);
+  assert.deepEqual(merged.payload.challenge_progression.completed_routes, [0, 1, 2]);
+  assert.deepEqual(merged.payload.challenge_progression.earned_badges, [1]);
   assert.deepEqual(
-    merged.payload.stretch.claimed_gifts,
-    ["exp-share-gift"],
+    new Set(merged.payload.inventory.claimed_gifts),
+    new Set(["cloud-gift", "exp-share-gift"]),
   );
 });
 

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_hx7gf"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_0r1dq"]
+
+[sub_resource type="Resource" id="Resource_fh4r4"]
+script = ExtResource("1_hx7gf")
+member_id = "police-officer-shinx"
+pokemon_id = 403
+species = "Shinx"
+sprite_id = "shinx"
+level = 4
+moves = Array[String](["leer", "tackle", "thundershock", "charge"])
+
+[sub_resource type="Resource" id="Resource_0cani"]
+script = ExtResource("1_hx7gf")
+member_id = "police-officer-hoothoot"
+pokemon_id = 163
+species = "Hoothoot"
+sprite_id = "hoothoot"
+level = 4
+moves = Array[String](["tackle", "growl", "peck", "hypnosis"])
+
+[resource]
+script = ExtResource("2_0r1dq")
+encounter_id = "trainer-police-officer-city-v1"
+display_name = "Police Officer"
+api_name = "PoliceOfficer"
+members = Array[ExtResource("1_hx7gf")]([SubResource("Resource_fh4r4"), SubResource("Resource_0cani")])

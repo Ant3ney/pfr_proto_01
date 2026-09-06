@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_gg3g1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_01.tres" id="2_lxt7k"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_02.tres" id="3_tqcno"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_03.tres" id="4_y7fvo"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_04.tres" id="5_x2e2w"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_05.tres" id="6_bp2hb"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_06.tres" id="7_cysie"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_trainer_07.tres" id="8_wr7cc"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_27/route_27.tscn" id="9_ae73o"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_q25qf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_27/encounters/route_27_wild.tres" id="11_r0sh7"]
+
+[resource]
+script = ExtResource("10_q25qf")
+area_id = "route_27"
+numeric_order = 27
+display_name = "Route 27 — Ember Maw"
+description = "Volcanic Caldera dungeon route with 7 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 160 m path (Lv. 37–44). Reach the end to unlock the next route."
+biome = "volcanic caldera"
+destination = ExtResource("9_ae73o")
+suggested_level_min = 37
+suggested_level_max = 44
+battle_encounters = Array[ExtResource("1_gg3g1")]([ExtResource("2_lxt7k"), ExtResource("3_tqcno"), ExtResource("4_y7fvo"), ExtResource("5_x2e2w"), ExtResource("6_bp2hb"), ExtResource("7_cysie"), ExtResource("8_wr7cc")])
+wild_encounters = Array[ExtResource("1_gg3g1")]([ExtResource("11_r0sh7")])
+route_completion_prerequisite = "route_26"

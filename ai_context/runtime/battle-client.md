@@ -145,7 +145,7 @@ level immediately for presentation and later battles; the in-flight server
 session remains snapshot-authoritative for combat calculations.
 
 After an `experience` event is displayed, `BattleScene` asks the R&D
-`RNDMoveLearningSystem` to present every move earned by that event's `memberId`.
+`MoveLearningSystem` to present every move earned by that event's `memberId`.
 The scene awaits replacement or decline before acknowledging the event
 revision, so the next server request cannot appear beneath the modal. Equipped
 moves still change only in `CollectionSystem`; the current REST session keeps
@@ -222,13 +222,13 @@ The launch ID and provider ID are both `wild-fletchling-route-0-v1`.
 node tools/generate_battle_species_mapping.mjs --check
 node tools/generate_creature_experience_data.mjs --check
 node rnd/move_learning/tools/generate_move_learnsets.mjs --check
-godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_ui_layout_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_choice_overlay_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_system_session_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
-godot --headless --path . --scene res://rnd/tests/move_learning_smoke_test.tscn
-godot --headless --path . --scene res://tests/tall_grass_encounter_zone_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_ui_layout_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_choice_overlay_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/integration/move_learning_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/tall_grass_encounter_zone_smoke_test.tscn
 ```
 
 These cover migration and mapping, exact Kyle authoring, start/action/retry,

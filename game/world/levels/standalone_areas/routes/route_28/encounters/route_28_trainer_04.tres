@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_porcq"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_4ovfy"]
+
+[sub_resource type="Resource" id="Resource_6i80j"]
+script = ExtResource("1_porcq")
+member_id = "route-28-trainer-04-member-1"
+pokemon_id = 100
+species = "Voltorb"
+sprite_id = "voltorb"
+level = 47
+moves = Array[String](["charge", "tackle", "thundershock", "eerieimpulse"])
+
+[sub_resource type="Resource" id="Resource_u8kg4"]
+script = ExtResource("1_porcq")
+member_id = "route-28-trainer-04-member-2"
+pokemon_id = 109
+species = "Koffing"
+sprite_id = "koffing"
+level = 48
+moves = Array[String](["poisongas", "tackle", "smog", "smokescreen"])
+
+[sub_resource type="Resource" id="Resource_3icv7"]
+script = ExtResource("1_porcq")
+member_id = "route-28-trainer-04-member-3"
+pokemon_id = 123
+species = "Scyther"
+sprite_id = "scyther"
+level = 49
+moves = Array[String](["leer", "quickattack", "furycutter", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_4sdcx"]
+script = ExtResource("1_porcq")
+member_id = "route-28-trainer-04-member-4"
+pokemon_id = 125
+species = "Electabuzz"
+sprite_id = "electabuzz"
+level = 50
+moves = Array[String](["charge", "leer", "quickattack", "thundershock"])
+
+[resource]
+script = ExtResource("2_4ovfy")
+encounter_id = "route-28-trainer-04"
+display_name = "Route 28 Trainer 4"
+api_name = "Route 28 Trainer 4"
+members = Array[ExtResource("1_porcq")]([SubResource("Resource_6i80j"), SubResource("Resource_u8kg4"), SubResource("Resource_3icv7"), SubResource("Resource_4sdcx")])

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_wbokj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_83vod"]
+
+[sub_resource type="Resource" id="Resource_ihdsj"]
+script = ExtResource("1_wbokj")
+member_id = "route-18-trainer-02-member-1"
+pokemon_id = 124
+species = "Jynx"
+sprite_id = "jynx"
+level = 26
+moves = Array[String](["copycat", "lick", "pound", "powdersnow"])
+
+[sub_resource type="Resource" id="Resource_j1chs"]
+script = ExtResource("1_wbokj")
+member_id = "route-18-trainer-02-member-2"
+pokemon_id = 215
+species = "Sneasel"
+sprite_id = "sneasel"
+level = 27
+moves = Array[String](["leer", "scratch", "taunt", "quickattack"])
+
+[sub_resource type="Resource" id="Resource_xr56a"]
+script = ExtResource("1_wbokj")
+member_id = "route-18-trainer-02-member-3"
+pokemon_id = 221
+species = "Piloswine"
+sprite_id = "piloswine"
+level = 28
+moves = Array[String](["icefang", "ancientpower", "flail", "mudslap"])
+
+[resource]
+script = ExtResource("2_83vod")
+encounter_id = "route-18-trainer-02"
+display_name = "Route 18 Trainer 2"
+api_name = "Route 18 Trainer 2"
+members = Array[ExtResource("1_wbokj")]([SubResource("Resource_ihdsj"), SubResource("Resource_j1chs"), SubResource("Resource_xr56a")])

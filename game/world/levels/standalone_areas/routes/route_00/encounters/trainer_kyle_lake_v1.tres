@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_pousx"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_f1jh2"]
+
+[sub_resource type="Resource" id="Resource_aabcl"]
+script = ExtResource("1_pousx")
+member_id = "kyle-wooper"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 3
+moves = Array[String](["watergun", "tailwhip"])
+
+[sub_resource type="Resource" id="Resource_c6mqi"]
+script = ExtResource("1_pousx")
+member_id = "kyle-magikarp"
+pokemon_id = 129
+species = "Magikarp"
+sprite_id = "magikarp"
+level = 3
+moves = Array[String](["splash"])
+
+[resource]
+script = ExtResource("2_f1jh2")
+encounter_id = "trainer-kyle-lake-v1"
+display_name = "Trainer Kyle"
+api_name = "Kyle"
+members = Array[ExtResource("1_pousx")]([SubResource("Resource_aabcl"), SubResource("Resource_c6mqi")])

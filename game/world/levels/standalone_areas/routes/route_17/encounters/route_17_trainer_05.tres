@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_f6fnl"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_hpnrk"]
+
+[sub_resource type="Resource" id="Resource_fbykp"]
+script = ExtResource("1_f6fnl")
+member_id = "route-17-trainer-05-member-1"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 31
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[sub_resource type="Resource" id="Resource_xqw2e"]
+script = ExtResource("1_f6fnl")
+member_id = "route-17-trainer-05-member-2"
+pokemon_id = 323
+species = "Camerupt"
+sprite_id = "camerupt"
+level = 32
+moves = Array[String](["rockslide", "ember", "eruption", "fissure"])
+
+[sub_resource type="Resource" id="Resource_xvs71"]
+script = ExtResource("1_f6fnl")
+member_id = "route-17-trainer-05-member-3"
+pokemon_id = 324
+species = "Torkoal"
+sprite_id = "torkoal"
+level = 32
+moves = Array[String](["ember", "smog", "withdraw", "rapidspin"])
+
+[resource]
+script = ExtResource("2_hpnrk")
+encounter_id = "route-17-trainer-05"
+display_name = "Route 17 Trainer 5"
+api_name = "Route 17 Trainer 5"
+members = Array[ExtResource("1_f6fnl")]([SubResource("Resource_fbykp"), SubResource("Resource_xqw2e"), SubResource("Resource_xvs71")])

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_iyn6n"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/gyms/gym_04/encounters/gym_04_leader.tres" id="2_62bwd"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_04/gym_04.tscn" id="3_oy36j"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="4_1jelw"]
+
+[resource]
+script = ExtResource("4_1jelw")
+area_id = "gym_04"
+category = 1
+numeric_order = 4
+display_name = "Gym 4 — Verdant House"
+description = "A status-heavy Grass progression battle (Lv. 29–33)."
+biome = "gym"
+destination = ExtResource("3_oy36j")
+suggested_level_min = 29
+suggested_level_max = 33
+battle_encounters = Array[ExtResource("1_iyn6n")]([ExtResource("2_62bwd")])

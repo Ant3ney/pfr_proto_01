@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_wiusj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_elnyh"]
+
+[sub_resource type="Resource" id="Resource_kng2g"]
+script = ExtResource("1_wiusj")
+member_id = "route-29-trainer-03-member-1"
+pokemon_id = 175
+species = "Togepi"
+sprite_id = "togepi"
+level = 45
+moves = Array[String](["growl", "pound", "sweetkiss", "lifedew"])
+
+[sub_resource type="Resource" id="Resource_x7p2v"]
+script = ExtResource("1_wiusj")
+member_id = "route-29-trainer-03-member-2"
+pokemon_id = 200
+species = "Misdreavus"
+sprite_id = "misdreavus"
+level = 46
+moves = Array[String](["confusion", "growl", "astonish", "confuseray"])
+
+[sub_resource type="Resource" id="Resource_u1lop"]
+script = ExtResource("1_wiusj")
+member_id = "route-29-trainer-03-member-3"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 47
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[sub_resource type="Resource" id="Resource_fs6at"]
+script = ExtResource("1_wiusj")
+member_id = "route-29-trainer-03-member-4"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 48
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[resource]
+script = ExtResource("2_elnyh")
+encounter_id = "route-29-trainer-03"
+display_name = "Route 29 Trainer 3"
+api_name = "Route 29 Trainer 3"
+members = Array[ExtResource("1_wiusj")]([SubResource("Resource_kng2g"), SubResource("Resource_x7p2v"), SubResource("Resource_u1lop"), SubResource("Resource_fs6at")])

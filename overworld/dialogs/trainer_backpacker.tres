@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="Dialog" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://core/Dialog.gd" id="1_dialog"]
-
-[resource]
-resource_name = "Backpacker Trainer Dialog"
-script = ExtResource("1_dialog")
-character_name = "Backpacker"
-dialog_lines = Array[String](["I've challenged trainers all across the region.", "Let's add one more battle to the journey!"])

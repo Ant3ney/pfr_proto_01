@@ -1,0 +1,205 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/ui/shared/ui_template.gd" id="1_template"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dialog"]
+bg_color = Color(0.129, 0.239, 0.157, 0.96)
+border_width_left = 9
+border_width_top = 9
+border_width_right = 9
+border_width_bottom = 9
+border_color = Color(0.902, 0.733, 0.482, 1)
+corner_radius_top_left = 34
+corner_radius_top_right = 34
+corner_radius_bottom_right = 34
+corner_radius_bottom_left = 34
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_speaker"]
+bg_color = Color(0.102, 0.2, 0.137, 0.94)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.078, 0.267, 0.302, 1)
+corner_radius_top_left = 33
+corner_radius_top_right = 33
+corner_radius_bottom_right = 33
+corner_radius_bottom_left = 33
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_frame"]
+bg_color = Color(0.941, 0.886, 0.804, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.902, 0.733, 0.482, 1)
+corner_radius_top_left = 37
+corner_radius_top_right = 37
+corner_radius_bottom_right = 37
+corner_radius_bottom_left = 37
+shadow_color = Color(0.1, 0.06, 0.02, 0.3)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_normal"]
+bg_color = Color(0.376, 0.729, 0.235, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.216, 0.431, 0.118, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_hover"]
+bg_color = Color(0.447, 0.816, 0.286, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.255, 0.49, 0.145, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_pressed"]
+bg_color = Color(0.286, 0.624, 0.165, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.173, 0.353, 0.094, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dismiss"]
+bg_color = Color(0.102, 0.2, 0.137, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.902, 0.733, 0.482, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[node name="UITemplate" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_template")
+
+[node name="DialogPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.029
+anchor_top = 0.628
+anchor_right = 0.971
+anchor_bottom = 0.948
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dialog")
+
+[node name="MessageMargin" type="MarginContainer" parent="DialogPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 25
+
+[node name="Message" type="Label" parent="DialogPanel/MessageMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "You fool. You have messed with forces beyond your control."
+autowrap_mode = 2
+
+[node name="SpeakerPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.029
+anchor_top = 0.433
+anchor_right = 0.415
+anchor_bottom = 0.598
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_speaker")
+
+[node name="SpeakerMargin" type="MarginContainer" parent="SpeakerPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 33
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 33
+theme_override_constants/margin_bottom = 9
+
+[node name="Speaker" type="Label" parent="SpeakerPanel/SpeakerMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "Trainer Jankens"
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="ActionFrame" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.798
+anchor_top = 0.421
+anchor_right = 0.965
+anchor_bottom = 0.605
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_action_frame")
+
+[node name="ActionMargin" type="MarginContainer" parent="ActionFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="ActionButton" type="Button" parent="ActionFrame/ActionMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_left = NodePath("../../../DismissButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_action_hover")
+text = "Next   ➜"
+
+[node name="DismissButton" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(114, 58)
+layout_mode = 1
+anchor_left = 0.68
+anchor_top = 0.445
+anchor_right = 0.785
+anchor_bottom = 0.582
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_right = NodePath("../ActionFrame/ActionMargin/ActionButton")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_dismiss")
+text = "Close"

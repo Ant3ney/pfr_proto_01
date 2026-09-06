@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_2lcei"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cw3su"]
+
+[sub_resource type="Resource" id="Resource_moh13"]
+script = ExtResource("1_2lcei")
+member_id = "route-38-wild-member-1"
+pokemon_id = 613
+species = "Cubchoo"
+sprite_id = "cubchoo"
+level = 58
+moves = Array[String](["growl", "powdersnow", "endure", "furyswipes"])
+
+[resource]
+script = ExtResource("2_cw3su")
+encounter_id = "route-38-wild"
+display_name = "Wild Aurora Tundra Pokemon"
+api_name = "Wild Aurora Tundra"
+members = Array[ExtResource("1_2lcei")]([SubResource("Resource_moh13")])

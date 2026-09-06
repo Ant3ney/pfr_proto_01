@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_omaa7"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_rc1m8"]
+
+[sub_resource type="Resource" id="Resource_127el"]
+script = ExtResource("1_omaa7")
+member_id = "route-37-trainer-07-member-1"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 59
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[sub_resource type="Resource" id="Resource_ue6ob"]
+script = ExtResource("1_omaa7")
+member_id = "route-37-trainer-07-member-2"
+pokemon_id = 323
+species = "Camerupt"
+sprite_id = "camerupt"
+level = 60
+moves = Array[String](["rockslide", "ember", "eruption", "fissure"])
+
+[sub_resource type="Resource" id="Resource_c6s2v"]
+script = ExtResource("1_omaa7")
+member_id = "route-37-trainer-07-member-3"
+pokemon_id = 324
+species = "Torkoal"
+sprite_id = "torkoal"
+level = 60
+moves = Array[String](["ember", "smog", "withdraw", "rapidspin"])
+
+[sub_resource type="Resource" id="Resource_y1u4n"]
+script = ExtResource("1_omaa7")
+member_id = "route-37-trainer-07-member-4"
+pokemon_id = 464
+species = "Rhyperior"
+sprite_id = "rhyperior"
+level = 60
+moves = Array[String](["bulldoze", "hammerarm", "smackdown", "tackle"])
+
+[resource]
+script = ExtResource("2_rc1m8")
+encounter_id = "route-37-trainer-07"
+display_name = "Route 37 Trainer 7"
+api_name = "Route 37 Trainer 7"
+members = Array[ExtResource("1_omaa7")]([SubResource("Resource_127el"), SubResource("Resource_ue6ob"), SubResource("Resource_c6s2v"), SubResource("Resource_y1u4n")])

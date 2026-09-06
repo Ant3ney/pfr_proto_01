@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_c4nek"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_63ri3"]
+
+[sub_resource type="Resource" id="Resource_yymem"]
+script = ExtResource("1_c4nek")
+member_id = "route-09-trainer-03-member-1"
+pokemon_id = 214
+species = "Heracross"
+sprite_id = "heracross"
+level = 17
+moves = Array[String](["armthrust", "leer", "tackle", "furyattack"])
+
+[sub_resource type="Resource" id="Resource_d78ip"]
+script = ExtResource("1_c4nek")
+member_id = "route-09-trainer-03-member-2"
+pokemon_id = 133
+species = "Eevee"
+sprite_id = "eevee"
+level = 18
+moves = Array[String](["covet", "growl", "helpinghand", "tackle"])
+
+[resource]
+script = ExtResource("2_63ri3")
+encounter_id = "route-09-trainer-03"
+display_name = "Route 9 Trainer 3"
+api_name = "Route 9 Trainer 3"
+members = Array[ExtResource("1_c4nek")]([SubResource("Resource_yymem"), SubResource("Resource_d78ip")])

@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="Dialog" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://core/Dialog.gd" id="1_dialog"]
-
-[resource]
-resource_name = "Trainer Jankens Dialog"
-script = ExtResource("1_dialog")
-character_name = "Trainer Jankens"
-dialog_lines = Array[String](["You fool. You have messed with forces beyond your control.", "Some lessons can only be learned in battle.", "Prepare yourself!"])

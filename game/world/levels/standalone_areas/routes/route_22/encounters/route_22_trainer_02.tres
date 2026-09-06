@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_wycqo"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_lakuo"]
+
+[sub_resource type="Resource" id="Resource_56ak3"]
+script = ExtResource("1_wycqo")
+member_id = "route-22-trainer-02-member-1"
+pokemon_id = 48
+species = "Venonat"
+sprite_id = "venonat"
+level = 32
+moves = Array[String](["disable", "tackle", "supersonic", "confusion"])
+
+[sub_resource type="Resource" id="Resource_4srwu"]
+script = ExtResource("1_wycqo")
+member_id = "route-22-trainer-02-member-2"
+pokemon_id = 27
+species = "Sandshrew"
+sprite_id = "sandshrew"
+level = 33
+moves = Array[String](["defensecurl", "scratch", "poisonsting", "sandattack"])
+
+[sub_resource type="Resource" id="Resource_wfoci"]
+script = ExtResource("1_wycqo")
+member_id = "route-22-trainer-02-member-3"
+pokemon_id = 23
+species = "Ekans"
+sprite_id = "ekans"
+level = 34
+moves = Array[String](["leer", "wrap", "poisonsting", "bite"])
+
+[resource]
+script = ExtResource("2_lakuo")
+encounter_id = "route-22-trainer-02"
+display_name = "Route 22 Trainer 2"
+api_name = "Route 22 Trainer 2"
+members = Array[ExtResource("1_wycqo")]([SubResource("Resource_56ak3"), SubResource("Resource_4srwu"), SubResource("Resource_wfoci")])

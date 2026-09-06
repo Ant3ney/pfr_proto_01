@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_edftl"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_mrabp"]
+
+[sub_resource type="Resource" id="Resource_1mgvc"]
+script = ExtResource("1_edftl")
+member_id = "route-01-trainer-01-member-1"
+pokemon_id = 191
+species = "Sunkern"
+sprite_id = "sunkern"
+level = 3
+moves = Array[String](["growth", "tackle", "absorb", "megadrain"])
+
+[sub_resource type="Resource" id="Resource_d1s6c"]
+script = ExtResource("1_edftl")
+member_id = "route-01-trainer-01-member-2"
+pokemon_id = 192
+species = "Sunflora"
+sprite_id = "sunflora"
+level = 4
+moves = Array[String](["growth", "pound", "tackle", "ingrain"])
+
+[resource]
+script = ExtResource("2_mrabp")
+encounter_id = "route-01-trainer-01"
+display_name = "Route 1 Trainer 1"
+api_name = "Route 1 Trainer 1"
+members = Array[ExtResource("1_edftl")]([SubResource("Resource_1mgvc"), SubResource("Resource_d1s6c")])

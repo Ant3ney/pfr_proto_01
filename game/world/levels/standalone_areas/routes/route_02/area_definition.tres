@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_bxr4b"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_02/encounters/route_02_trainer_01.tres" id="2_16r0u"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_02/encounters/route_02_trainer_02.tres" id="3_8fpyt"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_02/encounters/route_02_trainer_03.tres" id="4_opiri"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_02/encounters/route_02_trainer_04.tres" id="5_d2c55"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_02/route_02.tscn" id="6_8mpur"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="7_j3vkx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_02/encounters/route_02_wild.tres" id="8_2ae15"]
+
+[resource]
+script = ExtResource("7_j3vkx")
+area_id = "route_02"
+numeric_order = 2
+display_name = "Route 2 — Bramblewood Cut"
+description = "Old Growth Forest dungeon route with 4 mandatory trainer checkpoints, 4 tall-grass fields, and a twisting 84 m path (Lv. 3–6). Reach the end to unlock the next route."
+biome = "old-growth forest"
+destination = ExtResource("6_8mpur")
+suggested_level_min = 3
+suggested_level_max = 6
+battle_encounters = Array[ExtResource("1_bxr4b")]([ExtResource("2_16r0u"), ExtResource("3_8fpyt"), ExtResource("4_opiri"), ExtResource("5_d2c55")])
+wild_encounters = Array[ExtResource("1_bxr4b")]([ExtResource("8_2ae15")])
+route_completion_prerequisite = "route_01"

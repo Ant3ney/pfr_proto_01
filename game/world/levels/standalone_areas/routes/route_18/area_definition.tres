@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_8rh60"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_01.tres" id="2_6u1xd"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_02.tres" id="3_4gjx8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_03.tres" id="4_2fw5j"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_04.tres" id="5_otnv3"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_05.tres" id="6_sdi2u"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_trainer_06.tres" id="7_hj72f"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_18/route_18.tscn" id="8_7kyls"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_1ctc5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_18/encounters/route_18_wild.tres" id="10_fsdo5"]
+
+[resource]
+script = ExtResource("9_1ctc5")
+area_id = "route_18"
+numeric_order = 18
+display_name = "Route 18 — Aurora Tundra"
+description = "Aurora Tundra dungeon route with 6 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 132 m path (Lv. 25–32). Reach the end to unlock the next route."
+biome = "aurora tundra"
+destination = ExtResource("8_7kyls")
+suggested_level_min = 25
+suggested_level_max = 32
+battle_encounters = Array[ExtResource("1_8rh60")]([ExtResource("2_6u1xd"), ExtResource("3_4gjx8"), ExtResource("4_2fw5j"), ExtResource("5_otnv3"), ExtResource("6_sdi2u"), ExtResource("7_hj72f")])
+wild_encounters = Array[ExtResource("1_8rh60")]([ExtResource("10_fsdo5")])
+route_completion_prerequisite = "route_17"

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_aelnc"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_7aa0v"]
+
+[sub_resource type="Resource" id="Resource_t3wb7"]
+script = ExtResource("1_aelnc")
+member_id = "route-12-trainer-01-member-1"
+pokemon_id = 337
+species = "Lunatone"
+sprite_id = "lunatone"
+level = 19
+moves = Array[String](["confusion", "harden", "moonblast", "moonlight"])
+
+[sub_resource type="Resource" id="Resource_8urcf"]
+script = ExtResource("1_aelnc")
+member_id = "route-12-trainer-01-member-2"
+pokemon_id = 338
+species = "Solrock"
+sprite_id = "solrock"
+level = 20
+moves = Array[String](["confusion", "flareblitz", "harden", "morningsun"])
+
+[sub_resource type="Resource" id="Resource_e10a8"]
+script = ExtResource("1_aelnc")
+member_id = "route-12-trainer-01-member-3"
+pokemon_id = 525
+species = "Boldore"
+sprite_id = "boldore"
+level = 21
+moves = Array[String](["powergem", "harden", "sandattack", "stealthrock"])
+
+[resource]
+script = ExtResource("2_7aa0v")
+encounter_id = "route-12-trainer-01"
+display_name = "Route 12 Trainer 1"
+api_name = "Route 12 Trainer 1"
+members = Array[ExtResource("1_aelnc")]([SubResource("Resource_t3wb7"), SubResource("Resource_8urcf"), SubResource("Resource_e10a8")])

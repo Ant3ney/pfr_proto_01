@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_wjkso"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_01.tres" id="2_ux8km"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_02.tres" id="3_gq2ue"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_03.tres" id="4_g4sb1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_04.tres" id="5_1kb8u"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_05.tres" id="6_lm5ie"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_trainer_06.tres" id="7_2rw3b"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_21/route_21.tscn" id="8_q1knk"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_wscw0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_21/encounters/route_21_wild.tres" id="10_767jo"]
+
+[resource]
+script = ExtResource("9_wscw0")
+area_id = "route_21"
+numeric_order = 21
+display_name = "Route 21 — Sunpetal Maze"
+description = "Sunflower Prairie dungeon route with 6 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 140 m path (Lv. 31–38). Reach the end to unlock the next route."
+biome = "sunflower prairie"
+destination = ExtResource("8_q1knk")
+suggested_level_min = 31
+suggested_level_max = 38
+battle_encounters = Array[ExtResource("1_wjkso")]([ExtResource("2_ux8km"), ExtResource("3_gq2ue"), ExtResource("4_g4sb1"), ExtResource("5_1kb8u"), ExtResource("6_lm5ie"), ExtResource("7_2rw3b")])
+wild_encounters = Array[ExtResource("1_wjkso")]([ExtResource("10_767jo")])
+route_completion_prerequisite = "route_20"

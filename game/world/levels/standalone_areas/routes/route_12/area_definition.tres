@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_tm7in"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_trainer_01.tres" id="2_6gi7i"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_trainer_02.tres" id="3_nt4qh"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_trainer_03.tres" id="4_n700p"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_trainer_04.tres" id="5_khgc4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_trainer_05.tres" id="6_3x5xn"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_12/route_12.tscn" id="7_wlb4w"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_ui0r7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_12/encounters/route_12_wild.tres" id="9_csqmi"]
+
+[resource]
+script = ExtResource("8_ui0r7")
+area_id = "route_12"
+numeric_order = 12
+display_name = "Route 12 — Prism Cavern"
+description = "Crystal Cavern dungeon route with 5 mandatory trainer checkpoints, 5 tall-grass fields, and a twisting 112 m path (Lv. 19–26). Reach the end to unlock the next route."
+biome = "crystal cavern"
+destination = ExtResource("7_wlb4w")
+suggested_level_min = 19
+suggested_level_max = 26
+battle_encounters = Array[ExtResource("1_tm7in")]([ExtResource("2_6gi7i"), ExtResource("3_nt4qh"), ExtResource("4_n700p"), ExtResource("5_khgc4"), ExtResource("6_3x5xn")])
+wild_encounters = Array[ExtResource("1_tm7in")]([ExtResource("9_csqmi")])
+route_completion_prerequisite = "route_11"

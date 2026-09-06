@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://game/battle/scenes/battle_scene.tscn" id="1_battle"]
+[ext_resource type="Script" path="res://game/battle/encounters/challenge_battle_encounter_provider.gd" id="2_provider"]
+
+[node name="ChallengeBattle" instance=ExtResource("1_battle")]
+editor_description = "Generic challenge battle. The provider resolves the selected area's Inspector-authored encounter before BattleSystem preflight."
+
+[node name="ChallengeEncounterProvider" type="Node" parent="." index="6" groups=["battle_encounter_provider"]]
+script = ExtResource("2_provider")

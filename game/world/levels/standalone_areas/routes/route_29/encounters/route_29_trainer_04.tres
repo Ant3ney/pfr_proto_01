@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_t7cn1"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_365fv"]
+
+[sub_resource type="Resource" id="Resource_yocfa"]
+script = ExtResource("1_t7cn1")
+member_id = "route-29-trainer-04-member-1"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 47
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[sub_resource type="Resource" id="Resource_23cjx"]
+script = ExtResource("1_t7cn1")
+member_id = "route-29-trainer-04-member-2"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 48
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[sub_resource type="Resource" id="Resource_51wtq"]
+script = ExtResource("1_t7cn1")
+member_id = "route-29-trainer-04-member-3"
+pokemon_id = 214
+species = "Heracross"
+sprite_id = "heracross"
+level = 49
+moves = Array[String](["armthrust", "leer", "tackle", "furyattack"])
+
+[sub_resource type="Resource" id="Resource_lfmbi"]
+script = ExtResource("1_t7cn1")
+member_id = "route-29-trainer-04-member-4"
+pokemon_id = 133
+species = "Eevee"
+sprite_id = "eevee"
+level = 50
+moves = Array[String](["covet", "growl", "helpinghand", "tackle"])
+
+[resource]
+script = ExtResource("2_365fv")
+encounter_id = "route-29-trainer-04"
+display_name = "Route 29 Trainer 4"
+api_name = "Route 29 Trainer 4"
+members = Array[ExtResource("1_t7cn1")]([SubResource("Resource_yocfa"), SubResource("Resource_23cjx"), SubResource("Resource_51wtq"), SubResource("Resource_lfmbi")])

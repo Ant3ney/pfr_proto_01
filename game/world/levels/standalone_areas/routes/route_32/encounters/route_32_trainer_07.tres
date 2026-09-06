@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_mjl4n"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_4yw4w"]
+
+[sub_resource type="Resource" id="Resource_x15cj"]
+script = ExtResource("1_mjl4n")
+member_id = "route-32-trainer-07-member-1"
+pokemon_id = 337
+species = "Lunatone"
+sprite_id = "lunatone"
+level = 55
+moves = Array[String](["confusion", "harden", "moonblast", "moonlight"])
+
+[sub_resource type="Resource" id="Resource_gfk3m"]
+script = ExtResource("1_mjl4n")
+member_id = "route-32-trainer-07-member-2"
+pokemon_id = 338
+species = "Solrock"
+sprite_id = "solrock"
+level = 56
+moves = Array[String](["confusion", "flareblitz", "harden", "morningsun"])
+
+[sub_resource type="Resource" id="Resource_6uhvp"]
+script = ExtResource("1_mjl4n")
+member_id = "route-32-trainer-07-member-3"
+pokemon_id = 525
+species = "Boldore"
+sprite_id = "boldore"
+level = 56
+moves = Array[String](["powergem", "harden", "sandattack", "stealthrock"])
+
+[sub_resource type="Resource" id="Resource_dvcgy"]
+script = ExtResource("1_mjl4n")
+member_id = "route-32-trainer-07-member-4"
+pokemon_id = 703
+species = "Carbink"
+sprite_id = "carbink"
+level = 56
+moves = Array[String](["harden", "tackle", "guardsplit", "smackdown"])
+
+[resource]
+script = ExtResource("2_4yw4w")
+encounter_id = "route-32-trainer-07"
+display_name = "Route 32 Trainer 7"
+api_name = "Route 32 Trainer 7"
+members = Array[ExtResource("1_mjl4n")]([SubResource("Resource_x15cj"), SubResource("Resource_gfk3m"), SubResource("Resource_6uhvp"), SubResource("Resource_dvcgy")])

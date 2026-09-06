@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_snq8q"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cugiq"]
+
+[sub_resource type="Resource" id="Resource_074qp"]
+script = ExtResource("1_snq8q")
+member_id = "route-26-wild-member-1"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 41
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[resource]
+script = ExtResource("2_cugiq")
+encounter_id = "route-26-wild"
+display_name = "Wild Dry Savanna Pokemon"
+api_name = "Wild Dry Savanna P"
+members = Array[ExtResource("1_snq8q")]([SubResource("Resource_074qp")])

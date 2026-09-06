@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_v60t1"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ha1ok"]
+
+[sub_resource type="Resource" id="Resource_hbtx8"]
+script = ExtResource("1_v60t1")
+member_id = "route-02-trainer-03-member-1"
+pokemon_id = 69
+species = "Bellsprout"
+sprite_id = "bellsprout"
+level = 5
+moves = Array[String](["vinewhip", "growth", "wrap", "sleeppowder"])
+
+[sub_resource type="Resource" id="Resource_kgqyh"]
+script = ExtResource("1_v60t1")
+member_id = "route-02-trainer-03-member-2"
+pokemon_id = 46
+species = "Paras"
+sprite_id = "paras"
+level = 6
+moves = Array[String](["scratch", "poisonpowder", "stunspore", "absorb"])
+
+[resource]
+script = ExtResource("2_ha1ok")
+encounter_id = "route-02-trainer-03"
+display_name = "Route 2 Trainer 3"
+api_name = "Route 2 Trainer 3"
+members = Array[ExtResource("1_v60t1")]([SubResource("Resource_hbtx8"), SubResource("Resource_kgqyh")])

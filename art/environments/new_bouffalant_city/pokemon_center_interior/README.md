@@ -27,9 +27,9 @@ From the repository root, run:
 
 ```sh
 godot --headless --path . --import
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_interior/validation/pokemon_center_interior_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_scene_transfer_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_interior_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_healer_smoke_test.tscn
 ```
 
 The interior test verifies the exact geometry/two-draw texture budget, authored bounds, collision, staffed-attendant clearance and interaction area, gameplay markers, camera, exit-trigger configuration, and the shadow-light contract. The healer test covers its full UI and collection sequence. The transfer test traverses both real exterior openings, confirms that they load different assigned environments, returns through each matching marker, and rejects reverse-trigger loops.

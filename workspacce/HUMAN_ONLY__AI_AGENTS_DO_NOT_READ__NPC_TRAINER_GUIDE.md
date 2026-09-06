@@ -65,7 +65,7 @@ Its root is a `CharacterBody3D` running `PFRCharacter.gd`. The scene assigns:
   as the existing `Visual/CharacterArt` child;
 - [`overworld/dialogs/trainer_kyle.tres`](overworld/dialogs/trainer_kyle.tres)
   to the behavior's `dialog`;
-- `res://battle/kyle_battle_scene.tscn` as its battle scene; and
+- `res://game/battle/scenes/kyle_battle_scene.tscn` as its battle scene; and
 - `trainer-kyle-lake-v1` as its stable encounter ID.
 
 There is also an
@@ -605,11 +605,11 @@ From the repository root, these are the most relevant checks:
 
 ```bash
 godot --headless --path . --scene res://tests/pfr_character_behavior_composition_smoke_test.tscn
-godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.tscn
-godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
-godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/scenes/interaction_hud_smoke_test.tscn
 ```
 
 The first four passed against the working tree when this guide was written.

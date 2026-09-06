@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ie0dp"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_b2ghi"]
+
+[sub_resource type="Resource" id="Resource_58du1"]
+script = ExtResource("1_ie0dp")
+member_id = "route-05-trainer-01-member-1"
+pokemon_id = 320
+species = "Wailmer"
+sprite_id = "wailmer"
+level = 7
+moves = Array[String](["splash", "growl", "astonish", "watergun"])
+
+[sub_resource type="Resource" id="Resource_qcmbp"]
+script = ExtResource("1_ie0dp")
+member_id = "route-05-trainer-01-member-2"
+pokemon_id = 72
+species = "Tentacool"
+sprite_id = "tentacool"
+level = 8
+moves = Array[String](["poisonsting", "watergun", "acid", "wrap"])
+
+[resource]
+script = ExtResource("2_b2ghi")
+encounter_id = "route-05-trainer-01"
+display_name = "Route 5 Trainer 1"
+api_name = "Route 5 Trainer 1"
+members = Array[ExtResource("1_ie0dp")]([SubResource("Resource_58du1"), SubResource("Resource_qcmbp")])

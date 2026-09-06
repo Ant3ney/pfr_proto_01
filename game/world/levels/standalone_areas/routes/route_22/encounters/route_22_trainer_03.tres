@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_vw71v"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_r6y7t"]
+
+[sub_resource type="Resource" id="Resource_5ldjb"]
+script = ExtResource("1_vw71v")
+member_id = "route-22-trainer-03-member-1"
+pokemon_id = 23
+species = "Ekans"
+sprite_id = "ekans"
+level = 34
+moves = Array[String](["leer", "wrap", "poisonsting", "bite"])
+
+[sub_resource type="Resource" id="Resource_oc8hw"]
+script = ExtResource("1_vw71v")
+member_id = "route-22-trainer-03-member-2"
+pokemon_id = 52
+species = "Meowth"
+sprite_id = "meowth"
+level = 35
+moves = Array[String](["fakeout", "growl", "feint", "scratch"])
+
+[sub_resource type="Resource" id="Resource_oneo6"]
+script = ExtResource("1_vw71v")
+member_id = "route-22-trainer-03-member-3"
+pokemon_id = 41
+species = "Zubat"
+sprite_id = "zubat"
+level = 36
+moves = Array[String](["absorb", "supersonic", "astonish", "meanlook"])
+
+[resource]
+script = ExtResource("2_r6y7t")
+encounter_id = "route-22-trainer-03"
+display_name = "Route 22 Trainer 3"
+api_name = "Route 22 Trainer 3"
+members = Array[ExtResource("1_vw71v")]([SubResource("Resource_5ldjb"), SubResource("Resource_oc8hw"), SubResource("Resource_oneo6")])

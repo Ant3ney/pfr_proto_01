@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_yq25y"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/gyms/gym_06/encounters/gym_06_leader.tres" id="2_oh86f"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_06/gym_06.tscn" id="3_ucarx"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="4_34w2k"]
+
+[resource]
+script = ExtResource("4_34w2k")
+area_id = "gym_06"
+category = 1
+numeric_order = 6
+display_name = "Gym 6 — Mirage Stage"
+description = "A Psychic specialist with four battle-ready partners (Lv. 39–44)."
+biome = "gym"
+destination = ExtResource("3_ucarx")
+suggested_level_min = 39
+suggested_level_max = 44
+battle_encounters = Array[ExtResource("1_yq25y")]([ExtResource("2_oh86f")])

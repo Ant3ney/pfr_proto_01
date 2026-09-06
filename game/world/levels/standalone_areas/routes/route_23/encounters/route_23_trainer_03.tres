@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_p0eol"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_yp7xl"]
+
+[sub_resource type="Resource" id="Resource_dcdku"]
+script = ExtResource("1_p0eol")
+member_id = "route-23-trainer-03-member-1"
+pokemon_id = 60
+species = "Poliwag"
+sprite_id = "poliwag"
+level = 34
+moves = Array[String](["hypnosis", "watergun", "pound", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_iathv"]
+script = ExtResource("1_p0eol")
+member_id = "route-23-trainer-03-member-2"
+pokemon_id = 72
+species = "Tentacool"
+sprite_id = "tentacool"
+level = 35
+moves = Array[String](["poisonsting", "watergun", "acid", "wrap"])
+
+[sub_resource type="Resource" id="Resource_v6qyn"]
+script = ExtResource("1_p0eol")
+member_id = "route-23-trainer-03-member-3"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 36
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[resource]
+script = ExtResource("2_yp7xl")
+encounter_id = "route-23-trainer-03"
+display_name = "Route 23 Trainer 3"
+api_name = "Route 23 Trainer 3"
+members = Array[ExtResource("1_p0eol")]([SubResource("Resource_dcdku"), SubResource("Resource_iathv"), SubResource("Resource_v6qyn")])

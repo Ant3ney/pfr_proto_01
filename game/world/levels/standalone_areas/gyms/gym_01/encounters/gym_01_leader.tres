@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_4j48w"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cj2p1"]
+
+[sub_resource type="Resource" id="Resource_l0age"]
+script = ExtResource("1_4j48w")
+member_id = "gym-01-leader-member-1"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 12
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_61don"]
+script = ExtResource("1_4j48w")
+member_id = "gym-01-leader-member-2"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 14
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[resource]
+script = ExtResource("2_cj2p1")
+encounter_id = "gym-01-leader"
+display_name = "Leader Petra"
+api_name = "Leader Petra"
+members = Array[ExtResource("1_4j48w")]([SubResource("Resource_l0age"), SubResource("Resource_61don")])

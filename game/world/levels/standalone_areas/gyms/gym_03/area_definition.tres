@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_147qm"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/gyms/gym_03/encounters/gym_03_leader.tres" id="2_m4pk5"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_03/gym_03.tscn" id="3_2lpgt"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="4_xy0lp"]
+
+[resource]
+script = ExtResource("4_xy0lp")
+area_id = "gym_03"
+category = 1
+numeric_order = 3
+display_name = "Gym 3 — Dynamo Works"
+description = "An Electric team built to punish slow challengers (Lv. 23–27)."
+biome = "gym"
+destination = ExtResource("3_2lpgt")
+suggested_level_min = 23
+suggested_level_max = 27
+battle_encounters = Array[ExtResource("1_147qm")]([ExtResource("2_m4pk5")])

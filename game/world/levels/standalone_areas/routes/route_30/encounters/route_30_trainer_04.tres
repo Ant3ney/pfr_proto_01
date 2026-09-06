@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_gmobr"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_mp3h8"]
+
+[sub_resource type="Resource" id="Resource_p3dvd"]
+script = ExtResource("1_gmobr")
+member_id = "route-30-trainer-04-member-1"
+pokemon_id = 215
+species = "Sneasel"
+sprite_id = "sneasel"
+level = 47
+moves = Array[String](["leer", "scratch", "taunt", "quickattack"])
+
+[sub_resource type="Resource" id="Resource_ngrq7"]
+script = ExtResource("1_gmobr")
+member_id = "route-30-trainer-04-member-2"
+pokemon_id = 220
+species = "Swinub"
+sprite_id = "swinub"
+level = 48
+moves = Array[String](["mudslap", "tackle", "powdersnow", "flail"])
+
+[sub_resource type="Resource" id="Resource_2q6tl"]
+script = ExtResource("1_gmobr")
+member_id = "route-30-trainer-04-member-3"
+pokemon_id = 228
+species = "Houndour"
+sprite_id = "houndour"
+level = 49
+moves = Array[String](["ember", "leer", "howl", "smog"])
+
+[sub_resource type="Resource" id="Resource_m5ilb"]
+script = ExtResource("1_gmobr")
+member_id = "route-30-trainer-04-member-4"
+pokemon_id = 246
+species = "Larvitar"
+sprite_id = "larvitar"
+level = 50
+moves = Array[String](["leer", "tackle", "rockthrow", "payback"])
+
+[resource]
+script = ExtResource("2_mp3h8")
+encounter_id = "route-30-trainer-04"
+display_name = "Route 30 Trainer 4"
+api_name = "Route 30 Trainer 4"
+members = Array[ExtResource("1_gmobr")]([SubResource("Resource_p3dvd"), SubResource("Resource_ngrq7"), SubResource("Resource_2q6tl"), SubResource("Resource_m5ilb")])

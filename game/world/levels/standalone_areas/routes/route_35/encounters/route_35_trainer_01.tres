@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_vah3m"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_oggri"]
+
+[sub_resource type="Resource" id="Resource_k170t"]
+script = ExtResource("1_vah3m")
+member_id = "route-35-trainer-01-member-1"
+pokemon_id = 128
+species = "Tauros"
+sprite_id = "tauros"
+level = 49
+moves = Array[String](["tackle", "tailwhip", "workup", "payback"])
+
+[sub_resource type="Resource" id="Resource_dbwfx"]
+script = ExtResource("1_vah3m")
+member_id = "route-35-trainer-01-member-2"
+pokemon_id = 190
+species = "Aipom"
+sprite_id = "aipom"
+level = 50
+moves = Array[String](["scratch", "tailwhip", "sandattack", "astonish"])
+
+[sub_resource type="Resource" id="Resource_a35go"]
+script = ExtResource("1_vah3m")
+member_id = "route-35-trainer-01-member-3"
+pokemon_id = 198
+species = "Murkrow"
+sprite_id = "murkrow"
+level = 51
+moves = Array[String](["astonish", "peck", "gust", "haze"])
+
+[sub_resource type="Resource" id="Resource_rjigu"]
+script = ExtResource("1_vah3m")
+member_id = "route-35-trainer-01-member-4"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 52
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[resource]
+script = ExtResource("2_oggri")
+encounter_id = "route-35-trainer-01"
+display_name = "Route 35 Trainer 1"
+api_name = "Route 35 Trainer 1"
+members = Array[ExtResource("1_vah3m")]([SubResource("Resource_k170t"), SubResource("Resource_dbwfx"), SubResource("Resource_a35go"), SubResource("Resource_rjigu")])

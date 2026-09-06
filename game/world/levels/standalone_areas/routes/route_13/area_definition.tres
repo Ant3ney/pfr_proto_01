@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_6b3j6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_trainer_01.tres" id="2_3aaog"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_trainer_02.tres" id="3_n55et"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_trainer_03.tres" id="4_nxj2v"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_trainer_04.tres" id="5_a31f8"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_trainer_05.tres" id="6_vmoog"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_13/route_13.tscn" id="7_wtnpy"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_ktsjn"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_13/encounters/route_13_wild.tres" id="9_l1t6n"]
+
+[resource]
+script = ExtResource("8_ktsjn")
+area_id = "route_13"
+numeric_order = 13
+display_name = "Route 13 — Wispwood Thicket"
+description = "Haunted Thicket dungeon route with 5 mandatory trainer checkpoints, 6 tall-grass fields, and a twisting 116 m path (Lv. 19–26). Reach the end to unlock the next route."
+biome = "haunted thicket"
+destination = ExtResource("7_wtnpy")
+suggested_level_min = 19
+suggested_level_max = 26
+battle_encounters = Array[ExtResource("1_6b3j6")]([ExtResource("2_3aaog"), ExtResource("3_n55et"), ExtResource("4_nxj2v"), ExtResource("5_a31f8"), ExtResource("6_vmoog")])
+wild_encounters = Array[ExtResource("1_6b3j6")]([ExtResource("9_l1t6n")])
+route_completion_prerequisite = "route_12"

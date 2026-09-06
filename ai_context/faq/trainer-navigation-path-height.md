@@ -37,7 +37,7 @@ This correction handles a consistent vertical difference between a flat walkable
 From the repository root, run:
 
 ```sh
-godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
 ```
 
 The regression scene in [`tests/`](../../tests/navigation_path_height_smoke_test.tscn) builds one path at `Y = 0` and another at `Y = 0.5`. Both characters remain at `Y = 0`; the test requires both to reach their targets and verifies path-height offsets of `0` and `0.5` respectively.

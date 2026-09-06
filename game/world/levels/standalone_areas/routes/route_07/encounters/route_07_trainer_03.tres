@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_mu112"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_s1xpo"]
+
+[sub_resource type="Resource" id="Resource_aa3i6"]
+script = ExtResource("1_mu112")
+member_id = "route-07-trainer-03-member-1"
+pokemon_id = 58
+species = "Growlithe"
+sprite_id = "growlithe"
+level = 12
+moves = Array[String](["ember", "leer", "howl", "bite"])
+
+[sub_resource type="Resource" id="Resource_13j74"]
+script = ExtResource("1_mu112")
+member_id = "route-07-trainer-03-member-2"
+pokemon_id = 77
+species = "Ponyta"
+sprite_id = "ponyta"
+level = 13
+moves = Array[String](["growl", "tackle", "tailwhip", "ember"])
+
+[resource]
+script = ExtResource("2_s1xpo")
+encounter_id = "route-07-trainer-03"
+display_name = "Route 7 Trainer 3"
+api_name = "Route 7 Trainer 3"
+members = Array[ExtResource("1_mu112")]([SubResource("Resource_aa3i6"), SubResource("Resource_13j74")])

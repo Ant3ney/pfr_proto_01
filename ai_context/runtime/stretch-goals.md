@@ -172,10 +172,10 @@ UI, NPC, and loot reel through
 
 ```bash
 python3 rnd/stretch/tools/generate_stretch_catalogs.py --check
-godot --headless --path . --scene res://rnd/tests/stretch_goal_system_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/stretchman_hub_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/domain_systems_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/adventure_menu_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
 ```
 
 The regressions enforce 40 catalog entries, 20 biome families, four routes per

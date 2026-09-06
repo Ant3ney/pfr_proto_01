@@ -68,10 +68,10 @@ a newly entered destination gets a fresh local behavior and forces sight again.
 From the repository root, run:
 
 ```sh
-godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_data_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_scene_lifecycle_test.tscn
-godot --headless --path . --scene res://tests/navigation_path_height_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
+godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
 ```
 
 The destination test poisons an instance of every authored trainer template,

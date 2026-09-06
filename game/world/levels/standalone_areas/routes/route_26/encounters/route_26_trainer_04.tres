@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_uybvc"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ayvap"]
+
+[sub_resource type="Resource" id="Resource_rbguj"]
+script = ExtResource("1_uybvc")
+member_id = "route-26-trainer-04-member-1"
+pokemon_id = 239
+species = "Elekid"
+sprite_id = "elekid"
+level = 41
+moves = Array[String](["leer", "quickattack", "thundershock", "charge"])
+
+[sub_resource type="Resource" id="Resource_13wy2"]
+script = ExtResource("1_uybvc")
+member_id = "route-26-trainer-04-member-2"
+pokemon_id = 261
+species = "Poochyena"
+sprite_id = "poochyena"
+level = 42
+moves = Array[String](["tackle", "howl", "sandattack", "bite"])
+
+[sub_resource type="Resource" id="Resource_2pvsm"]
+script = ExtResource("1_uybvc")
+member_id = "route-26-trainer-04-member-3"
+pokemon_id = 307
+species = "Meditite"
+sprite_id = "meditite"
+level = 43
+moves = Array[String](["confusion", "workup", "detect", "endure"])
+
+[sub_resource type="Resource" id="Resource_ig77s"]
+script = ExtResource("1_uybvc")
+member_id = "route-26-trainer-04-member-4"
+pokemon_id = 522
+species = "Blitzle"
+sprite_id = "blitzle"
+level = 44
+moves = Array[String](["quickattack", "tailwhip", "charge", "shockwave"])
+
+[resource]
+script = ExtResource("2_ayvap")
+encounter_id = "route-26-trainer-04"
+display_name = "Route 26 Trainer 4"
+api_name = "Route 26 Trainer 4"
+members = Array[ExtResource("1_uybvc")]([SubResource("Resource_rbguj"), SubResource("Resource_13wy2"), SubResource("Resource_2pvsm"), SubResource("Resource_ig77s")])

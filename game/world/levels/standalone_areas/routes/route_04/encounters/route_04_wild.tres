@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_mp3hb"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_blxu4"]
+
+[sub_resource type="Resource" id="Resource_lvtd3"]
+script = ExtResource("1_mp3hb")
+member_id = "route-04-wild-member-1"
+pokemon_id = 77
+species = "Ponyta"
+sprite_id = "ponyta"
+level = 11
+moves = Array[String](["growl", "tackle", "tailwhip", "ember"])
+
+[resource]
+script = ExtResource("2_blxu4")
+encounter_id = "route-04-wild"
+display_name = "Wild Redrock Canyon Pokemon"
+api_name = "Wild Redrock Canyo"
+members = Array[ExtResource("1_mp3hb")]([SubResource("Resource_lvtd3")])

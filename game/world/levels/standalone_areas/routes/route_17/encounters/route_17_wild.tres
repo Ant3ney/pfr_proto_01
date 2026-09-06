@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_e8q10"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_mixch"]
+
+[sub_resource type="Resource" id="Resource_kvnsx"]
+script = ExtResource("1_e8q10")
+member_id = "route-17-wild-member-1"
+pokemon_id = 464
+species = "Rhyperior"
+sprite_id = "rhyperior"
+level = 29
+moves = Array[String](["bulldoze", "hammerarm", "smackdown", "tackle"])
+
+[resource]
+script = ExtResource("2_mixch")
+encounter_id = "route-17-wild"
+display_name = "Wild Obsidian Badlands Pokemon"
+api_name = "Wild Obsidian Badl"
+members = Array[ExtResource("1_e8q10")]([SubResource("Resource_kvnsx")])

@@ -123,9 +123,9 @@ the bag without a new top-level save section. The selected-resource Web export
 explicitly includes the player-menu scripts and scenes.
 
 ```bash
-godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tscn
-godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/starter_selection_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/cloud_save_sync_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/collection_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
 ```

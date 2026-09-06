@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_7x6d4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/gyms/gym_01/encounters/gym_01_leader.tres" id="2_se2cw"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_01/gym_01.tscn" id="3_x6x76"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="4_ghvjx"]
+
+[resource]
+script = ExtResource("4_ghvjx")
+area_id = "gym_01"
+category = 1
+numeric_order = 1
+display_name = "Gym 1 — Granite Hall"
+description = "A first badge match against a Rock specialist (Lv. 12–14)."
+biome = "gym"
+destination = ExtResource("3_x6x76")
+suggested_level_min = 12
+suggested_level_max = 14
+battle_encounters = Array[ExtResource("1_7x6d4")]([ExtResource("2_se2cw")])

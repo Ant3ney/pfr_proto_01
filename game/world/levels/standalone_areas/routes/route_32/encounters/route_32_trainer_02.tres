@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_glhrw"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ru6dm"]
+
+[sub_resource type="Resource" id="Resource_tqike"]
+script = ExtResource("1_glhrw")
+member_id = "route-32-trainer-02-member-1"
+pokemon_id = 299
+species = "Nosepass"
+sprite_id = "nosepass"
+level = 50
+moves = Array[String](["tackle", "harden", "block", "rockthrow"])
+
+[sub_resource type="Resource" id="Resource_vmtir"]
+script = ExtResource("1_glhrw")
+member_id = "route-32-trainer-02-member-2"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 51
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_xfbwq"]
+script = ExtResource("1_glhrw")
+member_id = "route-32-trainer-02-member-3"
+pokemon_id = 337
+species = "Lunatone"
+sprite_id = "lunatone"
+level = 52
+moves = Array[String](["confusion", "harden", "moonblast", "moonlight"])
+
+[sub_resource type="Resource" id="Resource_1bbud"]
+script = ExtResource("1_glhrw")
+member_id = "route-32-trainer-02-member-4"
+pokemon_id = 338
+species = "Solrock"
+sprite_id = "solrock"
+level = 53
+moves = Array[String](["confusion", "flareblitz", "harden", "morningsun"])
+
+[resource]
+script = ExtResource("2_ru6dm")
+encounter_id = "route-32-trainer-02"
+display_name = "Route 32 Trainer 2"
+api_name = "Route 32 Trainer 2"
+members = Array[ExtResource("1_glhrw")]([SubResource("Resource_tqike"), SubResource("Resource_vmtir"), SubResource("Resource_xfbwq"), SubResource("Resource_1bbud")])

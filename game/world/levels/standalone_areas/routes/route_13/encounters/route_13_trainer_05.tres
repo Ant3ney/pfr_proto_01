@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_sb56n"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cjsom"]
+
+[sub_resource type="Resource" id="Resource_1a77v"]
+script = ExtResource("1_sb56n")
+member_id = "route-13-trainer-05-member-1"
+pokemon_id = 442
+species = "Spiritomb"
+sprite_id = "spiritomb"
+level = 26
+moves = Array[String](["confuseray", "nightshade", "shadowsneak", "spite"])
+
+[sub_resource type="Resource" id="Resource_hnbkt"]
+script = ExtResource("1_sb56n")
+member_id = "route-13-trainer-05-member-2"
+pokemon_id = 92
+species = "Gastly"
+sprite_id = "gastly"
+level = 26
+moves = Array[String](["confuseray", "lick", "hypnosis", "meanlook"])
+
+[sub_resource type="Resource" id="Resource_56xpr"]
+script = ExtResource("1_sb56n")
+member_id = "route-13-trainer-05-member-3"
+pokemon_id = 93
+species = "Haunter"
+sprite_id = "haunter"
+level = 26
+moves = Array[String](["shadowpunch", "confuseray", "hypnosis", "lick"])
+
+[resource]
+script = ExtResource("2_cjsom")
+encounter_id = "route-13-trainer-05"
+display_name = "Route 13 Trainer 5"
+api_name = "Route 13 Trainer 5"
+members = Array[ExtResource("1_sb56n")]([SubResource("Resource_1a77v"), SubResource("Resource_hnbkt"), SubResource("Resource_56xpr")])

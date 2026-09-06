@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_0pahb"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_krotu"]
+
+[sub_resource type="Resource" id="Resource_2tvce"]
+script = ExtResource("1_0pahb")
+member_id = "route-22-trainer-06-member-1"
+pokemon_id = 48
+species = "Venonat"
+sprite_id = "venonat"
+level = 38
+moves = Array[String](["disable", "tackle", "supersonic", "confusion"])
+
+[sub_resource type="Resource" id="Resource_jbo0a"]
+script = ExtResource("1_0pahb")
+member_id = "route-22-trainer-06-member-2"
+pokemon_id = 27
+species = "Sandshrew"
+sprite_id = "sandshrew"
+level = 38
+moves = Array[String](["defensecurl", "scratch", "poisonsting", "sandattack"])
+
+[sub_resource type="Resource" id="Resource_sdr5h"]
+script = ExtResource("1_0pahb")
+member_id = "route-22-trainer-06-member-3"
+pokemon_id = 23
+species = "Ekans"
+sprite_id = "ekans"
+level = 38
+moves = Array[String](["leer", "wrap", "poisonsting", "bite"])
+
+[resource]
+script = ExtResource("2_krotu")
+encounter_id = "route-22-trainer-06"
+display_name = "Route 22 Trainer 6"
+api_name = "Route 22 Trainer 6"
+members = Array[ExtResource("1_0pahb")]([SubResource("Resource_2tvce"), SubResource("Resource_jbo0a"), SubResource("Resource_sdr5h")])

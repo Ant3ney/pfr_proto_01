@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_xvjul"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_01.tres" id="2_xo6j4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_02.tres" id="3_3e3x5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_03.tres" id="4_iy44d"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_04.tres" id="5_png8s"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_05.tres" id="6_ws82p"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_06.tres" id="7_u5t1a"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_07.tres" id="8_rrdni"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_trainer_08.tres" id="9_cscjm"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_33/route_33.tscn" id="10_s2o62"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_uiuv1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_33/encounters/route_33_wild.tres" id="12_gy8ey"]
+
+[resource]
+script = ExtResource("11_uiuv1")
+area_id = "route_33"
+numeric_order = 33
+display_name = "Route 33 — Wispwood Haunt"
+description = "Haunted Thicket dungeon route with 8 mandatory trainer checkpoints, 9 tall-grass fields, and a twisting 176 m path (Lv. 49–56). Reach the end to unlock the next route."
+biome = "haunted thicket"
+destination = ExtResource("10_s2o62")
+suggested_level_min = 49
+suggested_level_max = 56
+battle_encounters = Array[ExtResource("1_xvjul")]([ExtResource("2_xo6j4"), ExtResource("3_3e3x5"), ExtResource("4_iy44d"), ExtResource("5_png8s"), ExtResource("6_ws82p"), ExtResource("7_u5t1a"), ExtResource("8_rrdni"), ExtResource("9_cscjm")])
+wild_encounters = Array[ExtResource("1_xvjul")]([ExtResource("12_gy8ey")])
+route_completion_prerequisite = "route_32"

@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/world/level_bases/interior_level_base.tscn" id="1_mdh6c"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="4_transfer"]
+
+[sub_resource type="StandardMaterial3D" id="Material_mailbox"]
+albedo_color = Color(0.35, 0.39, 0.38, 1)
+metallic = 0.18
+roughness = 0.62
+
+[sub_resource type="BoxMesh" id="Mesh_mailboxes"]
+material = SubResource("Material_mailbox")
+size = Vector3(3.3, 1.75, 0.28)
+
+[sub_resource type="StandardMaterial3D" id="Material_walnut"]
+albedo_color = Color(0.15, 0.075, 0.04, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="Mesh_bench"]
+material = SubResource("Material_walnut")
+size = Vector3(2.7, 0.62, 0.78)
+
+[sub_resource type="StandardMaterial3D" id="Material_green"]
+albedo_color = Color(0.38, 0.48, 0.16, 1)
+roughness = 0.78
+
+[sub_resource type="BoxMesh" id="Mesh_notice"]
+material = SubResource("Material_green")
+size = Vector3(2, 1.1, 0.07)
+
+[sub_resource type="BoxMesh" id="Mesh_stair"]
+material = SubResource("Material_walnut")
+size = Vector3(2.7, 0.22, 0.72)
+
+[sub_resource type="BoxShape3D" id="Shape_mailboxes"]
+size = Vector3(3.3, 1.75, 0.38)
+
+[sub_resource type="BoxShape3D" id="Shape_bench"]
+size = Vector3(2.7, 0.62, 0.78)
+
+[node name="WestTenantLobby" unique_id=1908249636 instance=ExtResource("1_mdh6c")]
+editor_description = "Small western apartment lobby with dark timber seating, compact metal mailboxes, repaired stairs, and a muted green residents' notice board."
+level_id = "west_tenant_lobby"
+area_id = "west_tenant_lobby"
+metadata/mobile_web_level = true
+metadata/interior_id = "west_tenant"
+
+[node name="Lighting" parent="Environment" index="0" unique_id=1690217481 instance=ExtResource("2_lighting")]
+
+[node name="Room" parent="NavigationRegion3D/WorldGeometry/Structures" index="0" unique_id=240856150 instance=ExtResource("1_room")]
+transform = Transform3D(0.7, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 0, 0)
+
+[node name="Mailboxes" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=1502600759]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 1.02, -3.62)
+mesh = SubResource("Mesh_mailboxes")
+
+[node name="Bench" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=538431586]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -2.65, 0.31, -0.35)
+mesh = SubResource("Mesh_bench")
+
+[node name="NoticeBoard" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="2" unique_id=281472515]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05, 1.95, -3.62)
+mesh = SubResource("Mesh_notice")
+
+[node name="StairBottom" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="3" unique_id=21682124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.11, 1.25)
+mesh = SubResource("Mesh_stair")
+
+[node name="StairMiddle" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="4" unique_id=252375124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.33, 0.78)
+mesh = SubResource("Mesh_stair")
+
+[node name="StairTop" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="5" unique_id=248727759]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.55, 0.31)
+mesh = SubResource("Mesh_stair")
+
+[node name="FurnitureCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=442209828]
+
+[node name="Mailboxes" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="0" unique_id=2136644026]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 1.02, -3.55)
+shape = SubResource("Shape_mailboxes")
+
+[node name="Bench" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="1" unique_id=768108556]
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -2.65, 0.31, -0.35)
+shape = SubResource("Shape_bench")
+
+[node name="ExitToCity" parent="Gameplay/Transitions" index="0" unique_id=1187947402 instance=ExtResource("4_transfer")]
+transform = Transform3D(1.05, 0, 0, 0, 1, 0, 0, 0, 0.78, 0, 0, 3.42)
+destination_scene_path = "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+destination_spawn_marker = &"WestTenantReturn"
+
+[node name="EntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=512718273]
+transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 0, 0, 2.35)

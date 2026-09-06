@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_yxrk6"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_oe78a"]
+
+[sub_resource type="Resource" id="Resource_mtl5k"]
+script = ExtResource("1_yxrk6")
+member_id = "route-09-trainer-04-member-1"
+pokemon_id = 147
+species = "Dratini"
+sprite_id = "dratini"
+level = 18
+moves = Array[String](["leer", "wrap", "twister", "thunderwave"])
+
+[sub_resource type="Resource" id="Resource_fr41d"]
+script = ExtResource("1_yxrk6")
+member_id = "route-09-trainer-04-member-2"
+pokemon_id = 172
+species = "Pichu"
+sprite_id = "pichu"
+level = 19
+moves = Array[String](["tailwhip", "thundershock", "playnice", "sweetkiss"])
+
+[resource]
+script = ExtResource("2_oe78a")
+encounter_id = "route-09-trainer-04"
+display_name = "Route 9 Trainer 4"
+api_name = "Route 9 Trainer 4"
+members = Array[ExtResource("1_yxrk6")]([SubResource("Resource_mtl5k"), SubResource("Resource_fr41d")])

@@ -1,9 +1,0 @@
-[gd_scene load_steps=3 format=3]
-
-[ext_resource type="Script" path="res://rnd/tests/battle_return_position_smoke_test.gd" id="1_test"]
-[ext_resource type="PackedScene" path="res://demo/player.tscn" id="2_player"]
-
-[node name="BattleReturnPositionSmokeTest" type="Node3D"]
-script = ExtResource("1_test")
-
-[node name="Player" parent="." instance=ExtResource("2_player")]

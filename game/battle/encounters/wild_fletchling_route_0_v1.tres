@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="2_member"]
+
+[sub_resource type="Resource" id="BattleEncounterMember_fletchling"]
+script = ExtResource("2_member")
+member_id = "route0-wild-fletchling"
+pokemon_id = 661
+species = "Fletchling"
+sprite_id = "fletchling"
+level = 4
+health = 1.0
+moves = Array[String](["growl", "peck", "quickattack", "ember"])
+
+[resource]
+script = ExtResource("1_definition")
+encounter_id = "wild-fletchling-route-0-v1"
+display_name = "Wild Fletchling"
+api_name = "WildFletchling"
+members = Array[ExtResource("2_member")]([SubResource("BattleEncounterMember_fletchling")])
+sprite_override = ""
+forfeit_policy = 0

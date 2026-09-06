@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_55c8e"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_l5yy1"]
+
+[sub_resource type="Resource" id="Resource_nedb5"]
+script = ExtResource("1_55c8e")
+member_id = "elite-four-04-member-1"
+pokemon_id = 212
+species = "Scizor"
+sprite_id = "scizor"
+level = 74
+moves = Array[String](["bulletpunch", "agility", "airslash", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_o1qja"]
+script = ExtResource("1_55c8e")
+member_id = "elite-four-04-member-2"
+pokemon_id = 227
+species = "Skarmory"
+sprite_id = "skarmory"
+level = 75
+moves = Array[String](["leer", "peck", "sandattack", "furyattack"])
+
+[sub_resource type="Resource" id="Resource_0shgk"]
+script = ExtResource("1_55c8e")
+member_id = "elite-four-04-member-3"
+pokemon_id = 448
+species = "Lucario"
+sprite_id = "lucario"
+level = 76
+moves = Array[String](["aurasphere", "copycat", "detect", "feint"])
+
+[sub_resource type="Resource" id="Resource_3t4ap"]
+script = ExtResource("1_55c8e")
+member_id = "elite-four-04-member-4"
+pokemon_id = 376
+species = "Metagross"
+sprite_id = "metagross"
+level = 77
+moves = Array[String](["hammerarm", "bulletpunch", "confusion", "explosion"])
+
+[sub_resource type="Resource" id="Resource_5kpt6"]
+script = ExtResource("1_55c8e")
+member_id = "elite-four-04-member-5"
+pokemon_id = 823
+species = "Corviknight"
+sprite_id = "corviknight"
+level = 78
+moves = Array[String](["steelwing", "honeclaws", "irondefense", "leer"])
+
+[resource]
+script = ExtResource("2_l5yy1")
+encounter_id = "elite-four-04"
+display_name = "Elite Four Aegis"
+api_name = "Elite Aegis"
+members = Array[ExtResource("1_55c8e")]([SubResource("Resource_nedb5"), SubResource("Resource_o1qja"), SubResource("Resource_0shgk"), SubResource("Resource_3t4ap"), SubResource("Resource_5kpt6")])

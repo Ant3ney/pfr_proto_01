@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_554bf"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_1owrs"]
+
+[sub_resource type="Resource" id="Resource_kxaxm"]
+script = ExtResource("1_554bf")
+member_id = "backpacker-wooper"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 5
+moves = Array[String](["tailwhip", "watergun", "raindance", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_if4u0"]
+script = ExtResource("1_554bf")
+member_id = "backpacker-wingull"
+pokemon_id = 278
+species = "Wingull"
+sprite_id = "wingull"
+level = 5
+moves = Array[String](["growl", "watergun", "quickattack", "supersonic"])
+
+[resource]
+script = ExtResource("2_1owrs")
+encounter_id = "trainer-backpacker-city-v1"
+display_name = "Backpacker"
+api_name = "Backpacker"
+members = Array[ExtResource("1_554bf")]([SubResource("Resource_kxaxm"), SubResource("Resource_if4u0")])

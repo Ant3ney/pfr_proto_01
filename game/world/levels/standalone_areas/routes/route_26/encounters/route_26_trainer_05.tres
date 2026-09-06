@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_co5n2"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_xbjys"]
+
+[sub_resource type="Resource" id="Resource_1e751"]
+script = ExtResource("1_co5n2")
+member_id = "route-26-trainer-05-member-1"
+pokemon_id = 307
+species = "Meditite"
+sprite_id = "meditite"
+level = 42
+moves = Array[String](["confusion", "workup", "detect", "endure"])
+
+[sub_resource type="Resource" id="Resource_h02cw"]
+script = ExtResource("1_co5n2")
+member_id = "route-26-trainer-05-member-2"
+pokemon_id = 522
+species = "Blitzle"
+sprite_id = "blitzle"
+level = 43
+moves = Array[String](["quickattack", "tailwhip", "charge", "shockwave"])
+
+[sub_resource type="Resource" id="Resource_j1x8r"]
+script = ExtResource("1_co5n2")
+member_id = "route-26-trainer-05-member-3"
+pokemon_id = 179
+species = "Mareep"
+sprite_id = "mareep"
+level = 44
+moves = Array[String](["growl", "tackle", "thunderwave", "thundershock"])
+
+[sub_resource type="Resource" id="Resource_5l4xp"]
+script = ExtResource("1_co5n2")
+member_id = "route-26-trainer-05-member-4"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 44
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[resource]
+script = ExtResource("2_xbjys")
+encounter_id = "route-26-trainer-05"
+display_name = "Route 26 Trainer 5"
+api_name = "Route 26 Trainer 5"
+members = Array[ExtResource("1_co5n2")]([SubResource("Resource_1e751"), SubResource("Resource_h02cw"), SubResource("Resource_j1x8r"), SubResource("Resource_5l4xp")])

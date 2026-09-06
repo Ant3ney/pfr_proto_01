@@ -1,0 +1,158 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://tests/manual/navigation_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://game/actors/character/pfr_character.tscn" id="2_character"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/zach.tres" id="3_zach"]
+[ext_resource type="PackedScene" path="res://game/actors/player/player.tscn" id="4_player"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_test"]
+vertices = PackedVector3Array(-8, 0, -6, -1.5, 0, -6, 1.5, 0, -6, 8, 0, -6, -8, 0, -4.5, -1.5, 0, -4.5, 1.5, 0, -4.5, 8, 0, -4.5, -8, 0, 4.5, -1.5, 0, 4.5, 1.5, 0, 4.5, 8, 0, 4.5, -8, 0, 6, -1.5, 0, 6, 1.5, 0, 6, 8, 0, 6)
+polygons = [PackedInt32Array(0, 1, 5), PackedInt32Array(0, 5, 4), PackedInt32Array(4, 5, 9), PackedInt32Array(4, 9, 8), PackedInt32Array(8, 9, 13), PackedInt32Array(8, 13, 12), PackedInt32Array(1, 2, 6), PackedInt32Array(1, 6, 5), PackedInt32Array(9, 10, 14), PackedInt32Array(9, 14, 13), PackedInt32Array(2, 3, 7), PackedInt32Array(2, 7, 6), PackedInt32Array(6, 7, 11), PackedInt32Array(6, 11, 10), PackedInt32Array(10, 11, 15), PackedInt32Array(10, 15, 14)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_ground"]
+albedo_color = Color(0.18, 0.42, 0.25, 1)
+roughness = 0.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial_ground")
+size = Vector2(16, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape_ground"]
+size = Vector3(16, 0.2, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_wall"]
+albedo_color = Color(0.24, 0.29, 0.38, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+material = SubResource("StandardMaterial_wall")
+size = Vector3(1.5, 2, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape_wall"]
+size = Vector3(1.5, 2, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape_horizontal_limit"]
+size = Vector3(16.6, 2, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape_vertical_limit"]
+size = Vector3(0.5, 2, 12.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_destination"]
+albedo_color = Color(0.95, 0.28, 0.16, 1)
+emission_enabled = true
+emission = Color(0.35, 0.03, 0.01, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_destination"]
+material = SubResource("StandardMaterial_destination")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.08
+
+[node name="NavigationTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_test")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="GroundBody" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundBody"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("BoxShape_ground")
+
+[node name="CenterWall" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CenterWall"]
+mesh = SubResource("BoxMesh_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CenterWall"]
+shape = SubResource("BoxShape_wall")
+
+[node name="NorthLimit" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, -6.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NorthLimit"]
+shape = SubResource("BoxShape_horizontal_limit")
+
+[node name="SouthLimit" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, 6.25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SouthLimit"]
+shape = SubResource("BoxShape_horizontal_limit")
+
+[node name="WestLimit" type="StaticBody3D" parent="."]
+position = Vector3(-8.25, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WestLimit"]
+shape = SubResource("BoxShape_vertical_limit")
+
+[node name="EastLimit" type="StaticBody3D" parent="."]
+position = Vector3(8.25, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EastLimit"]
+shape = SubResource("BoxShape_vertical_limit")
+
+[node name="Destination" type="MeshInstance3D" parent="."]
+position = Vector3(6, 0.04, 0)
+mesh = SubResource("CylinderMesh_destination")
+
+[node name="NPC" parent="." instance=ExtResource("2_character")]
+position = Vector3(-6, 0, 0)
+character_art_asset_pack = ExtResource("3_zach")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+position = Vector3(-6, 0, -2)
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -25, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 14, 14)
+rotation_degrees = Vector3(-45, 0, 0)
+projection = 1
+size = 18.0
+current = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Title" type="Label" parent="UI"]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 490.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+text = "Player + NPC Navigation Test"
+
+[node name="Status" type="Label" parent="UI"]
+offset_left = 24.0
+offset_top = 58.0
+offset_right = 560.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 18
+text = "Preparing navigation..."
+
+[node name="Controls" type="Label" parent="UI"]
+offset_left = 24.0
+offset_top = 124.0
+offset_right = 580.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 17
+text = "Move: WASD / Arrow Keys / Left Stick"

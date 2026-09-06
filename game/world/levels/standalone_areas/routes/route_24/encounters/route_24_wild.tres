@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ff3cm"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ljhua"]
+
+[sub_resource type="Resource" id="Resource_viikc"]
+script = ExtResource("1_ff3cm")
+member_id = "route-24-wild-member-1"
+pokemon_id = 23
+species = "Ekans"
+sprite_id = "ekans"
+level = 41
+moves = Array[String](["leer", "wrap", "poisonsting", "bite"])
+
+[resource]
+script = ExtResource("2_ljhua")
+encounter_id = "route-24-wild"
+display_name = "Wild Redrock Canyon Pokemon"
+api_name = "Wild Redrock Canyo"
+members = Array[ExtResource("1_ff3cm")]([SubResource("Resource_viikc")])

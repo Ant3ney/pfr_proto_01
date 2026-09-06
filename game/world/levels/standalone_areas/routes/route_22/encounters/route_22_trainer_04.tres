@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_wgqgj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_w68ok"]
+
+[sub_resource type="Resource" id="Resource_b175d"]
+script = ExtResource("1_wgqgj")
+member_id = "route-22-trainer-04-member-1"
+pokemon_id = 41
+species = "Zubat"
+sprite_id = "zubat"
+level = 35
+moves = Array[String](["absorb", "supersonic", "astonish", "meanlook"])
+
+[sub_resource type="Resource" id="Resource_jeipq"]
+script = ExtResource("1_wgqgj")
+member_id = "route-22-trainer-04-member-2"
+pokemon_id = 43
+species = "Oddish"
+sprite_id = "oddish"
+level = 36
+moves = Array[String](["absorb", "growth", "acid", "sweetscent"])
+
+[sub_resource type="Resource" id="Resource_7lp3t"]
+script = ExtResource("1_wgqgj")
+member_id = "route-22-trainer-04-member-3"
+pokemon_id = 69
+species = "Bellsprout"
+sprite_id = "bellsprout"
+level = 37
+moves = Array[String](["vinewhip", "growth", "wrap", "sleeppowder"])
+
+[resource]
+script = ExtResource("2_w68ok")
+encounter_id = "route-22-trainer-04"
+display_name = "Route 22 Trainer 4"
+api_name = "Route 22 Trainer 4"
+members = Array[ExtResource("1_wgqgj")]([SubResource("Resource_b175d"), SubResource("Resource_jeipq"), SubResource("Resource_7lp3t")])

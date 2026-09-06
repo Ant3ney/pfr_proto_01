@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_xf5vo"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_srvpq"]
+
+[sub_resource type="Resource" id="Resource_hwwmm"]
+script = ExtResource("1_xf5vo")
+member_id = "elite-four-02-member-1"
+pokemon_id = 121
+species = "Starmie"
+sprite_id = "starmie"
+level = 66
+moves = Array[String](["brine", "confuseray", "cosmicpower", "harden"])
+
+[sub_resource type="Resource" id="Resource_ayq1n"]
+script = ExtResource("1_xf5vo")
+member_id = "elite-four-02-member-2"
+pokemon_id = 350
+species = "Milotic"
+sprite_id = "milotic"
+level = 67
+moves = Array[String](["waterpulse", "flail", "splash", "tackle"])
+
+[sub_resource type="Resource" id="Resource_tayj5"]
+script = ExtResource("1_xf5vo")
+member_id = "elite-four-02-member-3"
+pokemon_id = 423
+species = "Gastrodon"
+sprite_id = "gastrodon"
+level = 68
+moves = Array[String](["harden", "mudslap", "recover", "watergun"])
+
+[sub_resource type="Resource" id="Resource_jecuf"]
+script = ExtResource("1_xf5vo")
+member_id = "elite-four-02-member-4"
+pokemon_id = 130
+species = "Gyarados"
+sprite_id = "gyarados"
+level = 69
+moves = Array[String](["bite", "flail", "leer", "splash"])
+
+[sub_resource type="Resource" id="Resource_0t7c4"]
+script = ExtResource("1_xf5vo")
+member_id = "elite-four-02-member-5"
+pokemon_id = 658
+species = "Greninja"
+sprite_id = "greninja"
+level = 70
+moves = Array[String](["watershuriken", "growl", "haze", "nightslash"])
+
+[resource]
+script = ExtResource("2_srvpq")
+encounter_id = "elite-four-02"
+display_name = "Elite Four Tides"
+api_name = "Elite Tides"
+members = Array[ExtResource("1_xf5vo")]([SubResource("Resource_hwwmm"), SubResource("Resource_ayq1n"), SubResource("Resource_tayj5"), SubResource("Resource_jecuf"), SubResource("Resource_0t7c4")])

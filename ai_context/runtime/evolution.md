@@ -67,10 +67,10 @@ remains authoritative until that session ends.
 ## Regression checks
 
 ```bash
-godot --headless --path . --scene res://tests/creature_system_smoke_test.tscn
-godot --headless --path . --scene res://tests/collection_system_smoke_test.tscn
-godot --headless --path . --scene res://tests/battle_system_session_test.tscn
-godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/creature_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/collection_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
 ```
 
 This document covers the implemented level-only runtime. Future items,

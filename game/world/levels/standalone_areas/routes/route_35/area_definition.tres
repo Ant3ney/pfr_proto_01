@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_lx888"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_01.tres" id="2_47g2u"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_02.tres" id="3_3gu7e"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_03.tres" id="4_du21r"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_04.tres" id="5_wvdq6"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_05.tres" id="6_3b68x"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_06.tres" id="7_swvgl"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_07.tres" id="8_uafki"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_trainer_08.tres" id="9_4lb4h"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_35/route_35.tscn" id="10_2vw64"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_hrwjs"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_35/encounters/route_35_wild.tres" id="12_mkaph"]
+
+[resource]
+script = ExtResource("11_hrwjs")
+area_id = "route_35"
+numeric_order = 35
+display_name = "Route 35 — Copperleaf Gauntlet"
+description = "Autumn Highlands dungeon route with 8 mandatory trainer checkpoints, 9 tall-grass fields, and a twisting 184 m path (Lv. 49–56). Reach the end to unlock the next route."
+biome = "autumn highlands"
+destination = ExtResource("10_2vw64")
+suggested_level_min = 49
+suggested_level_max = 56
+battle_encounters = Array[ExtResource("1_lx888")]([ExtResource("2_47g2u"), ExtResource("3_3gu7e"), ExtResource("4_du21r"), ExtResource("5_wvdq6"), ExtResource("6_3b68x"), ExtResource("7_swvgl"), ExtResource("8_uafki"), ExtResource("9_4lb4h")])
+wild_encounters = Array[ExtResource("1_lx888")]([ExtResource("12_mkaph")])
+route_completion_prerequisite = "route_34"

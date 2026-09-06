@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_12o27"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_7l3iv"]
+
+[sub_resource type="Resource" id="Resource_el4cj"]
+script = ExtResource("1_12o27")
+member_id = "route-16-trainer-06-member-1"
+pokemon_id = 102
+species = "Exeggcute"
+sprite_id = "exeggcute"
+level = 32
+moves = Array[String](["absorb", "hypnosis", "reflect", "leechseed"])
+
+[sub_resource type="Resource" id="Resource_tuvj3"]
+script = ExtResource("1_12o27")
+member_id = "route-16-trainer-06-member-2"
+pokemon_id = 193
+species = "Yanma"
+sprite_id = "yanma"
+level = 32
+moves = Array[String](["tackle", "quickattack", "doubleteam", "aircutter"])
+
+[sub_resource type="Resource" id="Resource_iic5d"]
+script = ExtResource("1_12o27")
+member_id = "route-16-trainer-06-member-3"
+pokemon_id = 270
+species = "Lotad"
+sprite_id = "lotad"
+level = 32
+moves = Array[String](["astonish", "growl", "absorb", "watergun"])
+
+[resource]
+script = ExtResource("2_7l3iv")
+encounter_id = "route-16-trainer-06"
+display_name = "Route 16 Trainer 6"
+api_name = "Route 16 Trainer 6"
+members = Array[ExtResource("1_12o27")]([SubResource("Resource_el4cj"), SubResource("Resource_tuvj3"), SubResource("Resource_iic5d")])

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ecw26"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_q2jsg"]
+
+[sub_resource type="Resource" id="Resource_06wgc"]
+script = ExtResource("1_ecw26")
+member_id = "route-22-wild-member-1"
+pokemon_id = 52
+species = "Meowth"
+sprite_id = "meowth"
+level = 35
+moves = Array[String](["fakeout", "growl", "feint", "scratch"])
+
+[resource]
+script = ExtResource("2_q2jsg")
+encounter_id = "route-22-wild"
+display_name = "Wild Old Growth Forest Pokemon"
+api_name = "Wild Old Growth Fo"
+members = Array[ExtResource("1_ecw26")]([SubResource("Resource_06wgc")])

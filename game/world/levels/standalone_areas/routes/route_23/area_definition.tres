@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_nnkyc"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_01.tres" id="2_8epnu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_02.tres" id="3_ij5a7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_03.tres" id="4_fltbt"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_04.tres" id="5_irx8d"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_05.tres" id="6_jriri"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_trainer_06.tres" id="7_mh2tp"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_23/route_23.tscn" id="8_kiubb"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="9_1eh48"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_23/encounters/route_23_wild.tres" id="10_ehpcp"]
+
+[resource]
+script = ExtResource("9_1eh48")
+area_id = "route_23"
+numeric_order = 23
+display_name = "Route 23 — Mistral Sink"
+description = "Mist Marsh dungeon route with 6 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 148 m path (Lv. 31–38). Reach the end to unlock the next route."
+biome = "mist marsh"
+destination = ExtResource("8_kiubb")
+suggested_level_min = 31
+suggested_level_max = 38
+battle_encounters = Array[ExtResource("1_nnkyc")]([ExtResource("2_8epnu"), ExtResource("3_ij5a7"), ExtResource("4_fltbt"), ExtResource("5_irx8d"), ExtResource("6_jriri"), ExtResource("7_mh2tp")])
+wild_encounters = Array[ExtResource("1_nnkyc")]([ExtResource("10_ehpcp")])
+route_completion_prerequisite = "route_22"

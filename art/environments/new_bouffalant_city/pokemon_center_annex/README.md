@@ -22,8 +22,8 @@ Source authoring files and regeneration instructions live under [`../../../../so
 
 ```sh
 godot --headless --path . --import
-godot --headless --rendering-method gl_compatibility --path . --scene res://art/environments/new_bouffalant_city/pokemon_center_annex/validation/pokemon_center_annex_smoke_test.tscn
-godot --headless --rendering-method gl_compatibility --path . --scene res://tests/pokemon_center_scene_transfer_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/assets/pokemon_center_annex_smoke_test.tscn
+godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/pokemon_center_scene_transfer_smoke_test.tscn
 ```
 
 The focused annex test protects its geometry, textures, bounds, collision, gameplay nodes, lights, and east-return contract. The transfer test traverses both real exterior openings and confirms that each reaches its assigned interior and returns through its matching safe marker.

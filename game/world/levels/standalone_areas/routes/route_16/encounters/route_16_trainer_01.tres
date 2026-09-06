@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_01wd0"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_y17wi"]
+
+[sub_resource type="Resource" id="Resource_oml07"]
+script = ExtResource("1_01wd0")
+member_id = "route-16-trainer-01-member-1"
+pokemon_id = 60
+species = "Poliwag"
+sprite_id = "poliwag"
+level = 25
+moves = Array[String](["hypnosis", "watergun", "pound", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_lm25h"]
+script = ExtResource("1_01wd0")
+member_id = "route-16-trainer-01-member-2"
+pokemon_id = 98
+species = "Krabby"
+sprite_id = "krabby"
+level = 26
+moves = Array[String](["leer", "watergun", "harden", "metalclaw"])
+
+[sub_resource type="Resource" id="Resource_xw6ht"]
+script = ExtResource("1_01wd0")
+member_id = "route-16-trainer-01-member-3"
+pokemon_id = 102
+species = "Exeggcute"
+sprite_id = "exeggcute"
+level = 27
+moves = Array[String](["absorb", "hypnosis", "reflect", "leechseed"])
+
+[resource]
+script = ExtResource("2_y17wi")
+encounter_id = "route-16-trainer-01"
+display_name = "Route 16 Trainer 1"
+api_name = "Route 16 Trainer 1"
+members = Array[ExtResource("1_01wd0")]([SubResource("Resource_oml07"), SubResource("Resource_lm25h"), SubResource("Resource_xw6ht")])

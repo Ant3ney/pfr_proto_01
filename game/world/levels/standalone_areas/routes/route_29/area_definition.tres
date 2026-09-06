@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_j8t2m"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_01.tres" id="2_edxn5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_02.tres" id="3_7ip6l"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_03.tres" id="4_fqm4q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_04.tres" id="5_vj4i7"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_05.tres" id="6_04gty"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_06.tres" id="7_un60f"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_trainer_07.tres" id="8_1sgcr"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_29/route_29.tscn" id="9_xgqoe"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_tof5q"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_29/encounters/route_29_wild.tres" id="11_q3d02"]
+
+[resource]
+script = ExtResource("10_tof5q")
+area_id = "route_29"
+numeric_order = 29
+display_name = "Route 29 — Moonlit Hollow"
+description = "Moonlit Fen dungeon route with 7 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 164 m path (Lv. 43–50). Reach the end to unlock the next route."
+biome = "moonlit fen"
+destination = ExtResource("9_xgqoe")
+suggested_level_min = 43
+suggested_level_max = 50
+battle_encounters = Array[ExtResource("1_j8t2m")]([ExtResource("2_edxn5"), ExtResource("3_7ip6l"), ExtResource("4_fqm4q"), ExtResource("5_vj4i7"), ExtResource("6_04gty"), ExtResource("7_un60f"), ExtResource("8_1sgcr")])
+wild_encounters = Array[ExtResource("1_j8t2m")]([ExtResource("11_q3d02")])
+route_completion_prerequisite = "route_28"

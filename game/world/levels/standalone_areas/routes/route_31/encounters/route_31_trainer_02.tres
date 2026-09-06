@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_4avi5"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_gnefp"]
+
+[sub_resource type="Resource" id="Resource_mn1lx"]
+script = ExtResource("1_4avi5")
+member_id = "route-31-trainer-02-member-1"
+pokemon_id = 357
+species = "Tropius"
+sprite_id = "tropius"
+level = 44
+moves = Array[String](["growth", "gust", "leafstorm", "leer"])
+
+[sub_resource type="Resource" id="Resource_s6c81"]
+script = ExtResource("1_4avi5")
+member_id = "route-31-trainer-02-member-2"
+pokemon_id = 83
+species = "Farfetch’d"
+sprite_id = "farfetchd"
+level = 45
+moves = Array[String](["peck", "sandattack", "leer", "furycutter"])
+
+[sub_resource type="Resource" id="Resource_8652x"]
+script = ExtResource("1_4avi5")
+member_id = "route-31-trainer-02-member-3"
+pokemon_id = 123
+species = "Scyther"
+sprite_id = "scyther"
+level = 46
+moves = Array[String](["leer", "quickattack", "furycutter", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_ihwxh"]
+script = ExtResource("1_4avi5")
+member_id = "route-31-trainer-02-member-4"
+pokemon_id = 127
+species = "Pinsir"
+sprite_id = "pinsir"
+level = 47
+moves = Array[String](["harden", "visegrip", "focusenergy", "bind"])
+
+[resource]
+script = ExtResource("2_gnefp")
+encounter_id = "route-31-trainer-02"
+display_name = "Route 31 Trainer 2"
+api_name = "Route 31 Trainer 2"
+members = Array[ExtResource("1_4avi5")]([SubResource("Resource_mn1lx"), SubResource("Resource_s6c81"), SubResource("Resource_8652x"), SubResource("Resource_ihwxh")])

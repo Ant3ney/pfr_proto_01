@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_bby7l"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_h6qy0"]
+
+[sub_resource type="Resource" id="Resource_agd1f"]
+script = ExtResource("1_bby7l")
+member_id = "route-31-trainer-03-member-1"
+pokemon_id = 123
+species = "Scyther"
+sprite_id = "scyther"
+level = 45
+moves = Array[String](["leer", "quickattack", "furycutter", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_pydhy"]
+script = ExtResource("1_bby7l")
+member_id = "route-31-trainer-03-member-2"
+pokemon_id = 127
+species = "Pinsir"
+sprite_id = "pinsir"
+level = 46
+moves = Array[String](["harden", "visegrip", "focusenergy", "bind"])
+
+[sub_resource type="Resource" id="Resource_baq0r"]
+script = ExtResource("1_bby7l")
+member_id = "route-31-trainer-03-member-3"
+pokemon_id = 163
+species = "Hoothoot"
+sprite_id = "hoothoot"
+level = 47
+moves = Array[String](["tackle", "growl", "peck", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_0db6s"]
+script = ExtResource("1_bby7l")
+member_id = "route-31-trainer-03-member-4"
+pokemon_id = 273
+species = "Seedot"
+sprite_id = "seedot"
+level = 48
+moves = Array[String](["harden", "tackle", "absorb", "astonish"])
+
+[resource]
+script = ExtResource("2_h6qy0")
+encounter_id = "route-31-trainer-03"
+display_name = "Route 31 Trainer 3"
+api_name = "Route 31 Trainer 3"
+members = Array[ExtResource("1_bby7l")]([SubResource("Resource_agd1f"), SubResource("Resource_pydhy"), SubResource("Resource_baq0r"), SubResource("Resource_0db6s")])

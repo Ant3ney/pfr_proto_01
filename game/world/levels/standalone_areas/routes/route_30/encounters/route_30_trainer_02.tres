@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_8ixnp"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_v2f6b"]
+
+[sub_resource type="Resource" id="Resource_6yp5c"]
+script = ExtResource("1_8ixnp")
+member_id = "route-30-trainer-02-member-1"
+pokemon_id = 280
+species = "Ralts"
+sprite_id = "ralts"
+level = 44
+moves = Array[String](["disarmingvoice", "growl", "doubleteam", "confusion"])
+
+[sub_resource type="Resource" id="Resource_bwg6k"]
+script = ExtResource("1_8ixnp")
+member_id = "route-30-trainer-02-member-2"
+pokemon_id = 304
+species = "Aron"
+sprite_id = "aron"
+level = 45
+moves = Array[String](["harden", "tackle", "metalclaw", "rocktomb"])
+
+[sub_resource type="Resource" id="Resource_vnui3"]
+script = ExtResource("1_8ixnp")
+member_id = "route-30-trainer-02-member-3"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 46
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_7eepw"]
+script = ExtResource("1_8ixnp")
+member_id = "route-30-trainer-02-member-4"
+pokemon_id = 308
+species = "Medicham"
+sprite_id = "medicham"
+level = 47
+moves = Array[String](["confusion", "detect", "firepunch", "icepunch"])
+
+[resource]
+script = ExtResource("2_v2f6b")
+encounter_id = "route-30-trainer-02"
+display_name = "Route 30 Trainer 2"
+api_name = "Route 30 Trainer 2"
+members = Array[ExtResource("1_8ixnp")]([SubResource("Resource_6yp5c"), SubResource("Resource_bwg6k"), SubResource("Resource_vnui3"), SubResource("Resource_7eepw")])

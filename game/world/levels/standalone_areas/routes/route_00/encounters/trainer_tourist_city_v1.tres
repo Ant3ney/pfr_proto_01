@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_gh625"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ry02s"]
+
+[sub_resource type="Resource" id="Resource_kstt4"]
+script = ExtResource("1_gh625")
+member_id = "tourist-butterfree"
+pokemon_id = 12
+species = "Butterfree"
+sprite_id = "butterfree"
+level = 5
+moves = Array[String](["gust", "bugbite", "harden", "stringshot"])
+
+[sub_resource type="Resource" id="Resource_ak7a4"]
+script = ExtResource("1_gh625")
+member_id = "tourist-venomoth"
+pokemon_id = 49
+species = "Venomoth"
+sprite_id = "venomoth"
+level = 5
+moves = Array[String](["airslash", "disable", "quiverdance", "supersonic"])
+
+[resource]
+script = ExtResource("2_ry02s")
+encounter_id = "trainer-tourist-city-v1"
+display_name = "Tourist"
+api_name = "Tourist"
+members = Array[ExtResource("1_gh625")]([SubResource("Resource_kstt4"), SubResource("Resource_ak7a4")])

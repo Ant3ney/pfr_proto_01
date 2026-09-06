@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_hc4cy"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_rtt74"]
+
+[sub_resource type="Resource" id="Resource_46ktc"]
+script = ExtResource("1_hc4cy")
+member_id = "route-08-trainer-04-member-1"
+pokemon_id = 126
+species = "Magmar"
+sprite_id = "magmar"
+level = 18
+moves = Array[String](["ember", "leer", "smog", "smokescreen"])
+
+[sub_resource type="Resource" id="Resource_lc5lx"]
+script = ExtResource("1_hc4cy")
+member_id = "route-08-trainer-04-member-2"
+pokemon_id = 135
+species = "Jolteon"
+sprite_id = "jolteon"
+level = 19
+moves = Array[String](["thundershock", "batonpass", "bite", "charm"])
+
+[resource]
+script = ExtResource("2_rtt74")
+encounter_id = "route-08-trainer-04"
+display_name = "Route 8 Trainer 4"
+api_name = "Route 8 Trainer 4"
+members = Array[ExtResource("1_hc4cy")]([SubResource("Resource_46ktc"), SubResource("Resource_lc5lx")])

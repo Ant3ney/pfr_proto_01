@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_s2nki"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_3203i"]
+
+[sub_resource type="Resource" id="Resource_5001s"]
+script = ExtResource("1_s2nki")
+member_id = "route-34-trainer-06-member-1"
+pokemon_id = 27
+species = "Sandshrew"
+sprite_id = "sandshrew"
+level = 54
+moves = Array[String](["defensecurl", "scratch", "poisonsting", "sandattack"])
+
+[sub_resource type="Resource" id="Resource_dbohk"]
+script = ExtResource("1_s2nki")
+member_id = "route-34-trainer-06-member-2"
+pokemon_id = 50
+species = "Diglett"
+sprite_id = "diglett"
+level = 55
+moves = Array[String](["sandattack", "scratch", "growl", "astonish"])
+
+[sub_resource type="Resource" id="Resource_27l11"]
+script = ExtResource("1_s2nki")
+member_id = "route-34-trainer-06-member-3"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 56
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_cmgvi"]
+script = ExtResource("1_s2nki")
+member_id = "route-34-trainer-06-member-4"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 56
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[resource]
+script = ExtResource("2_3203i")
+encounter_id = "route-34-trainer-06"
+display_name = "Route 34 Trainer 6"
+api_name = "Route 34 Trainer 6"
+members = Array[ExtResource("1_s2nki")]([SubResource("Resource_5001s"), SubResource("Resource_dbohk"), SubResource("Resource_27l11"), SubResource("Resource_cmgvi")])

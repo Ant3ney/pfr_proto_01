@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_ws3ru"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_xkir1"]
+
+[sub_resource type="Resource" id="Resource_r2v8m"]
+script = ExtResource("1_ws3ru")
+member_id = "route-10-trainer-02-member-1"
+pokemon_id = 215
+species = "Sneasel"
+sprite_id = "sneasel"
+level = 15
+moves = Array[String](["leer", "scratch", "taunt", "quickattack"])
+
+[sub_resource type="Resource" id="Resource_r36rf"]
+script = ExtResource("1_ws3ru")
+member_id = "route-10-trainer-02-member-2"
+pokemon_id = 220
+species = "Swinub"
+sprite_id = "swinub"
+level = 16
+moves = Array[String](["mudslap", "tackle", "powdersnow", "flail"])
+
+[resource]
+script = ExtResource("2_xkir1")
+encounter_id = "route-10-trainer-02"
+display_name = "Route 10 Trainer 2"
+api_name = "Route 10 Trainer 2"
+members = Array[ExtResource("1_ws3ru")]([SubResource("Resource_r2v8m"), SubResource("Resource_r36rf")])

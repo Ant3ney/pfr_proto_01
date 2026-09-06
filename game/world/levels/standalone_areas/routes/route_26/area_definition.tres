@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_sfspx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_01.tres" id="2_pw7k5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_02.tres" id="3_vhqg2"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_03.tres" id="4_7lcjm"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_04.tres" id="5_k3twu"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_05.tres" id="6_gl124"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_06.tres" id="7_ydn35"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_trainer_07.tres" id="8_dsjcu"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_26/route_26.tscn" id="9_c8a04"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_o7jyx"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_26/encounters/route_26_wild.tres" id="11_rhl1p"]
+
+[resource]
+script = ExtResource("10_o7jyx")
+area_id = "route_26"
+numeric_order = 26
+display_name = "Route 26 — Amber Stampede"
+description = "Dry Savanna dungeon route with 7 mandatory trainer checkpoints, 7 tall-grass fields, and a twisting 156 m path (Lv. 37–44). Reach the end to unlock the next route."
+biome = "dry savanna"
+destination = ExtResource("9_c8a04")
+suggested_level_min = 37
+suggested_level_max = 44
+battle_encounters = Array[ExtResource("1_sfspx")]([ExtResource("2_pw7k5"), ExtResource("3_vhqg2"), ExtResource("4_7lcjm"), ExtResource("5_k3twu"), ExtResource("6_gl124"), ExtResource("7_ydn35"), ExtResource("8_dsjcu")])
+wild_encounters = Array[ExtResource("1_sfspx")]([ExtResource("11_rhl1p")])
+route_completion_prerequisite = "route_25"

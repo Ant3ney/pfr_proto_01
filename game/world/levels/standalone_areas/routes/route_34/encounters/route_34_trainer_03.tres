@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_8u5nd"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_1mb6k"]
+
+[sub_resource type="Resource" id="Resource_luw1n"]
+script = ExtResource("1_8u5nd")
+member_id = "route-34-trainer-03-member-1"
+pokemon_id = 74
+species = "Geodude"
+sprite_id = "geodude"
+level = 51
+moves = Array[String](["defensecurl", "tackle", "rockpolish", "rollout"])
+
+[sub_resource type="Resource" id="Resource_4q612"]
+script = ExtResource("1_8u5nd")
+member_id = "route-34-trainer-03-member-2"
+pokemon_id = 95
+species = "Onix"
+sprite_id = "onix"
+level = 52
+moves = Array[String](["bind", "harden", "rockthrow", "tackle"])
+
+[sub_resource type="Resource" id="Resource_1jnsh"]
+script = ExtResource("1_8u5nd")
+member_id = "route-34-trainer-03-member-3"
+pokemon_id = 111
+species = "Rhyhorn"
+sprite_id = "rhyhorn"
+level = 53
+moves = Array[String](["tackle", "tailwhip", "smackdown", "bulldoze"])
+
+[sub_resource type="Resource" id="Resource_c1hcw"]
+script = ExtResource("1_8u5nd")
+member_id = "route-34-trainer-03-member-4"
+pokemon_id = 328
+species = "Trapinch"
+sprite_id = "trapinch"
+level = 54
+moves = Array[String](["astonish", "sandattack", "bite", "mudslap"])
+
+[resource]
+script = ExtResource("2_1mb6k")
+encounter_id = "route-34-trainer-03"
+display_name = "Route 34 Trainer 3"
+api_name = "Route 34 Trainer 3"
+members = Array[ExtResource("1_8u5nd")]([SubResource("Resource_luw1n"), SubResource("Resource_4q612"), SubResource("Resource_1jnsh"), SubResource("Resource_c1hcw")])

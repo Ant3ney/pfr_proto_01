@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_qpvx8"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_0lxbi"]
+
+[sub_resource type="Resource" id="Resource_jm5p6"]
+script = ExtResource("1_qpvx8")
+member_id = "elite-four-01-member-1"
+pokemon_id = 450
+species = "Hippowdon"
+sprite_id = "hippowdon"
+level = 62
+moves = Array[String](["bite", "firefang", "icefang", "sandattack"])
+
+[sub_resource type="Resource" id="Resource_tlg4o"]
+script = ExtResource("1_qpvx8")
+member_id = "elite-four-01-member-2"
+pokemon_id = 473
+species = "Mamoswine"
+sprite_id = "mamoswine"
+level = 64
+moves = Array[String](["doublehit", "ancientpower", "flail", "icefang"])
+
+[sub_resource type="Resource" id="Resource_etmpo"]
+script = ExtResource("1_qpvx8")
+member_id = "elite-four-01-member-3"
+pokemon_id = 472
+species = "Gliscor"
+sprite_id = "gliscor"
+level = 65
+moves = Array[String](["firefang", "harden", "icefang", "poisonjab"])
+
+[sub_resource type="Resource" id="Resource_7etct"]
+script = ExtResource("1_qpvx8")
+member_id = "elite-four-01-member-4"
+pokemon_id = 445
+species = "Garchomp"
+sprite_id = "garchomp"
+level = 66
+moves = Array[String](["crunch", "dragonbreath", "sandattack", "sandtomb"])
+
+[resource]
+script = ExtResource("2_0lxbi")
+encounter_id = "elite-four-01"
+display_name = "Elite Four Terra"
+api_name = "Elite Terra"
+members = Array[ExtResource("1_qpvx8")]([SubResource("Resource_jm5p6"), SubResource("Resource_tlg4o"), SubResource("Resource_etmpo"), SubResource("Resource_7etct")])

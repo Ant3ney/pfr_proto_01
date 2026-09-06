@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_3m368"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_71j0x"]
+
+[sub_resource type="Resource" id="Resource_7cqoi"]
+script = ExtResource("1_3m368")
+member_id = "elite-four-03-member-1"
+pokemon_id = 94
+species = "Gengar"
+sprite_id = "gengar"
+level = 70
+moves = Array[String](["confuseray", "hypnosis", "lick", "meanlook"])
+
+[sub_resource type="Resource" id="Resource_g08m7"]
+script = ExtResource("1_3m368")
+member_id = "elite-four-03-member-2"
+pokemon_id = 609
+species = "Chandelure"
+sprite_id = "chandelure"
+level = 71
+moves = Array[String](["astonish", "confuseray", "curse", "ember"])
+
+[sub_resource type="Resource" id="Resource_n1ta3"]
+script = ExtResource("1_3m368")
+member_id = "elite-four-03-member-3"
+pokemon_id = 442
+species = "Spiritomb"
+sprite_id = "spiritomb"
+level = 72
+moves = Array[String](["confuseray", "nightshade", "shadowsneak", "spite"])
+
+[sub_resource type="Resource" id="Resource_5ou88"]
+script = ExtResource("1_3m368")
+member_id = "elite-four-03-member-4"
+pokemon_id = 778
+species = "Mimikyu"
+sprite_id = "mimikyu"
+level = 73
+moves = Array[String](["astonish", "copycat", "scratch", "splash"])
+
+[sub_resource type="Resource" id="Resource_4pv5f"]
+script = ExtResource("1_3m368")
+member_id = "elite-four-03-member-5"
+pokemon_id = 197
+species = "Umbreon"
+sprite_id = "umbreon"
+level = 74
+moves = Array[String](["snarl", "batonpass", "bite", "charm"])
+
+[resource]
+script = ExtResource("2_71j0x")
+encounter_id = "elite-four-03"
+display_name = "Elite Four Shade"
+api_name = "Elite Shade"
+members = Array[ExtResource("1_3m368")]([SubResource("Resource_7cqoi"), SubResource("Resource_g08m7"), SubResource("Resource_n1ta3"), SubResource("Resource_5ou88"), SubResource("Resource_4pv5f")])

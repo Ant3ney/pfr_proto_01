@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_82hj8"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ovtiy"]
+
+[sub_resource type="Resource" id="Resource_u2byf"]
+script = ExtResource("1_82hj8")
+member_id = "route-11-trainer-01-member-1"
+pokemon_id = 123
+species = "Scyther"
+sprite_id = "scyther"
+level = 13
+moves = Array[String](["leer", "quickattack", "furycutter", "falseswipe"])
+
+[sub_resource type="Resource" id="Resource_7ik80"]
+script = ExtResource("1_82hj8")
+member_id = "route-11-trainer-01-member-2"
+pokemon_id = 127
+species = "Pinsir"
+sprite_id = "pinsir"
+level = 14
+moves = Array[String](["harden", "visegrip", "focusenergy", "bind"])
+
+[resource]
+script = ExtResource("2_ovtiy")
+encounter_id = "route-11-trainer-01"
+display_name = "Route 11 Trainer 1"
+api_name = "Route 11 Trainer 1"
+members = Array[ExtResource("1_82hj8")]([SubResource("Resource_u2byf"), SubResource("Resource_7ik80")])

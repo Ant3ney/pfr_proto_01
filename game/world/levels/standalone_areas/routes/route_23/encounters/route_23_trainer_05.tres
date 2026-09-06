@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_hfvn0"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_saj8v"]
+
+[sub_resource type="Resource" id="Resource_kvrop"]
+script = ExtResource("1_hfvn0")
+member_id = "route-23-trainer-05-member-1"
+pokemon_id = 129
+species = "Magikarp"
+sprite_id = "magikarp"
+level = 37
+moves = Array[String](["splash", "tackle", "flail"])
+
+[sub_resource type="Resource" id="Resource_1c0ux"]
+script = ExtResource("1_hfvn0")
+member_id = "route-23-trainer-05-member-2"
+pokemon_id = 90
+species = "Shellder"
+sprite_id = "shellder"
+level = 38
+moves = Array[String](["tackle", "watergun", "withdraw", "iceshard"])
+
+[sub_resource type="Resource" id="Resource_nobvd"]
+script = ExtResource("1_hfvn0")
+member_id = "route-23-trainer-05-member-3"
+pokemon_id = 116
+species = "Horsea"
+sprite_id = "horsea"
+level = 38
+moves = Array[String](["leer", "watergun", "smokescreen", "twister"])
+
+[resource]
+script = ExtResource("2_saj8v")
+encounter_id = "route-23-trainer-05"
+display_name = "Route 23 Trainer 5"
+api_name = "Route 23 Trainer 5"
+members = Array[ExtResource("1_hfvn0")]([SubResource("Resource_kvrop"), SubResource("Resource_1c0ux"), SubResource("Resource_nobvd")])

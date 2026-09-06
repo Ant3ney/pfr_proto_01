@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_y6qsk"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_eccc3"]
+
+[sub_resource type="Resource" id="Resource_3lqqh"]
+script = ExtResource("1_y6qsk")
+member_id = "route-38-trainer-07-member-1"
+pokemon_id = 459
+species = "Snover"
+sprite_id = "snover"
+level = 59
+moves = Array[String](["leer", "powdersnow", "leafage", "mist"])
+
+[sub_resource type="Resource" id="Resource_evjrh"]
+script = ExtResource("1_y6qsk")
+member_id = "route-38-trainer-07-member-2"
+pokemon_id = 613
+species = "Cubchoo"
+sprite_id = "cubchoo"
+level = 60
+moves = Array[String](["growl", "powdersnow", "endure", "furyswipes"])
+
+[sub_resource type="Resource" id="Resource_g4b2k"]
+script = ExtResource("1_y6qsk")
+member_id = "route-38-trainer-07-member-3"
+pokemon_id = 124
+species = "Jynx"
+sprite_id = "jynx"
+level = 60
+moves = Array[String](["copycat", "lick", "pound", "powdersnow"])
+
+[sub_resource type="Resource" id="Resource_tt4yt"]
+script = ExtResource("1_y6qsk")
+member_id = "route-38-trainer-07-member-4"
+pokemon_id = 215
+species = "Sneasel"
+sprite_id = "sneasel"
+level = 60
+moves = Array[String](["leer", "scratch", "taunt", "quickattack"])
+
+[resource]
+script = ExtResource("2_eccc3")
+encounter_id = "route-38-trainer-07"
+display_name = "Route 38 Trainer 7"
+api_name = "Route 38 Trainer 7"
+members = Array[ExtResource("1_y6qsk")]([SubResource("Resource_3lqqh"), SubResource("Resource_evjrh"), SubResource("Resource_g4b2k"), SubResource("Resource_tt4yt")])

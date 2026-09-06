@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_7xghm"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_werqa"]
+
+[sub_resource type="Resource" id="Resource_rq8bd"]
+script = ExtResource("1_7xghm")
+member_id = "route-28-trainer-03-member-1"
+pokemon_id = 81
+species = "Magnemite"
+sprite_id = "magnemite"
+level = 45
+moves = Array[String](["tackle", "thundershock", "supersonic", "thunderwave"])
+
+[sub_resource type="Resource" id="Resource_wa8h0"]
+script = ExtResource("1_7xghm")
+member_id = "route-28-trainer-03-member-2"
+pokemon_id = 92
+species = "Gastly"
+sprite_id = "gastly"
+level = 46
+moves = Array[String](["confuseray", "lick", "hypnosis", "meanlook"])
+
+[sub_resource type="Resource" id="Resource_s6c7n"]
+script = ExtResource("1_7xghm")
+member_id = "route-28-trainer-03-member-3"
+pokemon_id = 100
+species = "Voltorb"
+sprite_id = "voltorb"
+level = 47
+moves = Array[String](["charge", "tackle", "thundershock", "eerieimpulse"])
+
+[sub_resource type="Resource" id="Resource_yei4n"]
+script = ExtResource("1_7xghm")
+member_id = "route-28-trainer-03-member-4"
+pokemon_id = 109
+species = "Koffing"
+sprite_id = "koffing"
+level = 48
+moves = Array[String](["poisongas", "tackle", "smog", "smokescreen"])
+
+[resource]
+script = ExtResource("2_werqa")
+encounter_id = "route-28-trainer-03"
+display_name = "Route 28 Trainer 3"
+api_name = "Route 28 Trainer 3"
+members = Array[ExtResource("1_7xghm")]([SubResource("Resource_rq8bd"), SubResource("Resource_wa8h0"), SubResource("Resource_s6c7n"), SubResource("Resource_yei4n")])

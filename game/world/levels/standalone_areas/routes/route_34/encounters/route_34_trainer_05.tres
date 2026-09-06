@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_asvke"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_k7665"]
+
+[sub_resource type="Resource" id="Resource_i2edg"]
+script = ExtResource("1_asvke")
+member_id = "route-34-trainer-05-member-1"
+pokemon_id = 331
+species = "Cacnea"
+sprite_id = "cacnea"
+level = 53
+moves = Array[String](["leer", "poisonsting", "absorb", "growth"])
+
+[sub_resource type="Resource" id="Resource_3ie85"]
+script = ExtResource("1_asvke")
+member_id = "route-34-trainer-05-member-2"
+pokemon_id = 449
+species = "Hippopotas"
+sprite_id = "hippopotas"
+level = 54
+moves = Array[String](["sandattack", "tackle", "bite", "yawn"])
+
+[sub_resource type="Resource" id="Resource_qjhci"]
+script = ExtResource("1_asvke")
+member_id = "route-34-trainer-05-member-3"
+pokemon_id = 27
+species = "Sandshrew"
+sprite_id = "sandshrew"
+level = 55
+moves = Array[String](["defensecurl", "scratch", "poisonsting", "sandattack"])
+
+[sub_resource type="Resource" id="Resource_ukqfu"]
+script = ExtResource("1_asvke")
+member_id = "route-34-trainer-05-member-4"
+pokemon_id = 50
+species = "Diglett"
+sprite_id = "diglett"
+level = 56
+moves = Array[String](["sandattack", "scratch", "growl", "astonish"])
+
+[resource]
+script = ExtResource("2_k7665")
+encounter_id = "route-34-trainer-05"
+display_name = "Route 34 Trainer 5"
+api_name = "Route 34 Trainer 5"
+members = Array[ExtResource("1_asvke")]([SubResource("Resource_i2edg"), SubResource("Resource_3ie85"), SubResource("Resource_qjhci"), SubResource("Resource_ukqfu")])

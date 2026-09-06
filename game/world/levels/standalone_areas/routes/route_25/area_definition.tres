@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_8tjf1"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_01.tres" id="2_wtk6p"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_02.tres" id="3_2aiys"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_03.tres" id="4_rbo2w"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_04.tres" id="5_t85mm"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_05.tres" id="6_julwb"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_06.tres" id="7_i3rqa"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_trainer_07.tres" id="8_oopse"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_25/route_25.tscn" id="9_n8dfc"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="10_aaogp"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_25/encounters/route_25_wild.tres" id="11_3aw3g"]
+
+[resource]
+script = ExtResource("10_aaogp")
+area_id = "route_25"
+numeric_order = 25
+display_name = "Route 25 — Azure Undertow"
+description = "Coastal Bluff dungeon route with 7 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 152 m path (Lv. 37–44). Reach the end to unlock the next route."
+biome = "coastal bluff"
+destination = ExtResource("9_n8dfc")
+suggested_level_min = 37
+suggested_level_max = 44
+battle_encounters = Array[ExtResource("1_8tjf1")]([ExtResource("2_wtk6p"), ExtResource("3_2aiys"), ExtResource("4_rbo2w"), ExtResource("5_t85mm"), ExtResource("6_julwb"), ExtResource("7_i3rqa"), ExtResource("8_oopse")])
+wild_encounters = Array[ExtResource("1_8tjf1")]([ExtResource("11_3aw3g")])
+route_completion_prerequisite = "route_24"

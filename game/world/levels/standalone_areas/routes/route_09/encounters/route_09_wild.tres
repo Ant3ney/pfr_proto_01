@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_0gr4u"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_nknh6"]
+
+[sub_resource type="Resource" id="Resource_j8b5y"]
+script = ExtResource("1_0gr4u")
+member_id = "route-09-wild-member-1"
+pokemon_id = 207
+species = "Gligar"
+sprite_id = "gligar"
+level = 17
+moves = Array[String](["poisonsting", "sandattack", "harden", "knockoff"])
+
+[resource]
+script = ExtResource("2_nknh6")
+encounter_id = "route-09-wild"
+display_name = "Wild Moonlit Fen Pokemon"
+api_name = "Wild Moonlit Fen P"
+members = Array[ExtResource("1_0gr4u")]([SubResource("Resource_j8b5y")])

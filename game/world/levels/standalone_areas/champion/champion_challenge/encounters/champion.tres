@@ -1,0 +1,65 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_75pe3"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_7o5rb"]
+
+[sub_resource type="Resource" id="Resource_nri15"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-1"
+pokemon_id = 6
+species = "Charizard"
+sprite_id = "charizard"
+level = 80
+moves = Array[String](["airslash", "dragonclaw", "ember", "growl"])
+
+[sub_resource type="Resource" id="Resource_f8h23"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-2"
+pokemon_id = 282
+species = "Gardevoir"
+sprite_id = "gardevoir"
+level = 81
+moves = Array[String](["dazzlinggleam", "charm", "confusion", "disarmingvoice"])
+
+[sub_resource type="Resource" id="Resource_doxnm"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-3"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 82
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[sub_resource type="Resource" id="Resource_jokq8"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-4"
+pokemon_id = 448
+species = "Lucario"
+sprite_id = "lucario"
+level = 83
+moves = Array[String](["aurasphere", "copycat", "detect", "feint"])
+
+[sub_resource type="Resource" id="Resource_tnfmj"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-5"
+pokemon_id = 887
+species = "Dragapult"
+sprite_id = "dragapult"
+level = 84
+moves = Array[String](["dragondarts", "astonish", "bite", "dragonbreath"])
+
+[sub_resource type="Resource" id="Resource_dvfa8"]
+script = ExtResource("1_75pe3")
+member_id = "champion-member-6"
+pokemon_id = 150
+species = "Mewtwo"
+sprite_id = "mewtwo"
+level = 85
+moves = Array[String](["confusion", "disable", "lifedew", "swift"])
+
+[resource]
+script = ExtResource("2_7o5rb")
+encounter_id = "champion"
+display_name = "Champion Aurelia"
+api_name = "Champion Aurelia"
+members = Array[ExtResource("1_75pe3")]([SubResource("Resource_nri15"), SubResource("Resource_f8h23"), SubResource("Resource_doxnm"), SubResource("Resource_jokq8"), SubResource("Resource_tnfmj"), SubResource("Resource_dvfa8")])

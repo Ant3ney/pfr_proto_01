@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_4i3pa"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_11x5e"]
+
+[sub_resource type="Resource" id="Resource_o3nbi"]
+script = ExtResource("1_4i3pa")
+member_id = "route-23-wild-member-1"
+pokemon_id = 118
+species = "Goldeen"
+sprite_id = "goldeen"
+level = 35
+moves = Array[String](["peck", "tailwhip", "supersonic", "waterpulse"])
+
+[resource]
+script = ExtResource("2_11x5e")
+encounter_id = "route-23-wild"
+display_name = "Wild Mist Marsh Pokemon"
+api_name = "Wild Mist Marsh Po"
+members = Array[ExtResource("1_4i3pa")]([SubResource("Resource_o3nbi")])

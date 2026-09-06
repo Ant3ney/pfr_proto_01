@@ -36,8 +36,8 @@ awards across two knockouts, one and only one Lv. 8 announcement, readable
 remaining-XP progress, retry safety, and duplicate-callback safety:
 
 ```bash
-godot --headless --path . --scene res://tests/battle_system_session_test.tscn
-godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
 ```
 
 Do not diagnose a failure from the displayed level alone. If cumulative XP does

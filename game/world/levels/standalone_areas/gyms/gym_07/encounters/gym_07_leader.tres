@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_n3jlm"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_gglto"]
+
+[sub_resource type="Resource" id="Resource_whqxi"]
+script = ExtResource("1_n3jlm")
+member_id = "gym-07-leader-member-1"
+pokemon_id = 337
+species = "Lunatone"
+sprite_id = "lunatone"
+level = 45
+moves = Array[String](["confusion", "harden", "moonblast", "moonlight"])
+
+[sub_resource type="Resource" id="Resource_2gwk2"]
+script = ExtResource("1_n3jlm")
+member_id = "gym-07-leader-member-2"
+pokemon_id = 338
+species = "Solrock"
+sprite_id = "solrock"
+level = 47
+moves = Array[String](["confusion", "flareblitz", "harden", "morningsun"])
+
+[sub_resource type="Resource" id="Resource_w8oek"]
+script = ExtResource("1_n3jlm")
+member_id = "gym-07-leader-member-3"
+pokemon_id = 344
+species = "Claydol"
+sprite_id = "claydol"
+level = 49
+moves = Array[String](["hyperbeam", "confusion", "harden", "mudslap"])
+
+[sub_resource type="Resource" id="Resource_2fhj7"]
+script = ExtResource("1_n3jlm")
+member_id = "gym-07-leader-member-4"
+pokemon_id = 376
+species = "Metagross"
+sprite_id = "metagross"
+level = 51
+moves = Array[String](["hammerarm", "bulletpunch", "confusion", "explosion"])
+
+[resource]
+script = ExtResource("2_gglto")
+encounter_id = "gym-07-leader"
+display_name = "Leader Solenne"
+api_name = "Leader Solenne"
+members = Array[ExtResource("1_n3jlm")]([SubResource("Resource_whqxi"), SubResource("Resource_2gwk2"), SubResource("Resource_w8oek"), SubResource("Resource_2fhj7")])

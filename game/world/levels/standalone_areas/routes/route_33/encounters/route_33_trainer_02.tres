@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_4bto3"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_tm21o"]
+
+[sub_resource type="Resource" id="Resource_c3grt"]
+script = ExtResource("1_4bto3")
+member_id = "route-33-trainer-02-member-1"
+pokemon_id = 355
+species = "Duskull"
+sprite_id = "duskull"
+level = 50
+moves = Array[String](["astonish", "leer", "disable", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_6q5hy"]
+script = ExtResource("1_4bto3")
+member_id = "route-33-trainer-02-member-2"
+pokemon_id = 425
+species = "Drifloon"
+sprite_id = "drifloon"
+level = 51
+moves = Array[String](["astonish", "minimize", "gust", "focusenergy"])
+
+[sub_resource type="Resource" id="Resource_l1xva"]
+script = ExtResource("1_4bto3")
+member_id = "route-33-trainer-02-member-3"
+pokemon_id = 442
+species = "Spiritomb"
+sprite_id = "spiritomb"
+level = 52
+moves = Array[String](["confuseray", "nightshade", "shadowsneak", "spite"])
+
+[sub_resource type="Resource" id="Resource_28vnr"]
+script = ExtResource("1_4bto3")
+member_id = "route-33-trainer-02-member-4"
+pokemon_id = 92
+species = "Gastly"
+sprite_id = "gastly"
+level = 53
+moves = Array[String](["confuseray", "lick", "hypnosis", "meanlook"])
+
+[resource]
+script = ExtResource("2_tm21o")
+encounter_id = "route-33-trainer-02"
+display_name = "Route 33 Trainer 2"
+api_name = "Route 33 Trainer 2"
+members = Array[ExtResource("1_4bto3")]([SubResource("Resource_c3grt"), SubResource("Resource_6q5hy"), SubResource("Resource_l1xva"), SubResource("Resource_28vnr")])

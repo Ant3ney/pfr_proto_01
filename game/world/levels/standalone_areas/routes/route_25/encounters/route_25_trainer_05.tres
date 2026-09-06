@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_tcmx0"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_8kpcr"]
+
+[sub_resource type="Resource" id="Resource_5ttkv"]
+script = ExtResource("1_tcmx0")
+member_id = "route-25-trainer-05-member-1"
+pokemon_id = 116
+species = "Horsea"
+sprite_id = "horsea"
+level = 42
+moves = Array[String](["leer", "watergun", "smokescreen", "twister"])
+
+[sub_resource type="Resource" id="Resource_eh0g7"]
+script = ExtResource("1_tcmx0")
+member_id = "route-25-trainer-05-member-2"
+pokemon_id = 170
+species = "Chinchou"
+sprite_id = "chinchou"
+level = 43
+moves = Array[String](["supersonic", "watergun", "electroball", "thunderwave"])
+
+[sub_resource type="Resource" id="Resource_v1nic"]
+script = ExtResource("1_tcmx0")
+member_id = "route-25-trainer-05-member-3"
+pokemon_id = 194
+species = "Wooper"
+sprite_id = "wooper"
+level = 44
+moves = Array[String](["tailwhip", "watergun", "raindance", "mudshot"])
+
+[sub_resource type="Resource" id="Resource_vxxpo"]
+script = ExtResource("1_tcmx0")
+member_id = "route-25-trainer-05-member-4"
+pokemon_id = 278
+species = "Wingull"
+sprite_id = "wingull"
+level = 44
+moves = Array[String](["growl", "watergun", "quickattack", "supersonic"])
+
+[resource]
+script = ExtResource("2_8kpcr")
+encounter_id = "route-25-trainer-05"
+display_name = "Route 25 Trainer 5"
+api_name = "Route 25 Trainer 5"
+members = Array[ExtResource("1_tcmx0")]([SubResource("Resource_5ttkv"), SubResource("Resource_eh0g7"), SubResource("Resource_v1nic"), SubResource("Resource_vxxpo")])

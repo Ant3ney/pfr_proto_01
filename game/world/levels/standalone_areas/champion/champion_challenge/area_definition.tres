@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_6ayh0"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/champion/champion_challenge/encounters/elite_four_01.tres" id="2_4qyy5"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/champion/champion_challenge/encounters/elite_four_02.tres" id="3_ih1wa"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/champion/champion_challenge/encounters/elite_four_03.tres" id="4_stfnw"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/champion/champion_challenge/encounters/elite_four_04.tres" id="5_axviy"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/champion/champion_challenge/encounters/champion.tres" id="6_7coms"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/champion/champion_challenge/champion_challenge.tscn" id="7_0s7qj"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="8_l61a1"]
+
+[resource]
+script = ExtResource("8_l61a1")
+area_id = "champion_challenge"
+category = 2
+numeric_order = 1
+display_name = "Elite Four + Champion Challenge"
+description = "Five forced battles in order: Elite Four at Lv. 62–78, then Champion Aurelia at Lv. 80–85."
+biome = "champion"
+destination = ExtResource("7_0s7qj")
+suggested_level_min = 62
+suggested_level_max = 85
+battle_encounters = Array[ExtResource("1_6ayh0")]([ExtResource("2_4qyy5"), ExtResource("3_ih1wa"), ExtResource("4_stfnw"), ExtResource("5_axviy"), ExtResource("6_7coms")])

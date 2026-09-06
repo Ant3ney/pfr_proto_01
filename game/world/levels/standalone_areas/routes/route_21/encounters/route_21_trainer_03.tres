@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_di5pt"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_hcgbg"]
+
+[sub_resource type="Resource" id="Resource_j5jdm"]
+script = ExtResource("1_di5pt")
+member_id = "route-21-trainer-03-member-1"
+pokemon_id = 191
+species = "Sunkern"
+sprite_id = "sunkern"
+level = 34
+moves = Array[String](["growth", "tackle", "absorb", "megadrain"])
+
+[sub_resource type="Resource" id="Resource_r2xtl"]
+script = ExtResource("1_di5pt")
+member_id = "route-21-trainer-03-member-2"
+pokemon_id = 192
+species = "Sunflora"
+sprite_id = "sunflora"
+level = 35
+moves = Array[String](["growth", "pound", "tackle", "ingrain"])
+
+[sub_resource type="Resource" id="Resource_kedeu"]
+script = ExtResource("1_di5pt")
+member_id = "route-21-trainer-03-member-3"
+pokemon_id = 203
+species = "Girafarig"
+sprite_id = "girafarig"
+level = 36
+moves = Array[String](["astonish", "growl", "guardswap", "powerswap"])
+
+[resource]
+script = ExtResource("2_hcgbg")
+encounter_id = "route-21-trainer-03"
+display_name = "Route 21 Trainer 3"
+api_name = "Route 21 Trainer 3"
+members = Array[ExtResource("1_di5pt")]([SubResource("Resource_j5jdm"), SubResource("Resource_r2xtl"), SubResource("Resource_kedeu")])

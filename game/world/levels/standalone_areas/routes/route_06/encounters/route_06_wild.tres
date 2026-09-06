@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_6yhlj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_waf7f"]
+
+[sub_resource type="Resource" id="Resource_p4gat"]
+script = ExtResource("1_6yhlj")
+member_id = "route-06-wild-member-1"
+pokemon_id = 522
+species = "Blitzle"
+sprite_id = "blitzle"
+level = 11
+moves = Array[String](["quickattack", "tailwhip", "charge", "shockwave"])
+
+[resource]
+script = ExtResource("2_waf7f")
+encounter_id = "route-06-wild"
+display_name = "Wild Dry Savanna Pokemon"
+api_name = "Wild Dry Savanna P"
+members = Array[ExtResource("1_6yhlj")]([SubResource("Resource_p4gat")])

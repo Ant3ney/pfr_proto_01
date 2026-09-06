@@ -1,0 +1,17 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/trainer_base.tscn" id="1_character"]
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="2_controller"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_police_officer.tres" id="3_art_pack"]
+[ext_resource type="Resource" path="res://game/dialogue/resources/trainers/trainer_police_officer.tres" id="5_dialog"]
+
+[sub_resource type="Resource" id="Resource_trainer"]
+resource_local_to_scene = true
+script = ExtResource("2_controller")
+dialog = ExtResource("5_dialog")
+battle_scene_path = "res://game/battle/scenes/police_officer_battle_scene.tscn"
+encounter_id = "trainer-police-officer-city-v1"
+
+[node name="PoliceOfficer" instance=ExtResource("1_character")]
+controller = SubResource("Resource_trainer")
+character_art_asset_pack = ExtResource("3_art_pack")

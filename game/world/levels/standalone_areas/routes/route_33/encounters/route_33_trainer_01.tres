@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_mmtao"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_ibpj6"]
+
+[sub_resource type="Resource" id="Resource_fnpij"]
+script = ExtResource("1_mmtao")
+member_id = "route-33-trainer-01-member-1"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 49
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_xs3vd"]
+script = ExtResource("1_mmtao")
+member_id = "route-33-trainer-01-member-2"
+pokemon_id = 353
+species = "Shuppet"
+sprite_id = "shuppet"
+level = 50
+moves = Array[String](["astonish", "screech", "nightshade", "spite"])
+
+[sub_resource type="Resource" id="Resource_f7lit"]
+script = ExtResource("1_mmtao")
+member_id = "route-33-trainer-01-member-3"
+pokemon_id = 355
+species = "Duskull"
+sprite_id = "duskull"
+level = 51
+moves = Array[String](["astonish", "leer", "disable", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_h6u31"]
+script = ExtResource("1_mmtao")
+member_id = "route-33-trainer-01-member-4"
+pokemon_id = 425
+species = "Drifloon"
+sprite_id = "drifloon"
+level = 52
+moves = Array[String](["astonish", "minimize", "gust", "focusenergy"])
+
+[resource]
+script = ExtResource("2_ibpj6")
+encounter_id = "route-33-trainer-01"
+display_name = "Route 33 Trainer 1"
+api_name = "Route 33 Trainer 1"
+members = Array[ExtResource("1_mmtao")]([SubResource("Resource_fnpij"), SubResource("Resource_xs3vd"), SubResource("Resource_f7lit"), SubResource("Resource_h6u31")])

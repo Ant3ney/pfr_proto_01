@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_j8ynu"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_qi1io"]
+
+[sub_resource type="Resource" id="Resource_p7rwg"]
+script = ExtResource("1_j8ynu")
+member_id = "route-19-trainer-06-member-1"
+pokemon_id = 374
+species = "Beldum"
+sprite_id = "beldum"
+level = 32
+moves = Array[String](["tackle"])
+
+[sub_resource type="Resource" id="Resource_oj2fg"]
+script = ExtResource("1_j8ynu")
+member_id = "route-19-trainer-06-member-2"
+pokemon_id = 443
+species = "Gible"
+sprite_id = "gible"
+level = 32
+moves = Array[String](["sandtomb", "tackle", "sandattack", "dragonbreath"])
+
+[sub_resource type="Resource" id="Resource_rrawt"]
+script = ExtResource("1_j8ynu")
+member_id = "route-19-trainer-06-member-3"
+pokemon_id = 447
+species = "Riolu"
+sprite_id = "riolu"
+level = 32
+moves = Array[String](["endure", "quickattack", "feint", "metalclaw"])
+
+[resource]
+script = ExtResource("2_qi1io")
+encounter_id = "route-19-trainer-06"
+display_name = "Route 19 Trainer 6"
+api_name = "Route 19 Trainer 6"
+members = Array[ExtResource("1_j8ynu")]([SubResource("Resource_p7rwg"), SubResource("Resource_oj2fg"), SubResource("Resource_rrawt")])

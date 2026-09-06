@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_6u3lj"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_itt6i"]
+
+[sub_resource type="Resource" id="Resource_2e878"]
+script = ExtResource("1_6u3lj")
+member_id = "route-20-trainer-01-member-1"
+pokemon_id = 29
+species = "Nidoran-F"
+sprite_id = "nidoranf"
+level = 31
+moves = Array[String](["growl", "poisonsting", "scratch", "tailwhip"])
+
+[sub_resource type="Resource" id="Resource_rrosw"]
+script = ExtResource("1_6u3lj")
+member_id = "route-20-trainer-01-member-2"
+pokemon_id = 32
+species = "Nidoran-M"
+sprite_id = "nidoranm"
+level = 32
+moves = Array[String](["leer", "poisonsting", "peck", "focusenergy"])
+
+[sub_resource type="Resource" id="Resource_m1771"]
+script = ExtResource("1_6u3lj")
+member_id = "route-20-trainer-01-member-3"
+pokemon_id = 21
+species = "Spearow"
+sprite_id = "spearow"
+level = 33
+moves = Array[String](["growl", "peck", "leer", "pursuit"])
+
+[resource]
+script = ExtResource("2_itt6i")
+encounter_id = "route-20-trainer-01"
+display_name = "Route 20 Trainer 1"
+api_name = "Route 20 Trainer 1"
+members = Array[ExtResource("1_6u3lj")]([SubResource("Resource_2e878"), SubResource("Resource_rrosw"), SubResource("Resource_m1771")])

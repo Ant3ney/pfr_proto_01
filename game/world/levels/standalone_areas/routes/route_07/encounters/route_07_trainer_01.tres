@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_gjds0"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_xtrod"]
+
+[sub_resource type="Resource" id="Resource_ejd7i"]
+script = ExtResource("1_gjds0")
+member_id = "route-07-trainer-01-member-1"
+pokemon_id = 219
+species = "Magcargo"
+sprite_id = "magcargo"
+level = 7
+moves = Array[String](["shellsmash", "earthpower", "ember", "rockthrow"])
+
+[sub_resource type="Resource" id="Resource_m7dpm"]
+script = ExtResource("1_gjds0")
+member_id = "route-07-trainer-01-member-2"
+pokemon_id = 322
+species = "Numel"
+sprite_id = "numel"
+level = 8
+moves = Array[String](["growl", "tackle", "ember", "focusenergy"])
+
+[resource]
+script = ExtResource("2_xtrod")
+encounter_id = "route-07-trainer-01"
+display_name = "Route 7 Trainer 1"
+api_name = "Route 7 Trainer 1"
+members = Array[ExtResource("1_gjds0")]([SubResource("Resource_ejd7i"), SubResource("Resource_m7dpm")])

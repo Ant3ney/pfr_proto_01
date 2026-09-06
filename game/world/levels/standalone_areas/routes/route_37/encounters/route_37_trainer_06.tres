@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_cs8dr"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_3j6m1"]
+
+[sub_resource type="Resource" id="Resource_ou47m"]
+script = ExtResource("1_cs8dr")
+member_id = "route-37-trainer-06-member-1"
+pokemon_id = 208
+species = "Steelix"
+sprite_id = "steelix"
+level = 59
+moves = Array[String](["bind", "crunch", "firefang", "harden"])
+
+[sub_resource type="Resource" id="Resource_3noto"]
+script = ExtResource("1_cs8dr")
+member_id = "route-37-trainer-06-member-2"
+pokemon_id = 229
+species = "Houndoom"
+sprite_id = "houndoom"
+level = 60
+moves = Array[String](["ember", "howl", "leer", "nastyplot"])
+
+[sub_resource type="Resource" id="Resource_etf0k"]
+script = ExtResource("1_cs8dr")
+member_id = "route-37-trainer-06-member-3"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 60
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[sub_resource type="Resource" id="Resource_iucej"]
+script = ExtResource("1_cs8dr")
+member_id = "route-37-trainer-06-member-4"
+pokemon_id = 323
+species = "Camerupt"
+sprite_id = "camerupt"
+level = 60
+moves = Array[String](["rockslide", "ember", "eruption", "fissure"])
+
+[resource]
+script = ExtResource("2_3j6m1")
+encounter_id = "route-37-trainer-06"
+display_name = "Route 37 Trainer 6"
+api_name = "Route 37 Trainer 6"
+members = Array[ExtResource("1_cs8dr")]([SubResource("Resource_ou47m"), SubResource("Resource_3noto"), SubResource("Resource_etf0k"), SubResource("Resource_iucej")])

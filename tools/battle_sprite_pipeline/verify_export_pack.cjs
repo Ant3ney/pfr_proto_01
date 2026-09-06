@@ -27,7 +27,9 @@ function readPackPaths(packBytes) {
   let cursor = directoryOffset;
   const fileCount = packBytes.readUInt32LE(cursor);
   cursor += 4;
-  if (fileCount <= 0 || fileCount > 1000000) throw new Error(`Godot PCK file count is invalid: ${fileCount}.`);
+  if (fileCount <= 0 || fileCount > 1000000) {
+    throw new Error(`Godot PCK file count is invalid: ${fileCount}.`);
+  }
   const paths = new Set();
   for (let index = 0; index < fileCount; index += 1) {
     if (cursor + 4 > packBytes.length) throw new Error('Godot PCK directory is truncated.');
@@ -38,7 +40,9 @@ function readPackPaths(packBytes) {
       throw new Error(`Godot PCK directory entry ${index} is invalid.`);
     }
     const entryPath = packBytes.subarray(cursor, cursor + pathBytes).toString('utf8').replace(/\0+$/, '');
-    if (!entryPath || paths.has(entryPath)) throw new Error(`Godot PCK path is empty or duplicated: ${entryPath}`);
+    if (!entryPath || paths.has(entryPath)) {
+      throw new Error(`Godot PCK path is empty or duplicated: ${entryPath}`);
+    }
     paths.add(entryPath);
     cursor += recordBytes;
   }
@@ -59,105 +63,72 @@ if (atlasImports.size !== 2106) {
 if (timingManifests.size !== 2106) {
   throw new Error(`Export contains ${timingManifests.size} timing manifests; expected 2106.`);
 }
-for (const required of [
-  'art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior.tscn.remap',
-  'art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior_environment.glb.import',
-  'art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex.tscn.remap',
-  'art/environments/new_bouffalant_city/city_interiors/miare_station_concourse.tscn.remap',
-  'art/environments/new_bouffalant_city/city_interiors/gatehouse_interior.tscn.remap',
-  'overworld/route_0/route_0.tscn.remap',
-  'overworld/route_0/RouteZeroRuntime.gd.remap',
-  'overworld/route_4/route_4.tscn.remap',
-  'overworld/route_4/route_4_gateway.tscn.remap',
-  'overworld/route_4/route_4_return_gateway.tscn.remap',
-  'overworld/route_4/Route4Gateway.gd.remap',
-  'rnd/tall_grass_encounter_zone.tscn.remap',
-  'rnd/TallGrassEncounterZone.gd.remap',
-  'rnd/interaction/PlayerInteractionDetector.gd.remap',
-  'overworld/town_npcs/RoamingTownNpcBehavior.gd.remap',
-  'overworld/town_npcs/TownNpcBehavior.gd.remap',
-  'overworld/town_npcs/town_npc.tscn.remap',
-  'rnd/player_menu/PlayerMenuHUD.gd.remap',
-  'rnd/player_menu/PlayerMenuUI.gd.remap',
-  'rnd/player_menu/player_menu_hud.tscn.remap',
-  'rnd/player_menu/player_menu_ui.tscn.remap',
-  'rnd/move_learning/MoveLearningSystem.gd.remap',
-  'rnd/move_learning/MoveLearnsetCatalog.gd.remap',
-  'rnd/move_learning/MoveLearningUI.gd.remap',
-  'rnd/move_learning/move_learning_ui.tscn.remap',
-  'rnd/move_learning/data/level_up_learnsets.json',
-  'rnd/starter_selection/StarterSelectionSystem.gd.remap',
-  'rnd/starter_selection/StarterSelectionUI.gd.remap',
-  'rnd/starter_selection/starter_selection_ui.tscn.remap',
-  'rnd/save/ProgressionAutosave.gd.remap',
-  'rnd/save/CloudSaveSync.gd.remap',
-  'rnd/stretch/StretchContent.gd.remap',
-  'rnd/stretch/StretchGoalSystem.gd.remap',
-  'rnd/stretch/battle/stretch_battle_scene.tscn.remap',
-  'rnd/stretch/data/items.json',
-  'rnd/stretch/data/pokemon.json',
-  'rnd/stretch/npc/stretchman.tscn.remap',
-  'rnd/stretch/ui/loot_box_roulette.tscn.remap',
-  'rnd/stretch/ui/stretch_goal_ui.tscn.remap',
-  'rnd/stretch/worlds/RouteCompletionGate.gd.remap',
-  'rnd/stretch/worlds/route_completion_gate.tscn.remap',
-  'rnd/stretch/worlds/stretch_destination.tscn.remap',
-  'battle/route_0_wild_battle_scene.tscn.remap',
-  'battle/encounters/wild_fletchling_route_0_v1.tres.remap',
-  'overworld/pokemon_center/PokemonCenterHealer.tscn.remap',
-  'core/PokemonCenterHealerBehavior.gd.remap',
-  'core/CollectionSystem.gd.remap',
-  'art/characters/za_city_waiter/za_city_waiter.tres.remap',
-  'art/characters/za_city_waiter/models/model.glb.import',
-  'art/battle/ui/icons/bag_icon.png.import',
-  'art/battle/ui/icons/pokeball_icon.png.import',
-  'art/battle/ui/icons/run_icon.png.import',
-  'art/battle/ui/icons/sword_icon.png.import',
+
+const requiredPaths = [
+  'game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn.remap',
+  'game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn.remap',
+  'game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn.remap',
+  'game/world/levels/new_bouffalant_city/interiors/miare_station_concourse.tscn.remap',
+  'game/world/levels/new_bouffalant_city/interiors/gatehouse_interior.tscn.remap',
+  'game/world/levels/standalone_areas/standalone_area_catalog.tres.remap',
+  'game/world/levels/standalone_areas/standalone_area_definition.gd.remap',
+  'game/world/levels/standalone_areas/standalone_area_catalog.gd.remap',
+  'game/world/level_bases/world_level_base.tscn.remap',
+  'game/world/level_bases/outdoor_level_base.tscn.remap',
+  'game/world/level_bases/interior_level_base.tscn.remap',
+  'game/actors/character/pfr_character.tscn.remap',
+  'game/actors/npcs/residents/resident_base.tscn.remap',
+  'game/actors/npcs/residents/stretchman/stretchman.tscn.remap',
+  'game/actors/npcs/shared/menu_npc_behavior.gd.remap',
+  'game/actors/npcs/trainers/trainer_base.tscn.remap',
+  'game/ui/adventure_menu/adventure_menu.tscn.remap',
+  'game/economy/economy_system.gd.remap',
+  'game/economy/shop/shop_system.gd.remap',
+  'game/inventory/inventory_system.gd.remap',
+  'game/progression/challenges/challenge_progression_system.gd.remap',
+  'game/battle/rewards/battle_reward_system.gd.remap',
+  'game/battle/scenes/challenge_battle.tscn.remap',
+  'game/save/progression_autosave.gd.remap',
+  'game/save/cloud_save_sync.gd.remap',
   'art/battle/sprites/generated/catalog.json',
-  'art/battle/sprites/placeholder.svg.import',
-  'core/ui/BattleUIOverlay.gd.remap',
-  'core/CreatureExperience.gd.remap',
-  'battle/kyle_battle_scene.tscn.remap',
-  'battle/delivery_worker_battle_scene.tscn.remap',
-  'battle/police_officer_battle_scene.tscn.remap',
-  'battle/businessman_battle_scene.tscn.remap',
-  'battle/backpacker_battle_scene.tscn.remap',
-  'battle/jogger_battle_scene.tscn.remap',
-  'battle/tourist_battle_scene.tscn.remap',
-  'battle/encounters/trainer_delivery_worker_city_v1.tres.remap',
-  'battle/encounters/trainer_police_officer_city_v1.tres.remap',
-  'battle/encounters/trainer_businessman_city_v1.tres.remap',
-  'battle/encounters/trainer_backpacker_city_v1.tres.remap',
-  'battle/encounters/trainer_jogger_city_v1.tres.remap',
-  'battle/encounters/trainer_tourist_city_v1.tres.remap',
-  'battle/ui/BattleChoiceOverlay.gd.remap',
-  'battle/ui/battle_choice_overlay.tscn.remap',
-  'battle/system/BattleSystem.gd.remap',
-  'battle/system/BattleExperience.gd.remap',
-  'battle/system/BattleRestClient.gd.remap',
-  'battle/system/BattleDtoValidator.gd.remap',
-  'battle/system/BattleEventTranslator.gd.remap',
-  'battle/system/BattleSpeciesMapping.gd.remap',
-  'battle/system/BattleSpriteCatalog.gd.remap',
-  'battle/system/BattleSpriteScale.gd.remap',
-  'battle/system/BattleSpritePresenter.gd.remap',
-  'battle/data/BattleEncounterDefinition.gd.remap',
-  'battle/data/BattleEncounterMember.gd.remap',
-  'battle/data/BattleEncounterProvider.gd.remap',
-  'battle/data/pokeapi_showdown_mapping.json',
   'data/creatures/experience.json',
-  'battle/encounters/trainer_kyle_lake_v1.tres.remap',
-]) {
+];
+for (let routeIndex = 0; routeIndex < 40; routeIndex += 1) {
+  const id = `route_${String(routeIndex).padStart(2, '0')}`;
+  requiredPaths.push(`game/world/levels/standalone_areas/routes/${id}/${id}.tscn.remap`);
+  requiredPaths.push(`game/world/levels/standalone_areas/routes/${id}/area_definition.tres.remap`);
+}
+for (let gymIndex = 1; gymIndex <= 8; gymIndex += 1) {
+  const id = `gym_${String(gymIndex).padStart(2, '0')}`;
+  requiredPaths.push(`game/world/levels/standalone_areas/gyms/${id}/${id}.tscn.remap`);
+  requiredPaths.push(`game/world/levels/standalone_areas/gyms/${id}/area_definition.tres.remap`);
+}
+requiredPaths.push(
+  'game/world/levels/standalone_areas/champion/champion_challenge/champion_challenge.tscn.remap',
+  'game/world/levels/standalone_areas/champion/champion_challenge/area_definition.tres.remap',
+);
+
+for (const required of requiredPaths) {
   if (!packPaths.has(required)) throw new Error(`Export is missing ${required}.`);
 }
-for (const forbidden of [
+
+const standaloneScenePaths = [...packPaths].filter((entry) => (
+  /^game\/world\/levels\/standalone_areas\/(?:routes\/route_\d{2}\/route_\d{2}|gyms\/gym_\d{2}\/gym_\d{2}|champion\/champion_challenge\/champion_challenge)\.tscn\.remap$/.test(entry)
+));
+if (standaloneScenePaths.length !== 49) {
+  throw new Error(`Export contains ${standaloneScenePaths.length} standalone-area scenes; expected 49.`);
+}
+
+for (const forbiddenPrefix of [
   'source_assets/battle_sprites/',
-  'res://source_assets/battle_sprites/',
   'battle_server/',
-  'res://battle_server/',
+  'core/',
+  'demo/',
+  'overworld/',
+  'rnd/',
 ]) {
-  if ([...packPaths].some((entry) => entry.startsWith(forbidden.replace(/^res:\/\//, '')))) {
-    throw new Error(`Export contains forbidden path prefix: ${forbidden}`);
+  if ([...packPaths].some((entry) => entry.startsWith(forbiddenPrefix))) {
+    throw new Error(`Export contains forbidden legacy/source path prefix: ${forbiddenPrefix}`);
   }
 }
 
@@ -165,8 +136,10 @@ console.log(JSON.stringify({
   pack: packPath,
   bytes: bytes.length,
   packEntries: packPaths.size,
+  standaloneAreaScenes: standaloneScenePaths.length,
   atlasImports: atlasImports.size,
   timingManifests: timingManifests.size,
   rawGifSourcesPresent: false,
   battleServerPresent: false,
+  legacyRuntimeRootsPresent: false,
 }, null, 2));

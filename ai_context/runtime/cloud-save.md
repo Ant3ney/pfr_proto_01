@@ -114,9 +114,9 @@ restored payload as a fresh local change.
 
 ```bash
 npm run test:cloud-save
-godot --headless --path . --scene res://rnd/tests/cloud_save_sync_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/progression_autosave_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
 ```
 
 The Node suite covers first link, causal updates, forced first-link conflicts,

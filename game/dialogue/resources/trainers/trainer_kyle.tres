@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialog" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/dialogue/dialog.gd" id="1_dialog"]
+
+[resource]
+resource_name = "Trainer Kyle Dialog"
+script = ExtResource("1_dialog")
+character_name = "Trainer Kyle"
+dialog_lines = Array[String](["Hold it right there!", "The path ahead is only for trainers who can prove themselves.", "Show me what you and your partner can do!"])

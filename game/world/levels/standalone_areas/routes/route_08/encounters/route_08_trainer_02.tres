@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_lowqm"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_tcx8i"]
+
+[sub_resource type="Resource" id="Resource_nt3sw"]
+script = ExtResource("1_lowqm")
+member_id = "route-08-trainer-02-member-1"
+pokemon_id = 100
+species = "Voltorb"
+sprite_id = "voltorb"
+level = 15
+moves = Array[String](["charge", "tackle", "thundershock", "eerieimpulse"])
+
+[sub_resource type="Resource" id="Resource_7qon8"]
+script = ExtResource("1_lowqm")
+member_id = "route-08-trainer-02-member-2"
+pokemon_id = 109
+species = "Koffing"
+sprite_id = "koffing"
+level = 16
+moves = Array[String](["poisongas", "tackle", "smog", "smokescreen"])
+
+[resource]
+script = ExtResource("2_tcx8i")
+encounter_id = "route-08-trainer-02"
+display_name = "Route 8 Trainer 2"
+api_name = "Route 8 Trainer 2"
+members = Array[ExtResource("1_lowqm")]([SubResource("Resource_nt3sw"), SubResource("Resource_7qon8")])

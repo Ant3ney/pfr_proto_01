@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_nlyvx"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_cklao"]
+
+[sub_resource type="Resource" id="Resource_6wsyi"]
+script = ExtResource("1_nlyvx")
+member_id = "route-26-trainer-07-member-1"
+pokemon_id = 228
+species = "Houndour"
+sprite_id = "houndour"
+level = 44
+moves = Array[String](["ember", "leer", "howl", "smog"])
+
+[sub_resource type="Resource" id="Resource_4mp7u"]
+script = ExtResource("1_nlyvx")
+member_id = "route-26-trainer-07-member-2"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 44
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_uortw"]
+script = ExtResource("1_nlyvx")
+member_id = "route-26-trainer-07-member-3"
+pokemon_id = 239
+species = "Elekid"
+sprite_id = "elekid"
+level = 44
+moves = Array[String](["leer", "quickattack", "thundershock", "charge"])
+
+[sub_resource type="Resource" id="Resource_ggewg"]
+script = ExtResource("1_nlyvx")
+member_id = "route-26-trainer-07-member-4"
+pokemon_id = 261
+species = "Poochyena"
+sprite_id = "poochyena"
+level = 44
+moves = Array[String](["tackle", "howl", "sandattack", "bite"])
+
+[resource]
+script = ExtResource("2_cklao")
+encounter_id = "route-26-trainer-07"
+display_name = "Route 26 Trainer 7"
+api_name = "Route 26 Trainer 7"
+members = Array[ExtResource("1_nlyvx")]([SubResource("Resource_6wsyi"), SubResource("Resource_4mp7u"), SubResource("Resource_uortw"), SubResource("Resource_ggewg")])

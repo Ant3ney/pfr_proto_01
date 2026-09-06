@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_7r2gh"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/gyms/gym_02/encounters/gym_02_leader.tres" id="2_uryqh"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_02/gym_02.tscn" id="3_jdm32"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="4_qbjqp"]
+
+[resource]
+script = ExtResource("4_qbjqp")
+area_id = "gym_02"
+category = 1
+numeric_order = 2
+display_name = "Gym 2 — Tidal Court"
+description = "A Water specialist's mirrored arena (Lv. 18–20)."
+biome = "gym"
+destination = ExtResource("3_jdm32")
+suggested_level_min = 18
+suggested_level_max = 20
+battle_encounters = Array[ExtResource("1_7r2gh")]([ExtResource("2_uryqh")])

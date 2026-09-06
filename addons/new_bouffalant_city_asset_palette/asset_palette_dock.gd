@@ -1,8 +1,8 @@
 @tool
 extends VBoxContainer
 
-const CollisionProfiles := preload("res://art/environments/new_bouffalant_city/reference_city_pack/collision/collision_profiles.gd")
-const RuntimeContract := preload("res://art/environments/new_bouffalant_city/reference_city_pack/runtime_contract.gd")
+const CollisionProfiles := preload("res://tools/new_bouffalant_city_import/collision_profiles.gd")
+const RuntimeContract := preload("res://game/world/level_kits/structures/new_bouffalant_city/runtime_contract.gd")
 
 signal placement_toggled(enabled: bool)
 signal place_at_origin_requested

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_tfg1j"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_banrv"]
+
+[sub_resource type="Resource" id="Resource_773xm"]
+script = ExtResource("1_tfg1j")
+member_id = "route-10-trainer-01-member-1"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 13
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_fpj3w"]
+script = ExtResource("1_tfg1j")
+member_id = "route-10-trainer-01-member-2"
+pokemon_id = 308
+species = "Medicham"
+sprite_id = "medicham"
+level = 14
+moves = Array[String](["confusion", "detect", "firepunch", "icepunch"])
+
+[resource]
+script = ExtResource("2_banrv")
+encounter_id = "route-10-trainer-01"
+display_name = "Route 10 Trainer 1"
+api_name = "Route 10 Trainer 1"
+members = Array[ExtResource("1_tfg1j")]([SubResource("Resource_773xm"), SubResource("Resource_fpj3w")])

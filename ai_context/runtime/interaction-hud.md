@@ -6,7 +6,7 @@ or changing the touch/keyboard interaction prompt during the RND phase.
 ## Target selection and HUD
 
 The shared [`player.tscn`](../../demo/player.tscn) owns
-[`RNDPlayerInteractionDetector`](../../rnd/interaction/PlayerInteractionDetector.gd).
+[`PlayerInteractionDetector`](../../rnd/interaction/PlayerInteractionDetector.gd).
 The player scene and every reusable NPC role scene inherit the common
 [`PFRCharacter.tscn`](../../core/PFRCharacter.tscn) scene, which owns their
 shared body, capsule, and `Visual` pivot. Every `PFRCharacter` joins the
@@ -86,12 +86,12 @@ cobblestone and grants the persistent one-time Exp. Share gift.
 ## Regression checks
 
 ```bash
-godot --headless --path . --scene res://tests/pfr_character_scene_inheritance_smoke_test.tscn
-godot --headless --path . --scene res://tests/player_input_movement_smoke_test.tscn
-godot --headless --editor --path . --script res://tests/pfr_character_editor_preview_smoke_test.gd
-godot --headless --path . --scene res://rnd/tests/interaction_hud_smoke_test.tscn
-godot --headless --path . --scene res://rnd/tests/stretch_destination_smoke_test.tscn
-godot --headless --path . --scene res://tests/pokemon_center_healer_smoke_test.tscn
-godot --headless --path . --scene res://tests/trainer_dialog_battle_start_smoke_test.tscn
-godot --headless --path . --scene res://tests/town_npc_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/pfr_character_scene_inheritance_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/player_input_movement_smoke_test.tscn
+godot --headless --editor --path . --script res://tests/scenes/pfr_character_editor_preview_smoke_test.gd
+godot --headless --path . --scene res://tests/scenes/interaction_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/pokemon_center_healer_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/town_npc_smoke_test.tscn
 ```

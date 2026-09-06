@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_p8q77"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_q0a0n"]
+
+[sub_resource type="Resource" id="Resource_u8pqo"]
+script = ExtResource("1_p8q77")
+member_id = "route-15-trainer-05-member-1"
+pokemon_id = 234
+species = "Stantler"
+sprite_id = "stantler"
+level = 26
+moves = Array[String](["tackle", "leer", "astonish", "hypnosis"])
+
+[sub_resource type="Resource" id="Resource_yjslm"]
+script = ExtResource("1_p8q77")
+member_id = "route-15-trainer-05-member-2"
+pokemon_id = 335
+species = "Zangoose"
+sprite_id = "zangoose"
+level = 26
+moves = Array[String](["bellydrum", "counter", "curse", "disable"])
+
+[sub_resource type="Resource" id="Resource_dxbgd"]
+script = ExtResource("1_p8q77")
+member_id = "route-15-trainer-05-member-3"
+pokemon_id = 585
+species = "Deerling"
+sprite_id = "deerling"
+level = 26
+moves = Array[String](["tackle", "growl", "sandattack", "doublekick"])
+
+[resource]
+script = ExtResource("2_q0a0n")
+encounter_id = "route-15-trainer-05"
+display_name = "Route 15 Trainer 5"
+api_name = "Route 15 Trainer 5"
+members = Array[ExtResource("1_p8q77")]([SubResource("Resource_u8pqo"), SubResource("Resource_yjslm"), SubResource("Resource_dxbgd")])

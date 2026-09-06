@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_508s3"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_01.tres" id="2_j18j4"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_02.tres" id="3_q5ruy"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_03.tres" id="4_5bfdr"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_04.tres" id="5_bpx75"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_05.tres" id="6_1n2ag"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_06.tres" id="7_yfpth"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_07.tres" id="8_yn0mm"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_trainer_08.tres" id="9_8wgo5"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_32/route_32.tscn" id="10_fe83q"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_ttr28"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_32/encounters/route_32_wild.tres" id="12_sk0j8"]
+
+[resource]
+script = ExtResource("11_ttr28")
+area_id = "route_32"
+numeric_order = 32
+display_name = "Route 32 — Prism Abyss"
+description = "Crystal Cavern dungeon route with 8 mandatory trainer checkpoints, 8 tall-grass fields, and a twisting 172 m path (Lv. 49–56). Reach the end to unlock the next route."
+biome = "crystal cavern"
+destination = ExtResource("10_fe83q")
+suggested_level_min = 49
+suggested_level_max = 56
+battle_encounters = Array[ExtResource("1_508s3")]([ExtResource("2_j18j4"), ExtResource("3_q5ruy"), ExtResource("4_5bfdr"), ExtResource("5_bpx75"), ExtResource("6_1n2ag"), ExtResource("7_yfpth"), ExtResource("8_yn0mm"), ExtResource("9_8wgo5")])
+wild_encounters = Array[ExtResource("1_508s3")]([ExtResource("12_sk0j8")])
+route_completion_prerequisite = "route_31"

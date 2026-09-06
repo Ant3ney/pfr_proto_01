@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_jk1j3"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_5675s"]
+
+[sub_resource type="Resource" id="Resource_ffmop"]
+script = ExtResource("1_jk1j3")
+member_id = "route-37-trainer-02-member-1"
+pokemon_id = 208
+species = "Steelix"
+sprite_id = "steelix"
+level = 56
+moves = Array[String](["bind", "crunch", "firefang", "harden"])
+
+[sub_resource type="Resource" id="Resource_msd1n"]
+script = ExtResource("1_jk1j3")
+member_id = "route-37-trainer-02-member-2"
+pokemon_id = 229
+species = "Houndoom"
+sprite_id = "houndoom"
+level = 57
+moves = Array[String](["ember", "howl", "leer", "nastyplot"])
+
+[sub_resource type="Resource" id="Resource_1dkvo"]
+script = ExtResource("1_jk1j3")
+member_id = "route-37-trainer-02-member-3"
+pokemon_id = 248
+species = "Tyranitar"
+sprite_id = "tyranitar"
+level = 58
+moves = Array[String](["darkpulse", "firefang", "icefang", "irondefense"])
+
+[sub_resource type="Resource" id="Resource_yhtt7"]
+script = ExtResource("1_jk1j3")
+member_id = "route-37-trainer-02-member-4"
+pokemon_id = 323
+species = "Camerupt"
+sprite_id = "camerupt"
+level = 59
+moves = Array[String](["rockslide", "ember", "eruption", "fissure"])
+
+[resource]
+script = ExtResource("2_5675s")
+encounter_id = "route-37-trainer-02"
+display_name = "Route 37 Trainer 2"
+api_name = "Route 37 Trainer 2"
+members = Array[ExtResource("1_jk1j3")]([SubResource("Resource_ffmop"), SubResource("Resource_msd1n"), SubResource("Resource_1dkvo"), SubResource("Resource_yhtt7")])

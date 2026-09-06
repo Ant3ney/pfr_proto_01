@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_61v1x"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_7qcgu"]
+
+[sub_resource type="Resource" id="Resource_e514y"]
+script = ExtResource("1_61v1x")
+member_id = "route-05-trainer-03-member-1"
+pokemon_id = 116
+species = "Horsea"
+sprite_id = "horsea"
+level = 12
+moves = Array[String](["leer", "watergun", "smokescreen", "twister"])
+
+[sub_resource type="Resource" id="Resource_ngcla"]
+script = ExtResource("1_61v1x")
+member_id = "route-05-trainer-03-member-2"
+pokemon_id = 170
+species = "Chinchou"
+sprite_id = "chinchou"
+level = 13
+moves = Array[String](["supersonic", "watergun", "electroball", "thunderwave"])
+
+[resource]
+script = ExtResource("2_7qcgu")
+encounter_id = "route-05-trainer-03"
+display_name = "Route 5 Trainer 3"
+api_name = "Route 5 Trainer 3"
+members = Array[ExtResource("1_61v1x")]([SubResource("Resource_e514y"), SubResource("Resource_ngcla")])

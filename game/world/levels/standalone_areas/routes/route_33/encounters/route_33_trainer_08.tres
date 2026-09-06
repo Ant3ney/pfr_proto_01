@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_p12yy"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_en4rx"]
+
+[sub_resource type="Resource" id="Resource_psn51"]
+script = ExtResource("1_p12yy")
+member_id = "route-33-trainer-08-member-1"
+pokemon_id = 93
+species = "Haunter"
+sprite_id = "haunter"
+level = 56
+moves = Array[String](["shadowpunch", "confuseray", "hypnosis", "lick"])
+
+[sub_resource type="Resource" id="Resource_x1uca"]
+script = ExtResource("1_p12yy")
+member_id = "route-33-trainer-08-member-2"
+pokemon_id = 200
+species = "Misdreavus"
+sprite_id = "misdreavus"
+level = 56
+moves = Array[String](["confusion", "growl", "astonish", "confuseray"])
+
+[sub_resource type="Resource" id="Resource_kecjw"]
+script = ExtResource("1_p12yy")
+member_id = "route-33-trainer-08-member-3"
+pokemon_id = 302
+species = "Sableye"
+sprite_id = "sableye"
+level = 56
+moves = Array[String](["leer", "scratch", "astonish", "shadowsneak"])
+
+[sub_resource type="Resource" id="Resource_anm7r"]
+script = ExtResource("1_p12yy")
+member_id = "route-33-trainer-08-member-4"
+pokemon_id = 353
+species = "Shuppet"
+sprite_id = "shuppet"
+level = 56
+moves = Array[String](["astonish", "screech", "nightshade", "spite"])
+
+[resource]
+script = ExtResource("2_en4rx")
+encounter_id = "route-33-trainer-08"
+display_name = "Route 33 Trainer 8"
+api_name = "Route 33 Trainer 8"
+members = Array[ExtResource("1_p12yy")]([SubResource("Resource_psn51"), SubResource("Resource_x1uca"), SubResource("Resource_kecjw"), SubResource("Resource_anm7r")])

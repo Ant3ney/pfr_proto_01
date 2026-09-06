@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="1_lmf8v"]
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="2_gb5u7"]
+
+[sub_resource type="Resource" id="Resource_5gqra"]
+script = ExtResource("1_lmf8v")
+member_id = "gym-06-leader-member-1"
+pokemon_id = 64
+species = "Kadabra"
+sprite_id = "kadabra"
+level = 39
+moves = Array[String](["confusion", "disable", "kinesis", "teleport"])
+
+[sub_resource type="Resource" id="Resource_g22k2"]
+script = ExtResource("1_lmf8v")
+member_id = "gym-06-leader-member-2"
+pokemon_id = 65
+species = "Alakazam"
+sprite_id = "alakazam"
+level = 41
+moves = Array[String](["confusion", "disable", "kinesis", "teleport"])
+
+[sub_resource type="Resource" id="Resource_6vmyf"]
+script = ExtResource("1_lmf8v")
+member_id = "gym-06-leader-member-3"
+pokemon_id = 122
+species = "Mr. Mime"
+sprite_id = "mrmime"
+level = 42
+moves = Array[String](["batonpass", "copycat", "encore", "guardswap"])
+
+[sub_resource type="Resource" id="Resource_ejefn"]
+script = ExtResource("1_lmf8v")
+member_id = "gym-06-leader-member-4"
+pokemon_id = 124
+species = "Jynx"
+sprite_id = "jynx"
+level = 44
+moves = Array[String](["copycat", "lick", "pound", "powdersnow"])
+
+[resource]
+script = ExtResource("2_gb5u7")
+encounter_id = "gym-06-leader"
+display_name = "Leader Satori"
+api_name = "Leader Satori"
+members = Array[ExtResource("1_lmf8v")]([SubResource("Resource_5gqra"), SubResource("Resource_g22k2"), SubResource("Resource_6vmyf"), SubResource("Resource_ejefn")])
