@@ -16,7 +16,7 @@ func _run() -> void:
 	while editor_filesystem != null and editor_filesystem.is_scanning():
 		await process_frame
 	var packed := load(CITY_SCENE_PATH) as PackedScene
-	_check(packed != null, "The New Bouffalant City wrapper should load.")
+	_check(packed != null, "The canonical New Bouffalant City scene should load.")
 	if packed == null:
 		_finish()
 		return
@@ -26,8 +26,11 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 
-	var residents := city.get_node_or_null(^"TownResidents")
-	_check(residents != null, "The city should retain its TownResidents group.")
+	var residents := city.get_node_or_null(^"Gameplay/Actors/TownResidents")
+	_check(
+		residents != null,
+		"The city should retain TownResidents beneath Gameplay/Actors."
+	)
 	if residents != null:
 		_check(residents.get_child_count() == 7, "All seven residents should load in the editor.")
 		for child: Node in residents.get_children():

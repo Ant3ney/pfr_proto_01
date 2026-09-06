@@ -20,8 +20,8 @@ The generated document records its [PokeAPI growth-rate](https://pokeapi.co/docs
 and [Pokemon Showdown tier-data](https://github.com/smogon/pokemon-showdown/blob/master/data/formats-data.ts)
 sources plus input hashes.
 
-The separate R&D artifact
-[`level_up_learnsets.json`](../../rnd/move_learning/data/level_up_learnsets.json)
+The separate generated artifact
+[`level_up_learnsets.json`](../../game/progression/move_learning/data/level_up_learnsets.json)
 is derived from the level-up details in these same compressed Pokemon records.
 Its generator selects an explicit version group, validates moves against the
 pinned battle mapping, and records source hashes; do not hand-edit it.
@@ -33,8 +33,8 @@ python3 tools/sync_pokeapi_data.py
 python3 tools/sync_pokeapi_data.py --verify
 node tools/generate_creature_experience_data.mjs
 node tools/generate_creature_experience_data.mjs --check
-node rnd/move_learning/tools/generate_move_learnsets.mjs
-node rnd/move_learning/tools/generate_move_learnsets.mjs --check
+node tools/creatures/generate_move_learnsets.mjs
+node tools/creatures/generate_move_learnsets.mjs --check
 ```
 
 The source revision, record counts, and content digest are recorded in

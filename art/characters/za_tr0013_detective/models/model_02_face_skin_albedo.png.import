@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8nhhtneop8n3"
-path="res://.godot/imported/model_02_face_skin_albedo.png-5c49c98b4fc199dad7481afc1fe7a1c6.ctex"
+path.s3tc="res://.godot/imported/model_02_face_skin_albedo.png-5c49c98b4fc199dad7481afc1fe7a1c6.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "70a7783582cbf27438bfa57b8c2ab764"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_tr0013_detective/models/model_02_face_skin_albedo.png"
-dest_files=["res://.godot/imported/model_02_face_skin_albedo.png-5c49c98b4fc199dad7481afc1fe7a1c6.ctex"]
+dest_files=["res://.godot/imported/model_02_face_skin_albedo.png-5c49c98b4fc199dad7481afc1fe7a1c6.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

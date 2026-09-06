@@ -33,7 +33,7 @@ func _run() -> void:
 		police_officer.controller.npc_behavior as TrainerBehavior
 	)
 
-	_check(detector != null, "The shared player should own the RND interaction detector.")
+	_check(detector != null, "The shared player should own the interaction detector.")
 	_check(
 		trainer_behavior != null and trainer_behavior.automatic_sight_encounter,
 		"Prototype trainers should retain automatic sight encounters."
@@ -104,13 +104,13 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"RND interaction HUD smoke test passed: optional talk outside the sight "
+			"Interaction HUD smoke test passed: optional talk outside the sight "
 			+ "line and forced trainer detection from the front verified."
 		)
 		get_tree().quit(0)
 		return
 	for failure in _failures:
-		push_error("RND interaction HUD smoke test failed: %s" % failure)
+		push_error("Interaction HUD smoke test failed: %s" % failure)
 	get_tree().quit(1)
 
 

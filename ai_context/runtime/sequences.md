@@ -7,15 +7,15 @@ general `Sequence` base class or sequence runner in the current implementation.
 
 ## Current movement-control authority
 
-[`GameInstance`](../../core/GameInstance.gd) is an autoload that owns one
+[`GameInstance`](../../game/runtime/game_instance.gd) is an autoload that owns one
 global boolean. It defaults to `true` and exposes:
 
 - `set_player_movement_enabled(is_enabled: bool)`
 - `is_player_movement_enabled() -> bool`
 
-[`PlayerController`](../../core/PlayerController.gd) checks the flag every time
+[`PlayerController`](../../game/actors/player/player_controller.gd) checks the flag every time
 it supplies a movement target. When movement is disabled, it returns the
-player's current position. [`CharacterMovement`](../../core/CharacterMovement.gd)
+player's current position. [`CharacterMovement`](../../game/actors/character/character_movement.gd)
 zeros velocity before processing that target, so player locomotion stops on the
 next physics update.
 
@@ -44,7 +44,7 @@ document in the same change.
 
 ## Current trainer sequence
 
-[`TrainerBehavior`](../../core/TrainerBehavior.gd) is the implemented sequence
+[`TrainerBehavior`](../../game/actors/npcs/trainers/trainer_behavior.gd) is the implemented sequence
 example:
 
 | Stage | Trainer behavior | Player movement |
@@ -56,16 +56,16 @@ example:
 | Dialog advancing | Caller updates the returned UI template | Disabled |
 | Final line dismissed | Clears dialog state, releases its lock, and calls `GameInstance.startBattle()` for a trainer encounter | Transferred to the battle-start flow; remains disabled after the synchronous handoff |
 
-The RND interaction HUD can also dispatch a trainer while it is `WAITING`.
+The shared interaction HUD can also dispatch a trainer while it is `WAITING`.
 Interaction immediately marks the trainer `COMPLETE`, faces the player, and
 either starts the same dialog path or launches the configured battle directly
 when there is no dialog. `automatic_sight_encounter` controls the independent
 classic approach path. Kyle and all six city-line trainers use standard
 aggression: the first accepted battle consumes automatic sight for the current
 play session, and the returned trainer enters `WAITING` for HUD-driven manual
-rematches. Stretchman's generated opponents use Highly Aggro mode, stay
+rematches. Authored standalone-area opponents use Highly Aggro mode, stay
 `COMPLETE` only in the immediate suppressed return scene, and regain automatic
-sight when the destination is entered as a fresh run. The HUD interaction
+sight when their area is launched as a fresh run. The HUD interaction
 remains available while a trainer is `WAITING`, including when the player
 approaches from outside that sight line.
 
@@ -76,7 +76,7 @@ instance and applies the standard/manual or Highly Aggro/suppressed policy above
 
 ## Current Pokemon Center healer sequence
 
-[`PokemonCenterHealerBehavior`](../../core/PokemonCenterHealerBehavior.gd)
+[`PokemonCenterHealerBehavior`](../../game/actors/npcs/services/pokemon_center_healer/pokemon_center_healer_behavior.gd)
 can poll its owning character's `InteractionArea` when
 `automatic_proximity_prompt` is enabled. The authored Center attendant disables
 that mode and is dispatched by the shared look-interaction HUD instead. The area

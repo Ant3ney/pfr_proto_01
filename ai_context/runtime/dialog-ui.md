@@ -4,17 +4,17 @@ Use this document when displaying a UI template, creating dialog data, or
 implementing dialog playback. The current implementation deliberately keeps
 conversation state in the caller rather than in a global dialog manager.
 
-The contributor-facing [UI Template System guide](../../core/ui/README.md)
+The contributor-facing [UI Template System guide](../../game/battle/ui/README.md)
 contains copyable single-message, confirmation, and multi-line dialog recipes,
 plus styling and troubleshooting instructions. This AI Context document records
 the narrower runtime ownership contract that those recipes follow.
 
 ## Ownership model
 
-- [`UIManager`](../../core/UIManager.gd) is an autoloaded `CanvasLayer`. It
+- [`UIManager`](../../game/ui/shared/ui_manager.gd) is an autoloaded `CanvasLayer`. It
   creates visual templates above the active game scene at layer `100`.
 - `UIManager.show_ui(text: String) -> UITemplate` instantiates the current
-  [`ui_template.tscn`](../../core/ui/ui_template.tscn), initializes its message,
+  [`ui_template.tscn`](../../game/ui/shared/ui_template.tscn), initializes its message,
   adds it beneath the manager, and returns that specific template object.
 - The caller owns the meaning of the UI, its state, line index, callbacks, and
   completion behavior. `UIManager` does not own or advance conversations.
@@ -24,7 +24,7 @@ the narrower runtime ownership contract that those recipes follow.
 
 ## Dialog data
 
-[`Dialog`](../../core/Dialog.gd) is a data-only `Resource` with two exported
+[`Dialog`](../../game/dialogue/dialog.gd) is a data-only `Resource` with two exported
 fields:
 
 | Field | Meaning |
@@ -34,11 +34,11 @@ fields:
 
 `Dialog.is_empty()` checks only whether `dialog_lines` is empty. An empty
 speaker name is valid and causes the speaker panel to be hidden. Reusable
-examples live in [`overworld/dialogs`](../../overworld/dialogs/).
+examples live in [`game/dialogue/resources/trainers`](../../game/dialogue/resources/trainers/).
 
 ## Returned template API
 
-[`UITemplate`](../../core/UITemplate.gd) is both the displayed `Control` and the
+[`UITemplate`](../../game/ui/shared/ui_template.gd) is both the displayed `Control` and the
 object callers use to update that instance.
 
 | API | Effect |
@@ -73,7 +73,7 @@ A dialog caller should:
 5. Call `close()` after the final line.
 6. Put external-state cleanup in the dismiss callback or a shared finish path.
 
-[`TrainerBehavior`](../../core/TrainerBehavior.gd) is the current reference
+[`TrainerBehavior`](../../game/actors/npcs/trainers/trainer_behavior.gd) is the current reference
 implementation. On automatic arrival or accepted HUD interaction it opens the
 first assigned line, owns the line index, updates the returned template when
 `Next` is pressed, and closes it after the last line. Its dismiss callback
@@ -82,11 +82,11 @@ control to `GameInstance.startBattle()` for a trainer encounter. See
 [`sequences.md`](sequences.md) for the control-state contract.
 
 Trainer dialog data is assigned through the exported `dialog` property on
-[`TrainerKyle`](../../overworld/trainer_lake/TrainerKyle.gd); the lake trainer
+[`TrainerKyle`](../../game/actors/npcs/trainers/trainer_controller.gd); the lake trainer
 scene demonstrates that resource assignment in
-[`TrainerKyle.tscn`](../../overworld/trainer_lake/TrainerKyle.tscn).
+[`TrainerKyle.tscn`](../../game/actors/npcs/trainers/presets/trainer_kyle.tscn).
 
-[`PokemonCenterHealerBehavior`](../../core/PokemonCenterHealerBehavior.gd) is
+[`PokemonCenterHealerBehavior`](../../game/actors/npcs/services/pokemon_center_healer/pokemon_center_healer_behavior.gd) is
 the current confirmation-and-result example. Its authored scene waits for the
 shared look-interaction HUD, then opens one template with **Heal** and **Not
 now**, applies the party mutation only from the primary callback, and reuses

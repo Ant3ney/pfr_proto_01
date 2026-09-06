@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://bu4qfjdfgeyns"]
+
+[ext_resource type="PackedScene" path="res://game/actors/character/pfr_character.tscn" id="1_3on4o"]
+[ext_resource type="Script" uid="uid://bgcyqdinri1px" path="res://game/actors/character/character_movement.gd" id="2_war5o"]
+[ext_resource type="Script" uid="uid://s3pre1mk8dg0" path="res://game/actors/npcs/shared/npc_controller.gd" id="3_1nwyw"]
+[ext_resource type="Script" uid="uid://b4cgrvfewsd0a" path="res://game/actors/npcs/residents/behaviors/town_npc_behavior.gd" id="3_dim6q"]
+[ext_resource type="Resource" uid="uid://vfj2t6dmkp0o" path="res://game/actors/character/art_packs/za_city_adult_a_01.tres" id="4_war5o"]
+
+[sub_resource type="Resource" id="Resource_60oj8"]
+resource_local_to_scene = true
+script = ExtResource("2_war5o")
+
+[sub_resource type="Resource" id="Resource_3qrru"]
+script = ExtResource("3_dim6q")
+speaker_name = "Pablo"
+dialog_lines = Array[String](["This world is imperfect.", "If only I could wipe away the impurities...", "And make it as beautiful as me!"])
+metadata/_custom_type_script = "uid://b4cgrvfewsd0a"
+
+[sub_resource type="Resource" id="Resource_w3kf2"]
+resource_local_to_scene = true
+script = ExtResource("3_1nwyw")
+npc_behavior = SubResource("Resource_3qrru")
+
+[node name="PFRCharacter" unique_id=838646149 instance=ExtResource("1_3on4o")]
+character_movement = SubResource("Resource_60oj8")
+controller = SubResource("Resource_w3kf2")
+character_art_asset_pack = ExtResource("4_war5o")
+
+[node name="CollisionShape3D" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)

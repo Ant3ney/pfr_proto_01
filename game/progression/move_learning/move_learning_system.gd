@@ -61,7 +61,7 @@ func present_all_pending() -> bool:
 
 
 ## Resolves the first queued request without presentation. Used by focused
-## tests and by tools that deliberately provide their own R&D presentation.
+## tests and by tools that deliberately provide their own presentation.
 func resolve_next_pending(replacement_index := -1) -> Dictionary:
 	if _pending_requests.is_empty():
 		return {}
@@ -236,7 +236,7 @@ func _queue_level_up_moves(
 		if move_id in equipped_moves:
 			continue
 		if _pending_requests.size() >= MAX_PENDING_REQUESTS:
-			push_error("R&D move-learning queue reached its safety limit.")
+			push_error("Move-learning queue reached its safety limit.")
 			break
 		var learned_level := int(learned_move.get("level", current_level))
 		var request_key := "%s:%d:%s" % [pcl_id, learned_level, move_id]
@@ -334,7 +334,7 @@ func _present_pending(pcl_id: String) -> bool:
 		return true
 	_active_ui = _ensure_ui()
 	if not is_instance_valid(_active_ui):
-		push_error("R&D move-learning UI could not be created.")
+		push_error("Move-learning UI could not be created.")
 		return false
 
 	_presenting = true
@@ -368,7 +368,7 @@ func _present_pending(pcl_id: String) -> bool:
 			)
 			result = _resolve_request_at(request_index, replacement_index)
 		if not bool(result.get("ok", false)):
-			push_error("R&D move-learning choice could not be applied.")
+			push_error("Move-learning choice could not be applied.")
 			break
 		_active_ui.show_result(request, result)
 		await _active_ui.continued
@@ -546,6 +546,6 @@ func _is_integer_value(value: Variant) -> bool:
 func _is_test_process_command_line() -> bool:
 	for argument in OS.get_cmdline_args():
 		var value := String(argument)
-		if "res://tests/" in value or "res://rnd/tests/" in value:
+		if "res://tests/" in value:
 			return true
 	return false

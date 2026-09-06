@@ -7,7 +7,7 @@ resolver before changing the protocol.
 
 ## Trust boundary and deployment
 
-[`CloudSaveSync.gd`](../../rnd/save/CloudSaveSync.gd) is the optional Godot
+[`CloudSaveSync.gd`](../../game/save/cloud_save_sync.gd) is the optional Godot
 client and [`cloud-save.mjs`](../../netlify/functions/cloud-save.mjs) is the
 only MongoDB boundary. A Web export calls the same-origin `/api/cloud-save`
 path. Native development and release builds default to the linked
@@ -35,7 +35,7 @@ AI Context, source, tests, logs, or the published Web directory. The function
 fails closed with `cloud_save_not_configured` when the URI or pepper is absent.
 It reuses one module-scope `MongoClient` pool, caps requests at 2 MiB, performs
 optimistic compare-and-swap writes, accepts JSON requests only, returns
-`no-store` JSON, and has a per-IP and-domain rate limit. Atlas documents use an
+`no-store` JSON, and has a per-IP and per-domain rate limit. Atlas documents use an
 HMAC-SHA-256 lookup key; they do not store the raw Save ID.
 
 ## Player linkage and offline behavior
@@ -53,7 +53,7 @@ flag, raw player-entered ID, random device ID, reset epoch, last cloud revision,
 base section fingerprints, and last successful-sync time. It is never uploaded
 as part of the progression payload.
 
-Portable JSON export contains only the same schema-5 progression payload sent
+Portable JSON export contains only the same schema-6 progression payload sent
 under the protocol request's `payload` field; it never contains this linkage
 file or any of its Save ID/device/revision fields. Manual JSON import preserves
 the current linkage and reset epoch, validates through `ProgressionAutosave`,
@@ -62,9 +62,10 @@ queues the ordinary sync path. Consequently an import during an in-flight
 request receives the same local-change rebase protection as gameplay edits,
 and first-time linking still obeys the existing-cloud-pull rule.
 
-Local `ProgressionAutosave` remains authoritative while offline. Schema 5
+Local `ProgressionAutosave` remains authoritative while offline. Schema 6
 stores a `saved_at_ms` clock and independent timestamps for `profile`,
-`collection`, `move_learning`, `stretch`, and `world`. Cloud sync is debounced
+`collection`, `move_learning`, `economy`, `inventory`,
+`challenge_progression`, and `world`. Cloud sync is debounced
 after disk checkpoints, polls every 45 seconds for another device's changes,
 and retries failures from 5 seconds up to 5 minutes. Network or server failure
 does not block gameplay or local writes. A local section changed while an HTTP
@@ -79,7 +80,7 @@ and applies only after those transition-sensitive owners are idle.
 
 Protocol version 1 resolves a single Atlas document in this order:
 
-1. A missing document is created from the local schema-5 payload.
+1. A missing document is created from the local schema-6 payload.
 2. First-time linking to an existing ID pulls the cloud document. It does not
    overwrite an established save with an unrelated newly linked profile.
 3. A larger reset epoch replaces the older profile. A smaller epoch always
@@ -91,16 +92,18 @@ Protocol version 1 resolves a single Atlas document in this order:
    preferred, with a stable device-ID tie break. `profile`, move-choice state,
    and world pose use that winner directly. Collection conflicts union unique
    PCL IDs into PC storage, retain the preferred party/moves/health/held item,
-   and never reduce already-earned XP or level. Stretch conflicts take the
-   newer balance, inventory, and active-run state while unioning one-time
-   gifts, badges, contiguous completed routes, Champion completion, and
-   defeated IDs for the same active run.
+   and never reduce already-earned XP or level. Inventory conflicts retain the
+   preferred item quantities while unioning one-time gifts. Challenge conflicts
+   retain the preferred active-run state while unioning badges, the contiguous
+   completed-route prefix, Champion completion, and defeated IDs when both
+   versions describe the same active run. Economy uses the preferred section as
+   a whole, so its balance and last reward remain internally consistent.
 
 The resolver clamps a client timestamp more than five minutes ahead of server
 time. The server reconstructs save metadata after a merge and increments one
 document revision atomically. Cloud results still pass the same Godot profile,
-collection, move-learning, and Stretch validators before replacing in-memory
-or local disk state.
+collection, move-learning, economy, inventory, and challenge validators before
+replacing in-memory or local disk state.
 
 ## Reset and verification
 
@@ -120,8 +123,8 @@ godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.
 ```
 
 The Node suite covers first link, causal updates, forced first-link conflicts,
-divergent collection and Stretch merges, and reset epochs. The Godot tests
-cover private-ID validation, opt-in/out, masked UI, schema-5 timestamps, normal
+divergent collection/inventory/challenge merges, and reset epochs. The Godot tests
+cover private-ID validation, opt-in/out, masked UI, schema-6 timestamps, normal
 save validation, linked JSON import, and in-flight local-change rebasing. The
 selected-resource export must include `CloudSaveSync.gd`; Netlify deploys the
 function separately from the Web PCK.

@@ -10,7 +10,7 @@ This directory contains the deterministic Blender authoring source for the disti
 
 The builder imports the shared mesh/material helpers from `source_assets/pokemon_center_interior/create_pokemon_center_interior.py` and embeds the same `pokemon_center_interior_palette.png` and `pokemon_center_classic_brick.png`. Do not create another source copy of those textures.
 
-The playable Godot composition, lighting, collision, player, camera, markers, and exit trigger live in [`../../art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex.tscn`](../../art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex.tscn).
+The playable Godot composition, lighting, collision, player, camera, markers, and exit trigger live in [`pokemon_center_annex.tscn`](../../game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn).
 
 ## Regeneration
 

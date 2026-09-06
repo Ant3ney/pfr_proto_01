@@ -7,7 +7,7 @@ before changing this contract.
 
 ## Launch boundary
 
-[`GameInstance.startBattle(battle_data := {})`](../../core/GameInstance.gd) is
+[`GameInstance.startBattle(battle_data := {})`](../../game/runtime/game_instance.gd) is
 the single transition entry point. Callers identify an authored battle scene and
 encounter; they never pass player or opponent team DTOs:
 

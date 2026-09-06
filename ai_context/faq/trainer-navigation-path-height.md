@@ -9,9 +9,9 @@ This specific failure has all or most of these signs:
 - Trainer line of sight works, so the encounter behavior runs and player movement is disabled.
 - A `NavigationRegion3D` has a baked, connected surface covering the trainer and destination.
 - The trainer root is correctly placed at foot level on the visible and collidable floor.
-- Navigation debug geometry or returned path points are vertically offset from the character root. The original reproduction used a path at `Y = 0.5` with both characters at `Y = 0`; [`demo/main.tscn`](../../demo/main.tscn) did not reproduce it because its path and character roots shared `Y = 0`.
+- Navigation debug geometry or returned path points are vertically offset from the character root. The original reproduction used a path at `Y = 0.5` with both characters at `Y = 0`; an otherwise identical path at `Y = 0` did not reproduce it because its path and character roots shared a height.
 
-Do not diagnose this issue from the navigation overlay alone. First inspect the current scene, [`NPCController.gd`](../../core/NPCController.gd), [`CharacterMovement.gd`](../../core/CharacterMovement.gd), and runtime path data.
+Do not diagnose this issue from the navigation overlay alone. First inspect the current scene, [`NPCController.gd`](../../game/actors/npcs/shared/npc_controller.gd), [`CharacterMovement.gd`](../../game/actors/character/character_movement.gd), and runtime path data.
 
 ## Verified Cause
 
@@ -21,7 +21,7 @@ Raising the trainer or player to the navigation debug surface is not a valid fix
 
 ## Current Required Behavior
 
-[`NPCController.gd`](../../core/NPCController.gd) owns the correction. Before assigning each changed target, it:
+[`NPCController.gd`](../../game/actors/npcs/shared/npc_controller.gd) owns the correction. Before assigning each changed target, it:
 
 1. Gets the navigation-map point closest to the character's current global position.
 2. Measures that point's vertical difference from the character's foot-level pivot.
@@ -40,7 +40,7 @@ From the repository root, run:
 godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
 ```
 
-The regression scene in [`tests/`](../../tests/navigation_path_height_smoke_test.tscn) builds one path at `Y = 0` and another at `Y = 0.5`. Both characters remain at `Y = 0`; the test requires both to reach their targets and verifies path-height offsets of `0` and `0.5` respectively.
+The regression scene in [`tests/scenes/`](../../tests/scenes/navigation_path_height_smoke_test.tscn) builds one path at `Y = 0` and another at `Y = 0.5`. Both characters remain at `Y = 0`; the test requires both to reach their targets and verifies path-height offsets of `0` and `0.5` respectively.
 
 If this test passes but a trainer still does not move in a level, investigate a different navigation failure:
 

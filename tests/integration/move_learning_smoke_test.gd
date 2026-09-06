@@ -28,14 +28,14 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"R&D move-learning smoke test passed: generated PokeAPI learnsets, "
+			"Move-learning smoke test passed: generated PokeAPI learnsets, "
 			+ "form fallback, touch replacement UI, open-slot learning, four-move "
 			+ "replacement/decline, multi-move levels, and pending persistence verified."
 		)
 		get_tree().quit(0)
 		return
 	for failure in _failures:
-		push_error("R&D move-learning smoke test failed: %s" % failure)
+		push_error("Move-learning smoke test failed: %s" % failure)
 	get_tree().quit(1)
 
 
@@ -157,7 +157,7 @@ func _test_level_change_queue_and_choices() -> void:
 	MoveLearningSystem.reset_for_testing()
 	_check(
 		MoveLearningSystem.load_save_data(saved_pending),
-		"A valid pending move choice should survive an R&D progression reload."
+		"A valid pending move choice should survive a progression reload."
 	)
 	var presentation_state := {
 		"movement_was_locked": false,

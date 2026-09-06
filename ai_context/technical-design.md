@@ -12,7 +12,7 @@ input adapters; they do not construct REST commands or calculate results. See
 
 ## Local and optional cloud persistence
 
-`ProgressionAutosave` owns the validated schema-5 local checkpoint and
+`ProgressionAutosave` owns the validated schema-6 local checkpoint and
 per-section offline timestamps. Optional `CloudSaveSync` sends that payload to
 a same-origin Netlify Function only after a player enters a private Save ID;
 opting out never disables local saving. MongoDB Atlas credentials remain
@@ -22,76 +22,76 @@ from undoing a confirmed reset. See
 [`runtime/progression-autosave.md`](runtime/progression-autosave.md) and
 [`runtime/cloud-save.md`](runtime/cloud-save.md).
 
-## Overworld and traversal.
+## Overworld and traversal
 
-Simple character controller. The art of the overworld will be made with modular assets that way the world can be easily made. For the time being, no additional tools will be implimentedt to speed up overwold creation. The overwold will be developed via simple drag and drop placements of the assets.
+Walkable worlds are authored as native Godot inherited scenes with modular
+assets, the FileSystem dock, the Scene tree, Inspector resources, and
+drag-and-drop. Every playable city, route, gym, Champion challenge, and interior
+inherits a base beneath
+[`game/world/level_bases/`](../game/world/level_bases/). `PFRWorldLevel`
+provides `get_player()` and `find_spawn_marker()` and warns when the required
+Runtime, Environment, NavigationRegion3D/WorldGeometry, Gameplay, Markers, or
+Backdrop hierarchy is incomplete. Production code must not assume Player is a
+direct root child.
 
-Each zone will have NPC's and objects that take in interation scrips. They will also take in location scrips. Aupon init of that zone when the player enters that zone, the location scripts will read the progression api and move the NPCs to where they need to go.
-
-The interaction scrip, being a child of a interaction parrent, will be a free handed way of handling what happons when interacted and when an interaction is called. The interaction parrent provides an ocean of healpers to help facilitate this.
+New Bouffalant City and its directly connected interiors live together under
+[`new_bouffalant_city/`](../game/world/levels/new_bouffalant_city/). The 49
+walkable areas opened from the Adventure Menu live together under
+[`standalone_areas/`](../game/world/levels/standalone_areas/): 40 routes, eight
+gyms, and one Champion challenge. Battle-only scenes remain under
+`game/battle/`.
 
 ### Routes 0–39 and wild grass
 
-The authored opening level is
-[`overworld/route_0/route_0.tscn`](../overworld/route_0/route_0.tscn). It uses
-96 unit-scale 4 × 4 m route modules, five reusable encounter fields, and the
+Every route is an independent, directly editable inherited scene. The opening
+level is
+[`route_00.tscn`](../game/world/levels/standalone_areas/routes/route_00/route_00.tscn).
+It uses 96 unit-scale 4 × 4 m route modules, five encounter fields, and the
 calibrated tree, hedge, shrub, flower, stump, and boulder families from the New
 Bouffalant City environment pack. Its authored `NavigationRegion3D` supports
-seven standard prototype trainers in nondecreasing battle order: Kyle and
-Delivery Worker at Lv. 3, Police Officer and Businessman at Lv. 4, Backpacker
-and Tourist at Lv. 5, then Jogger at Lv. 6. Map-wide checkpoint walls force the
-player through each unobstructed sight lane. Their first sight battle is forced
-once per play session; later rematches use normal interaction. `Route0Start` is
-the stable entry marker. The red interactive `Route0ReturnGateway` beside that
-marker returns to `Route0ReturnSpawn` in the Gate Building's rear exit room;
-there is no contact exit at the Route 0 spawn.
+seven standard trainers in nondecreasing battle order: Kyle and Delivery Worker
+at Lv. 3, Police Officer and Businessman at Lv. 4, Backpacker and Tourist at
+Lv. 5, then Jogger at Lv. 6. Map-wide checkpoint walls force the player through
+each unobstructed sight lane. Their first sight battle is forced once per play
+session; later rematches use normal interaction. `Route0Start` is the stable
+entry marker.
 
-Stretchman lists Route 0 plus 39 deterministic generated dungeons. The catalog
-groups four routes into each of 10 shared level ranges and uses 20 biome
-families with named deep variants. Generated routes have winding segmented
-paths, continuous side-wall collision, route-specific tall grass, four-to-eight
-Highly Aggro trainer chokepoints, and increasing lengths through Route 39.
-Every route ends at a physical completion goal. Route 0 begins unlocked; the
-next route becomes available only after the prior route's far-end goal is
-reached, and generated goals additionally require every trainer win. See
-[`runtime/stretch-goals.md`](runtime/stretch-goals.md) for the catalog,
-persistence, reward, and regression contracts.
+Routes 1–39 retain the seeded deterministic winding layouts, continuous side
+walls, biome lighting/decoration, route-specific grass, four-to-eight Highly
+Aggro trainer chokepoints, and increasing length, but all of those elements are
+now ordinary authored scene nodes. Every route ends at a physical completion
+goal. Route 0 begins unlocked; a later route requires the preceding route's
+completion, and Routes 1–39 additionally require every authored trainer win in
+the current run. The exact 49-entry catalog, encounter resources, rewards, and
+authoring contracts are documented in
+[`runtime/adventure-menu-and-standalone-areas.md`](runtime/adventure-menu-and-standalone-areas.md).
 
-[`TallGrassEncounterZone`](../rnd/TallGrassEncounterZone.gd) is the reusable
-player-only `Area3D` under `rnd/`. Its ready-made
-[`tall_grass_encounter_zone.tscn`](../rnd/tall_grass_encounter_zone.tscn)
+[`TallGrassEncounterZone`](../game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd)
+is the reusable player-only `Area3D`. Its ready-made
+[`tall_grass_encounter_zone.tscn`](../game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.tscn)
 combines six unit-scale tall-grass clumps with an 8.5 × 4.5 m detection volume.
 It accumulates horizontal distance only while movement is enabled, checks the
 authored chance every 2 m by default, never rolls while the player stands
 still, debounces a selected encounter, and calls `GameInstance.startBattle()`
-with a concrete scene and stable encounter ID. Route 0 currently authors an 8%
-check chance and launches `wild-fletchling-route-0-v1` through
-[`route_0_wild_battle_scene.tscn`](../battle/route_0_wild_battle_scene.tscn).
+with a concrete scene and stable encounter ID. Route 0 authors an 8% check
+chance and launches `wild-fletchling-route-0-v1` through
+[`route_0_wild_battle_scene.tscn`](../game/battle/scenes/route_0_wild_battle_scene.tscn).
 
-The Gate Building's rear `Route0ExitRoom` uses an ordinary player-only
-`ExitToRoute0` threshold at the labeled rear door, so walking through the door
-immediately enters Route 0 without an interaction prop. Its city-facing arrival
-marker sits well beyond a narrower `ExitFront` threshold and faces into the
-room, preventing an idle arrival from bouncing back outside. Illuminated floor
-guides and `CITY EXIT` / `ROUTE 0` labels make both directions explicit. The
-modular city's sole Gate Building trigger sits on the city-facing side and
-enters this safe front-room marker; the old second exterior-side transition is
-absent.
-
-[`route_4_return_gateway.tscn`](../overworld/route_4/route_4_return_gateway.tscn)
-inherits the configurable
-[`route_4_gateway.tscn`](../overworld/route_4/route_4_gateway.tscn) interaction
-object, styles it red, and places it near `Route0Start`. These legacy internal
-resource names remain dependencies of the live Route 0 wrapper. It accepts only a
-nearby `PlayerCharacter`, then supports E, Enter, Space, gamepad A, or its 48 px
-touch button before returning to the Gate Building rear marker.
+The Gate Building's rear `ExitToRoute0` threshold enters Route 0 without an
+interaction prop. Its city-facing arrival marker sits beyond the narrower
+`ExitFront` threshold, preventing an idle return loop. Route 0's red
+[`city_return_gateway.tscn`](../game/world/level_kits/gameplay/transitions/city_return_gateway.tscn)
+instance beside `Route0Start` inherits the generic
+[`area_gateway.tscn`](../game/world/level_kits/gameplay/transitions/area_gateway.tscn)
+and returns to `Route0ReturnSpawn`. It accepts only a nearby PlayerCharacter and
+supports E, Enter, Space, gamepad A, and its touch prompt.
 
 
 ### Character
 
-[`core/PFRCharacter.tscn`](../core/PFRCharacter.tscn) is the single authored
+[`pfr_character.tscn`](../game/actors/character/pfr_character.tscn) is the single authored
 scene foundation for players and NPCs. It owns the `PFRCharacter` body, standard
-capsule, and `Visual` pivot. `demo/player.tscn` and every reusable NPC role scene
+capsule, and `Visual` pivot. [`player.tscn`](../game/actors/player/player.tscn) and every reusable NPC role scene
 inherit it, then assign their role-specific controller, behavior, art pack,
 and interaction children. The art pack is the only model-selection source: the
 shared tool script creates a non-persistent editor preview and instantiates the
@@ -99,7 +99,7 @@ same model at runtime. Levels instance those reusable role scenes; they do not
 rebuild or copy the character hierarchy. Some roles override only the inherited
 capsule resource to retain a narrower collision radius.
 
-`demo/player.tscn` explicitly overrides the inherited `controller` property
+`player.tscn` explicitly overrides the inherited `controller` property
 with a scene-local `PlayerController`. Do not rely only on
 `PlayerCharacter._init()` for that assignment: applying the packed base scene
 can restore its default `NPCController`, which leaves both keyboard and floating
@@ -134,7 +134,7 @@ The implimentation of how the player input controlls the player. Additionaly, so
 
 Entities that impliment this interface will be have access to a lot of objects with moethods need to drive the interaction along.
 
-The current RND implementation attaches a forward target detector to the shared
+The interaction implementation attaches a forward target detector to the shared
 player and a touch-friendly interaction button to `GameUI`. `PFRCharacter`
 delegates the request through `NPCController` to the owning `NPCBehavior`, so
 trainer dialog/battle and Center healing retain their own sequence state and
@@ -151,9 +151,9 @@ exposes the player-movement enable flag used by sequences and dialog callers,
 the covered battle transition lifecycle, and the ordinary level-transfer entry
 point `transfer_to_scene(path, optional_marker_name)`.
 
-[`SceneTransferTrigger`](../core/SceneTransferTrigger.gd) is the reusable
+[`SceneTransferTrigger`](../game/world/level_kits/gameplay/transitions/scene_transfer_trigger.gd) is the reusable
 player-only `Area3D` for ordinary level travel. Place its ready-made
-[`scene_transfer_trigger.tscn`](../core/scene_transfer_trigger.tscn), choose a
+[`scene_transfer_trigger.tscn`](../game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn), choose a
 `.tscn` path in the inspector, optionally name a destination `Node3D` or
 `Marker3D`, and fit its `CollisionShape3D` to the doorway. The trigger debounces
 contacts and defers the request outside the physics callback. `GameInstance`
@@ -163,7 +163,7 @@ joystick input, changes scenes, applies the marker to the destination's first
 started, finished, and failed signals. Path-based targets avoid cyclic scene
 dependencies for bidirectional doors; selected-resource export presets must
 explicitly include every destination scene. See the
-[`Scene Transfer Trigger` guide](../core/scene_transfer_trigger.md) and its
+[`Scene Transfer Trigger` guide](../game/world/level_kits/gameplay/transitions/scene_transfer_trigger.md) and its
 focused smoke tests for the editor and runtime contracts.
 
 The modular city currently authors 10 contact-triggered exterior openings. Two
@@ -184,7 +184,7 @@ callbacks, advancement, gameplay locks, and cleanup; `UIManager` does not own a
 dialog state machine or prevent overlapping templates. Use `UITemplate.close()`
 to run dismissal cleanup before the instance is freed.
 
-See the [UI Template System guide](../core/ui/README.md) for the complete API,
+See the [UI Template System guide](../game/battle/ui/README.md) for the complete API,
 copyable message, confirmation, and multi-line dialog recipes, editor setup,
 styling, lifecycle rules, and troubleshooting.
 
@@ -192,7 +192,7 @@ styling, lifecycle rules, and troubleshooting.
 
 The implemented Creature System is the `CreatureSystem` autoload backed by the local data snapshot in `data/creatures/`. `CreatureSystem.get_creature(pokemon_id)` is the canonical API; `get_pokemon(pokemon_id)` is an alias. A successful lookup returns the complete PokeAPI `pokemon` record at the root, plus its location encounters in `encounters_data`, complete `pokemon-species` and `evolution-chain` records under `species_data` and `evolution_chain_data`, direct leveled targets in `evolution_options`, a top-level `xp_multiplier`, and `experience_data` containing its growth-row metadata and the cumulative level table. It performs no network request.
 
-[`CreatureExperience`](../core/CreatureExperience.gd) validates the generated `data/creatures/experience.json` artifact. The artifact is a compact two-dimensional table: six growth rows indexed from level 0 through 100 and one packed lookup row for every one of the 1,351 Pokemon IDs. `CreatureSystem.get_experience_for_level()`, `get_experience_to_next_level()`, `get_level_for_experience()`, `get_experience_progress()`, and `get_xp_multiplier()` are the public lookup boundary. Growth rows reproduce PokeAPI's six growth-rate tables. Reward multipliers are a project balance rule generated from pinned `pokemon-showdown@0.11.11` community singles tiers, falling back to National Dex tier and then documented BST bands; they are not an official Pokemon experience formula. Regenerate or check with `node tools/generate_creature_experience_data.mjs [--check]`.
+[`CreatureExperience`](../game/progression/creatures/creature_experience.gd) validates the generated `data/creatures/experience.json` artifact. The artifact is a compact two-dimensional table: six growth rows indexed from level 0 through 100 and one packed lookup row for every one of the 1,351 Pokemon IDs. `CreatureSystem.get_experience_for_level()`, `get_experience_to_next_level()`, `get_level_for_experience()`, `get_experience_progress()`, and `get_xp_multiplier()` are the public lookup boundary. Growth rows reproduce PokeAPI's six growth-rate tables. Reward multipliers are a project balance rule generated from pinned `pokemon-showdown@0.11.11` community singles tiers, falling back to National Dex tier and then documented BST bands; they are not an official Pokemon experience formula. Regenerate or check with `node tools/generate_creature_experience_data.mjs [--check]`.
 
 The pinned tier multipliers descend as `AG 1.60`, `Uber 1.50`, `OU 1.35`, `UUBL 1.28`, `UU 1.22`, `RUBL 1.16`, `RU 1.12`, `NUBL 1.08`, `NU 1.04`, `PUBL 1.00`, `PU 0.96`, `ZUBL 0.93`, `ZU 0.90`, `NFE 0.82`, and `LC 0.75`. The 106 records without a usable current or National Dex tier use exact-form BST bands from `0.80` below 330 through `1.50` at 670 or above. The generator, rather than battle runtime, owns this mapping.
 
@@ -248,7 +248,7 @@ Party slots are integers from `1` through `6`. A Pokemon outside the party has `
 
 `heldItem` is an optional lowercase catalog slug owned by the captured instance.
 `set_held_item()` validates and mutates that field; it does not manage bag
-quantity. `StretchGoalSystem` is the transaction owner that moves an item
+quantity. `InventorySystem` is the transaction owner that moves an item
 between its bag and a PCL, so replacing or taking an item cannot duplicate it.
 
 `add_pokemon(...)` creates a PCL, `get_pcl(pcl_id)` queries a captured instance,
@@ -290,16 +290,23 @@ Battle callers do not assemble a party one slot at a time. `BattleSystem` reads
 the complete validated party through `get_battle_party_members()` and keeps
 collection dictionaries out of scene code.
 
-## Progression System
+## Progression systems
 
-Progression is a large object with a lot of methods. You passin in input and it returns a out put. Ususaly a boolean. For example, if a man blocks a path and he will move if you talk to him, you call the progression system api method and it will access DB and save data. From there, it will know that you don't have enough badges and will return false. The overwolrd interaction system will then make the character stay put.
+Progression is divided by concept. `CollectionSystem` owns captured Pokémon and
+party state, `MoveLearningSystem` owns pending learn choices,
+`EconomySystem` owns money, `InventorySystem` owns the bag and unique gifts,
+and `ChallengeProgressionSystem` owns routes, badges, the Champion result, and
+active standalone runs. `ShopSystem` and `BattleRewardSystem` orchestrate
+transactions through those owners but do not duplicate their state. World and
+NPC logic query the narrow domain API needed for the authored interaction.
 
-## Save system.
+## Save system
 
-The current RND save owner automatically persists the validated
-`CollectionSystem` payload plus active overworld player scene, position, and
-facing. It loads at startup, debounces collection changes, checkpoints location
-periodically and around scene/battle transitions, and restores a saved pose when
-the same scene is active. It writes `user://pfr_rnd_progression.json`; there is
-no manual-save promotion layer yet. See
+The save owner automatically persists the validated profile, collection,
+move-learning, economy, inventory, challenge-progression, and active walkable
+world pose sections. It loads at startup, debounces domain changes, checkpoints
+location periodically and around scene/battle transitions, and restores a saved
+pose only when the same scene is active. Schema 6 retains the historical
+`user://pfr_rnd_progression.json` filename for existing installations and
+migrates schemas 1–5. See
 [`runtime/progression-autosave.md`](runtime/progression-autosave.md).

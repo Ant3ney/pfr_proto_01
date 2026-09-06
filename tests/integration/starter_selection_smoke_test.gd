@@ -141,14 +141,14 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"R&D starter-selection smoke test passed: exact animated Charmander/Froakie/"
+			"Starter-selection smoke test passed: exact animated Charmander/Froakie/"
 			+ "Treecko choices, Lv. 5 profile creation, complete reset, schema-6 save, "
 			+ "and three-stage destructive warnings verified."
 		)
 		get_tree().quit(0)
 		return
 	for failure in _failures:
-		push_error("R&D starter-selection smoke test failed: %s" % failure)
+		push_error("Starter-selection smoke test failed: %s" % failure)
 	get_tree().quit(1)
 
 

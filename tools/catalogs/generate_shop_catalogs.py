@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the RND Stretchman item and Pokemon shop catalogs.
+"""Generate the production item and Pokemon shop catalogs.
 
 Items come from the same pinned PokeAPI api-data commit as the project's
 creature snapshot. Pokemon rows come from the already-vendored creature index
@@ -18,8 +18,8 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[3]
-OUTPUT_ROOT = ROOT / "rnd" / "stretch" / "data"
+ROOT = Path(__file__).resolve().parents[2]
+OUTPUT_ROOT = ROOT / "game" / "economy" / "shop" / "catalogs"
 ITEM_OUTPUT = OUTPUT_ROOT / "items.json"
 POKEMON_OUTPUT = OUTPUT_ROOT / "pokemon.json"
 CREATURE_INDEX = ROOT / "data" / "creatures" / "index.json"
@@ -38,7 +38,7 @@ EVOLUTION_PRICE_MARKUP_DENOMINATOR = 2
 MIN_EVOLUTION_PRICE_INCREASE = 500
 
 # Subjective by design: these are the recognizable, visually high-interest
-# species that Stretchman marks up beyond their competitive tier. Keeping the
+# species that the shop marks up beyond their competitive tier. Keeping the
 # list here makes the prototype taste decision obvious and easy to tune.
 ICONIC_PRICE_FLOORS: dict[int, int] = {
     3: 20_000,
@@ -264,7 +264,7 @@ def generate_items(source: Path, source_commit: str) -> dict[str, Any]:
         "schemaVersion": 2,
         "source": "PokeAPI/api-data",
         "sourceCommit": source_commit,
-        "pricingPolicy": "RND low-cash economy with collector premiums",
+        "pricingPolicy": "Low-cash economy with collector premiums",
         "itemCount": len(records),
         "items": records,
     }
@@ -497,7 +497,7 @@ def generate_pokemon(source_commit: str) -> dict[str, Any]:
         "source": "project CreatureSystem default-form snapshot",
         "sourceCommit": source_commit,
         "pricingPolicy": (
-            "RND $500 minimum, universal 25% increase, and strictly increasing "
+            "$500 minimum, universal 25% increase, and strictly increasing "
             "50% evolution-stage minimums with tier, rarity, and appeal premiums"
         ),
         "minimumPokemonPrice": MIN_POKEMON_PRICE,
@@ -572,11 +572,11 @@ def main() -> None:
         validate_committed()
         mismatches = [path for path, text in expected.items() if not path.exists() or path.read_text(encoding="utf-8") != text]
         if mismatches:
-            raise SystemExit("Out-of-date Stretchman catalogs: " + ", ".join(str(path) for path in mismatches))
+            raise SystemExit("Out-of-date shop catalogs: " + ", ".join(str(path) for path in mismatches))
         if args.item_source is None:
-            print("Stretchman catalogs passed validation; Pokemon pricing matches vendored inputs.")
+            print("Shop catalogs passed validation; Pokemon pricing matches vendored inputs.")
         else:
-            print("Stretchman catalogs match the pinned PokeAPI source.")
+            print("Shop catalogs match the pinned PokeAPI source.")
         return
 
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)

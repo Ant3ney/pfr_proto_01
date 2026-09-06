@@ -1,7 +1,7 @@
 class_name MoveLearningUI
 extends CanvasLayer
 
-## Blocking, touch-safe move replacement prompt owned by the R&D move system.
+## Blocking, touch-safe move replacement prompt owned by move progression.
 
 signal replacement_selected(move_index: int)
 signal continued

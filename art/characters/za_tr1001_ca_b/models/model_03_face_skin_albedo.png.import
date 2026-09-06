@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xf52mhs3u7ay"
-path="res://.godot/imported/model_03_face_skin_albedo.png-064308f09f8d5ba20fc4545338e9cd31.ctex"
+path.s3tc="res://.godot/imported/model_03_face_skin_albedo.png-064308f09f8d5ba20fc4545338e9cd31.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "0573a8bf111fdf40aefc06823d11620c"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_tr1001_ca_b/models/model_03_face_skin_albedo.png"
-dest_files=["res://.godot/imported/model_03_face_skin_albedo.png-064308f09f8d5ba20fc4545338e9cd31.ctex"]
+dest_files=["res://.godot/imported/model_03_face_skin_albedo.png-064308f09f8d5ba20fc4545338e9cd31.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

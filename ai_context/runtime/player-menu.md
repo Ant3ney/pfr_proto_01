@@ -1,4 +1,4 @@
-# R&D Player Menu HUD
+# Player Menu HUD
 
 Read this document when changing the permanent overworld menu button, the
 Party/PC organizer, the persistent bag UI, or the Pokedex browser. Verify the
@@ -6,8 +6,8 @@ current implementation and focused smoke test before changing these contracts.
 
 ## Shared HUD entry and modal ownership
 
-[`player_menu_hud.tscn`](../../rnd/player_menu/player_menu_hud.tscn) is
-instanced by the shared [`game_ui.tscn`](../../demo/game_ui.tscn), so every
+[`player_menu_hud.tscn`](../../game/ui/player_menu/player_menu_hud.tscn) is
+instanced by the shared [`game_ui.tscn`](../../game/ui/hud/game_ui.tscn), so every
 authored overworld scene that uses GameUI receives the same visible `Menu`
 button. It renders on CanvasLayer 150, above the interaction HUD and UIManager,
 and opens by touch/click, keyboard M, or gamepad Y. The menu records the prior
@@ -15,7 +15,7 @@ movement state, clears joystick input, and restores only the lock it acquired;
 closing a menu opened over an already-running sequence does not unlock that
 sequence.
 
-[`PlayerMenuUI`](../../rnd/player_menu/PlayerMenuUI.gd) is a blocking,
+[`PlayerMenuUI`](../../game/ui/player_menu/player_menu_ui.gd) is a blocking,
 keyboard/gamepad-focusable modal with Party & PC, Bag & Items, and Pokedex
 tabs. Escape, M, gamepad B, or its close button dismiss it. Search is local,
 accent/punctuation-normalized, and typo-tolerant. Text-driven result refreshes
@@ -59,23 +59,23 @@ loot-box, imported, or captured Pokemon obtained above its threshold receives
 the action immediately. See [`evolution.md`](evolution.md) for the balance and
 mutation contract.
 
-Stretchman shop purchases and loot-box awards call `add_pokemon(..., 0)`, so
+Adventure Menu shop purchases and loot-box awards call `add_pokemon(..., 0)`, so
 both arrive in PC storage with `inParty: false` and `slot: null`. They become
 battle party members only through the organizer.
 
 ## Bag and Pokedex
 
-The Bag lists only owned item stacks from `StretchGoalSystem`'s persisted
-`item_inventory`, with search and category filters. Discards require a quantity
-and confirmation, then call `StretchGoalSystem.discard_item()`. Most item
-effects remain outside this R&D screen, but the Pokemon detail panel can give
+The Bag lists only owned item stacks from `InventorySystem`'s persisted
+`item_quantities`, with search and category filters. Discards require a quantity
+and confirmation, then call `InventorySystem.discard_item()`. Most item
+effects remain outside this screen, but the Pokemon detail panel can give
 an owned Exp. Share to the selected PCL or take its held item back. A give
 removes one item from the bag, a take returns it, and replacing an item returns
 the previous item in the same synchronous transaction. Party/PC moves retain
 the held item because it belongs to the PCL rather than its slot.
 
-The Pokedex browses all 1,025 default entries in the committed Stretchman
-Pokemon catalog. Owned counts are derived from the complete collection,
+The Pokedex browses all 1,025 default entries in the committed shop Pokémon
+catalog. Owned counts are derived from the complete collection,
 including PC storage, so no parallel seen/owned save state exists. Filters cover
 owned, missing, legendary, and mythical entries. Visible list rows use one still
 frame through `BattleSpriteCatalog.load_front_thumbnail()`, while the selected
@@ -97,7 +97,7 @@ ownership.
 
 The tab row's separate `Save Data` button opens a blocking export/import
 overlay that works whether cloud sync is enabled or not. `Export JSON` emits
-the exact schema-5 progression payload returned by `ProgressionAutosave`, but
+the exact schema-6 progression payload returned by `ProgressionAutosave`, but
 never the private Save ID, device ID, reset epoch, revision, or other cloud
 linkage. Native builds use filesystem dialogs; Web builds use
 `JavaScriptBridge.download_buffer()` for a real browser download and a hidden
@@ -106,8 +106,8 @@ cannot access the browser host filesystem.
 
 Imports are capped at the cloud service's 2 MiB request limit and require an
 explicit replacement confirmation. The save owner parses the JSON and applies
-it through the same profile, collection, move-learning, Stretch, metadata, and
-world validators used by disk and cloud loads. A successful import immediately
+it through the same profile, collection, move-learning, economy, inventory,
+challenge, metadata, and world validators used by disk and cloud loads. A successful import immediately
 replaces the ordinary local checkpoint. Existing cloud linkage is preserved;
 all imported sections receive a fresh monotonic local timestamp and the normal
 cloud save signals queue synchronization. Import is refused during a battle,
@@ -117,9 +117,9 @@ scene or battle transition, reset, or starter-selection handoff.
 
 Party/PC operations, evolution, and `CollectionSystem.set_held_item()` emit the
 existing collection update signal. Item discards and held-item bag transfers
-emit the existing Stretch progression and inventory signals. Schema-5
-ProgressionAutosave therefore persists the optional PCL `heldItem` field and
-the bag without a new top-level save section. The selected-resource Web export
+emit `InventorySystem` progression signals. Schema-6 ProgressionAutosave
+persists the optional PCL `heldItem` field in `collection` and bag state in the
+independent `inventory` section. The selected-resource Web export
 explicitly includes the player-menu scripts and scenes.
 
 ```bash

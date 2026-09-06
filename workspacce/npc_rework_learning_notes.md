@@ -8,6 +8,10 @@ One think i may be able to change is the fact so many resources are assigned to 
 
 
 
+Dialog and Sequence implimentation idea
+I'm thinking that dialog should hook ids. When you run a seqeunce script, you can have that script anitipate those hook ids and do specal sequences stuff and manipulate the dialog flow like pause it or resume it.
+
+
 
 
 

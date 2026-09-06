@@ -7,8 +7,7 @@ player and disappear from the interaction HUD after battles or scene changes.
 
 This failure has all or most of these signs:
 
-- Trainers in more than one scene are affected, including newly generated
-  Stretchman destinations.
+- Trainers in more than one authored route, gym, or Champion scene are affected.
 - Forward sight and manual E interaction both fail because the trainer behavior
   is already in `COMPLETE` before the player approaches it.
 - Quitting the entire game and launching it again temporarily restores the
@@ -50,16 +49,15 @@ recreate its behavior from `prepare_for_character()` because release PackedScene
 deserialization can overwrite the inherited exported property with null; see
 [`web-export-trainer-behavior.md`](web-export-trainer-behavior.md).
 
-[`PFRCharacter.gd`](../../core/PFRCharacter.gd) calls
-`NPCController.prepare_for_character()` from `_ready()`. Custom trainer
+[`PFRCharacter.gd`](../../game/actors/character/pfr_character.gd) calls
+`NPCController.prepare_for_character()` from `_ready()`. `TrainerController`
 controllers use that hook to ensure a local behavior exists and copy their
 exported dialog, encounter ID, battle scene path, sight flag, and aggression
-mode into it. Runtime destination spawners must call the hook before inspecting
-trainers that have not entered the scene tree. Keep `NPCController.map_coordinates`
+mode into it. Keep `NPCController.map_coordinates`
 as passive storage and activate travel only through `move_to()`.
 
 Standard trainers consume automatic sight once per play session and then remain
-in `WAITING` for manual rematches. Stretchman destination trainers use
+in `WAITING` for manual rematches. Authored standalone-area trainers use
 `HIGHLY_AGGRO`: the immediate return scene is suppressed to prevent a loop, but
 a newly entered destination gets a fresh local behavior and forces sight again.
 
@@ -74,7 +72,7 @@ godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test
 godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
 ```
 
-The destination test poisons an instance of every authored trainer template,
+The standalone-area test poisons an instance of every authored trainer template,
 requires the next instance to own fresh controller and behavior resources,
 exercises Highly Aggro sight again after route scene re-entry, and dispatches
 Gym 8 through the E-key HUD path. The battle-data test verifies that an

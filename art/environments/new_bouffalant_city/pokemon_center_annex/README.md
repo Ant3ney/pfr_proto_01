@@ -1,6 +1,6 @@
 # Pokemon Center Service Annex
 
-[`pokemon_center_annex.tscn`](pokemon_center_annex.tscn) is the distinct interior reached through the Pokemon Center's east exterior storefront. The south storefront continues to open the main clinic lobby; the east storefront now opens this service annex instead of placing both entrances at the same indoor spawn.
+[`pokemon_center_annex.tscn`](../../../../game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn) is the distinct interior reached through the Pokemon Center's east exterior storefront. The south storefront continues to open the main clinic lobby; the east storefront now opens this service annex instead of placing both entrances at the same indoor spawn.
 
 ## Design
 

@@ -64,13 +64,13 @@ class BattleReturnWatcher:
 
 		if failures.is_empty():
 			print(
-				"RND battle return smoke test passed: implicit source scene, exact player "
+				"Battle return smoke test passed: implicit source scene, exact player "
 				+ "transform/facing, and movement restoration verified."
 			)
 			get_tree().quit(0)
 			return
 		for failure in failures:
-			push_error("RND battle return smoke test failed: %s" % failure)
+			push_error("Battle return smoke test failed: %s" % failure)
 		get_tree().quit(1)
 
 

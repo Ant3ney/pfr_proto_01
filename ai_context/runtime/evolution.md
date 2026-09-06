@@ -13,7 +13,7 @@ the smallest valid `min_level` authored for that target. A target without an
 authored level inherits the smallest authored level among its sibling branches;
 when the whole branch group lacks a level, the first evolution uses level 20
 and the second uses level 36. This flattens item, trade, friendship, time,
-location, move, stat, and other source-game rules into the current R&D
+location, move, stat, and other source-game rules into the current
 level-only system.
 
 Each returned option contains `pokemonId`, PokeAPI `name`, `requiredLevel`,

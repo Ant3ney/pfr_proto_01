@@ -58,11 +58,11 @@ menu moves it between the bag and a selected PCL; a party holder that did not
 enter battle receives half of its own normal knockout XP, while an active
 holder receives the ordinary full award without doubling it.
 
-When a battle-supported Pokemon crosses a level-up learnset threshold, the R&D
+When a battle-supported Pokemon crosses a level-up learnset threshold, the
 move-learning system derives the move from the committed PokeAPI snapshot. It
 automatically fills an open move slot; at four moves it pauses play so the
 player can replace one exact slot or keep the current set. Unresolved choices
-survive schema-5 autosaves. See the
+survive schema-6 autosaves. See the
 [level-up move-learning contract](ai_context/runtime/move-learning.md).
 
 Run the collection verification with:
@@ -104,12 +104,12 @@ tokens, calculate results, or write collection health.
 
 The included Kyle battle is the reference authoring setup:
 
-- [`battle/kyle_battle_scene.tscn`](battle/kyle_battle_scene.tscn) inherits the
+- [`kyle_battle_scene.tscn`](game/battle/scenes/kyle_battle_scene.tscn) inherits the
   shared battlefield and contains exactly one encounter provider.
-- [`trainer_kyle_lake_v1.tres`](battle/encounters/trainer_kyle_lake_v1.tres)
+- [`trainer_kyle_lake_v1.tres`](game/battle/encounters/trainer_kyle_lake_v1.tres)
   defines stable encounter and member IDs, canonical species, exact sprites,
   levels, normalized health, and equipped moves.
-- [`TrainerKyle.gd`](overworld/trainer_lake/TrainerKyle.gd) passes only the
+- [`TrainerController`](game/actors/npcs/trainers/trainer_controller.gd) passes only the
   concrete scene path and stable encounter ID to `GameInstance.startBattle()`.
 
 To author another encounter, duplicate the concrete scene and encounter
@@ -124,7 +124,7 @@ Run the focused battle gates with:
 ```sh
 node tools/generate_battle_species_mapping.mjs --check
 node tools/generate_creature_experience_data.mjs --check
-node rnd/move_learning/tools/generate_move_learnsets.mjs --check
+node tools/creatures/generate_move_learnsets.mjs --check
 godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
@@ -153,43 +153,94 @@ if template:
 
 The caller owns the template's state and lifecycle. Actions do not close automatically, the dismiss button is hidden by default, and `UIManager` does not prevent overlapping templates. Use `close()` rather than `queue_free()` when dismissal must run cleanup.
 
-See the complete [UI Template System guide](core/ui/README.md) for single messages, confirm/cancel UI, multi-line `Dialog` resources, movement locks, callbacks and signals, styling, lifecycle rules, and troubleshooting.
+See the complete [UI Template System guide](game/battle/ui/README.md) for single messages, confirm/cancel UI, multi-line `Dialog` resources, movement locks, callbacks and signals, styling, lifecycle rules, and troubleshooting.
+
+## Adventure Menu and Standalone Areas
+
+Stretchman is an ordinary resident NPC in Miare Station. His scene inherits the
+resident and `PFRCharacter` bases and assigns the reusable `MenuNpcBehavior` to
+open [`adventure_menu.tscn`](game/ui/adventure_menu/adventure_menu.tscn). The
+behavior only faces the player, owns the menu movement lock, and restores it
+when the menu closes; it does not own shops, rewards, battles, or progression.
+
+The Adventure Menu calls the production domain autoloads directly:
+`EconomySystem`, `InventorySystem`, `ShopSystem`,
+`ChallengeProgressionSystem`, and `BattleRewardSystem`. Its walkable catalog
+contains exactly 49 Inspector-authored destinations under
+[`standalone_areas/`](game/world/levels/standalone_areas/): Route 00–39, Gym
+01–08, and one Champion challenge. Each area folder contains its own scene,
+`area_definition.tres`, and only the local encounter resources it needs. All
+49 are native inherited scenes with static trainers, grass, gates, geometry,
+lights, objectives, and markers visible in Godot's Scene tree; routine
+authoring never invokes a world generator.
+
+See the [standalone-area contract](ai_context/runtime/adventure-menu-and-standalone-areas.md)
+for domain ownership, resource fields, unlocks, rewards, save migration, and
+export verification.
 
 ## Place the Player in a Traversable Scene
 
-[`core/PFRCharacter.tscn`](core/PFRCharacter.tscn) is the shared scene foundation
+[`pfr_character.tscn`](game/actors/character/pfr_character.tscn) is the shared scene foundation
 for every player and NPC. It owns the `PFRCharacter` body, standard capsule, and
 `Visual` pivot. Role scenes inherit that foundation: the reusable player is
-[`demo/player.tscn`](demo/player.tscn), while town residents, trainers, healers,
+[`player.tscn`](game/actors/player/player.tscn), while town residents, trainers, healers,
 and Stretchman add their own controller, behavior, art, and interaction data.
 Instance the role scene instead of rebuilding the character hierarchy in a
 level. Assign character appearance through one `PFRCharacterArtAssetPack`;
 the shared character creates the matching `CharacterArt` model at runtime and
 as a non-persistent editor preview.
 
-A playable level normally has this structure:
+A playable level inherits an outdoor or interior base and keeps this common
+structure:
 
 ```text
-Level (Node3D)
-├── Environment visuals
-├── Ground/Obstacles (StaticBody3D or collision-enabled GridMap)
-│   └── CollisionShape3D or MeshLibrary collision shapes
-├── Player (instance of demo/player.tscn)
-├── Camera (Camera3D using core/PlayerCamera.gd)
-├── WorldEnvironment and DirectionalLight3D
-└── GameUI (optional; enables touch and mouse-drag movement)
+PFRWorldLevel
+├── Runtime
+│   ├── Player
+│   ├── Camera3D
+│   └── GameUI
+├── Environment
+├── NavigationRegion3D
+│   └── WorldGeometry
+│       ├── Ground
+│       ├── Structures
+│       ├── Props
+│       └── Boundaries
+├── Gameplay
+│   ├── Actors
+│   ├── Encounters
+│   ├── Interactions
+│   ├── Transitions
+│   └── Objectives
+├── Markers
+└── Backdrop
 ```
 
 ### Set Up the Level
 
-1. Create or open a scene with a `Node3D` root.
-2. Instance [`demo/player.tscn`](demo/player.tscn) as a child. Keep its scale at `1, 1, 1` and place the `Player` root at the walkable surface height. The included capsule is 1.6 meters tall, centered at `Y = 0.8`, so the player root represents the character's foot position.
-3. Give every walkable surface and blocking obstacle physics collision. A visible `MeshInstance3D` alone does not stop the player: use a `StaticBody3D` with one or more `CollisionShape3D` children, or a `GridMap` whose `MeshLibrary` items contain collision shapes. The default collision layer and mask, layer 1, match the player.
-4. Add a `Camera3D` as a sibling of the player, attach [`core/PlayerCamera.gd`](core/PlayerCamera.gd), enable **Current**, and set **Target Path** to the player. For the tree above, the path is `../Player`. Movement is camera-relative when this camera is active.
-5. Add lighting and a `WorldEnvironment` so the level is visible. These nodes affect presentation, not movement.
-6. Optionally instance [`demo/game_ui.tscn`](demo/game_ui.tscn) to enable the floating touch/mouse joystick. Keyboard and gamepad movement work without this UI.
+1. In the FileSystem dock, right-click
+   [`outdoor_level_base.tscn`](game/world/level_bases/outdoor_level_base.tscn)
+   or [`interior_level_base.tscn`](game/world/level_bases/interior_level_base.tscn)
+   and create a native inherited scene.
+2. Set the root's level identity and entry marker in the Inspector. Keep the
+   inherited player at unit scale and place its foot-level root on the walkable
+   surface. The included capsule is 1.6 meters tall and centered at `Y = 0.8`.
+3. Put walkable and blocking physics beneath
+   `NavigationRegion3D/WorldGeometry`. A visible `MeshInstance3D` alone does not
+   stop the player: use `StaticBody3D` collision or a collision-enabled GridMap.
+4. Keep actors, encounter volumes, interaction objects, transitions, and
+   objectives under their corresponding `Gameplay` branches, and put stable
+   arrival points under `Markers`.
+5. Configure the inherited camera's player target and author lighting or
+   `WorldEnvironment` beneath `Environment`/`Backdrop` as appropriate.
+6. Retain inherited `GameUI` for the floating joystick, interaction prompt, and
+   permanent player menu. Keyboard and gamepad locomotion do not depend on the
+   joystick control.
 
-The current project already registers [`core/GameInstance.gd`](core/GameInstance.gd) as the `GameInstance` autoload. Keep that autoload enabled because `PlayerController` checks it before accepting movement. A `NavigationRegion3D` is not required for player movement; navigation meshes are used by NPC controllers.
+Use `PFRWorldLevel.get_player()` and `find_spawn_marker()` in production scripts;
+do not assume the player is a direct child of the level root.
+
+The project registers [`game_instance.gd`](game/runtime/game_instance.gd) as the `GameInstance` autoload. Keep that autoload enabled because `PlayerController` checks it before accepting movement. A `NavigationRegion3D` is not required for player movement; navigation meshes are used by NPC controllers.
 
 The controller currently moves only on the XZ plane and does not apply gravity. Spawn the player directly on the floor rather than above it, and use a common walkable elevation for dependable traversal. Test slopes, steps, ledges, and drops individually before relying on them.
 
@@ -214,10 +265,10 @@ The New Bouffalant City ground wrappers and imported reference assets already in
 ## Add a Trainer to a Scene
 
 All trainer prefabs inherit
-[`core/PFRCharacter.tscn`](core/PFRCharacter.tscn).
-[`overworld/trainer_lake/TrainerKyle.tscn`](overworld/trainer_lake/TrainerKyle.tscn)
+[`pfr_character.tscn`](game/actors/character/pfr_character.tscn).
+[`trainer_kyle.tscn`](game/actors/npcs/trainers/presets/trainer_kyle.tscn)
 is the reference trainer role scene, and
-[`overworld/route_0/route_0.tscn`](overworld/route_0/route_0.tscn)
+[`route_00.tscn`](game/world/levels/standalone_areas/routes/route_00/route_00.tscn)
 demonstrates all seven standard prototype placements in Lv. 3–6 order. A
 trainer uses the same character body, collision, movement, art-pack, and
 animation system as the player, but its controller waits for a line-of-sight
@@ -226,26 +277,31 @@ detection and then navigates toward the player.
 A trainer-ready level adds these nodes to the playable-level structure above:
 
 ```text
-Level (Node3D)
+PFRWorldLevel
 ├── NavigationRegion3D
-│   └── NavigationSource (Node3D)
-│       ├── Walkable ground with collision
-│       └── Blocking obstacles with collision
-├── Player
-└── TrainerKyle (instance of overworld/trainer_lake/TrainerKyle.tscn)
+│   └── WorldGeometry
+│       ├── Ground
+│       ├── Structures
+│       ├── Props
+│       └── Boundaries
+├── Runtime
+│   └── Player
+└── Gameplay
+    └── Actors
+        └── TrainerKyle (inherited trainer preset instance)
 ```
 
 ### Place and Configure a Trainer
 
 1. In the FileSystem dock, drag the required reusable trainer scene from
-   [`overworld/trainer_lake/`](overworld/trainer_lake/) into the level's Scene
+   [`game/actors/npcs/trainers/presets/`](game/actors/npcs/trainers/presets/) into the level's Scene
    tree. Do not copy its node hierarchy into the level. Keep its scale at
    `1, 1, 1`, and place its root directly on the walkable surface, inside the
    navigation mesh.
-2. Rotate the trainer root around the Y axis to face its detection lane. [`core/TrainerBehavior.gd`](core/TrainerBehavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
+2. Rotate the trainer root around the Y axis to face its detection lane. [`trainer_behavior.gd`](game/actors/npcs/trainers/trainer_behavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
 3. Keep the player's collision body on physics layer 1, or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
 4. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
-5. Assign a non-empty [`Dialog`](core/Dialog.gd) resource to the trainer's **Dialog** property. The bundled Kyle scene already uses [`trainer_kyle.tres`](overworld/dialogs/trainer_kyle.tres); create another resource with a speaker name and ordered lines for a different trainer.
+5. Assign a non-empty [`Dialog`](game/dialogue/dialog.gd) resource to the trainer's **Dialog** property. The bundled Kyle scene already uses [`trainer_kyle.tres`](game/dialogue/resources/trainers/trainer_kyle.tres); create another resource with a speaker name and ordered lines for a different trainer.
 6. Run the scene and walk into the trainer's forward sightline. The trainer should lock player movement, create its `NavigationAgent3D` at runtime, navigate around baked obstacles, stop beside the player, and open its dialog. Advancing the last line closes the template and restores player movement. Do not add a `NavigationAgent3D` manually.
 
 Trainer navigation and physical collision are separate. The `NavigationMesh` supplies a path, while `StaticBody3D`, `GridMap`, and other collision shapes keep the characters out of walls and scenery. A trainer needs both systems to behave correctly.
@@ -260,7 +316,7 @@ Trainer navigation and physical collision are separate. The `NavigationMesh` sup
 
 You do not need to draw a rectangular navigation boundary. With the `NavigationMesh` resource's `filter_baking_aabb` left empty, Godot derives the covered area from the source geometry it finds. Set `filter_baking_aabb` and its offset only when intentionally cropping a large bake or building navigation chunks.
 
-Keep character roots on the visible walkable surface; never move a character upward to match the navigation debug overlay. Baked path points can be vertically offset from the rendered floor because of navigation rasterization and source transforms. [`NPCController`](core/NPCController.gd) measures that difference for every new path and automatically applies the appropriate `NavigationAgent3D.path_height_offset`. This works without scene-specific tuning whether the baked path is at `Y = 0`, `Y = 0.5`, or another height near the character.
+Keep character roots on the visible walkable surface; never move a character upward to match the navigation debug overlay. Baked path points can be vertically offset from the rendered floor because of navigation rasterization and source transforms. [`NPCController`](game/actors/npcs/shared/npc_controller.gd) measures that difference for every new path and automatically applies the appropriate `NavigationAgent3D.path_height_offset`. This works without scene-specific tuning whether the baked path is at `Y = 0`, `Y = 0.5`, or another height near the character.
 
 For predictable baking, keep the `NavigationRegion3D` at scale `1, 1, 1`. Prefer unit-scale source geometry as well; set modular dimensions through meshes and `GridMap.cell_size` instead of scaling the navigation source merely to enlarge the bake. The navigation mesh gets its coverage from parsed source geometry, not from the `NavigationRegion3D` transform.
 
@@ -274,25 +330,25 @@ godot --headless --path . --scene res://tests/scenes/navigation_path_height_smok
 
 The existing Kyle behavior implements a complete one-time approach, linear
 dialog, and networked battle. After the result or an unrecoverable failure, it
-returns to the authored pose in `overworld/route_0/route_0.tscn`.
+returns to the authored pose in `game/world/levels/standalone_areas/routes/route_00/route_00.tscn`.
 Standard authored trainers consume their forced sight encounter for the current
 play session, then remain available through the shared interaction prompt for
-manual rematches. Stretchman destination trainers use **Highly Aggro** mode:
+manual rematches. Authored standalone-area trainers use **Highly Aggro** mode:
 the just-returned scene suppresses an immediate loop, but leaving and starting
 that destination again restores their forced sight challenge. Standard sight
 consumption is not yet persisted to disk. Avoid overlapping trainer sightlines
 because there is no encounter arbiter for simultaneous detections or UI templates.
 
 To author a genuinely new reusable character role, create an inherited scene
-from [`core/PFRCharacter.tscn`](core/PFRCharacter.tscn); do not duplicate an
+from [`pfr_character.tscn`](game/actors/character/pfr_character.tscn); do not duplicate an
 existing character scene. Preserve the inherited `CollisionShape3D` and
 `Visual` nodes, override the capsule shape only when the role needs a different
 radius, and assign a `PFRCharacterArtAssetPack` on the root. Do not separately
 add the pack's GLB beneath `Visual`; the inherited character owns both its
 editor preview and runtime instantiation. A trainer assigns a scene-local
-[`TrainerKyle`](overworld/trainer_lake/TrainerKyle.gd) controller, its `Dialog`,
+[`TrainerController`](game/actors/npcs/trainers/trainer_controller.gd), its `Dialog`,
 concrete battle-scene path, and matching encounter ID. Save that role scene
-under `overworld/`, then drag instances of it from the FileSystem dock into
+under `game/actors/npcs/trainers/presets/`, then drag instances of it from the FileSystem dock into
 levels.
 
 Run the shared-scene regression whenever character scene composition changes:

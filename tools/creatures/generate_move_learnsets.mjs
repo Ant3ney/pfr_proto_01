@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Generate the R&D level-up move catalog from the vendored PokeAPI Pokemon
+ * Generate the level-up move catalog from the vendored PokeAPI Pokemon
  * records. The runtime never needs a network request or a second Pokedex.
  */
 
@@ -12,17 +12,17 @@ import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 
 const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url));
-const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, "../../..");
+const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, "../..");
 const POKEAPI_INDEX_PATH = resolve(REPOSITORY_ROOT, "data/creatures/index.json");
 const POKEAPI_MANIFEST_PATH = resolve(REPOSITORY_ROOT, "data/creatures/manifest.json");
 const POKEAPI_POKEMON_ROOT = resolve(REPOSITORY_ROOT, "data/creatures/pokemon");
 const BATTLE_MAPPING_PATH = resolve(
   REPOSITORY_ROOT,
-  "battle/data/pokeapi_showdown_mapping.json",
+  "game/battle/encounters/pokeapi_showdown_mapping.json",
 );
 const OUTPUT_PATH = resolve(
   REPOSITORY_ROOT,
-  "rnd/move_learning/data/level_up_learnsets.json",
+  "game/progression/move_learning/data/level_up_learnsets.json",
 );
 
 // Prefer the newest conventional main-series learnset available for the exact
@@ -214,10 +214,10 @@ const encoded = `${JSON.stringify(buildOutput())}\n`;
 if (process.argv.includes("--check")) {
   if (readFileSync(OUTPUT_PATH, "utf8") !== encoded) {
     throw new Error(
-      "R&D move learnset data is stale. Run rnd/move_learning/tools/generate_move_learnsets.mjs.",
+      "Move learnset data is stale. Run tools/creatures/generate_move_learnsets.mjs.",
     );
   }
-  process.stdout.write("R&D move learnset data is current.\n");
+  process.stdout.write("Move learnset data is current.\n");
 } else {
   mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
   writeFileSync(OUTPUT_PATH, encoded);

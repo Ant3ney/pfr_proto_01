@@ -23,7 +23,7 @@ const MANIFEST_PATH = resolve(REPOSITORY_ROOT, "data/creatures/manifest.json");
 const SPECIES_ROOT = resolve(REPOSITORY_ROOT, "data/creatures/species");
 const BATTLE_MAPPING_PATH = resolve(
   REPOSITORY_ROOT,
-  "battle/data/pokeapi_showdown_mapping.json",
+  "game/battle/encounters/pokeapi_showdown_mapping.json",
 );
 const SHOWDOWN_PACKAGE_PATH = resolve(
   REPOSITORY_ROOT,

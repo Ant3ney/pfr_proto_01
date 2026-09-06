@@ -11,7 +11,7 @@ This directory contains the deterministic Blender authoring source for the playa
 - `pokemon_center_classic_brick.png` is the stripped 512 x 512 runtime-authoring texture embedded in the GLB.
 - `pokemon_center_interior_preview.png` is the generated authoring preview.
 
-The playable Godot composition, lighting, collision, player, camera, and gameplay markers live separately in [`../../art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior.tscn`](../../art/environments/new_bouffalant_city/pokemon_center_interior/pokemon_center_interior.tscn).
+The playable Godot composition, lighting, collision, player, camera, and gameplay markers live separately in [`pokemon_center_interior.tscn`](../../game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn).
 
 The generated reception counter is intentionally authored at Blender `Y = 2.75 m`
 (Godot `Z = -2.75 m`). This leaves the service aisle used by the staffed healer;

@@ -7,7 +7,7 @@ tests before changing these contracts.
 
 ## Runtime ownership
 
-[`BattleSystem`](../../battle/system/BattleSystem.gd) is an autoload and the
+[`BattleSystem`](../../game/battle/system/battle_system.gd) is an autoload and the
 only gameplay coordinator for networked PvE battles. Its state flow is:
 
 ```text
@@ -22,7 +22,7 @@ PRESENTING/SUBMITTING -> ENDED -> RETURNING -> IDLE
 `BattleSystem` owns encounter discovery, collection-party DTO construction,
 the memory-only state token, battle ID and revision, exact request retries,
 response validation, atomic health/XP writeback, event/request ordering, result state,
-and session cleanup. [`BattleScene`](../../battle/BattleScene.gd) is a thin
+and session cleanup. [`BattleScene`](../../game/battle/scenes/battle_scene.gd) is a thin
 adapter: it converts UI actions into typed coordinator calls and converts
 copied snapshots/events into presentation. It must not create REST commands,
 hold tokens, infer outcomes from event text, or mutate collection state.
@@ -33,7 +33,7 @@ connection, reveal, and return order.
 
 ## Session and transport contract
 
-[`BattleRestClient`](../../battle/system/BattleRestClient.gd) sends JSON to the
+[`BattleRestClient`](../../game/battle/system/battle_rest_client.gd) sends JSON to the
 fixed base URL `https://pfr-locomotion-prototype.vercel.app/api/v1`. It permits
 one `HTTPRequest` at a time, sends no credentials or authentication header,
 enforces a response-size ceiling, and tags callbacks with a local request ID.
@@ -46,7 +46,7 @@ until a response is accepted. A transport retry sends those byte-identical
 bytes. Stale callbacks and duplicate accepted responses are ignored; the
 client never intentionally submits a new action against an older token.
 
-[`BattleDtoValidator`](../../battle/system/BattleDtoValidator.gd) checks the
+[`BattleDtoValidator`](../../game/battle/system/battle_dto_validator.gd) checks the
 API, engine, and format versions; battle identity; revision progression; phase;
 token presence; structured request; party snapshots; result; event shape; and
 response size before any state is applied. The untouched server snapshot is
@@ -68,7 +68,7 @@ not-fainted to fainted awards every recorded participant once, including
 participants that later switched out or fainted. Initial snapshots, stale
 callbacks, retries, and duplicate responses cannot award XP. The level
 differential supplies the base reward in
-[`BattleExperience`](../../battle/system/BattleExperience.gd), then the
+[`BattleExperience`](../../game/battle/system/battle_experience.gd), then the
 defeated Pokemon's local Pokédex `xp_multiplier` is applied. This progression
 metadata stays local and never enters the strict REST team DTO.
 
@@ -117,7 +117,7 @@ switch member IDs, and whether a switch is forced. Bag is unavailable in v1;
 Run requires confirmation and submits a forfeit.
 
 Known p1-filtered protocol events are translated by
-[`BattleEventTranslator`](../../battle/system/BattleEventTranslator.gd) into
+[`BattleEventTranslator`](../../game/battle/system/battle_event_translator.gd) into
 message, switch, attack, damage/heal, status, knockout, and result presentation
 events. Unknown events safely become a message or no-op. The adapter must
 acknowledge a revision only after its complete event sequence finishes; the
@@ -125,10 +125,10 @@ next choice request is not exposed before that acknowledgement.
 
 ## Compact battle HUD
 
-[`battle_ui_overlay.tscn`](../../core/ui/battle_ui_overlay.tscn) defines the
-persistent status, message, and command HUD. [`UITemplate`](../../core/UITemplate.gd)
+[`battle_ui_overlay.tscn`](../../game/battle/ui/battle_ui_overlay.tscn) defines the
+persistent status, message, and command HUD. [`UITemplate`](../../game/ui/shared/ui_template.gd)
 binds copied battle presentation data to it, while
-[`BattleUIOverlay`](../../core/ui/BattleUIOverlay.gd) owns presentation-only
+[`BattleUIOverlay`](../../game/battle/ui/battle_ui_overlay.gd) owns presentation-only
 responsive layout and layered command materials. At the 960-by-540 design
 viewport, each status card and the message panel is 58 px tall, the command
 tray is 56 px tall, the lower rows have a 4 px gap, and the tray ends 4 px above
@@ -144,7 +144,7 @@ not increase the 58 px card height. A level-up may update the local collection
 level immediately for presentation and later battles; the in-flight server
 session remains snapshot-authoritative for combat calculations.
 
-After an `experience` event is displayed, `BattleScene` asks the R&D
+After an `experience` event is displayed, `BattleScene` asks
 `MoveLearningSystem` to present every move earned by that event's `memberId`.
 The scene awaits replacement or decline before acknowledging the event
 revision, so the next server request cannot appear beneath the modal. Equipped
@@ -153,8 +153,8 @@ its original team snapshot and later battles receive the updated move set. See
 [`move-learning.md`](move-learning.md) for the generated learnset and queue
 contract.
 
-Ordinary choices use [`battle_choice_overlay.tscn`](../../battle/ui/battle_choice_overlay.tscn)
-and [`BattleChoiceOverlay`](../../battle/ui/BattleChoiceOverlay.gd) as a bottom
+Ordinary choices use [`battle_choice_overlay.tscn`](../../game/battle/ui/battle_choice_overlay.tscn)
+and [`BattleChoiceOverlay`](../../game/battle/ui/battle_choice_overlay.gd) as a bottom
 tray with the same 56 px geometry and no battlefield dim. Move buttons preserve
 the returned order and `moveIndex`, show the returned PP and disabled state,
 and include Back; voluntary switches show only returned `memberId` options
@@ -169,8 +169,8 @@ dim layer.
 The request remains authoritative for available move and switch choices, and
 the snapshot remains authoritative for names and HP. Move color and type text
 are cosmetic only: the tray looks up the returned canonical move `id` through
-[`BattleSpeciesMapping.get_move_type()`](../../battle/system/BattleSpeciesMapping.gd).
-The generated [`pokeapi_showdown_mapping.json`](../../battle/data/pokeapi_showdown_mapping.json)
+[`BattleSpeciesMapping.get_move_type()`](../../game/battle/system/battle_species_mapping.gd).
+The generated [`pokeapi_showdown_mapping.json`](../../game/battle/encounters/pokeapi_showdown_mapping.json)
 contains a validated type for every pinned Showdown move ID; an unknown ID has
 no inferred gameplay meaning and falls back to the neutral presentation style.
 
@@ -197,23 +197,23 @@ preflight, while fainted members remain in a valid mixed-health request.
 
 The PokeAPI-ID mapping is generated against pinned
 `pokemon-showdown@0.11.11` and loaded by
-[`BattleSpeciesMapping`](../../battle/system/BattleSpeciesMapping.gd). Run
+[`BattleSpeciesMapping`](../../game/battle/system/battle_species_mapping.gd). Run
 `node tools/generate_battle_species_mapping.mjs --check` after mapping changes.
 Unsupported forms remain collectible but cannot enter the battle party until
 explicitly mapped.
 
 Concrete battle scenes contain exactly one node in group
 `battle_encounter_provider`, exporting a
-[`BattleEncounterDefinition`](../../battle/data/BattleEncounterDefinition.gd).
+[`BattleEncounterDefinition`](../../game/battle/encounters/battle_encounter_definition.gd).
 The resource owns stable IDs, protocol-safe side name, one-to-six validated
 members, optional approved sprite override, and forfeit policy. Kyle's example
-is [`trainer_kyle_lake_v1.tres`](../../battle/encounters/trainer_kyle_lake_v1.tres)
-inside [`kyle_battle_scene.tscn`](../../battle/kyle_battle_scene.tscn).
+is [`trainer_kyle_lake_v1.tres`](../../game/battle/encounters/trainer_kyle_lake_v1.tres)
+inside [`kyle_battle_scene.tscn`](../../game/battle/scenes/kyle_battle_scene.tscn).
 Route 0 uses the same contract for a wild caller: distance travelled inside
-[`TallGrassEncounterZone`](../../rnd/TallGrassEncounterZone.gd) launches
-[`route_0_wild_battle_scene.tscn`](../../battle/route_0_wild_battle_scene.tscn),
+[`TallGrassEncounterZone`](../../game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd) launches
+[`route_0_wild_battle_scene.tscn`](../../game/battle/scenes/route_0_wild_battle_scene.tscn),
 whose provider owns
-[`wild_fletchling_route_0_v1.tres`](../../battle/encounters/wild_fletchling_route_0_v1.tres).
+[`wild_fletchling_route_0_v1.tres`](../../game/battle/encounters/wild_fletchling_route_0_v1.tres).
 The launch ID and provider ID are both `wild-fletchling-route-0-v1`.
 
 ## Regression checks
@@ -221,7 +221,7 @@ The launch ID and provider ID are both `wild-fletchling-route-0-v1`.
 ```bash
 node tools/generate_battle_species_mapping.mjs --check
 node tools/generate_creature_experience_data.mjs --check
-node rnd/move_learning/tools/generate_move_learnsets.mjs --check
+node tools/creatures/generate_move_learnsets.mjs --check
 godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_ui_layout_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_choice_overlay_smoke_test.tscn

@@ -30,7 +30,7 @@ one-frame gate; `ani/regieleki` is the 315-frame maximum.
 
 ## Runtime ownership
 
-`battle/system/BattleSpriteCatalog.gd` loads the metadata-only catalog, enforces
+`game/battle/system/battle_sprite_catalog.gd` loads the metadata-only catalog, enforces
 exact IDs, builds `SpriteFrames` from one manifest at a time, and retains at most
 the active `ani` and `ani-back` assets. It uses cache-bypassing texture loads so
 discarding those references does not intentionally retain prior atlases.
@@ -40,7 +40,7 @@ and grounds it inside a small transparent texture. The full atlas is transient
 and is never added to the active-asset cache, so rendering a party tray does not
 retain six animation atlases.
 
-`battle/system/BattleSpritePresenter.gd` owns both billboarded
+`game/battle/system/battle_sprite_presenter.gd` owns both billboarded
 `AnimatedSprite3D` actors. `configure(player_spawn, opponent_spawn,
 player_shadow, opponent_shadow)` binds them to authored scene anchors and
 optional scene-authored ground shadows. `present_battlers` or `present_snapshot`

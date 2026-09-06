@@ -1,56 +1,50 @@
-# Trainers Are Inert or Missing in Web Exports
+# Trainers Are Inert in Web Exports
 
 Use this document when trainer interactions work from source but fail in a
-release or web package.
+release or Web package.
 
-## Recognize the Failure Signature
+## Recognize the failure signature
 
-- Route 0's standard trainers remain visible but neither notice the player nor accept the
+- A trainer remains visible but neither notices the player nor accepts the
   shared interaction action.
-- Stretchman and the Pokemon Center attendant still work because they use
+- Stretchman and the Pokémon Center attendant still work because they use
   different behavior resources.
-- Generated routes, gyms, and the Pokemon League contain no opponents.
-- Source-scene interaction and destination smoke tests pass.
-- Inspecting an exported Route 0 instance shows a valid `TrainerKyle` controller
+- Source-scene interaction and standalone-area smoke tests pass.
+- Inspecting an exported trainer instance shows a valid `TrainerController`
   whose inherited `npc_behavior` property is null.
 
-## Verified Cause
+The current 40 routes, eight gyms, and Champion challenge are static inherited
+scenes. If their nodes are absent from a package, diagnose selected-resource
+export contents separately; no runtime destination generator exists.
 
-`TrainerKyle._init()` creates a `TrainerBehavior`, but release PackedScene
-deserialization can subsequently restore the inherited exported
+## Verified cause and repair boundary
+
+`TrainerController._init()` creates a `TrainerBehavior`, but release
+`PackedScene` deserialization can subsequently restore the inherited exported
 `NPCController.npc_behavior` property to null. A null behavior rejects both
 automatic sight and manual interaction.
 
-Generated destinations expose a second edge: they configure a trainer directly
-after `PackedScene.instantiate()` and before `add_child()` can run
-`PFRCharacter._ready()`. Their validation rejects and frees a trainer whose
-behavior is null, which makes every generated opponent appear to be absent.
+[`TrainerController`](../../game/actors/npcs/trainers/trainer_controller.gd)
+owns `_ensure_trainer_behavior()`. Both `_init()` and
+`prepare_for_character()` call it before synchronizing dialog, battle scene,
+encounter ID, automatic sight, and aggression. Every trainer preset inherits
+[`trainer_base.tscn`](../../game/actors/npcs/trainers/trainer_base.tscn), and
+`PFRCharacter._ready()` calls the controller preparation hook after scene
+deserialization. Preserve the scene-local controller resources and this repair
+step; do not add area-specific trainer subclasses or reconstruct trainers from
+runtime dictionaries.
 
-## Current Required Behavior
+## Regression checks
 
-[`TrainerKyle`](../../overworld/trainer_lake/TrainerKyle.gd) owns
-`_ensure_trainer_behavior()`. Both `_init()` and `prepare_for_character()` call
-it before synchronizing dialog, battle scene, encounter ID, automatic sight,
-and aggression settings. This makes scene-ready Route 0 trainers recover from the
-exported null property without weakening the base behavior boundary.
-
-[`StretchDestination`](../../rnd/stretch/worlds/StretchDestination.gd) must call
-`prepare_for_character()` before reading a newly instantiated trainer's
-behavior. Do not rely only on `PFRCharacter._ready()` at this boundary because
-the destination configures and may discard the trainer before adding it to the
-tree.
-
-## Regression Checks
-
-```sh
+```bash
 godot --headless --path . --scene res://tests/scenes/interaction_hud_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
-netlify build
+godot --headless --path . --export-pack WebBuild /tmp/pfr-web-check.pck
+node tools/battle_sprite_pipeline/verify_export_pack.cjs /tmp/pfr-web-check.pck
+godot --headless --main-pack /tmp/pfr-web-check.pck --script "$PWD/tools/verify_web_export.gd"
 ```
 
-The destination test simulates the exported null property before pre-spawn
-configuration. The Netlify build exports the actual PCK and then runs
-[`verify_web_export.gd`](../../tools/verify_web_export.gd) against that package.
-The packaged check requires all seven Route 0 trainers to accept interaction,
-requires sight detection to enter an approach state, and verifies destination
-pre-spawn repair.
+The source checks cover behavior reconstruction and all 49 authored area
+scenes. The pack checker requires exactly 49 standalone scene resources. The
+packaged runtime verifier loads Route 0 and requires all seven static trainers
+to retain Inspector-authored encounter data and accept manual interaction.

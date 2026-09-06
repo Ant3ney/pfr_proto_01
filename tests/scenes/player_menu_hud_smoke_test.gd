@@ -42,7 +42,7 @@ func _run() -> void:
 	await get_tree().process_frame
 	var hud := $GameUI/PlayerMenuHUD as PlayerMenuHUD
 	var menu_button := $GameUI/PlayerMenuHUD/MenuButton as Button
-	_check(hud != null, "The shared overworld GameUI should instance the R&D player-menu HUD.")
+	_check(hud != null, "The shared overworld GameUI should instance the player-menu HUD.")
 	_check(
 		menu_button != null and menu_button.visible and not menu_button.disabled,
 		"The player-menu HUD button should always be visible and pressable."
@@ -292,7 +292,7 @@ func _run() -> void:
 			"Player-menu search should retain focus across multiple characters and recover a typo."
 		)
 		var discard_result := InventorySystem.discard_item("potion", 1)
-		_check(bool(discard_result.get("ok", false)), "Owned item quantities should be manageable from the R&D inventory API.")
+		_check(bool(discard_result.get("ok", false)), "Owned item quantities should be manageable from the inventory API.")
 		_check(InventorySystem.get_item_count("potion") == 1, "Discarding one item should leave the remaining stack intact.")
 
 		menu.select_tab(PlayerMenuUI.TAB_POKEDEX)
@@ -334,7 +334,7 @@ func _run() -> void:
 	GameInstance.set_player_movement_enabled(true)
 	if _failures.is_empty():
 		print(
-			"R&D player menu HUD smoke test passed: persistent button, retained search "
+			"Player menu HUD smoke test passed: persistent button, retained search "
 			+ "focus, leveled evolution choices, held-item transfers, Party/PC swaps, bag "
 			+ "management, JSON transfer, cloud opt-in/out, complete Pokedex, GIF art, "
 			+ "focus, and cleanup verified."
@@ -342,7 +342,7 @@ func _run() -> void:
 		get_tree().quit(0)
 		return
 	for failure in _failures:
-		push_error("R&D player menu HUD smoke test failed: %s" % failure)
+		push_error("Player menu HUD smoke test failed: %s" % failure)
 	get_tree().quit(1)
 
 

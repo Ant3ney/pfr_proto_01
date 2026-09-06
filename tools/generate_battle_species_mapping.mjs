@@ -30,7 +30,7 @@ const SHOWDOWN_DEX_PATH = resolve(
 );
 const OUTPUT_PATH = resolve(
   REPOSITORY_ROOT,
-  "battle/data/pokeapi_showdown_mapping.json",
+  "game/battle/encounters/pokeapi_showdown_mapping.json",
 );
 
 const STARTING_MOVE_OVERRIDES = new Map([

@@ -472,7 +472,7 @@ func _present_pending_events() -> void:
 				String(event.get("memberId", ""))
 			)
 		):
-			# The R&D owner blocks this presentation revision until every move
+			# The move-learning owner blocks this presentation revision until every move
 			# earned by the displayed level gain is learned, replaced, or declined.
 			await MoveLearningSystem.present_pending_for_member(
 				String(event.get("memberId", ""))

@@ -1,12 +1,12 @@
 # Pokemon Center Interior
 
-[`pokemon_center_interior.tscn`](pokemon_center_interior.tscn) is the playable interior level for New Bouffalant City's Pokemon Center. Open that scene directly in Godot to edit or play it.
+[`pokemon_center_interior.tscn`](../../../../game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn) is the playable interior level for New Bouffalant City's Pokemon Center. Open that scene directly in Godot to edit or play it.
 
 ## Design
 
 The five-sided, open-front room echoes the exterior building footprint while remaining readable from the project's low follow camera. It now presents the Center as a near-future clinic renovated inside an older civic shell: warm worn brick, pale limestone pilasters and cornices, dark walnut wainscot and benches, and lightly grungy mortar surround the vivid red/cyan healing technology. The wear stays broad and restrained so the room feels established and inhabited rather than ruined. Sparse props and low foreground walls preserve uncluttered walking space and clear silhouettes.
 
-The level includes the player, gameplay camera, game UI, a central entry spawn, nurse and visitor markers, and an `ExitToCity` [`SceneTransferTrigger`](../../../../core/scene_transfer_trigger.md). A formal male attendant now occupies `NurseSpawn` behind the healing desk. Walking up to the desk opens a touch-friendly **Heal** / **Not now** conversation; confirming restores the current party and reuses the same UI for the result. The exterior's south storefront enters this main clinic and its exit returns to the safe `PokemonCenterEntrance` marker. The east storefront instead enters the distinct [`pokemon_center_annex.tscn`](../pokemon_center_annex/pokemon_center_annex.tscn) service environment and returns through its own east marker.
+The level includes the player, gameplay camera, game UI, a central entry spawn, nurse and visitor markers, and an `ExitToCity` [`SceneTransferTrigger`](../../../../game/world/level_kits/gameplay/transitions/scene_transfer_trigger.md). A formal male attendant now occupies `NurseSpawn` behind the healing desk. Walking up to the desk opens a touch-friendly **Heal** / **Not now** conversation; confirming restores the current party and reuses the same UI for the result. The exterior's south storefront enters this main clinic and its exit returns to the safe `PokemonCenterEntrance` marker. The east storefront instead enters the distinct [`pokemon_center_annex.tscn`](../../../../game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn) service environment and returns through its own east marker.
 
 ## Mobile-Web Contract
 

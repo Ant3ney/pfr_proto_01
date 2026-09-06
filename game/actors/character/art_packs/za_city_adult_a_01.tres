@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="PFRCharacterArtAssetPack" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="PFRCharacterArtAssetPack" format=3 uid="uid://vfj2t6dmkp0o"]
 
-[ext_resource type="Script" path="res://game/actors/character/pfr_character_art_asset_pack.gd" id="1_pack"]
-[ext_resource type="PackedScene" path="res://art/characters/za_city_adult_a_01/models/model.glb" id="2_model"]
+[ext_resource type="Script" uid="uid://1tlut4ekaeyw" path="res://game/actors/character/pfr_character_art_asset_pack.gd" id="1_pack"]
+[ext_resource type="PackedScene" uid="uid://dws5ndqbxevy1" path="res://art/characters/za_city_adult_a_01/models/model.glb" id="2_model"]
 
 [resource]
 resource_name = "City Man A1"
@@ -10,4 +10,3 @@ character_scene = ExtResource("2_model")
 character_scene_rotation_degrees = Vector3(0, 180, 0)
 idle_animation = &"cc0003_00_00001_defaultwait01"
 run_animation = &"cc0003_00_00071_run01_000"
-root_motion_bone = &"origin"

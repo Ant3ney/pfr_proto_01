@@ -1,4 +1,4 @@
-# R&D Starter Selection and Full Reset
+# Starter Selection and Full Reset
 
 Read this document when changing first-run profile initialization, the starter
 roster or presentation, the player-menu reset sequence, or complete progression
@@ -7,7 +7,7 @@ contract.
 
 ## Fresh-profile ownership and roster
 
-[`StarterSelectionSystem.gd`](../../rnd/starter_selection/StarterSelectionSystem.gd)
+[`StarterSelectionSystem.gd`](../../game/progression/starter_selection/starter_selection_system.gd)
 is the `StarterSelectionSystem` autoload. It does not decide whether a save
 is new: `ProgressionAutosave` calls `prepare_new_profile()` only after no valid
 save exists or after an explicitly confirmed reset. The system then blocks
@@ -24,7 +24,7 @@ The roster is fixed and ordered:
 | Water | Froakie | 656 | Generation VI / Kalos | `froakie` |
 | Grass | Treecko | 252 | Generation III / Hoenn | `treecko` |
 
-[`StarterSelectionUI.gd`](../../rnd/starter_selection/StarterSelectionUI.gd)
+[`StarterSelectionUI.gd`](../../game/progression/starter_selection/starter_selection_ui.gd)
 shows all three cards together and requires a second confirmation after a card
 is chosen. Each card owns a separate initialized `BattleSpriteCatalog` instance
 and retains the exact front-facing `ani` `SpriteFrames`, allowing all three
@@ -33,27 +33,28 @@ durations. The UI has no close path: Escape backs out of the confirmation but
 cannot bypass choosing a starter. The system restores movement only when it
 owned the movement lock.
 
-## Schema-5 profile initialization
+## Schema-6 profile initialization
 
 ProgressionAutosave schema 4 introduced
 `profile.starter_pokemon_id`. A newly selected ID must be one of the three
 roster IDs. Zero remains accepted only as migrated legacy-profile identity;
 schema-1 through schema-3 saves upgrade without discarding their existing
-collection. The current schema 5 adds offline/cloud conflict timestamps without
-changing starter identity. An initialized schema-5 profile cannot have an empty
+collection. Schema 5 added offline/cloud conflict timestamps and schema 6 split
+the economy, inventory, and challenge sections without changing starter
+identity. An initialized schema-6 profile cannot have an empty
 collection.
 
 A fresh profile is deliberately not written while starter selection is
 pending. Closing the application on the picker therefore leaves no empty save;
 the picker appears again next launch. The first starter confirmation creates
 the PCL, records its original starter ID, captures the main-scene pose, and
-writes the first schema-5 checkpoint. Later evolution does not change the
+writes the first schema-6 checkpoint. Later evolution does not change the
 recorded original choice.
 
 ## Destructive reset sequence
 
 The permanent player menu exposes a red `RESET PROGRESS` button. It never calls
-the reset API immediately. [`PlayerMenuUI`](../../rnd/player_menu/PlayerMenuUI.gd)
+the reset API immediately. [`PlayerMenuUI`](../../game/ui/player_menu/player_menu_ui.gd)
 requires all of these gates:
 
 1. A full-screen permanent-deletion warning.
@@ -74,10 +75,10 @@ tap to summon a phone's native keyboard even when the field already owns focus;
 the Netlify build rejects generated HTML whose Godot config disables support.
 
 The save owner deletes the disk checkpoint, clears the collection and pending
-move choices, restores the Stretch economy/inventory/badges/Champion/run state,
+move choices, resets economy, inventory, and challenge progression,
 clears process-only standard-trainer sight history, drops the saved world pose,
 and returns to
-[`primary_development_enviroment.tscn`](../../demo/primary_development_enviroment.tscn).
+[`new_bouffalant_city.tscn`](../../game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn).
 Autosave remains suppressed throughout the transfer. The starter picker then
 acquires movement control, and no new save exists until a new starter is
 confirmed. If optional cloud saving is linked, `CloudSaveSync` advances its
@@ -98,10 +99,10 @@ godot --headless --path . --scene res://tests/integration/progression_autosave_s
 
 The focused test verifies exact IDs and regions, multi-frame front animations,
 three-card 960-by-540 fit, confirmation, a single battle-ready level-5 PCL,
-schema-5 disk output, full owner reset, transient trainer reset, every warning
+schema-6 disk output, full owner reset, transient trainer reset, every warning
 gate, touchscreen-keyboard-enabled reset focus, exact-phrase enforcement, and
 cloud-reset/portable-backup warning language. The
 selected-resource Web export explicitly
 includes both starter scripts and its scene. Keep starter implementation under
-`rnd/starter_selection/`; outside changes should remain thin autoload, save,
-menu, transient-reset, export, test, and context wiring.
+`game/progression/starter_selection/` and preserve the autoload/save/menu,
+transient-reset, export, test, and context boundaries above.

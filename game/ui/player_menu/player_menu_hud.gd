@@ -1,7 +1,7 @@
 class_name PlayerMenuHUD
 extends CanvasLayer
 
-## Persistent overworld entry point for the R&D player menu.
+## Persistent overworld entry point for the player menu.
 
 signal menu_opened(menu: PlayerMenuUI)
 signal menu_closed
@@ -43,7 +43,7 @@ func open_menu() -> void:
 		return
 	_menu = PlayerMenuScene.instantiate() as PlayerMenuUI
 	if _menu == null:
-		push_error("The R&D player menu scene could not be instantiated.")
+		push_error("The player menu scene could not be instantiated.")
 		return
 	_movement_was_enabled = GameInstance.is_player_movement_enabled()
 	GameInstance.set_player_movement_enabled(false)

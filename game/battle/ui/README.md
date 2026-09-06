@@ -5,10 +5,10 @@ sequence UI above the active scene. It consists of four pieces:
 
 | Piece | Responsibility |
 | --- | --- |
-| [`UIManager`](../UIManager.gd) | Global factory that creates and displays a template |
-| [`UITemplate`](../UITemplate.gd) | The displayed `Control` and its button/text API |
+| [`UIManager`](../../ui/shared/ui_manager.gd) | Global factory that creates and displays a template |
+| [`UITemplate`](../../ui/shared/ui_template.gd) | The displayed `Control` and its button/text API |
 | Caller | Owns state, callbacks, advancement, gameplay locks, and cleanup |
-| [`Dialog`](../Dialog.gd) | Optional data resource containing a speaker and ordered lines |
+| [`Dialog`](../../dialogue/dialog.gd) | Optional data resource containing a speaker and ordered lines |
 
 `UIManager` is an autoload, so gameplay scripts call it directly. Do not add
 `ui_template.tscn` to each gameplay scene manually.
@@ -140,7 +140,7 @@ func _finish_dialog() -> void:
 ```
 
 This is the same ownership pattern used by
-[`TrainerBehavior`](../TrainerBehavior.gd). Its assigned resources are examples
+[`TrainerBehavior`](../../actors/npcs/trainers/trainer_behavior.gd). Its assigned resources are examples
 of how trainer dialogs use the template system.
 
 ## Create and assign Dialog data
@@ -151,7 +151,7 @@ To create reusable dialog in the Godot editor:
 2. Select the `Dialog` resource type.
 3. Set **Character Name** and add entries to **Dialog Lines**.
 4. Save the resource in a relevant content directory, such as
-   [`overworld/dialogs`](../../overworld/dialogs/).
+   [`game/dialogue/resources/trainers`](../../dialogue/resources/trainers/).
 5. Expose an assignment point with `@export var dialog: Dialog`, or load the
    resource explicitly, and pass it to caller-owned playback code.
 
@@ -228,7 +228,7 @@ system would need a separate ownership contract.
 
 ## Customize the shared presentation
 
-Edit [`ui_template.tscn`](ui_template.tscn) to change the common layout,
+Edit [`ui_template.tscn`](../../ui/shared/ui_template.tscn) to change the common layout,
 anchors, typography, colors, and button styling. `UITemplate.gd` resolves these
 scene nodes by unique name:
 
