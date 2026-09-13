@@ -268,6 +268,7 @@ func continue_after_result() -> bool:
 	_set_state(State.RETURNING)
 	_cancel_inflight()
 	var suppression_id := _encounter_id
+	var should_heal_party := _is_non_forfeit_defeat(_result)
 	var return_scene_path := _return_scene_path_for_result(_result)
 	_clear_sensitive_session_state()
 	if not GameInstance.return_from_battle(return_scene_path, suppression_id):
@@ -277,6 +278,8 @@ func continue_after_result() -> bool:
 			false
 		)
 		return false
+	if should_heal_party:
+		CollectionSystem.heal_party()
 	# The authored return transition is now committed. Remove all remaining
 	# session identity and presentation data before the overworld can reveal.
 	_clear_session_data()
@@ -287,11 +290,15 @@ func continue_after_result() -> bool:
 
 
 func _return_scene_path_for_result(result: Dictionary) -> String:
-	var winner := String(result.get("winner", "")).strip_edges().to_lower()
-	var reason := String(result.get("reason", "")).strip_edges().to_lower()
-	if winner == "opponent" and reason != "forfeit":
+	if _is_non_forfeit_defeat(result):
 		return DEFEAT_RETURN_SCENE_PATH
 	return ""
+
+
+func _is_non_forfeit_defeat(result: Dictionary) -> bool:
+	var winner := String(result.get("winner", "")).strip_edges().to_lower()
+	var reason := String(result.get("reason", "")).strip_edges().to_lower()
+	return winner == "opponent" and reason != "forfeit"
 
 
 ## Test-only dependency injection. Production always uses BattleRestClient.

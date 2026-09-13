@@ -89,7 +89,7 @@ func _run() -> void:
 			"Starter %d should enter Stretchman’s station without a Continue fallback."
 			% starter_id
 		)
-		_validate_station_entry(starter_id)
+		await _validate_station_entry(starter_id)
 
 	MoveLearningSystem.begin_save_restore()
 	CollectionSystem.load_save_data(original_collection)
@@ -116,8 +116,8 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"Startup-entry smoke test passed: Charmander, Froakie, and Treecko each "
-			+ "created one Lv. 5 party member, faced Stretchman, and checkpointed "
-			+ "the exact station arrival."
+			+ "created one Lv. 5 party member, faced and interacted with Stretchman, "
+			+ "checkpointed the station, and exited into the city."
 		)
 		get_tree().quit(0)
 		return
@@ -142,8 +142,8 @@ func _validate_station_entry(starter_id: int) -> void:
 	var marker := scene.find_child(
 		String(ProgressionAutosaveService.FIRST_GAMEPLAY_SPAWN), true, false
 	) as Marker3D
-	var stretchman := scene.find_child("Stretchman", true, false) as Node3D
-	var exit_to_city := scene.find_child("ExitToCity", true, false)
+	var stretchman := scene.find_child("Stretchman", true, false) as PFRCharacter
+	var exit_to_city := scene.find_child("ExitToCity", true, false) as Area3D
 	var party := CollectionSystem.get_party()
 	var member := party[0] as Dictionary if party.size() == 1 else {}
 	var stats := member.get("instanceStats", {}) as Dictionary
@@ -209,6 +209,67 @@ func _validate_station_entry(starter_id: int) -> void:
 		.is_equal_approx(marker.global_position)
 		and int((payload.get("collection", []) as Array).size()) == 1,
 		"The first schema-6 checkpoint should contain the marker pose and one starter."
+	)
+
+	var opened_stretchman := (
+		stretchman != null
+		and player != null
+		and stretchman.can_interact(player)
+		and stretchman.interact(player)
+	)
+	_check(
+		opened_stretchman,
+		"Starter %d should be able to interact with Stretchman after arrival."
+		% starter_id
+	)
+	await get_tree().process_frame
+	var adventure_menu: AdventureMenu
+	for child in UIManager.get_children():
+		if child is AdventureMenu:
+			adventure_menu = child as AdventureMenu
+			break
+	_check(
+		adventure_menu != null and not GameInstance.is_player_movement_enabled(),
+		"Stretchman should open Adventure Menu and acquire movement control."
+	)
+	if adventure_menu != null:
+		adventure_menu.close_hub()
+		await get_tree().process_frame
+	_check(
+		GameInstance.is_player_movement_enabled(),
+		"Closing Stretchman's menu should restore control before the station exit."
+	)
+
+	if exit_to_city != null and player != null:
+		exit_to_city.body_entered.emit(player)
+	for frame in 600:
+		if (
+			get_tree().current_scene != null
+			and get_tree().current_scene.scene_file_path
+			== ProgressionAutosaveService.MAIN_SCENE_PATH
+			and not GameInstance.is_scene_transfer_in_progress()
+		):
+			break
+		await get_tree().process_frame
+	var city := get_tree().current_scene
+	var city_player := (
+		city.find_child("Player", true, false) as PlayerCharacter
+		if city != null
+		else null
+	)
+	var city_marker := (
+		city.find_child("MiareStationReturn", true, false) as Marker3D
+		if city != null
+		else null
+	)
+	_check(
+		city != null
+		and city.scene_file_path == ProgressionAutosaveService.MAIN_SCENE_PATH
+		and city_player != null
+		and city_marker != null
+		and city_player.global_transform.is_equal_approx(city_marker.global_transform),
+		"The station exit should transfer starter %d into the city at MiareStationReturn."
+		% starter_id
 	)
 
 

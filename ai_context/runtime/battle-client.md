@@ -57,7 +57,11 @@ deep-copied presentation snapshot.
 Every accepted response, including loss and forfeit, is written through
 `CollectionSystem.apply_battle_health_and_experience()`. That API validates a
 complete player party and all XP recipients before applying health and
-progression atomically and emitting one collection update. `BattleSystem`
+progression atomically and emitting one collection update. If the accepted
+result is a non-forfeit loss, the later `continue_after_result()` call commits
+the main Pokémon Center return and then restores every active party member to
+full health through `CollectionSystem.heal_party()`; stored Pokémon are not
+changed. Other outcomes and return-capable errors do not auto-heal. `BattleSystem`
 tracks every player member that appeared on the stage for the rest of the
 current session. An active accepted snapshot records ordinary appearances, and
 a living-to-fainted player transition records a forced-in member that fainted

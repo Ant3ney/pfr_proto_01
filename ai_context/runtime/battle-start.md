@@ -51,6 +51,11 @@ title/subtitle, locks movement, and covers the old scene before loading
 `return_scene_path` is the captured source scene. `BattleSystem` requests this
 implicit return instead of hard-coding one overworld.
 
+The persistent [`MusicManager`](music.md) also handles `battle_starting` in the
+source scene. In that callback it stores the overworld track and position,
+silences both music players, and starts the battle theme from zero immediately,
+without waiting for the visual cover or scene change.
+
 ## Covered connection and reveal
 
 The same autoload-owned transition template stays fully covered while the new
@@ -58,7 +63,7 @@ scene connects:
 
 | Stage | Owner and verified action |
 | --- | --- |
-| Launch accepted | `GameInstance` locks movement, stores defensive launch data, and begins the cover |
+| Launch accepted | `GameInstance` locks movement and stores defensive launch data; `MusicManager` cuts to battle music on the same `battle_starting` frame; then the visual cover begins |
 | Cover complete | `GameInstance` loads the requested concrete battle scene |
 | Scene ready | `BattleScene` calls `enter_battle_scene()`, which promotes pending data but does not reveal |
 | Session preflight | `BattleSystem` discovers exactly one `battle_encounter_provider`, validates its resource, reads `CollectionSystem.get_battle_party_members()`, and sends the start DTO |
@@ -70,7 +75,9 @@ scene connects:
 A start transport failure leaves the cover and movement lock in place. The
 battle interaction layer renders Retry and Return above the cover. Retrying
 reuses the exact pending bytes. A valid initial response is the only networked
-path that reveals the battlefield.
+path that reveals the battlefield. A `GameInstance.battle_start_failed` before
+the battle scene loads instead makes `MusicManager` crossfade back to the saved
+overworld position.
 
 ## Direct visual preview
 
@@ -87,21 +94,29 @@ the mismatch guard intentionally rejects cross-wired trainer and battle scenes.
 After all response events are acknowledged, `BattleSystem` emits the server
 result and waits for `continue_after_result()`. An authoritative non-forfeit
 opponent win returns to the staffed main Pokémon Center interior in New
-Buffalant City. Wins, ties, forfeits, and unrecoverable errors retain their
-existing source or explicit return destination. Every return uses this ordering:
+Buffalant City. Once that return transition is accepted, `BattleSystem` heals
+every current party member to full health in one collection update; Pokémon in
+storage remain untouched. Wins, ties, forfeits, and unrecoverable errors retain
+their existing source or explicit return destination without automatic healing.
+Every return uses this ordering:
 
 1. Enter `RETURNING`, cancel callbacks, and clear token/session data.
 2. Ask `GameInstance.return_from_battle()` to cover the battlefield.
 3. Override non-forfeit opponent-win returns with the main Pokémon Center
    interior; otherwise resolve an explicit launch override or the captured
    source scene.
-4. When returning to that source, restore the player's exact pre-battle global
+4. After the Pokémon Center return is accepted, heal the active party before
+   the destination scene loads.
+5. When returning to that source, restore the player's exact pre-battle global
    transform, zero velocity, and visual facing from `scene_changed` after the
    new scene is ready. An explicit different-scene override uses that scene's
    authored spawn instead.
-5. Clear active launch data and enable movement only after the returned scene is
+6. On the same `scene_changed`, `MusicManager` crossfades to the interrupted
+   position when the destination selects the saved overworld track. A different
+   destination track starts at zero instead.
+7. Clear active launch data and enable movement only after the returned scene is
    ready.
-6. Reveal the overworld and emit `battle_return_finished`; `BattleSystem` then
+8. Reveal the overworld and emit `battle_return_finished`; `BattleSystem` then
    returns to `IDLE`.
 
 The completed encounter ID is retained for immediate-return suppression in that
@@ -119,6 +134,8 @@ uses Talk. Standard sight consumption is transient and is not autosaved.
 
 - `GameInstance`: scene changes, transition template, movement lock, one-scene
   suppression, and session-level standard-trainer sight consumption.
+- `MusicManager`: persistent players, scene-to-track resolution, equal-power
+  crossfades, measured gains, and in-memory battle music resume state.
 - `BattleSystem`: encounter/party DTOs, REST session, tokens, revisions,
   validation, retries, snapshots, event ordering, HP writeback, outcome.
 - `BattleScene`: thin signal-to-visual and UI-intent adapter.
@@ -137,10 +154,12 @@ godot --headless --path . --scene res://tests/integration/battle_system_session_
 godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
 godot --headless --path . --scene res://tests/integration/battle_return_position_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/battle_loss_pokemon_center_return_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/music_manager_smoke_test.tscn
 ```
 
 These cover the offline preview path, concrete provider discovery, covered
 connection, deep-copy boundaries, request-driven locking, event acknowledgement,
 confirmed forfeit, source-position restoration, loss return to the Pokémon
-Center, movement restoration, one-time Kyle sight, and manual-rematch
-availability.
+Center with party healing, movement restoration, one-time Kyle sight, and manual-rematch
+availability. The music smoke test separately covers same-frame battle cutoff,
+same-track resume, failed-start recovery, and different-track return behavior.

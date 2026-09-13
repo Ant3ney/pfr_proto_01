@@ -10,6 +10,10 @@ const KYLE_TRAINER_SCENE_PATH := "res://game/actors/npcs/trainers/presets/traine
 const DELIVERY_WORKER_ENCOUNTER_PATH := (
 	"res://game/battle/encounters/trainer_delivery_worker_city_v1.tres"
 )
+const DELIVERY_WORKER_AREA_ENCOUNTER_PATH := (
+	"res://game/world/levels/standalone_areas/routes/route_00/encounters/"
+	+ "trainer_delivery_worker_city_v1.tres"
+)
 const DELIVERY_WORKER_BATTLE_SCENE_PATH := (
 	"res://game/battle/scenes/delivery_worker_battle_scene.tscn"
 )
@@ -433,9 +437,22 @@ func _test_delivery_worker_encounter_mapping() -> void:
 		encounter.api_name == "DeliveryWorker",
 		"Delivery Worker API name should be protocol-safe."
 	)
+	var team: Array[Dictionary] = encounter.to_server_team()
+	_check(team.size() == 1, "Delivery Worker should have exactly one team member.")
+	if team.size() == 1:
+		_check(
+			team[0].get("memberId") == "delivery-worker-bidoof"
+			and team[0].get("species") == "Bidoof"
+			and team[0].get("level") == 3
+			and team[0].get("moves") == ["tackle", "growl"],
+			"Route 0's second trainer should use the exact level-3 Bidoof roster."
+		)
+	var area_encounter: Resource = load(DELIVERY_WORKER_AREA_ENCOUNTER_PATH)
 	_check(
-		encounter.to_server_team().size() == 2,
-		"Delivery Worker should have the cloned two-member starter roster."
+		area_encounter != null
+		and area_encounter.validate().is_empty()
+		and area_encounter.to_server_team() == team,
+		"Route 0's editable area definition should mirror the Delivery Worker roster."
 	)
 
 	var battle_scene: PackedScene = load(DELIVERY_WORKER_BATTLE_SCENE_PATH)

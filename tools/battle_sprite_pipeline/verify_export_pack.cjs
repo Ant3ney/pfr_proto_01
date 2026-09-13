@@ -5,6 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const projectRoot = path.resolve(__dirname, '..', '..');
 const packPath = process.argv[2] ? path.resolve(process.argv[2]) : '';
 if (!packPath || !fs.existsSync(packPath)) {
   throw new Error('Usage: node verify_export_pack.cjs /path/to/export.pck');
@@ -64,7 +65,25 @@ if (timingManifests.size !== 2106) {
   throw new Error(`Export contains ${timingManifests.size} timing manifests; expected 2106.`);
 }
 
+const musicSources = [
+  'audio/pfr-main-theme.ogg',
+  'audio/tribly_town_theme.ogg',
+  'audio/battle_theme.ogg',
+];
+const importedMusicStreams = musicSources.map((sourcePath) => {
+  const importPath = `${sourcePath}.import`;
+  const importContents = fs.readFileSync(path.join(projectRoot, importPath), 'utf8');
+  const remap = importContents.match(/^path="res:\/\/([^"]+\.oggvorbisstr)"$/m);
+  if (!remap) throw new Error(`Music import has no Ogg stream remap: ${importPath}.`);
+  return remap[1];
+});
+
 const requiredPaths = [
+  'game/startup/startup_controller.gd.remap',
+  'game/startup/startup_controller.tscn.remap',
+  'game/ui/reset_progress/progress_reset_confirmation.gd.remap',
+  'game/ui/reset_progress/progress_reset_confirmation.tscn.remap',
+  'art/ui/startup/professor_cypress_intro.png.import',
   'game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn.remap',
   'game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn.remap',
   'game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn.remap',
@@ -90,6 +109,8 @@ const requiredPaths = [
   'game/save/cloud_save_sync.gd.remap',
   'art/battle/sprites/generated/catalog.json',
   'data/creatures/experience.json',
+  ...musicSources.map((sourcePath) => `${sourcePath}.import`),
+  ...importedMusicStreams,
 ];
 for (let routeIndex = 0; routeIndex < 41; routeIndex += 1) {
   const id = `route_${String(routeIndex).padStart(2, '0')}`;
@@ -148,6 +169,8 @@ console.log(JSON.stringify({
   standaloneAreaScenes: standaloneScenePaths.length,
   atlasImports: atlasImports.size,
   timingManifests: timingManifests.size,
+  musicImports: musicSources.length,
+  importedMusicStreams: importedMusicStreams.length,
   canonicalLevelBasePresent: true,
   rawGifSourcesPresent: false,
   battleServerPresent: false,

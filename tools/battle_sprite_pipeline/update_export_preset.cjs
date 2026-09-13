@@ -57,6 +57,9 @@ const required = [
   'res://art/battle/ui/icons/run_icon.png',
   'res://art/battle/ui/icons/sword_icon.png',
   'res://art/ui/startup/professor_cypress_intro.png',
+  'res://audio/pfr-main-theme.ogg',
+  'res://audio/tribly_town_theme.ogg',
+  'res://audio/battle_theme.ogg',
   ...catalog.entries.map((entry) => String(entry.atlas)),
 ];
 

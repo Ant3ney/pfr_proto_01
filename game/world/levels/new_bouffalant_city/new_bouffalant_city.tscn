@@ -232,9 +232,6 @@ resource_local_to_scene = true
 script = ExtResource("21_npc_controller")
 npc_behavior = SubResource("Resource_bl21h")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_6gkil"]
-size = Vector3(4.815, 0.995, 1)
-
 [sub_resource type="BoxShape3D" id="SouthRouteExitShape"]
 size = Vector3(4.704483, 2.4, 9.174024)
 
@@ -401,17 +398,12 @@ transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 3, 0, -6
 [node name="Dax" parent="Gameplay/Actors/TownResidents" index="12" instance=ExtResource("36_dax")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -13, 0, -12.5)
 
-[node name="NorthTenantEntranceTrigger2" parent="Gameplay/Transitions" index="0" unique_id=610409237 instance=ExtResource("12_transfer")]
-transform = Transform3D(-1, 0, 6.2783295e-07, 0, 1, 0, -6.2783295e-07, 0, -1, -8.411442, 1.208044, 7.000343)
+[node name="NorthTenantEntranceTrigger" parent="Gameplay/Transitions" index="0" unique_id=610409237 instance=ExtResource("12_transfer")]
+transform = Transform3D(2.354373e-07, 0, 0.35, 0, 1, 0, -0.75, 0, 1.0987076e-07, -5.85, 0, 8.75)
 destination_scene_path = "res://game/world/levels/new_bouffalant_city/interiors/north_tenant_lobby.tscn"
 destination_spawn_marker = &"EntrySpawn"
 metadata/exterior_entry_id = "north_tenant"
 metadata/approach_position = Vector3(-5.85, 0, 8.75)
-
-[node name="CollisionShape3D" parent="Gameplay/Transitions/NorthTenantEntranceTrigger2" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_6gkil")
-debug_color = Color(0, 0.6, 0.69803923, 1)
 
 [node name="PokemonCenterSouthEntranceTrigger" parent="Gameplay/Transitions" index="1" unique_id=1155880281 instance=ExtResource("12_transfer")]
 transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 0.9, -1.263, 0, -13.7)
@@ -476,18 +468,6 @@ destination_spawn_marker = &"EntrySpawn"
 metadata/exterior_entry_id = "museum_front"
 metadata/approach_position = Vector3(12.7, 0, 10.5)
 
-[node name="NorthTenantEntranceTrigger" parent="Gameplay/Transitions" index="10" unique_id=1600877127 instance=ExtResource("12_transfer")]
-transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -0.62136686, 0.60402155, -0.99791574)
-destination_scene_path = "uid://tga8ypmug0gs"
-destination_spawn_marker = &"EastEntrySpawn"
-metadata/exterior_entry_id = "north_tenant"
-metadata/approach_position = Vector3(-5.85, 0, 8.75)
-
-[node name="CollisionShape3D" parent="Gameplay/Transitions/NorthTenantEntranceTrigger" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_6gkil")
-debug_color = Color(0, 0.6, 0.69803923, 1)
-
 [node name="PokemonCenterEntrance" type="Marker3D" parent="Markers" index="0" unique_id=1238888391]
 transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, -1.263, 0, -12.8)
 
@@ -529,10 +509,6 @@ metadata/entry_id = "north_tenant"
 [node name="EntrySpawn" type="Marker3D" parent="Markers" index="10" unique_id=262423528]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 1)
 
-[node name="RougeTowerEastReturn" type="Marker3D" parent="Markers" index="11" unique_id=668770088]
-transform = Transform3D(-0.25881904, 0, -0.9659258, 0, 1, 0, 0.9659258, 0, -0.25881904, 0.57927346, 0, -1)
-
-[editable path="Gameplay/Transitions/NorthTenantEntranceTrigger2"]
 [editable path="Gameplay/Transitions/NorthTenantEntranceTrigger"]
 
 [node name="SoutheastRoute0Exit" type="Area3D" parent="Gameplay/Transitions"]

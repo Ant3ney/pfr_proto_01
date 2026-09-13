@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameInstance="*res://game/runtime/game_instance.gd"
+MusicManager="*res://game/audio/music_manager.gd"
 CreatureSystem="*res://game/progression/creatures/creature_system.gd"
 CollectionSystem="*res://game/progression/collection/collection_system.gd"
 UIManager="*res://game/ui/shared/ui_manager.gd"

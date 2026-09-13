@@ -6,6 +6,7 @@ check the linked implementation before changing its contract.
 
 | Task | Read next | Purpose |
 | --- | --- | --- |
+| Change scene music, crossfades, playback gains, battle music interruption/resume, audio imports, or music export coverage | [`music.md`](music.md) | Persistent manager ownership, scene rules, equal-power transitions, battle lifecycle, diagnostics, and Web-pack checks |
 | Display a UI template, author dialog data, or implement dialog playback | [`dialog-ui.md`](dialog-ui.md) | Caller ownership, data and template APIs, lifecycle, and current trainer usage |
 | Implement a gameplay sequence, disable player movement, or clean up control state | [`sequences.md`](sequences.md) | Current sequence model, movement-control authority, ownership rules, and limitations |
 | Add an NPC action, town resident dialog/roaming, change forward target selection, or modify the interaction HUD | [`interaction-hud.md`](interaction-hud.md) | Target geometry, shared HUD input, behavior dispatch, and trainer/healer/resident modes |

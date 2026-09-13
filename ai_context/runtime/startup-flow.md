@@ -21,7 +21,9 @@ is present on desktop and omitted on Web/mobile builds.
 All actionable controls are ordinary focusable Godot buttons, so mouse, touch,
 keyboard focus, and controller focus share one path. The menu uses the
 project's blue/red identity over an opaque-enough navy panel. It creates no
-audio player and starts no music.
+scene-local audio player; the persistent
+[`MusicManager`](music.md) selects and starts the main theme for this startup
+scene.
 
 ## Isolated Route 0 backdrop
 
@@ -107,10 +109,12 @@ The structural startup test covers menu visibility, platform Quit behavior,
 invalid-save replacement gating, exact intro content, isolated inert Route 0,
 the closed 60-second curve, backdrop teardown, and retry without duplication.
 The entry and Continue tests use real scene transfers to cover all three
-starters, station placement and Stretchman facing, city exit, exact saved poses,
-legacy fallback, first-checkpoint timing, and delayed move prompts. The selected
-Web export must include all startup/reset scenes and scripts plus the Cypress
-PNG; run `node tools/battle_sprite_pipeline/update_export_preset.cjs` after
+starters, station placement, Stretchman facing and interaction, city exit,
+exact saved poses, legacy fallback, first-checkpoint timing, and delayed move
+prompts. The selected Web export must include all startup/reset scenes and
+scripts, the Cypress PNG, and the persistent music manager and its three Ogg
+streams; run
+`node tools/battle_sprite_pipeline/update_export_preset.cjs` after
 adding runtime resources.
 
 This leaf describes only configured launch and startup-to-gameplay ownership.

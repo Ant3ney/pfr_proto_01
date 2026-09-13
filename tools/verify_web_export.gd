@@ -16,6 +16,18 @@ const MENU_BEHAVIOR_PATH := (
 const ADVENTURE_MENU_PATH := (
 	"res://game/ui/adventure_menu/adventure_menu.tscn"
 )
+const STARTUP_SCENE_PATH := "res://game/startup/startup_controller.tscn"
+const RESET_CONFIRMATION_PATH := (
+	"res://game/ui/reset_progress/progress_reset_confirmation.tscn"
+)
+const CYPRESS_ILLUSTRATION_PATH := (
+	"res://art/ui/startup/professor_cypress_intro.png"
+)
+const MUSIC_PATHS: Array[String] = [
+	"res://audio/pfr-main-theme.ogg",
+	"res://audio/tribly_town_theme.ogg",
+	"res://audio/battle_theme.ogg",
+]
 const TRAINER_NAMES := [
 	"TrainerKyle",
 	"PoliceOfficer",
@@ -36,6 +48,8 @@ func _initialize() -> void:
 func _run() -> void:
 	await process_frame
 	_verify_level_base()
+	_verify_startup_resources()
+	_verify_music_resources()
 	_verify_standalone_catalog()
 	await _verify_route_zero()
 	_verify_stretchman()
@@ -43,9 +57,11 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"Web export verification passed: the canonical level base, 50 editable "
-			+ "standalone areas, static Route 0 trainers, ordinary menu-NPC "
-			+ "Stretchman, and schema-6 domain services verified."
+			"Web export verification passed: persistent looping music, the startup "
+			+ "menu and introduction, "
+			+ "canonical level base, 50 editable standalone areas, static Route 0 "
+			+ "trainers, ordinary menu-NPC Stretchman, shared reset, and schema-6 "
+			+ "domain services verified."
 		)
 		quit(0)
 		return
@@ -78,6 +94,100 @@ func _verify_level_base() -> void:
 		"The exported base ModularGroundGrid should remain empty."
 	)
 	level.free()
+
+
+func _verify_startup_resources() -> void:
+	_check(
+		String(ProjectSettings.get_setting("application/run/main_scene", ""))
+		== STARTUP_SCENE_PATH,
+		"The exported project entry should be StartupController."
+	)
+	var packed_startup := load(STARTUP_SCENE_PATH) as PackedScene
+	var reset_scene := load(RESET_CONFIRMATION_PATH) as PackedScene
+	var cypress := load(CYPRESS_ILLUSTRATION_PATH) as Texture2D
+	_check(packed_startup != null, "The exported startup scene should load.")
+	_check(reset_scene != null, "The exported shared reset scene should load.")
+	_check(cypress != null, "The exported Cypress illustration should load.")
+	if packed_startup != null:
+		var startup := packed_startup.instantiate()
+		var startup_script := startup.get_script() as Script
+		var constants := (
+			startup_script.get_script_constant_map()
+			if startup_script != null
+			else {}
+		)
+		var intro_messages: Variant = constants.get("INTRO_MESSAGES", [])
+		_check(
+			String(constants.get("MENU_TITLE", ""))
+			== "Pokémon Fracture × Revolt",
+			"The exported startup controller should retain the game title."
+		)
+		_check(
+			is_equal_approx(
+				float(constants.get("CAMERA_CIRCUIT_SECONDS", 0.0)),
+				60.0
+			),
+			"The exported menu camera should retain its 60-second circuit."
+		)
+		_check(
+			typeof(intro_messages) == TYPE_ARRAY
+			and (intro_messages as Array).size() == 8,
+			"The exported Cypress introduction should retain exactly eight messages."
+		)
+		startup.free()
+	if reset_scene != null:
+		var reset := reset_scene.instantiate()
+		var reset_script := reset.get_script() as Script
+		var reset_constants := (
+			reset_script.get_script_constant_map()
+			if reset_script != null
+			else {}
+		)
+		var warnings: Variant = reset_constants.get("WARNING_MESSAGES", [])
+		_check(
+			typeof(warnings) == TYPE_ARRAY and (warnings as Array).size() == 3,
+			"The exported shared reset should retain exactly three warnings."
+		)
+		reset.free()
+
+
+func _verify_music_resources() -> void:
+	var manager := root.get_node_or_null(^"MusicManager")
+	_check(manager != null, "The exported project should register MusicManager.")
+	for music_path in MUSIC_PATHS:
+		var stream := load(music_path) as AudioStreamOggVorbis
+		_check(stream != null, "Exported music should load: %s" % music_path)
+		if stream != null:
+			_check(
+				stream.loop and is_zero_approx(stream.loop_offset),
+				"Exported music should loop from offset zero: %s" % music_path
+			)
+	if manager == null:
+		return
+	var players := manager.find_children("*", "AudioStreamPlayer", false, false)
+	var manager_script := manager.get_script() as Script
+	var constants := (
+		manager_script.get_script_constant_map()
+		if manager_script != null
+		else {}
+	)
+	_check(
+		players.size() == 2,
+		"The exported MusicManager should own exactly two audio players."
+	)
+	_check(
+		manager.has_signal("track_changed")
+		and manager.has_method("get_current_track_id")
+		and manager.has_method("get_current_playback_position")
+		and manager.has_method("resolve_track_for_scene"),
+		"The exported MusicManager should retain its read-only diagnostics."
+	)
+	_check(
+		is_equal_approx(float(constants.get("MAIN_GAIN_DB", 0.0)), 10.3)
+		and is_equal_approx(float(constants.get("ROUTE_GAIN_DB", 0.0)), -0.6)
+		and is_equal_approx(float(constants.get("BATTLE_GAIN_DB", 0.0)), -8.3),
+		"The exported music gains should remain +10.3, -0.6, and -8.3 dB."
+	)
 
 
 func _verify_standalone_catalog() -> void:

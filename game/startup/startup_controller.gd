@@ -16,6 +16,7 @@ const CYPRESS_ILLUSTRATION: Texture2D = preload(
 
 const MENU_TITLE := "Pokémon Fracture × Revolt"
 const CAMERA_CIRCUIT_SECONDS := 60.0
+const CAMERA_LOOK_DOWN_METERS := 5.0
 const INTRO_MESSAGES: Array[String] = [
 	"Welcome, young Trainer. I’m Professor Cypress.",
 	"Pokémon share our homes, our cities, and the wild places beyond.",
@@ -105,6 +106,7 @@ func _process(delta: float) -> void:
 			ratio * _target_curve.get_baked_length(),
 			true
 		)
+		target.y -= CAMERA_LOOK_DOWN_METERS
 		_camera.look_at(target, Vector3.UP)
 
 
@@ -368,13 +370,16 @@ func _build_camera_circuit() -> void:
 	_camera = Camera3D.new()
 	_camera.name = "MenuCamera"
 	_camera.current = true
-	_camera.fov = 46.0
+	_camera.fov = 42.0
 	_camera.near = 0.15
 	_camera.far = 220.0
 	_camera_follow.add_child(_camera)
 	_target_curve = _smooth_closed_curve(CAMERA_TARGETS)
 	_camera_follow.progress_ratio = 0.0
-	_camera.look_at(CAMERA_TARGETS[0], Vector3.UP)
+	_camera.look_at(
+		CAMERA_TARGETS[0] - Vector3(0.0, CAMERA_LOOK_DOWN_METERS, 0.0),
+		Vector3.UP
+	)
 
 
 func _smooth_closed_curve(points: Array[Vector3]) -> Curve3D:

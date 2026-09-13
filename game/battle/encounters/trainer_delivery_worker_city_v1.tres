@@ -1,33 +1,23 @@
-[gd_resource type="Resource" script_class="BattleEncounterDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="BattleEncounterDefinition" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_definition"]
 [ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_member.gd" id="2_member"]
 
-[sub_resource type="Resource" id="BattleEncounterMember_wooper"]
+[sub_resource type="Resource" id="BattleEncounterMember_bidoof"]
 script = ExtResource("2_member")
-member_id = "delivery-worker-wooper"
-pokemon_id = 194
-species = "Wooper"
-sprite_id = "wooper"
+member_id = "delivery-worker-bidoof"
+pokemon_id = 399
+species = "Bidoof"
+sprite_id = "bidoof"
 level = 3
 health = 1.0
-moves = Array[String](["watergun", "tailwhip"])
-
-[sub_resource type="Resource" id="BattleEncounterMember_magikarp"]
-script = ExtResource("2_member")
-member_id = "delivery-worker-magikarp"
-pokemon_id = 129
-species = "Magikarp"
-sprite_id = "magikarp"
-level = 3
-health = 1.0
-moves = Array[String](["splash"])
+moves = Array[String](["tackle", "growl"])
 
 [resource]
 script = ExtResource("1_definition")
 encounter_id = "trainer-delivery-worker-city-v1"
 display_name = "Delivery Worker"
 api_name = "DeliveryWorker"
-members = Array[ExtResource("2_member")]([SubResource("BattleEncounterMember_wooper"), SubResource("BattleEncounterMember_magikarp")])
+members = Array[ExtResource("2_member")]([SubResource("BattleEncounterMember_bidoof")])
 sprite_override = ""
 forfeit_policy = 0

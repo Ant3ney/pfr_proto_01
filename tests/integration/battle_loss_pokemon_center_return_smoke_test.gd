@@ -10,9 +10,11 @@ class BattleLossReturnWatcher:
 	extends Node
 
 	var failures: Array[String] = []
+	var collection_change_count := 0
 
 
 	func run() -> void:
+		var original_collection := CollectionSystem.get_save_data()
 		_check(
 			String(BattleSystem.call(
 				"_return_scene_path_for_result",
@@ -34,6 +36,28 @@ class BattleLossReturnWatcher:
 			)).is_empty(),
 			"Running from battle should retain the battle's ordinary return destination."
 		)
+		_check(
+			not bool(BattleSystem.call(
+				"_is_non_forfeit_defeat",
+				{"winner": "opponent", "reason": "forfeit"}
+			)),
+			"A forfeit should not qualify for automatic loss healing."
+		)
+
+		var party := CollectionSystem.get_party()
+		_check(not party.is_empty(), "The loss fixture should begin with a party.")
+		for member: Dictionary in party:
+			_check(
+				CollectionSystem.update_instance_stats(
+					String(member.get("pclID", "")),
+					{"health": 0.0}
+				),
+				"Every loss-fixture party member should be set to fainted."
+			)
+		var stored_bidoof := CollectionSystem.add_pokemon(399, 3, 0.25)
+		_check(not stored_bidoof.is_empty(), "The loss fixture should add a stored Pokemon.")
+		CollectionSystem.collection_changed.connect(_on_collection_changed)
+		collection_change_count = 0
 
 		BattleSystem.reset_for_testing()
 		BattleSystem.set("_encounter_id", "battle-loss-center-smoke")
@@ -74,11 +98,36 @@ class BattleLossReturnWatcher:
 			GameInstance.is_player_movement_enabled(),
 			"Player movement should resume after the Pokemon Center reveals."
 		)
+		for member: Dictionary in CollectionSystem.get_party():
+			_check(
+				is_equal_approx(float(member["instanceStats"]["health"]), 1.0),
+				"A loss return should fully heal every party member."
+			)
+		if not stored_bidoof.is_empty():
+			var stored_after_return := CollectionSystem.get_pcl(
+				String(stored_bidoof.get("pclID", ""))
+			)
+			_check(
+				is_equal_approx(
+					float(stored_after_return.get("instanceStats", {}).get("health", -1.0)),
+					0.25
+				),
+				"Automatic loss healing should leave stored Pokemon untouched."
+			)
+		_check(
+			collection_change_count == 1,
+			"Automatic loss healing should emit one atomic collection update."
+		)
+		CollectionSystem.collection_changed.disconnect(_on_collection_changed)
+		_check(
+			CollectionSystem.load_save_data(original_collection),
+			"The loss fixture should restore the original collection."
+		)
 
 		if failures.is_empty():
 			print(
 				"Battle-loss return smoke test passed: non-forfeit defeats return to "
-				+ "the staffed New Buffalant City Pokemon Center."
+				+ "the staffed New Buffalant City Pokemon Center and heal the party."
 			)
 			get_tree().quit(0)
 			return
@@ -102,6 +151,10 @@ class BattleLossReturnWatcher:
 	func _check(condition: bool, message: String) -> void:
 		if not condition:
 			failures.append(message)
+
+
+	func _on_collection_changed() -> void:
+		collection_change_count += 1
 
 
 func _ready() -> void:
