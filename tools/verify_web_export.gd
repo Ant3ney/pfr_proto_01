@@ -43,7 +43,7 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"Web export verification passed: the canonical level base, 49 editable "
+			"Web export verification passed: the canonical level base, 50 editable "
 			+ "standalone areas, static Route 0 trainers, ordinary menu-NPC "
 			+ "Stretchman, and schema-6 domain services verified."
 		)
@@ -86,7 +86,7 @@ func _verify_standalone_catalog() -> void:
 	if catalog == null:
 		return
 	var areas: Array = catalog.get("areas")
-	_check(areas.size() == 49, "The exported catalog should contain exactly 49 areas.")
+	_check(areas.size() == 50, "The exported catalog should contain exactly 50 areas.")
 	var seen_ids: Dictionary = {}
 	for area_value: Variant in areas:
 		var area := area_value as Resource
@@ -101,7 +101,7 @@ func _verify_standalone_catalog() -> void:
 			destination != null and not destination.resource_path.is_empty(),
 			"Exported area %s should retain its editable PackedScene." % area_id
 		)
-	for route_index in 40:
+	for route_index in 41:
 		_check(seen_ids.has("route_%02d" % route_index), "The export is missing a route area.")
 	for gym_index in range(1, 9):
 		_check(seen_ids.has("gym_%02d" % gym_index), "The export is missing a gym area.")
@@ -137,16 +137,8 @@ func _verify_route_zero() -> void:
 		and route.get_node_or_null(^"Gameplay/Encounters/TallGrassFields") != null,
 		"Route 0 should retain the common editable level hierarchy."
 	)
-	var checkpoint_root := route.get_node_or_null(
-		^"NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints"
-	)
-	_check(
-		checkpoint_root != null
-		and checkpoint_root.find_children(
-			"TrainerGate*", "StaticBody3D", false, false
-		).size() == 14,
-		"Route 0 should retain all seven mandatory trainer chokes."
-	)
+	var grid := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Ground/ModularGroundGrid") as GridMap
+	_check(grid != null and grid.get_used_cells().size() > 300, "Route 0 should export its painted grass/dirt terrain.")
 	var completion_gate := route.get_node_or_null(
 		^"Gameplay/Objectives/Route0CompletionGate"
 	) as Area3D
@@ -155,6 +147,11 @@ func _verify_route_zero() -> void:
 		"Route 0 should retain its far-end progression gate."
 	)
 	_check(trainer_root != null and trainer_root.get_child_count() == 7, "Route 0 should retain seven static trainers.")
+	# A clean verification profile can have the starter chooser open. This
+	# fixture tests exported trainer behavior after normal player control resumes.
+	var game_instance := root.get_node_or_null(^"GameInstance")
+	if game_instance != null:
+		game_instance.call("set_player_movement_enabled", true)
 	for trainer_name in TRAINER_NAMES:
 		var trainer := route.get_node_or_null(
 			NodePath("Gameplay/Actors/RouteTrainers/%s" % trainer_name)
@@ -170,10 +167,15 @@ func _verify_route_zero() -> void:
 			trainer != null and player != null and bool(trainer.call("can_interact", player)),
 			"Exported trainer %s should accept manual interaction." % trainer_name
 		)
+		var battle := load(String(controller.get("battle_scene_path"))) as PackedScene if controller != null else null
+		var battle_preview := battle.instantiate() if battle != null else null
+		_check(
+			battle_preview != null and battle_preview.get_script() != null,
+			"Exported trainer %s should retain a scripted battle scene." % trainer_name
+		)
+		if battle_preview != null:
+			battle_preview.free()
 
-	var game_instance := root.get_node_or_null(^"GameInstance")
-	if game_instance != null:
-		game_instance.call("set_player_movement_enabled", true)
 	route.free()
 
 

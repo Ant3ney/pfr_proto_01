@@ -13,7 +13,7 @@ release or Web package.
 - Inspecting an exported trainer instance shows a valid `TrainerController`
   whose inherited `npc_behavior` property is null.
 
-The current 40 routes, eight gyms, and Champion challenge are static inherited
+The current 41 routes, eight gyms, and Champion challenge are static inherited
 scenes. If their nodes are absent from a package, diagnose selected-resource
 export contents separately; no runtime destination generator exists.
 
@@ -44,8 +44,8 @@ node tools/battle_sprite_pipeline/verify_export_pack.cjs /tmp/pfr-web-check.pck
 godot --headless --main-pack /tmp/pfr-web-check.pck --script "$PWD/tools/verify_web_export.gd"
 ```
 
-The source checks cover behavior reconstruction and all 49 authored area
-scenes. The pack checker requires the canonical `level_base.tscn`, exactly 49
+The source checks cover behavior reconstruction and all 50 authored area
+scenes. The pack checker requires the canonical `level_base.tscn`, exactly 50
 standalone scene resources, and the absence of all four removed base/runtime
 scenes. The packaged runtime verifier loads the canonical base and Route 0, then
 requires all seven static trainers to retain Inspector-authored encounter data

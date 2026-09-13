@@ -1,0 +1,87 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://game/battle/scenes/battle_scene.tscn" id="1_battle"]
+[ext_resource type="Script" path="res://tests/manual/battle_screenshot_showcase/developer_battle_showcase.gd" id="2_showcase"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_showcase_card"]
+bg_color = Color(0.019, 0.078, 0.061, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.929, 0.769, 0.388, 0.96)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+shadow_color = Color(0.003, 0.012, 0.009, 0.72)
+shadow_size = 7
+shadow_offset = Vector2(0, 3)
+
+[node name="DeveloperBattleShowcase" instance=ExtResource("1_battle")]
+editor_description = "Network-free screenshot stage. Run this scene directly, press K for the next curated matchup, and press H to hide the title card."
+script = ExtResource("2_showcase")
+
+[node name="DeveloperShowcaseUI" type="CanvasLayer" parent="." index="10"]
+layer = 210
+
+[node name="ShowcaseCard" type="PanelContainer" parent="DeveloperShowcaseUI"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 20.0
+offset_top = 14.0
+offset_right = 680.0
+offset_bottom = 104.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_showcase_card")
+
+[node name="Margin" type="MarginContainer" parent="DeveloperShowcaseUI/ShowcaseCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="DeveloperShowcaseUI/ShowcaseCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="ShowcaseTitle" type="Label" parent="DeveloperShowcaseUI/ShowcaseCard/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.842, 0.42, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.03, 0.018, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 23
+text = "SKYBREAKER VS DISTORTION"
+horizontal_alignment = 1
+
+[node name="ShowcasePair" type="Label" parent="DeveloperShowcaseUI/ShowcaseCard/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 1, 0.93, 1)
+theme_override_font_sizes/font_size = 16
+text = "RAYQUAZA  VS  GIRATINA"
+horizontal_alignment = 1
+
+[node name="ShowcaseHint" type="Label" parent="DeveloperShowcaseUI/ShowcaseCard/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.54, 0.89, 0.66, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "01 / 10   •   K  NEXT MATCHUP   •   H  CLEAN FRAME"
+horizontal_alignment = 1
+
+[node name="MatchupCurtain" type="ColorRect" parent="DeveloperShowcaseUI"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.004, 0.025, 0.018, 0)
+
+[editable path="BattlefieldArt"]

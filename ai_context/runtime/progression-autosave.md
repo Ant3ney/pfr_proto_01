@@ -63,12 +63,11 @@ held items. `MoveLearningSystem` validates pending choices against the incoming
 collection. `EconomySystem`, `InventorySystem`, and
 `ChallengeProgressionSystem` validate and load their own independent sections.
 The route list must be unique, in range, and contiguous from Route 0.
-
 Schema 6 reads schemas 1–5. A schema 2–5 `stretch` object is split into the
 three production domains, including balance, battle reward, item quantities,
 claimed gifts, badges, Champion completion, completed routes, active area,
 defeated encounters, and run ID. Legacy destination dictionaries and encounter
-IDs are mapped to the canonical 49-area catalog, and former city/Route 0/dynamic
+IDs are mapped to the canonical 50-area catalog, and former city/Route 0/dynamic
 world paths are mapped to their current authored scenes. An untouched legacy
 `$5,000,000` bootstrap balance still migrates to the current `$50` start;
 progressed saves are not reset. Pre-schema-5 saves receive fresh per-section

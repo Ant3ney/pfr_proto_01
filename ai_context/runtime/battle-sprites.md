@@ -59,6 +59,17 @@ exact forms, shiny requests, and the 21 unsupported base species use the neutral
 placeholder unless an explicit approved `res://` override is supplied. The
 catalog never strips a form suffix or substitutes a related ID.
 
+## Developer screenshot showcase
+
+[`developer_battle_showcase.tscn`](../../tests/manual/battle_screenshot_showcase/developer_battle_showcase.tscn)
+inherits the production battle scene and renders ten curated, network-free
+matchups with the real HUD and `BattleSpritePresenter`. Run it directly with F6,
+press K to cycle, and press H to hide or restore its title card. Its first
+pairing is Rayquaza versus Giratina, and the remaining list includes several
+legendary rivalries, a Joltik-versus-Wailord scale contrast, and classic rivals.
+Keeping it beneath `tests/manual/` prevents automatic profile initialization and
+save writes while it is used as a screenshot stage.
+
 ## Pokédex-driven proportions
 
 `BattleSpriteScale.gd` computes a presentation-only footprint from the exact

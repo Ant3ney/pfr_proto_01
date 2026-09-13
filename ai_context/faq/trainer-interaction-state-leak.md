@@ -57,9 +57,12 @@ mode into it. Keep `NPCController.map_coordinates`
 as passive storage and activate travel only through `move_to()`.
 
 Standard trainers consume automatic sight once per play session and then remain
-in `WAITING` for manual rematches. Authored standalone-area trainers use
-`HIGHLY_AGGRO`: the immediate return scene is suppressed to prevent a loop, but
-a newly entered destination gets a fresh local behavior and forces sight again.
+in `WAITING` for manual rematches. Routes 1–40 use automatic `HIGHLY_AGGRO`
+trainers: the immediate return scene is suppressed to prevent a loop, but a
+newly entered destination gets a fresh local behavior and forces sight again.
+Gym leaders and the Elite Four/Champion roster use manual-only `HIGHLY_AGGRO`
+trainers. Suppression leaves those bosses in `WAITING`, allowing Talk to start
+their dialog and another battle immediately after return.
 
 ## Regression Checks
 
@@ -70,15 +73,16 @@ godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smok
 godot --headless --path . --scene res://tests/integration/battle_data_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
 godot --headless --path . --scene res://tests/scenes/navigation_path_height_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_manual_boss_rematch_smoke_test.tscn
 ```
 
-The standalone-area test poisons an instance of every authored trainer template,
-requires the next instance to own fresh controller and behavior resources,
-exercises Highly Aggro sight again after route scene re-entry, and dispatches
-Gym 8 through the E-key HUD path. The battle-data test verifies that an
-instantiated Kyle retains its concrete encounter ID and battle scene path; the
-lifecycle test covers forced sight, battle return, suppression, and manual
-rematch behavior.
+The standalone-area test verifies every placed trainer's dialog, encounter,
+battle scene, and the manual-only setting across all gym and Champion bosses.
+The battle-data test verifies that an instantiated Kyle retains its concrete
+encounter ID and battle scene path; the lifecycle test covers standard forced
+sight, battle return, suppression, and rematch behavior. The focused boss test
+checks that a gym leader stays put, starts through the HUD, and remains
+interactable inside the post-battle suppression window.
 
 If these checks pass but an individual trainer still fails, inspect its facing,
 line-of-sight collision, authored resources, and scene-specific geometry before

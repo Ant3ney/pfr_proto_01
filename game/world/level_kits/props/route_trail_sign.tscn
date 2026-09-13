@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.28, 0.17, 0.09, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Board"]
+albedo_color = Color(0.84, 0.75, 0.52, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="PostMesh"]
+material = SubResource("Wood")
+size = Vector3(0.18, 1.8, 0.18)
+
+[sub_resource type="BoxMesh" id="BoardMesh"]
+material = SubResource("Board")
+size = Vector3(2.7, 0.9, 0.15)
+
+[sub_resource type="BoxShape3D" id="PostShape"]
+size = Vector3(0.3, 1.8, 0.3)
+
+[node name="TrailSign" type="Node3D"]
+
+[node name="Post" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.9, 0)
+mesh = SubResource("PostMesh")
+
+[node name="Board" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.8, 0)
+mesh = SubResource("BoardMesh")
+
+[node name="Text" type="Label3D" parent="."]
+position = Vector3(0, 1.8, 0.086)
+pixel_size = 0.006
+font_size = 30
+outline_size = 0
+modulate = Color(0.13, 0.19, 0.1, 1)
+no_depth_test = false
+text = "ROUTE"
+
+[node name="Collision" type="StaticBody3D" parent="."]
+
+[node name="Post" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("PostShape")

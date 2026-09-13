@@ -86,7 +86,7 @@ func _ready() -> void:
 		return
 	print(
 		"Grass/dirt GridMap smoke test passed: IDs 6-11, six native meshes, shared "
-		+ "materials, six 512 px textures, collisions, 270 preserved city cells, "
+		+ "materials, six 512 px textures, collisions, 291 city cells including the south and southeast route approaches, "
 		+ "all rotated boundaries, and representative transitions validated."
 	)
 	get_tree().quit(0)
@@ -266,10 +266,10 @@ func _validate_city_compatibility(library: MeshLibrary) -> bool:
 		city.free()
 		return _fail("New Bouffalant City's GridMap cell settings changed.")
 	var used_cells := grid.get_used_cells()
-	if used_cells.size() != 270:
+	if used_cells.size() != 291:
 		city.free()
 		return _fail("New Bouffalant City's painted cell count changed: %d." % used_cells.size())
-	var expected_item_counts := {0: 247, 1: 12, 2: 4, 3: 1, 4: 1, 5: 5}
+	var expected_item_counts := {0: 255, 1: 17, 2: 4, 3: 1, 4: 1, 5: 5, 6: 6, 7: 2}
 	var actual_item_counts := {}
 	for cell: Vector3i in used_cells:
 		var item_id := grid.get_cell_item(cell)

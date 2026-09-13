@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StandaloneAreaDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/battle/encounters/battle_encounter_definition.gd" id="1_sym3x"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_01.tres" id="2_x3mgq"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_02.tres" id="3_qhmtk"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_03.tres" id="4_vapkc"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_04.tres" id="5_pmrqh"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_05.tres" id="6_av45b"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_06.tres" id="7_1y8qf"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_07.tres" id="8_lhu83"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_trainer_08.tres" id="9_7c8vs"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/routes/route_40/route_40.tscn" id="10_dmdmi"]
+[ext_resource type="Script" path="res://game/world/levels/standalone_areas/standalone_area_definition.gd" id="11_4g5uo"]
+[ext_resource type="Resource" path="res://game/world/levels/standalone_areas/routes/route_40/encounters/route_40_wild.tres" id="12_pydj1"]
+
+[resource]
+script = ExtResource("11_4g5uo")
+area_id = "route_40"
+numeric_order = 40
+display_name = "Route 40 — Homeward Crown"
+description = "Homeward Crown: a connected meadow trail with 8 trainers, 9 tall-grass clearings, planted borders and side paths. Walk to the far checkpoint to continue home to New Bouffalant City."
+biome = "alpine victory highlands"
+destination = ExtResource("10_dmdmi")
+suggested_level_min = 58
+suggested_level_max = 63
+battle_encounters = Array[ExtResource("1_sym3x")]([ExtResource("2_x3mgq"), ExtResource("3_qhmtk"), ExtResource("4_vapkc"), ExtResource("5_pmrqh"), ExtResource("6_av45b"), ExtResource("7_1y8qf"), ExtResource("8_lhu83"), ExtResource("9_7c8vs")])
+wild_encounters = Array[ExtResource("1_sym3x")]([ExtResource("12_pydj1")])
+route_completion_prerequisite = "route_39"

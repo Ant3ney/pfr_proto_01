@@ -1,599 +1,85 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_rn6sg"]
+[ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="new_base"]
+
+[ext_resource type="NavigationMesh" path="res://game/world/levels/standalone_areas/routes/route_08/navigation.tres" id="new_nav"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl032.glb" id="new_t1_pl032"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/field_item302a.glb" id="new_field_item302a"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl015.glb" id="new_t1_pl015"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl024.glb" id="new_t1_pl024"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl025.glb" id="new_t1_pl025"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl021.glb" id="new_t1_pl021"]
+
+[ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/reference_city_pack/models/t1_pl013.glb" id="new_t1_pl013"]
+
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_backpacker.tscn" id="2_avabt"]
+
 [ext_resource type="Script" path="res://game/actors/character/pfr_character.gd" id="3_dty07"]
-[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="4_xlwfn"]
-[ext_resource type="Script" path="res://game/dialogue/dialog.gd" id="5_4dliv"]
-[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_behavior.gd" id="6_4yba0"]
-[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="7_b5aof"]
+
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_backpacker.tres" id="8_bt27v"]
+
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="4_xlwfn"]
+
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="7_b5aof"]
+
+[ext_resource type="Script" path="res://game/dialogue/dialog.gd" id="5_4dliv"]
+
+[ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_behavior.gd" id="6_4yba0"]
+
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_businessman.tscn" id="9_f00xe"]
+
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_businessman.tres" id="10_t67qk"]
+
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_delivery_worker.tscn" id="11_hpkmd"]
+
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_delivery_worker.tres" id="12_mqcqo"]
+
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_jogger.tscn" id="13_8cwd2"]
+
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_jogger.tres" id="14_djcul"]
+
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_police_officer.tscn" id="15_fv0h5"]
+
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_police_officer.tres" id="16_rftjo"]
-[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.tscn" id="17_jo7um"]
-[ext_resource type="Script" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd" id="18_wh7s6"]
-[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.tscn" id="19_agg2p"]
-[ext_resource type="Script" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.gd" id="20_0y6s2"]
 
-[sub_resource type="Environment" id="Environment_kw3qe"]
-background_mode = 1
-background_color = Color(0.3137255, 0.38431373, 0.49019608, 1)
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.tscn" id="new_grass"]
+
+[ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/objectives/route_completion_gate.tscn" id="new_gate"]
+
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/transitions/route_travel_trigger.gd" id="new_travel"]
+
+[ext_resource type="PackedScene" path="res://game/world/level_kits/props/route_trail_sign.tscn" id="new_sign"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_c5p5d"]
+sky_top_color = Color(0.18, 0.52, 0.88, 1)
+sky_horizon_color = Color(0.82, 0.94, 1, 1)
+ground_bottom_color = Color(0.36, 0.28, 0.22, 1)
+ground_horizon_color = Color(0.78, 0.86, 0.78, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_modular_ground"]
+sky_material = SubResource("ProceduralSkyMaterial_c5p5d")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_ftbry"]
+background_mode = 2
+sky = SubResource("Sky_modular_ground")
 ambient_light_source = 2
-ambient_light_color = Color(0.65882355, 0.72156864, 0.84705883, 1)
-ambient_light_energy = 0.65
-
-[sub_resource type="NavigationMesh" id="NavigationMesh_xc3as"]
-vertices = PackedVector3Array(-9.65, 0, -49.65, -9.65, 0, 49.65, 9.65, 0, 49.65, 9.65, 0, -49.65)
-polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d5lja"]
-albedo_color = Color(0.28235295, 0.32941177, 0.3529412, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_bma1w"]
-material = SubResource("StandardMaterial3D_d5lja")
-size = Vector3(20, 0.2, 100)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nbx6e"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_w157f"]
-material = SubResource("StandardMaterial3D_nbx6e")
-size = Vector3(9.2, 0.026, 11.052077)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k3rk1"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_hdoiq"]
-material = SubResource("StandardMaterial3D_k3rk1")
-size = Vector3(9.2, 0.026, 11.000145)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glff4"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_fmfta"]
-material = SubResource("StandardMaterial3D_glff4")
-size = Vector3(9.2, 0.026, 11.002862)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nya21"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_17ucq"]
-material = SubResource("StandardMaterial3D_nya21")
-size = Vector3(9.2, 0.026, 11.918966)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6vwxi"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_0nmt8"]
-material = SubResource("StandardMaterial3D_6vwxi")
-size = Vector3(9.2, 0.026, 11.345063)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lerp1"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_xprrv"]
-material = SubResource("StandardMaterial3D_lerp1")
-size = Vector3(9.2, 0.026, 11.246953)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jwx83"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_12c5i"]
-material = SubResource("StandardMaterial3D_jwx83")
-size = Vector3(9.2, 0.026, 11.009396)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n4bni"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_n5x4v"]
-material = SubResource("StandardMaterial3D_n4bni")
-size = Vector3(9.2, 0.026, 11.094263)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghlnn"]
-albedo_color = Color(0.45490196, 0.47843137, 0.4392157, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_c3wx6"]
-material = SubResource("StandardMaterial3D_ghlnn")
-size = Vector3(9.2, 0.026, 11.004126)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ldxdj"]
-size = Vector3(20, 0.2, 100)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_icm2n"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_fiiic"]
-material = SubResource("StandardMaterial3D_icm2n")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_63ln5"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_582sr"]
-material = SubResource("StandardMaterial3D_63ln5")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3pnte"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_755ed"]
-material = SubResource("StandardMaterial3D_3pnte")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nm056"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_foh20"]
-material = SubResource("StandardMaterial3D_nm056")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0jiqr"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_djyek"]
-material = SubResource("StandardMaterial3D_0jiqr")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u4sb7"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_j3b6a"]
-material = SubResource("StandardMaterial3D_u4sb7")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7d6tf"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_ihchy"]
-material = SubResource("StandardMaterial3D_7d6tf")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vcbl3"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_b3jfb"]
-material = SubResource("StandardMaterial3D_vcbl3")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o0srn"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_om753"]
-material = SubResource("StandardMaterial3D_o0srn")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tb5ky"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_iiri6"]
-material = SubResource("StandardMaterial3D_tb5ky")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ge3bk"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_dy38o"]
-material = SubResource("StandardMaterial3D_ge3bk")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cfsi7"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_tukoj"]
-material = SubResource("StandardMaterial3D_cfsi7")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_inkm4"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_h1ws2"]
-material = SubResource("StandardMaterial3D_inkm4")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ll22"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_tuyax"]
-material = SubResource("StandardMaterial3D_3ll22")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lg44n"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_k3q0p"]
-material = SubResource("StandardMaterial3D_lg44n")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bucn4"]
-albedo_color = Color(0.27529413, 0.5411765, 0.6, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_qs67b"]
-material = SubResource("StandardMaterial3D_bucn4")
-size = Vector3(0.55, 2.5, 0.55)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yktba"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_22d7k"]
-material = SubResource("StandardMaterial3D_yktba")
-size = Vector3(0.3, 2.4, 100)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ebl6n"]
-size = Vector3(0.3, 2.4, 100)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_il4ep"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_l17pn"]
-material = SubResource("StandardMaterial3D_il4ep")
-size = Vector3(0.3, 2.4, 100)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_l1tbm"]
-size = Vector3(0.3, 2.4, 100)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ggcb"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_dsan2"]
-material = SubResource("StandardMaterial3D_4ggcb")
-size = Vector3(20, 2.4, 0.3)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_f0vro"]
-size = Vector3(20, 2.4, 0.3)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lung2"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_r10ak"]
-material = SubResource("StandardMaterial3D_lung2")
-size = Vector3(20, 2.4, 0.3)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_y72sw"]
-size = Vector3(20, 2.4, 0.3)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wuxrp"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_2r422"]
-material = SubResource("StandardMaterial3D_wuxrp")
-size = Vector3(0.6, 2.1, 12.252077)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_e43ye"]
-size = Vector3(0.6, 2.1, 12.252077)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pesa4"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_g14y5"]
-material = SubResource("StandardMaterial3D_pesa4")
-size = Vector3(0.6, 2.1, 12.252077)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wggxy"]
-size = Vector3(0.6, 2.1, 12.252077)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jt527"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_5cbwv"]
-material = SubResource("StandardMaterial3D_jt527")
-size = Vector3(0.6, 2.1, 12.200145)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_opvjm"]
-size = Vector3(0.6, 2.1, 12.200145)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_35pgx"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_77f62"]
-material = SubResource("StandardMaterial3D_35pgx")
-size = Vector3(0.6, 2.1, 12.200145)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_m2iqj"]
-size = Vector3(0.6, 2.1, 12.200145)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iffbr"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_pq2by"]
-material = SubResource("StandardMaterial3D_iffbr")
-size = Vector3(0.6, 2.1, 12.202862)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_e4byf"]
-size = Vector3(0.6, 2.1, 12.202862)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wdp8p"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_7k5yu"]
-material = SubResource("StandardMaterial3D_wdp8p")
-size = Vector3(0.6, 2.1, 12.202862)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_f3qvh"]
-size = Vector3(0.6, 2.1, 12.202862)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k68pn"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_heivi"]
-material = SubResource("StandardMaterial3D_k68pn")
-size = Vector3(0.6, 2.1, 13.118966)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_jmwcw"]
-size = Vector3(0.6, 2.1, 13.118966)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dpm2m"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_30pyx"]
-material = SubResource("StandardMaterial3D_dpm2m")
-size = Vector3(0.6, 2.1, 13.118966)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_k54or"]
-size = Vector3(0.6, 2.1, 13.118966)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_okqkc"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_hnffq"]
-material = SubResource("StandardMaterial3D_okqkc")
-size = Vector3(0.6, 2.1, 12.545063)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_j0dkq"]
-size = Vector3(0.6, 2.1, 12.545063)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dlspj"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_vdc2y"]
-material = SubResource("StandardMaterial3D_dlspj")
-size = Vector3(0.6, 2.1, 12.545063)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_66mls"]
-size = Vector3(0.6, 2.1, 12.545063)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bbu5q"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_nnkts"]
-material = SubResource("StandardMaterial3D_bbu5q")
-size = Vector3(0.6, 2.1, 12.446953)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_qgqp2"]
-size = Vector3(0.6, 2.1, 12.446953)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5i41"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_pikvp"]
-material = SubResource("StandardMaterial3D_n5i41")
-size = Vector3(0.6, 2.1, 12.446953)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_on63g"]
-size = Vector3(0.6, 2.1, 12.446953)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_to8oe"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_iukvb"]
-material = SubResource("StandardMaterial3D_to8oe")
-size = Vector3(0.6, 2.1, 12.209395)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_y0y35"]
-size = Vector3(0.6, 2.1, 12.209395)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hn5k7"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_k0t0i"]
-material = SubResource("StandardMaterial3D_hn5k7")
-size = Vector3(0.6, 2.1, 12.209395)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_01sdo"]
-size = Vector3(0.6, 2.1, 12.209395)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xrhdv"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_uy584"]
-material = SubResource("StandardMaterial3D_xrhdv")
-size = Vector3(0.6, 2.1, 12.294263)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_kcu63"]
-size = Vector3(0.6, 2.1, 12.294263)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1kd6f"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_1i2r6"]
-material = SubResource("StandardMaterial3D_1kd6f")
-size = Vector3(0.6, 2.1, 12.294263)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ppn3a"]
-size = Vector3(0.6, 2.1, 12.294263)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_68w0k"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_tr61u"]
-material = SubResource("StandardMaterial3D_68w0k")
-size = Vector3(0.6, 2.1, 12.204125)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_t1xix"]
-size = Vector3(0.6, 2.1, 12.204125)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f1mf1"]
-albedo_color = Color(0.16078432, 0.2, 0.23921569, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_5kmib"]
-material = SubResource("StandardMaterial3D_f1mf1")
-size = Vector3(0.6, 2.1, 12.204125)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wrfcg"]
-size = Vector3(0.6, 2.1, 12.204125)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5ubtd"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_irtgv"]
-material = SubResource("StandardMaterial3D_5ubtd")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_gg6v3"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ybstb"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_xy5vk"]
-material = SubResource("StandardMaterial3D_ybstb")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_o1mp3"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bgvbt"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_7e4ho"]
-material = SubResource("StandardMaterial3D_bgvbt")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_6uo2q"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5r5v"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_375ib"]
-material = SubResource("StandardMaterial3D_m5r5v")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_57lev"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7iiw4"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_1ughj"]
-material = SubResource("StandardMaterial3D_7iiw4")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_3sq5k"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3icv8"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_d54yn"]
-material = SubResource("StandardMaterial3D_3icv8")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_6fgd1"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ctr64"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_veme1"]
-material = SubResource("StandardMaterial3D_ctr64")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_fpoti"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_el5ot"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_0v75c"]
-material = SubResource("StandardMaterial3D_el5ot")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_sjxds"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ckrr"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_r444j"]
-material = SubResource("StandardMaterial3D_4ckrr")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_afwx7"]
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ece3q"]
-albedo_color = Color(0.22792158, 0.264, 0.30007842, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_7bevp"]
-material = SubResource("StandardMaterial3D_ece3q")
-size = Vector3(4.15, 1.4, 0.38)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_vurqe"]
-size = Vector3(4.15, 1.4, 0.38)
+ambient_light_color = Color(0.72, 0.82, 0.95, 1)
+ambient_light_energy = 0.28
+reflected_light_source = 1
+tonemap_mode = 2
+tonemap_exposure = 0.85
+
+[sub_resource type="BoxShape3D" id="new_border_shape"]
+size = Vector3(4, 2.4, 0.45)
 
 [sub_resource type="Resource" id="Resource_atkrr"]
 resource_local_to_scene = true
@@ -715,572 +201,1814 @@ battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-trainer-05"
 npc_behavior = SubResource("Resource_dtqyr")
 
-[node name="Route08" unique_id=721895759 instance=ExtResource("1_rn6sg")]
-editor_description = "Editable route standalone area. Layout nodes are materialized and no runtime world generator is required."
+[sub_resource type="BoxShape3D" id="new_travel_shape"]
+size = Vector3(4, 2.4, 1.2)
+
+[node name="Route08" instance=ExtResource("new_base")]
+editor_description = "Textured meadow route with planted borders, connected clearings and optional grass trails. Edit this static inherited scene directly."
 level_id = "route_08"
 area_id = "route_08"
+entry_spawn_marker = &"EntrySpawn"
+metadata/route_main_path = PackedVector3Array(0, 0, 12, 0, 0, 8, 0, 0, 4, 0, 0, 0, 0, 0, -4, 0, 0, -8, 0, 0, -12, 0, 0, -16, 0, 0, -20, 0, 0, -24, 0, 0, -28, 0, 0, -32, -4, 0, -32, -8, 0, -32, -12, 0, -32, -16, 0, -32, -20, 0, -32, -20, 0, -36, -20, 0, -40, -20, 0, -44, -20, 0, -48, -20, 0, -52, -20, 0, -56, -20, 0, -60, -20, 0, -64, -20, 0, -68, -20, 0, -72, -16, 0, -72, -12, 0, -72, -8, 0, -72, -4, 0, -72, 0, 0, -72, 4, 0, -72, 8, 0, -72, 12, 0, -72, 12, 0, -76, 12, 0, -80, 12, 0, -84, 12, 0, -88, 12, 0, -92, 12, 0, -96, 12, 0, -100, 12, 0, -104, 12, 0, -108, 12, 0, -112, 12, 0, -116)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" index="0" unique_id=1547256062]
-environment = SubResource("Environment_kw3qe")
+[node name="Player" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 0, 0)
 
-[node name="Sun" type="DirectionalLight3D" parent="Environment" index="1" unique_id=1081419175]
-transform = Transform3D(0.99254614, 0.099829525, -0.069901384, 0, 0.57357645, 0.81915206, 0.12186935, -0.8130462, 0.56930107, 0, 0, 0)
-light_color = Color(0.71858823, 0.9490196, 1, 1)
-light_energy = 1.05
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_ftbry")
+
+[node name="Sun" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 0, 0)
+light_color = Color(1, 0.93, 0.82, 1)
+light_energy = 0.72
 shadow_enabled = true
+shadow_opacity = 0.58
+directional_shadow_mode = 0
+directional_shadow_max_distance = 32.0
 
-[node name="NavigationRegion3D" parent="." index="2"]
-navigation_mesh = SubResource("NavigationMesh_xc3as")
+[node name="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("new_nav")
 
-[node name="Floor" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="0" unique_id=338355286]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-mesh = SubResource("BoxMesh_bma1w")
+[node name="ModularGroundGrid" parent="NavigationRegion3D/WorldGeometry/Ground"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -2, 0, -2)
+data = {
+"cells": PackedInt32Array(65527, 65504, 6, 65528, 65504, 6, 65529, 65504, 6, 65530, 65504, 6, 65531, 65504, 6, 65532, 65504, 6, 65533, 65504, 6, 65534, 65504, 6, 65535, 65504, 6, 0, 65504, 6, 1, 65504, 6, 2, 65504, 6, 3, 65504, 6, 4, 65504, 6, 5, 65504, 6, 6, 65504, 6, 7, 65504, 6, 8, 65504, 6, 65527, 65505, 6, 65528, 65505, 6, 65529, 65505, 6, 65530, 65505, 6, 65531, 65505, 6, 65532, 65505, 6, 65533, 65505, 6, 65534, 65505, 6, 65535, 65505, 6, 0, 65505, 6, 1, 65505, 6, 2, 65505, 6, 3, 65505, 6, 4, 65505, 6, 5, 65505, 6, 6, 65505, 6, 7, 65505, 6, 8, 65505, 6, 65527, 65506, 6, 65528, 65506, 6, 65529, 65506, 6, 65530, 65506, 6, 65531, 65506, 6, 65532, 65506, 6, 65533, 65506, 6, 65534, 65506, 6, 65535, 65506, 6, 0, 65506, 6, 1, 65506, 6, 2, 65506, 6, 3, 65506, 6, 4, 65506, 6, 5, 65506, 6, 6, 65506, 6, 7, 65506, 6, 8, 65506, 6, 65527, 65507, 6, 65528, 65507, 6, 65529, 65507, 6, 65530, 65507, 6, 65531, 65507, 6, 65532, 65507, 6, 65533, 65507, 6, 65534, 65507, 6, 65535, 65507, 6, 0, 65507, 6, 1, 65507, 6, 2, 65507, 6, 3, 65507, 7, 4, 65507, 6, 5, 65507, 6, 6, 65507, 6, 7, 65507, 6, 8, 65507, 6, 65527, 65508, 6, 65528, 65508, 6, 65529, 65508, 6, 65530, 65508, 6, 65531, 65508, 6, 65532, 65508, 6, 65533, 65508, 6, 65534, 65508, 6, 65535, 65508, 6, 0, 65508, 6, 1, 65508, 6, 2, 65508, 6, 3, 65508, 7, 4, 65508, 6, 5, 65508, 6, 6, 65508, 6, 7, 65508, 6, 8, 65508, 6, 65527, 65509, 6, 65528, 65509, 6, 65529, 65509, 6, 65530, 65509, 6, 65531, 65509, 6, 65532, 65509, 6, 65533, 65509, 6, 65534, 65509, 6, 65535, 65509, 6, 0, 65509, 6, 1, 65509, 6, 2, 65509, 6, 3, 65509, 7, 4, 65509, 6, 5, 65509, 6, 6, 65509, 6, 7, 65509, 6, 8, 65509, 6, 65527, 65510, 6, 65528, 65510, 6, 65529, 65510, 6, 65530, 65510, 6, 65531, 65510, 6, 65532, 65510, 6, 65533, 65510, 6, 65534, 65510, 6, 65535, 65510, 6, 0, 65510, 6, 1, 65510, 6, 2, 65510, 6, 3, 65510, 7, 4, 65510, 6, 5, 65510, 6, 6, 65510, 6, 7, 65510, 6, 8, 65510, 6, 65527, 65511, 6, 65528, 65511, 6, 65529, 65511, 6, 65530, 65511, 6, 65531, 65511, 6, 65532, 65511, 6, 65533, 65511, 6, 65534, 65511, 6, 65535, 65511, 6, 0, 65511, 6, 1, 65511, 6, 2, 65511, 6, 3, 65511, 7, 4, 65511, 6, 5, 65511, 6, 6, 65511, 6, 7, 65511, 6, 8, 65511, 6, 65527, 65512, 6, 65528, 65512, 6, 65529, 65512, 6, 65530, 65512, 6, 65531, 65512, 6, 65532, 65512, 6, 65533, 65512, 6, 65534, 65512, 6, 65535, 65512, 6, 0, 65512, 6, 1, 65512, 1441803, 2, 65512, 1048583, 3, 65512, 1441801, 4, 65512, 6, 5, 65512, 6, 6, 65512, 6, 7, 65512, 6, 8, 65512, 6, 65527, 65513, 6, 65528, 65513, 6, 65529, 65513, 6, 65530, 65513, 6, 65531, 65513, 6, 65532, 65513, 6, 65533, 65513, 6, 65534, 65513, 6, 65535, 65513, 6, 0, 65513, 6, 1, 65513, 6, 2, 65513, 6, 3, 65513, 7, 4, 65513, 6, 5, 65513, 6, 6, 65513, 6, 7, 65513, 6, 8, 65513, 6, 65527, 65514, 6, 65528, 65514, 6, 65529, 65514, 6, 65530, 65514, 6, 65531, 65514, 6, 65532, 65514, 6, 65533, 65514, 6, 65534, 65514, 6, 65535, 65514, 6, 0, 65514, 6, 1, 65514, 6, 2, 65514, 6, 3, 65514, 7, 4, 65514, 6, 5, 65514, 6, 6, 65514, 6, 7, 65514, 6, 8, 65514, 6, 65527, 65515, 6, 65528, 65515, 6, 65529, 65515, 6, 65530, 65515, 6, 65531, 65515, 6, 65532, 65515, 6, 65533, 65515, 6, 65534, 65515, 6, 65535, 65515, 6, 0, 65515, 6, 1, 65515, 6, 2, 65515, 6, 3, 65515, 7, 4, 65515, 6, 5, 65515, 6, 6, 65515, 6, 7, 65515, 6, 8, 65515, 6, 65527, 65516, 6, 65528, 65516, 6, 65529, 65516, 6, 65530, 65516, 6, 65531, 65516, 6, 65532, 65516, 655371, 65533, 65516, 6, 65534, 65516, 6, 65535, 65516, 6, 0, 65516, 6, 1, 65516, 6, 2, 65516, 6, 3, 65516, 7, 4, 65516, 6, 5, 65516, 6, 6, 65516, 6, 7, 65516, 6, 8, 65516, 6, 65527, 65517, 6, 65528, 65517, 6, 65529, 65517, 6, 65530, 65517, 6, 65531, 65517, 6, 65532, 65517, 7, 65533, 65517, 6, 65534, 65517, 6, 65535, 65517, 6, 0, 65517, 6, 1, 65517, 6, 2, 65517, 6, 3, 65517, 7, 4, 65517, 6, 5, 65517, 6, 6, 65517, 6, 7, 65517, 6, 8, 65517, 6, 65527, 65518, 6, 65528, 65518, 6, 65529, 65518, 6, 65530, 65518, 6, 65531, 65518, 1048584, 65532, 65518, 655369, 65533, 65518, 1048583, 65534, 65518, 1048583, 65535, 65518, 1048583, 0, 65518, 9, 1, 65518, 1048583, 2, 65518, 9, 3, 65518, 1441800, 4, 65518, 6, 5, 65518, 6, 6, 65518, 6, 7, 65518, 6, 8, 65518, 6, 65527, 65519, 6, 65528, 65519, 6, 65529, 65519, 6, 65530, 65519, 6, 65531, 65519, 7, 65532, 65519, 6, 65533, 65519, 6, 65534, 65519, 6, 65535, 65519, 6, 0, 65519, 7, 1, 65519, 6, 2, 65519, 7, 3, 65519, 6, 4, 65519, 6, 5, 65519, 6, 6, 65519, 6, 7, 65519, 6, 8, 65519, 6, 65527, 65520, 6, 65528, 65520, 6, 65529, 65520, 6, 65530, 65520, 6, 65531, 65520, 7, 65532, 65520, 6, 65533, 65520, 6, 65534, 65520, 6, 65535, 65520, 6, 0, 65520, 7, 1, 65520, 6, 2, 65520, 11, 3, 65520, 6, 4, 65520, 6, 5, 65520, 6, 6, 65520, 6, 7, 65520, 6, 8, 65520, 6, 65527, 65521, 6, 65528, 65521, 6, 65529, 65521, 6, 65530, 65521, 6, 65531, 65521, 1048585, 65532, 65521, 1048583, 65533, 65521, 1048583, 65534, 65521, 1048583, 65535, 65521, 1048583, 0, 65521, 1441800, 1, 65521, 6, 2, 65521, 6, 3, 65521, 6, 4, 65521, 6, 5, 65521, 6, 6, 65521, 6, 7, 65521, 6, 8, 65521, 6, 65527, 65522, 6, 65528, 65522, 6, 65529, 65522, 6, 65530, 65522, 6, 65531, 65522, 7, 65532, 65522, 6, 65533, 65522, 6, 65534, 65522, 6, 65535, 65522, 6, 0, 65522, 6, 1, 65522, 6, 2, 65522, 6, 3, 65522, 6, 4, 65522, 6, 5, 65522, 6, 6, 65522, 6, 7, 65522, 6, 8, 65522, 6, 65527, 65523, 6, 65528, 65523, 6, 65529, 65523, 6, 65530, 65523, 6, 65531, 65523, 7, 65532, 65523, 6, 65533, 65523, 6, 65534, 65523, 6, 65535, 65523, 6, 0, 65523, 6, 1, 65523, 6, 2, 65523, 6, 3, 65523, 6, 4, 65523, 6, 5, 65523, 6, 6, 65523, 6, 7, 65523, 6, 8, 65523, 6, 65527, 65524, 6, 65528, 65524, 6, 65529, 65524, 6, 65530, 65524, 6, 65531, 65524, 7, 65532, 65524, 6, 65533, 65524, 6, 65534, 65524, 6, 65535, 65524, 6, 0, 65524, 6, 1, 65524, 6, 2, 65524, 6, 3, 65524, 6, 4, 65524, 6, 5, 65524, 6, 6, 65524, 6, 7, 65524, 6, 8, 65524, 6, 65527, 65525, 6, 65528, 65525, 6, 65529, 65525, 6, 65530, 65525, 6, 65531, 65525, 1048585, 65532, 65525, 1048583, 65533, 65525, 1048587, 65534, 65525, 6, 65535, 65525, 6, 0, 65525, 6, 1, 65525, 6, 2, 65525, 6, 3, 65525, 6, 4, 65525, 6, 5, 65525, 6, 6, 65525, 6, 7, 65525, 6, 8, 65525, 6, 65527, 65526, 6, 65528, 65526, 6, 65529, 65526, 6, 65530, 65526, 6, 65531, 65526, 7, 65532, 65526, 6, 65533, 65526, 6, 65534, 65526, 6, 65535, 65526, 6, 0, 65526, 6, 1, 65526, 6, 2, 65526, 6, 3, 65526, 6, 4, 65526, 6, 5, 65526, 6, 6, 65526, 6, 7, 65526, 6, 8, 65526, 6, 65527, 65527, 6, 65528, 65527, 6, 65529, 65527, 6, 65530, 65527, 6, 65531, 65527, 7, 65532, 65527, 6, 65533, 65527, 6, 65534, 65527, 6, 65535, 65527, 6, 0, 65527, 6, 1, 65527, 6, 2, 65527, 6, 3, 65527, 6, 4, 65527, 6, 5, 65527, 6, 6, 65527, 6, 7, 65527, 6, 8, 65527, 6, 65527, 65528, 6, 65528, 65528, 6, 65529, 65528, 6, 65530, 65528, 6, 65531, 65528, 655368, 65532, 65528, 1048583, 65533, 65528, 1048583, 65534, 65528, 1048583, 65535, 65528, 9, 0, 65528, 8, 1, 65528, 6, 2, 65528, 6, 3, 65528, 6, 4, 65528, 6, 5, 65528, 6, 6, 65528, 6, 7, 65528, 6, 8, 65528, 6, 65527, 65529, 6, 65528, 65529, 6, 65529, 65529, 6, 65530, 65529, 6, 65531, 65529, 6, 65532, 65529, 6, 65533, 65529, 6, 65534, 65529, 6, 65535, 65529, 1048585, 0, 65529, 1441801, 1, 65529, 6, 2, 65529, 6, 3, 65529, 6, 4, 65529, 6, 5, 65529, 6, 6, 65529, 6, 7, 65529, 6, 8, 65529, 6, 65527, 65530, 6, 65528, 65530, 6, 65529, 65530, 6, 65530, 65530, 6, 65531, 65530, 6, 65532, 65530, 6, 65533, 65530, 6, 65534, 65530, 6, 65535, 65530, 655368, 0, 65530, 1441801, 1, 65530, 6, 2, 65530, 6, 3, 65530, 6, 4, 65530, 6, 5, 65530, 6, 6, 65530, 6, 7, 65530, 6, 8, 65530, 6, 65527, 65531, 6, 65528, 65531, 6, 65529, 65531, 6, 65530, 65531, 6, 65531, 65531, 6, 65532, 65531, 6, 65533, 65531, 6, 65534, 65531, 6, 65535, 65531, 6, 0, 65531, 7, 1, 65531, 6, 2, 65531, 6, 3, 65531, 6, 4, 65531, 6, 5, 65531, 6, 6, 65531, 6, 7, 65531, 6, 8, 65531, 6, 65527, 65532, 6, 65528, 65532, 6, 65529, 65532, 6, 65530, 65532, 6, 65531, 65532, 6, 65532, 65532, 6, 65533, 65532, 6, 65534, 65532, 6, 65535, 65532, 6, 0, 65532, 7, 1, 65532, 6, 2, 65532, 6, 3, 65532, 6, 4, 65532, 6, 5, 65532, 6, 6, 65532, 6, 7, 65532, 6, 8, 65532, 6, 65527, 65533, 6, 65528, 65533, 6, 65529, 65533, 6, 65530, 65533, 6, 65531, 65533, 6, 65532, 65533, 6, 65533, 65533, 6, 65534, 65533, 6, 65535, 65533, 6, 0, 65533, 7, 1, 65533, 6, 2, 65533, 6, 3, 65533, 6, 4, 65533, 6, 5, 65533, 6, 6, 65533, 6, 7, 65533, 6, 8, 65533, 6, 65527, 65534, 6, 65528, 65534, 6, 65529, 65534, 6, 65530, 65534, 6, 65531, 65534, 6, 65532, 65534, 6, 65533, 65534, 6, 65534, 65534, 6, 65535, 65534, 6, 0, 65534, 1048585, 1, 65534, 1048583, 2, 65534, 1048587, 3, 65534, 6, 4, 65534, 6, 5, 65534, 6, 6, 65534, 6, 7, 65534, 6, 8, 65534, 6, 65527, 65535, 6, 65528, 65535, 6, 65529, 65535, 6, 65530, 65535, 6, 65531, 65535, 6, 65532, 65535, 6, 65533, 65535, 6, 65534, 65535, 6, 65535, 65535, 6, 0, 65535, 7, 1, 65535, 6, 2, 65535, 6, 3, 65535, 6, 4, 65535, 6, 5, 65535, 6, 6, 65535, 6, 7, 65535, 6, 8, 65535, 6, 65527, 0, 6, 65528, 0, 6, 65529, 0, 6, 65530, 0, 6, 65531, 0, 6, 65532, 0, 6, 65533, 0, 6, 65534, 0, 6, 65535, 0, 6, 0, 0, 7, 1, 0, 6, 2, 0, 6, 3, 0, 6, 4, 0, 6, 5, 0, 6, 6, 0, 6, 7, 0, 6, 8, 0, 6, 65527, 1, 6, 65528, 1, 6, 65529, 1, 6, 65530, 1, 6, 65531, 1, 6, 65532, 1, 6, 65533, 1, 6, 65534, 1, 6, 65535, 1, 6, 0, 1, 7, 1, 1, 6, 2, 1, 6, 3, 1, 6, 4, 1, 6, 5, 1, 6, 6, 1, 6, 7, 1, 6, 8, 1, 6, 65527, 2, 6, 65528, 2, 6, 65529, 2, 6, 65530, 2, 6, 65531, 2, 6, 65532, 2, 6, 65533, 2, 6, 65534, 2, 6, 65535, 2, 6, 0, 2, 7, 1, 2, 6, 2, 2, 6, 3, 2, 6, 4, 2, 6, 5, 2, 6, 6, 2, 6, 7, 2, 6, 8, 2, 6, 65527, 3, 6, 65528, 3, 6, 65529, 3, 6, 65530, 3, 6, 65531, 3, 6, 65532, 3, 6, 65533, 3, 6, 65534, 3, 6, 65535, 3, 6, 0, 3, 7, 1, 3, 6, 2, 3, 6, 3, 3, 6, 4, 3, 6, 5, 3, 6, 6, 3, 6, 7, 3, 6, 8, 3, 6, 65527, 4, 6, 65528, 4, 6, 65529, 4, 6, 65530, 4, 6, 65531, 4, 6, 65532, 4, 6, 65533, 4, 6, 65534, 4, 6, 65535, 4, 6, 0, 4, 6, 1, 4, 6, 2, 4, 6, 3, 4, 6, 4, 4, 6, 5, 4, 6, 6, 4, 6, 7, 4, 6, 8, 4, 6, 65527, 5, 6, 65528, 5, 6, 65529, 5, 6, 65530, 5, 6, 65531, 5, 6, 65532, 5, 6, 65533, 5, 6, 65534, 5, 6, 65535, 5, 6, 0, 5, 6, 1, 5, 6, 2, 5, 6, 3, 5, 6, 4, 5, 6, 5, 5, 6, 6, 5, 6, 7, 5, 6, 8, 5, 6, 65527, 6, 6, 65528, 6, 6, 65529, 6, 6, 65530, 6, 6, 65531, 6, 6, 65532, 6, 6, 65533, 6, 6, 65534, 6, 6, 65535, 6, 6, 0, 6, 6, 1, 6, 6, 2, 6, 6, 3, 6, 6, 4, 6, 6, 5, 6, 6, 6, 6, 6, 7, 6, 6, 8, 6, 6)
+}
 
-[node name="DirtPath" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Ground" index="1" unique_id=96052379]
+[node name="Vegetation" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props"]
 
-[node name="PathSegment01" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="0" unique_id=1405015361]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, 0.51094466, 0.012, 40)
-mesh = SubResource("BoxMesh_w157f")
+[node name="Hedges" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation"]
+scale = Vector3(2, 2, 2)
 
-[node name="PathSegment02" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="1" unique_id=1255046474]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 0.99498, 0.012, 30)
-mesh = SubResource("BoxMesh_hdoiq")
+[node name="Rocks" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation"]
+scale = Vector3(2, 2, 2)
 
-[node name="PathSegment03" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="2" unique_id=2089223396]
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, 0.8484342, 0.012, 20)
-mesh = SubResource("BoxMesh_fmfta")
+[node name="Trees" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation"]
 
-[node name="PathSegment04" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="3" unique_id=410079789]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, -1.4634516, 0.012, 10)
-mesh = SubResource("BoxMesh_17ucq")
+[node name="Plants" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation"]
 
-[node name="PathSegment05" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="4" unique_id=1440103772]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -2.330905, 0.012, 0)
-mesh = SubResource("BoxMesh_0nmt8")
+[node name="PlantedBorders" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries"]
 
-[node name="PathSegment06" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="5" unique_id=2128471727]
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, 0.111931086, 0.012, -10)
-mesh = SubResource("BoxMesh_xprrv")
+[node name="Border001" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -24, 1.2, -90)
+shape = SubResource("new_border_shape")
 
-[node name="PathSegment07" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="6" unique_id=1238665772]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 1.4467623, 0.012, -20)
-mesh = SubResource("BoxMesh_12c5i")
+[node name="Hedge001_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0, -45.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="PathSegment08" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="7" unique_id=716104047]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 0.97541326, 0.012, -30)
-mesh = SubResource("BoxMesh_n5x4v")
+[node name="Hedge001_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0, -46.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="PathSegment09" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Ground/DirtPath" index="8" unique_id=367497530]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, 0.14363636, 0.012, -40)
-mesh = SubResource("BoxMesh_c3wx6")
+[node name="Border002" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -88)
+shape = SubResource("new_border_shape")
 
-[node name="FloorCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Props" index="0" unique_id=1255589594]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+[node name="Hedge002_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -44)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="@CollisionShape3D@308" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Props/FloorCollision" index="0" unique_id=47683825]
-shape = SubResource("BoxShape3D_ldxdj")
+[node name="Hedge002_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -44)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="BiomeDecorations" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Props" index="1" unique_id=2086408536]
+[node name="Border003" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -84)
+shape = SubResource("new_border_shape")
 
-[node name="Pillar01L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="0" unique_id=839550498]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7651653, 1.25, 35.277996)
-mesh = SubResource("BoxMesh_fiiic")
+[node name="Hedge003_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar01R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="1" unique_id=381482496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.721387, 1.25, 34.722004)
-mesh = SubResource("BoxMesh_582sr")
+[node name="Hedge003_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar02L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="2" unique_id=332637263]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7174535, 1.25, 24.915745)
-mesh = SubResource("BoxMesh_755ed")
+[node name="Border004" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -80)
+shape = SubResource("new_border_shape")
 
-[node name="Pillar02R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="3" unique_id=1273558579]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813125, 1.25, 25.084255)
-mesh = SubResource("BoxMesh_foh20")
+[node name="Hedge004_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar03L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="4" unique_id=1426006930]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.331032, 1.25, 13.704827)
-mesh = SubResource("BoxMesh_djyek")
+[node name="Hedge004_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar03R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="5" unique_id=618096179]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.873436, 1.25, 16.295172)
-mesh = SubResource("BoxMesh_j3b6a")
+[node name="Border005" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -76)
+shape = SubResource("new_border_shape")
 
-[node name="Pillar04L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="6" unique_id=1604904056]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0727868, 1.25, 4.5030804)
-mesh = SubResource("BoxMesh_ihchy")
+[node name="Hedge005_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -38)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar04R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="7" unique_id=1125437708]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.38419, 1.25, 5.4969196)
-mesh = SubResource("BoxMesh_b3jfb")
+[node name="Hedge005_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -38)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar05L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="8" unique_id=1802584044]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5796432, 1.25, -3.6354928)
-mesh = SubResource("BoxMesh_om753")
+[node name="Border006" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -72)
+shape = SubResource("new_border_shape")
 
-[node name="Pillar05R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="9" unique_id=1212913644]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.59186, 1.25, -6.364507)
-mesh = SubResource("BoxMesh_iiri6")
+[node name="Hedge006_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -36)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar06L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="10" unique_id=487690670]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9294195, 1.25, -14.23922)
-mesh = SubResource("BoxMesh_dy38o")
+[node name="Hedge006_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -36)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
 
-[node name="Pillar06R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="11" unique_id=1507857685]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4694777, 1.25, -15.76078)
-mesh = SubResource("BoxMesh_tukoj")
+[node name="Border007" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -68)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge007_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -34)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge007_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -34)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock007" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -14.75, 0, -34)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border008" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -64)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge008_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -32)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge008_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -32)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border009" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -60)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge009_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -30)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge009_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -30)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border010" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -56)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge010_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -28)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge010_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -28)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border011" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -52)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge011_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge011_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border012" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -48)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge012_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -24)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge012_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -24)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border013" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -44)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge013_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -22)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge013_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -22)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border014" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -40)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge014_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -20)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge014_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -20)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock014" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -14.75, 0, -20)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border015" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -36)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge015_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -18)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge015_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -18)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border016" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -32)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge016_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -16)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge016_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -16)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border017" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -24, 1.2, -26)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge017_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0, -12.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge017_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0, -11.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border018" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26, 1.2, -28)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge018_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -13.35, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge018_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -14.35, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border019" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -20, 1.2, -94)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge019_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0, -47.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge019_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0, -48.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border020" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -22, 1.2, -92)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge020_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11.35, 0, -46)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge020_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -12.35, 0, -46)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border021" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -20, 1.2, -22)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge021_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0, -10.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge021_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0, -9.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock021" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0, -9.25)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border022" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -22, 1.2, -24)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge022_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11.35, 0, -12)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge022_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -12.35, 0, -12)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border023" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -16, 1.2, -94)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge023_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0, -47.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge023_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0, -48.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border024" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -16, 1.2, -22)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge024_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0, -10.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge024_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0, -9.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border025" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -12, 1.2, -94)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge025_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 0, -47.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge025_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 0, -48.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border026" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -14, 1.2, -20)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge026_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.35, 0, -10)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge026_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8.35, 0, -10)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border027" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -12, 1.2, -14)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge027_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 0, -6.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge027_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 0, -5.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border028" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -14, 1.2, -16)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge028_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.35, 0, -8)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge028_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8.35, 0, -8)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock028" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8.75, 0, -8)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border029" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8, 1.2, -102)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge029_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4, 0, -51.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge029_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4, 0, -52.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border030" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 1.2, -100)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge030_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -5.35, 0, -50)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge030_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -6.35, 0, -50)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border031" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 1.2, -96)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge031_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -5.35, 0, -48)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge031_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -6.35, 0, -48)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border032" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, -84)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge032_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -2.65, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge032_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -1.65, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border033" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8, 1.2, -10)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge033_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4, 0, -4.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge033_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4, 0, -3.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border034" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 1.2, -12)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge034_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -5.35, 0, -6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge034_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -6.35, 0, -6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border035" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4, 1.2, -106)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge035_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -53.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge035_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -54.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock035" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -2, 0, -54.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border036" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, -104)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge036_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, -52)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge036_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, -52)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border037" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4, 1.2, -86)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge037_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -42.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge037_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -41.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border038" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4, 1.2, -82)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge038_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -41.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge038_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, -42.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border039" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 1.2, -52)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge039_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -0.65, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge039_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border040" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, -8)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge040_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge040_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border041" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, -4)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge041_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge041_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border042" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, 0)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge042_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, 0)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge042_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, 0)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock042" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -4.75, 0, 0)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border043" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, 4)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge043_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, 2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge043_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, 2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border044" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, 8)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge044_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, 4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge044_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, 4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border045" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4, 1.2, 14)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge045_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, 7.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge045_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 0, 8.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border046" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 1.2, 12)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge046_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.35, 0, 6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge046_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.35, 0, 6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border047" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.2, -106)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge047_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -53.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge047_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -54.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border048" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.2, -86)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge048_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -42.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge048_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -41.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border049" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.2, -82)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge049_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -41.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge049_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -42.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock049" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -42.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border050" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 1.2, -80)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge050_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge050_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border051" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.2, -54)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge051_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -26.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge051_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -25.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border052" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.2, -50)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge052_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -25.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge052_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -26.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border053" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 1.2, -48)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge053_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.35, 0, -24)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge053_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.35, 0, -24)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border054" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 1.2, -44)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge054_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.35, 0, -22)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge054_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.35, 0, -22)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border055" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 1.2, -40)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge055_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.35, 0, -20)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge055_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.35, 0, -20)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border056" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, -106)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge056_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -53.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge056_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -54.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock056" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2, 0, -54.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border057" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, -86)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge057_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -42.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge057_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -41.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border058" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, -78)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge058_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -39.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge058_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -40.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border059" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, -50)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge059_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -24.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge059_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -23.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border060" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 1.2, -52)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge060_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.65, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge060_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -0.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border061" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, -38)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge061_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -19.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge061_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, -20.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border062" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -36)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge062_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, -18)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge062_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, -18)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border063" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -32)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge063_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, -16)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge063_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, -16)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock063" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 4.75, 0, -16)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border064" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -28)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge064_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge064_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, -14)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border065" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -24)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge065_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, -12)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge065_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, -12)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border066" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -20)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge066_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, -10)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge066_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, -10)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border067" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, 4)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge067_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, 2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge067_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, 2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border068" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, 8)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge068_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, 4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge068_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, 4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border069" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, 12)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge069_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.35, 0, 6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge069_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.35, 0, 6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border070" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 1.2, 14)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge070_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, 7.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge070_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 0, 8.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock070" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 2, 0, 8.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border071" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 1.2, -118)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge071_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -59.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge071_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -60.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border072" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -116)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge072_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.65, 0, -58)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge072_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.65, 0, -58)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border073" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -112)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge073_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.65, 0, -56)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge073_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.65, 0, -56)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border074" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -108)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge074_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.65, 0, -54)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge074_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.65, 0, -54)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border075" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -84)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge075_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.65, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge075_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.65, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border076" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.2, -80)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge076_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 2.65, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge076_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 1.65, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border077" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 1.2, -50)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge077_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -24.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge077_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -23.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock077" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -23.25)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border078" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 1.2, -18)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge078_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -9.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge078_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, -10.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border079" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 1.2, 2)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge079_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, 1.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge079_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4, 0, 2.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border080" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 14, 1.2, -52)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge080_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 7.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge080_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8.35, 0, -26)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border081" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 1.2, -50)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge081_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, -24.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge081_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, -23.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border082" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 1.2, -18)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge082_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, -9.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge082_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, -10.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border083" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 1.2, 2)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge083_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, 1.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge083_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 0, 2.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border084" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16, 1.2, -118)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge084_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -59.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge084_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -60.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock084" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 0, -60.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border085" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -116)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge085_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -58)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge085_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -58)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border086" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -112)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge086_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -56)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge086_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -56)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border087" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -108)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge087_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -54)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge087_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -54)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border088" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -104)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge088_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -52)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge088_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -52)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border089" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -100)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge089_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -50)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge089_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -50)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border090" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -96)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge090_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -48)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge090_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -48)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border091" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -92)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge091_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -46)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge091_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -46)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock091" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 10.75, 0, -46)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border092" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -88)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge092_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -44)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge092_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -44)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border093" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -84)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge093_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge093_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -42)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border094" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -80)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge094_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge094_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -40)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border095" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -76)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge095_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -38)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge095_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -38)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border096" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -72)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge096_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -36)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge096_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -36)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border097" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -68)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge097_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -34)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge097_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -34)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border098" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -64)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge098_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -32)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge098_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -32)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock098" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 10.75, 0, -32)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border099" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -60)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge099_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -30)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge099_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -30)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border100" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -56)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge100_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -28)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge100_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -28)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border101" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16, 1.2, -54)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge101_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -26.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge101_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -25.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border102" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16, 1.2, -18)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge102_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -9.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge102_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, -10.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border103" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, -16)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge103_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, -8)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge103_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, -8)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border104" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 1.2, 0)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge104_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 9.35, 0, 0)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge104_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10.35, 0, 0)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border105" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16, 1.2, 2)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge105_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, 1.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge105_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, 2.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Rock105" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks" instance=ExtResource("new_field_item302a")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 0, 2.75)
+metadata/new_bouffalant_city_asset_id = "field_item302a"
+
+[node name="Border106" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 20, 1.2, -14)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge106_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10, 0, -7.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge106_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10, 0, -8.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border107" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22, 1.2, -12)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge107_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 11.35, 0, -6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge107_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12.35, 0, -6)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border108" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22, 1.2, -8)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge108_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 11.35, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge108_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12.35, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border109" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22, 1.2, -4)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge109_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 11.35, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge109_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12.35, 0, -2)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Border110" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/PlantedBorders"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 20, 1.2, -2)
+shape = SubResource("new_border_shape")
+
+[node name="Hedge110_0" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10, 0, -0.65)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Hedge110_1" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges" instance=ExtResource("new_t1_pl032")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10, 0, 0.35)
+metadata/new_bouffalant_city_asset_id = "t1_pl032"
+
+[node name="Tree000" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl015")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -24, 0, -95)
+metadata/new_bouffalant_city_asset_id = "t1_pl015"
+
+[node name="Tree010" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl024")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -31, 0, -52)
+metadata/new_bouffalant_city_asset_id = "t1_pl024"
+
+[node name="Tree020" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl025")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -20, 0, -17)
+metadata/new_bouffalant_city_asset_id = "t1_pl025"
+
+[node name="Tree030" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl015")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -15, 0, -96)
+metadata/new_bouffalant_city_asset_id = "t1_pl015"
+
+[node name="Tree040" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl024")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11, 0, -4)
+metadata/new_bouffalant_city_asset_id = "t1_pl024"
+
+[node name="Tree060" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl015")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4, 0, -43)
+metadata/new_bouffalant_city_asset_id = "t1_pl015"
+
+[node name="Tree070" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl024")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 8, 0, -123)
+metadata/new_bouffalant_city_asset_id = "t1_pl024"
+
+[node name="Tree080" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl025")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 0, -45)
+metadata/new_bouffalant_city_asset_id = "t1_pl025"
+
+[node name="Tree090" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl015")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 23, 0, -92)
+metadata/new_bouffalant_city_asset_id = "t1_pl015"
+
+[node name="Tree100" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees" instance=ExtResource("new_t1_pl024")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16, 0, -49)
+metadata/new_bouffalant_city_asset_id = "t1_pl024"
+
+[node name="Flower000" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -23.5, 0, -87.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Bush000" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -24.5, 0, -88.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
+
+[node name="Flower004" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -23.5, 0, -71.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower008" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -23.5, 0, -55.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower012" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -23.5, 0, -39.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Bush012" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -24.5, 0, -40.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
+
+[node name="Flower016" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -19.5, 0, -91.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower020" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -19.5, 0, -75.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower032" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -19.5, 0, -27.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower040" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -15.5, 0, -67.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower044" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -15.5, 0, -51.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower048" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -15.5, 0, -35.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Bush048" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -16.5, 0, -36.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
+
+[node name="Flower052" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11.5, 0, -91.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower056" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11.5, 0, -75.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower068" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -11.5, 0, -27.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower072" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.5, 0, -99.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Bush072" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8.5, 0, -100.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
+
+[node name="Flower076" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.5, 0, -83.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower080" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.5, 0, -67.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower084" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.5, 0, -51.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Bush084" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8.5, 0, -52.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
+
+[node name="Flower088" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -7.5, 0, -35.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower100" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.5, 0, -79.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower104" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.5, 0, -63.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
+
+[node name="Flower120" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -3.5, 0, 0.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="Pillar07L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="12" unique_id=645561491]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4071765, 1.25, -25.270725)
-mesh = SubResource("BoxMesh_h1ws2")
+[node name="Bush120" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4.5, 0, -0.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="Pillar07R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="13" unique_id=1936802684]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.080069, 1.25, -24.729275)
-mesh = SubResource("BoxMesh_tuyax")
+[node name="Flower124" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.5, 0, -103.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="Pillar08L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="14" unique_id=598413879]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0174847, 1.25, -35.476627)
-mesh = SubResource("BoxMesh_k3q0p")
+[node name="Flower128" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.5, 0, -87.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="Pillar08R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props/BiomeDecorations" index="15" unique_id=1351511273]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.442939, 1.25, -34.523373)
-mesh = SubResource("BoxMesh_qs67b")
+[node name="Flower136" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.5, 0, -47.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="WestBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1859427857]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.15, 1.2, 0)
-mesh = SubResource("BoxMesh_22d7k")
+[node name="Flower152" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, -103.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="WestBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="1" unique_id=94061920]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.15, 1.2, 0)
+[node name="Flower156" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, -87.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@309" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/WestBoundaryCollision" index="0" unique_id=711183456]
-shape = SubResource("BoxShape3D_ebl6n")
+[node name="Bush156" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.5, 0, -88.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="EastBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="2" unique_id=1588388041]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.15, 1.2, 0)
-mesh = SubResource("BoxMesh_l17pn")
+[node name="Flower164" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, -35.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="EastBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="3" unique_id=2110447166]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.15, 1.2, 0)
+[node name="Flower168" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, -19.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@310" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/EastBoundaryCollision" index="0" unique_id=936887173]
-shape = SubResource("BoxShape3D_l1tbm")
+[node name="Bush168" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 3.5, 0, -20.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="NorthBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="4" unique_id=1253355893]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -50.15)
-mesh = SubResource("BoxMesh_dsan2")
+[node name="Flower172" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, -3.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="NorthBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="5" unique_id=1623250179]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -50.15)
+[node name="Flower176" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 4.5, 0, 12.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@311" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/NorthBoundaryCollision" index="0" unique_id=1628445137]
-shape = SubResource("BoxShape3D_f0vro")
+[node name="Flower180" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8.5, 0, -103.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="SouthBoundary" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="6" unique_id=1014713468]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 50.15)
-mesh = SubResource("BoxMesh_r10ak")
+[node name="Bush180" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 7.5, 0, -104.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="SouthBoundaryCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="7" unique_id=809486533]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 50.15)
+[node name="Flower184" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8.5, 0, -87.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@312" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/SouthBoundaryCollision" index="0" unique_id=1830911188]
-shape = SubResource("BoxShape3D_y72sw")
+[node name="Flower216" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12.5, 0, -15.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="RouteWalls" type="Node3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="8" unique_id=1816217830]
+[node name="Bush216" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 11.5, 0, -16.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="RouteWall01L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="0" unique_id=1657266859]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, 5.385559, 1.05, 40.49813)
-mesh = SubResource("BoxMesh_2r422")
+[node name="Flower220" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12.5, 0, 0.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="RouteWall01LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="1" unique_id=124208829]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, 5.385559, 1.05, 40.49813)
+[node name="Flower224" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16.5, 0, -103.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@313" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall01LCollision" index="0" unique_id=695619897]
-shape = SubResource("BoxShape3D_e43ye")
+[node name="Flower228" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16.5, 0, -87.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="RouteWall01R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="2" unique_id=1974110897]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, -4.3636694, 1.05, 39.50187)
-mesh = SubResource("BoxMesh_g14y5")
+[node name="Bush228" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 15.5, 0, -88.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl013"
 
-[node name="RouteWall01RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="3" unique_id=61201397]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, -4.3636694, 1.05, 39.50187)
+[node name="Flower232" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16.5, 0, -71.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="@CollisionShape3D@314" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall01RCollision" index="0" unique_id=1951968909]
-shape = SubResource("BoxShape3D_wggxy")
+[node name="Flower236" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 16.5, 0, -55.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="RouteWall02L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="4" unique_id=754102478]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 5.894909, 1.05, 29.973629)
-mesh = SubResource("BoxMesh_5cbwv")
+[node name="Flower244" parent="NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants" instance=ExtResource("new_t1_pl021")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 20.5, 0, -3.5)
+metadata/new_bouffalant_city_asset_id = "t1_pl021"
 
-[node name="RouteWall02LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="5" unique_id=1671182208]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 5.894909, 1.05, 29.973629)
-
-[node name="@CollisionShape3D@315" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall02LCollision" index="0" unique_id=1621422667]
-shape = SubResource("BoxShape3D_opvjm")
-
-[node name="RouteWall02R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="6" unique_id=1032560823]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, -3.9049492, 1.05, 30.026371)
-mesh = SubResource("BoxMesh_77f62")
-
-[node name="RouteWall02RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="7" unique_id=1844784958]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, -3.9049492, 1.05, 30.026371)
-
-[node name="@CollisionShape3D@316" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall02RCollision" index="0" unique_id=1705536139]
-shape = SubResource("BoxShape3D_m2iqj")
-
-[node name="RouteWall03L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="8" unique_id=1492976461]
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, 5.747032, 1.05, 19.88279)
-mesh = SubResource("BoxMesh_pq2by")
-
-[node name="RouteWall03LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="9" unique_id=170693070]
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, 5.747032, 1.05, 19.88279)
-
-[node name="@CollisionShape3D@317" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall03LCollision" index="0" unique_id=966787666]
-shape = SubResource("BoxShape3D_e4byf")
-
-[node name="RouteWall03R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="10" unique_id=61461631]
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, -4.050164, 1.05, 20.11721)
-mesh = SubResource("BoxMesh_7k5yu")
-
-[node name="RouteWall03RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="11" unique_id=304207746]
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, -4.050164, 1.05, 20.11721)
-
-[node name="@CollisionShape3D@318" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall03RCollision" index="0" unique_id=222811166]
-shape = SubResource("BoxShape3D_f3qvh")
-
-[node name="RouteWall04L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="12" unique_id=1693852380]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, 3.0241525, 1.05, 8.032411)
-mesh = SubResource("BoxMesh_heivi")
-
-[node name="RouteWall04LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="13" unique_id=653687190]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, 3.0241525, 1.05, 8.032411)
-
-[node name="@CollisionShape3D@319" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall04LCollision" index="0" unique_id=1962932601]
-shape = SubResource("BoxShape3D_jmwcw")
-
-[node name="RouteWall04R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="14" unique_id=324049115]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, -5.9510555, 1.05, 11.967589)
-mesh = SubResource("BoxMesh_30pyx")
-
-[node name="RouteWall04RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="15" unique_id=1796877589]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, -5.9510555, 1.05, 11.967589)
-
-[node name="@CollisionShape3D@320" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall04RCollision" index="0" unique_id=1210629678]
-shape = SubResource("BoxShape3D_k54or")
-
-[node name="RouteWall05L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="16" unique_id=340020766]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, 2.405654, 1.05, 1.2549951)
-mesh = SubResource("BoxMesh_hnffq")
-
-[node name="RouteWall05LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="17" unique_id=387693592]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, 2.405654, 1.05, 1.2549951)
-
-[node name="@CollisionShape3D@321" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall05LCollision" index="0" unique_id=971878987]
-shape = SubResource("BoxShape3D_j0dkq")
-
-[node name="RouteWall05R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="18" unique_id=1675528822]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -7.067464, 1.05, -1.2549951)
-mesh = SubResource("BoxMesh_vdc2y")
-
-[node name="RouteWall05RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="19" unique_id=390815527]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -7.067464, 1.05, -1.2549951)
-
-[node name="@CollisionShape3D@322" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall05RCollision" index="0" unique_id=1665231836]
-shape = SubResource("BoxShape3D_66mls")
-
-[node name="RouteWall06L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="20" unique_id=451515566]
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, 4.893841, 1.05, -8.930727)
-mesh = SubResource("BoxMesh_nnkts")
-
-[node name="RouteWall06LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="21" unique_id=371708040]
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, 4.893841, 1.05, -8.930727)
-
-[node name="@CollisionShape3D@323" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall06LCollision" index="0" unique_id=351290735]
-shape = SubResource("BoxShape3D_qgqp2")
-
-[node name="RouteWall06R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="22" unique_id=1488169604]
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, -4.669978, 1.05, -11.069273)
-mesh = SubResource("BoxMesh_pikvp")
-
-[node name="RouteWall06RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="23" unique_id=1685451547]
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, -4.669978, 1.05, -11.069273)
-
-[node name="@CollisionShape3D@324" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall06RCollision" index="0" unique_id=269625954]
-shape = SubResource("BoxShape3D_on63g")
-
-[node name="RouteWall07L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="24" unique_id=879717282]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 6.342163, 1.05, -19.787745)
-mesh = SubResource("BoxMesh_iukvb")
-
-[node name="RouteWall07LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="25" unique_id=327504430]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 6.342163, 1.05, -19.787745)
-
-[node name="@CollisionShape3D@325" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall07LCollision" index="0" unique_id=1701656609]
-shape = SubResource("BoxShape3D_y0y35")
-
-[node name="RouteWall07R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="26" unique_id=1255930832]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, -3.4486382, 1.05, -20.212255)
-mesh = SubResource("BoxMesh_k0t0i")
-
-[node name="RouteWall07RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="27" unique_id=142988809]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, -3.4486382, 1.05, -20.212255)
-
-[node name="@CollisionShape3D@326" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall07RCollision" index="0" unique_id=2013836651]
-shape = SubResource("BoxShape3D_01sdo")
-
-[node name="RouteWall08L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="28" unique_id=1626421880]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 5.829656, 1.05, -30.66808)
-mesh = SubResource("BoxMesh_uy584")
-
-[node name="RouteWall08LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="29" unique_id=853174294]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 5.829656, 1.05, -30.66808)
-
-[node name="@CollisionShape3D@327" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall08LCollision" index="0" unique_id=1314794875]
-shape = SubResource("BoxShape3D_kcu63")
-
-[node name="RouteWall08R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="30" unique_id=630115127]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, -3.8788295, 1.05, -29.33192)
-mesh = SubResource("BoxMesh_1i2r6")
-
-[node name="RouteWall08RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="31" unique_id=1618507011]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, -3.8788295, 1.05, -29.33192)
-
-[node name="@CollisionShape3D@328" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall08RCollision" index="0" unique_id=1891563388]
-shape = SubResource("BoxShape3D_ppn3a")
-
-[node name="RouteWall09L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="32" unique_id=726777644]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, 5.0416155, 1.05, -40.140705)
-mesh = SubResource("BoxMesh_tr61u")
-
-[node name="RouteWall09LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="33" unique_id=313565296]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, 5.0416155, 1.05, -40.140705)
-
-[node name="@CollisionShape3D@329" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall09LCollision" index="0" unique_id=175809787]
-shape = SubResource("BoxShape3D_t1xix")
-
-[node name="RouteWall09R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="34" unique_id=1986966140]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, -4.754343, 1.05, -39.859295)
-mesh = SubResource("BoxMesh_5kmib")
-
-[node name="RouteWall09RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls" index="35" unique_id=250108815]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, -4.754343, 1.05, -39.859295)
-
-[node name="@CollisionShape3D@330" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/RouteWalls/RouteWall09RCollision" index="0" unique_id=222928320]
-shape = SubResource("BoxShape3D_wrfcg")
-
-[node name="TrainerGate1L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="9" unique_id=1370790578]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 3.5234418, 0.7, 30.6364)
-mesh = SubResource("BoxMesh_irtgv")
-
-[node name="TrainerGate1LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="10" unique_id=1123820113]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 3.5234418, 0.7, 30.6364)
-
-[node name="@CollisionShape3D@331" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate1LCollision" index="0" unique_id=1640244957]
-shape = SubResource("BoxShape3D_gg6v3")
-
-[node name="TrainerGate1R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="11" unique_id=345800467]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, -1.5264854, 0.7, 30.66358)
-mesh = SubResource("BoxMesh_xy5vk")
-
-[node name="TrainerGate1RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="12" unique_id=890878505]
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, -1.5264854, 0.7, 30.66358)
-
-[node name="@CollisionShape3D@332" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate1RCollision" index="0" unique_id=1000456253]
-shape = SubResource("BoxShape3D_o1mp3")
-
-[node name="TrainerGate2L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="13" unique_id=1993424525]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, 3.3022947, 0.7, 14.581383)
-mesh = SubResource("BoxMesh_7e4ho")
-
-[node name="TrainerGate2LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="14" unique_id=921639679]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, 3.3022947, 0.7, 14.581383)
-
-[node name="@CollisionShape3D@333" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate2LCollision" index="0" unique_id=1923421055]
-shape = SubResource("BoxShape3D_6uo2q")
-
-[node name="TrainerGate2R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="15" unique_id=756159790]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, -1.3226854, 0.7, 16.609205)
-mesh = SubResource("BoxMesh_375ib")
-
-[node name="TrainerGate2RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="16" unique_id=482823199]
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, -1.3226854, 0.7, 16.609205)
-
-[node name="@CollisionShape3D@334" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate2RCollision" index="0" unique_id=1318453500]
-shape = SubResource("BoxShape3D_57lev")
-
-[node name="TrainerGate3L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="17" unique_id=768178150]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -0.056606054, 0.7, 1.2750257)
-mesh = SubResource("BoxMesh_1ughj")
-
-[node name="TrainerGate3LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="18" unique_id=2040526766]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -0.056606054, 0.7, 1.2750257)
-
-[node name="@CollisionShape3D@335" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate3LCollision" index="0" unique_id=1979348496]
-shape = SubResource("BoxShape3D_3sq5k")
-
-[node name="TrainerGate3R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="19" unique_id=2124616697]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -4.938162, 0.7, -0.018387675)
-mesh = SubResource("BoxMesh_d54yn")
-
-[node name="TrainerGate3RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="20" unique_id=440085899]
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -4.938162, 0.7, -0.018387675)
-
-[node name="@CollisionShape3D@336" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate3RCollision" index="0" unique_id=375290372]
-shape = SubResource("BoxShape3D_6fgd1")
-
-[node name="TrainerGate4L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="21" unique_id=1732533144]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 3.7244444, 0.7, -14.241233)
-mesh = SubResource("BoxMesh_veme1")
-
-[node name="TrainerGate4LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="22" unique_id=721044450]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 3.7244444, 0.7, -14.241233)
-
-[node name="@CollisionShape3D@337" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate4LCollision" index="0" unique_id=1541537004]
-shape = SubResource("BoxShape3D_fpoti")
-
-[node name="TrainerGate4R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="23" unique_id=1232334695]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, -1.3208157, 0.7, -14.459987)
-mesh = SubResource("BoxMesh_0v75c")
-
-[node name="TrainerGate4RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="24" unique_id=745662517]
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, -1.3208157, 0.7, -14.459987)
-
-[node name="@CollisionShape3D@338" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate4RCollision" index="0" unique_id=38236088]
-shape = SubResource("BoxShape3D_sjxds")
-
-[node name="TrainerGate5L" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="25" unique_id=683704859]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 3.565457, 0.7, -29.700335)
-mesh = SubResource("BoxMesh_r444j")
-
-[node name="TrainerGate5LCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="26" unique_id=77912357]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 3.565457, 0.7, -29.700335)
-
-[node name="@CollisionShape3D@339" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate5LCollision" index="0" unique_id=244378860]
-shape = SubResource("BoxShape3D_afwx7")
-
-[node name="TrainerGate5R" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="27" unique_id=1128994402]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, -1.4373848, 0.7, -29.011805)
-mesh = SubResource("BoxMesh_7bevp")
-
-[node name="TrainerGate5RCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="28" unique_id=1432343008]
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, -1.4373848, 0.7, -29.011805)
-
-[node name="@CollisionShape3D@340" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/TrainerGate5RCollision" index="0" unique_id=1287749823]
-shape = SubResource("BoxShape3D_vurqe")
-
-[node name="Route 8 Trainer 1" type="CharacterBody3D" parent="Gameplay/Actors" index="0" unique_id=671460309 instance=ExtResource("2_avabt")]
+[node name="Route 8 Trainer 1" type="CharacterBody3D" parent="Gameplay/Actors" instance=ExtResource("2_avabt")]
 editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 0.99498, 0, 30)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.25, 0, -20)
 script = ExtResource("3_dty07")
 character_movement = SubResource("Resource_atkrr")
 controller = SubResource("Resource_rm7kw")
 character_art_asset_pack = ExtResource("8_bt27v")
 metadata/encounter_id = "route-08-trainer-01"
 metadata/route_progress = 0.16666666666666666
+metadata/path_checkpoint = Vector3(0, 0, -20)
 
-[node name="Route 8 Trainer 2" type="CharacterBody3D" parent="Gameplay/Actors" index="1" unique_id=1200666071 instance=ExtResource("9_f00xe")]
+[node name="Route 8 Trainer 2" type="CharacterBody3D" parent="Gameplay/Actors" instance=ExtResource("9_f00xe")]
 editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
-transform = Transform3D(-0.9158376, 0, -0.4015489, 0, 1, 0, 0.4015489, 0, -0.9158376, 0.7287978, 0, 15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -16, 0, -29.75)
 script = ExtResource("3_dty07")
 character_movement = SubResource("Resource_uslba")
 controller = SubResource("Resource_647er")
 character_art_asset_pack = ExtResource("10_t67qk")
 metadata/encounter_id = "route-08-trainer-02"
 metadata/route_progress = 0.3333333333333333
+metadata/path_checkpoint = Vector3(-16, 0, -32)
 
-[node name="Route 8 Trainer 3" type="CharacterBody3D" parent="Gameplay/Actors" index="2" unique_id=1946807917 instance=ExtResource("11_hpkmd")]
+[node name="Route 8 Trainer 3" type="CharacterBody3D" parent="Gameplay/Actors" instance=ExtResource("11_hpkmd")]
 editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -2.330905, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -17.75, 0, -56)
 script = ExtResource("3_dty07")
 character_movement = SubResource("Resource_pcnp5")
 controller = SubResource("Resource_xf8rq")
 character_art_asset_pack = ExtResource("12_mqcqo")
 metadata/encounter_id = "route-08-trainer-03"
 metadata/route_progress = 0.5
+metadata/path_checkpoint = Vector3(-20, 0, -56)
 
-[node name="Route 8 Trainer 4" type="CharacterBody3D" parent="Gameplay/Actors" index="3" unique_id=1275015422 instance=ExtResource("13_8cwd2")]
+[node name="Route 8 Trainer 4" type="CharacterBody3D" parent="Gameplay/Actors" instance=ExtResource("13_8cwd2")]
 editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
-transform = Transform3D(-0.99906135, 0, 0.0433175, 0, 1, 0, -0.0433175, 0, -0.99906135, 1.2299707, 0, -15)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -4, 0, -74.25)
 script = ExtResource("3_dty07")
 character_movement = SubResource("Resource_vovb8")
 controller = SubResource("Resource_ow54o")
 character_art_asset_pack = ExtResource("14_djcul")
 metadata/encounter_id = "route-08-trainer-04"
 metadata/route_progress = 0.6666666666666666
+metadata/path_checkpoint = Vector3(-4, 0, -72)
 
-[node name="Route 8 Trainer 5" type="CharacterBody3D" parent="Gameplay/Actors" index="4" unique_id=796220191 instance=ExtResource("15_fv0h5")]
+[node name="Route 8 Trainer 5" type="CharacterBody3D" parent="Gameplay/Actors" instance=ExtResource("15_fv0h5")]
 editor_description = "Shared scene foundation for every playable and non-player PFR character. Derived scenes supply a controller, behavior, art pack, and any role-specific interaction nodes."
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 0.97541326, 0, -30)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 14.25, 0, -88)
 script = ExtResource("3_dty07")
 character_movement = SubResource("Resource_5dgph")
 controller = SubResource("Resource_at6e0")
 character_art_asset_pack = ExtResource("16_rftjo")
 metadata/encounter_id = "route-08-trainer-05"
 metadata/route_progress = 0.8333333333333334
+metadata/path_checkpoint = Vector3(12, 0, -88)
 
-[node name="TallGrassFields" type="Node3D" parent="Gameplay/Encounters" index="0" unique_id=314741154]
+[node name="TallGrassFields" type="Node3D" parent="Gameplay/Encounters"]
 
-[node name="Route8Grass01" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="0" unique_id=1243355971 instance=ExtResource("17_jo7um")]
-editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
-transform = Transform3D(-0.9999855, 0, -0.005381709, 0, 1, 0, 0.005381709, 0, -0.9999855, 0.9780271, 0, 26.85)
-collision_layer = 0
-monitorable = false
-script = ExtResource("18_wh7s6")
+[node name="GrassClearing01" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0, -8)
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-wild"
 encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
-random_seed = 801
 
-[node name="Route8Grass02" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="1" unique_id=2091400970 instance=ExtResource("17_jo7um")]
-editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
-transform = Transform3D(-0.99971384, 0, -0.023920551, 0, 1, 0, 0.023920551, 0, -0.99971384, 0.80416876, 0, 18.15)
-collision_layer = 0
-monitorable = false
-script = ExtResource("18_wh7s6")
+[node name="GrassClearing02" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -4, 0, -20)
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-wild"
 encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
-random_seed = 802
 
-[node name="Route8Grass03" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="2" unique_id=1054862891 instance=ExtResource("17_jo7um")]
-editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
-transform = Transform3D(-0.96664464, 0, 0.2561214, 0, 1, 0, -0.2561214, 0, -0.96664464, -1.496283, 0, -3.1499996)
-collision_layer = 0
-monitorable = false
-script = ExtResource("18_wh7s6")
+[node name="GrassClearing03" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0, -44)
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-wild"
 encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
-random_seed = 803
 
-[node name="Route8Grass04" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="3" unique_id=1946974037 instance=ExtResource("17_jo7um")]
-editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
-transform = Transform3D(-0.9758999, 0, 0.21821886, 0, 1, 0, -0.21821886, 0, -0.9758999, 0.5256058, 0, -11.85)
-collision_layer = 0
-monitorable = false
-script = ExtResource("18_wh7s6")
+[node name="GrassClearing04" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -16, 0, -84)
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-wild"
 encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
-random_seed = 804
 
-[node name="Route8Grass05" type="Area3D" parent="Gameplay/Encounters/TallGrassFields" index="4" unique_id=1861400009 instance=ExtResource("17_jo7um")]
-editor_description = "Reusable 8 x 4 m tall-grass patch. The visual clumps stay at unit scale; encounters are checked by player distance travelled inside the area."
-transform = Transform3D(-0.9906617, 0, -0.13634297, 0, 1, 0, 0.13634297, 0, -0.9906617, 0.54188466, 0, -33.15)
-collision_layer = 0
-monitorable = false
-script = ExtResource("18_wh7s6")
+[node name="GrassClearing05" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 8, 0, -60)
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "route-08-wild"
 encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
-random_seed = 805
 
-[node name="RouteCompletionGate" type="Area3D" parent="Gameplay/Objectives" index="0" unique_id=60056101 instance=ExtResource("19_agg2p")]
-transform = Transform3D(-0.99958766, 0, -0.02871539, 0, 1, 0, 0.02871539, 0, -0.99958766, -4.3067885e-16, 0, -45)
-collision_layer = 0
-monitorable = false
-script = ExtResource("20_0y6s2")
+[node name="GrassClearing06" parent="Gameplay/Encounters/TallGrassFields" instance=ExtResource("new_grass")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -96)
+battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
+encounter_id = "route-08-wild"
+encounter_name = "Wild Storm Powered Industrial Yard Pokemon"
+
+[node name="RouteCompletionGate" parent="Gameplay/Objectives" instance=ExtResource("new_gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 0, -112)
 route_index = 8
 
-[node name="EntrySpawn" type="Marker3D" parent="Markers" index="0" unique_id=1819037563]
-transform = Transform3D(-0.9948193, 0, 0.10165948, 0, 1, 0, -0.10165948, 0, -0.9948193, 0, 0, 45)
+[node name="PreviousRouteExit" type="Area3D" parent="Gameplay/Transitions"]
+position = Vector3(0, 0, 12)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("new_travel")
+destination_scene_path = "res://game/world/levels/standalone_areas/routes/route_07/route_07.tscn"
+destination_spawn_marker = &"FromNextRoute"
+destination_area_id = "route_07"
+
+[node name="Volume" type="CollisionShape3D" parent="Gameplay/Transitions/PreviousRouteExit"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("new_travel_shape")
+
+[node name="NextRouteExit" type="Area3D" parent="Gameplay/Transitions"]
+position = Vector3(12, 0, -116)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("new_travel")
+destination_scene_path = "res://game/world/levels/standalone_areas/routes/route_09/route_09.tscn"
+destination_spawn_marker = &"EntrySpawn"
+destination_area_id = "route_09"
+completion_gate_path = NodePath("../../Objectives/RouteCompletionGate")
+
+[node name="Volume" type="CollisionShape3D" parent="Gameplay/Transitions/NextRouteExit"]
+position = Vector3(0, 1.2, 0)
+shape = SubResource("new_travel_shape")
+
+[node name="EntrySpawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 0, 0)
+
+[node name="FromNextRoute" type="Marker3D" parent="Markers"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 12, 0, -106)
+
+[node name="TrailheadSign" parent="NavigationRegion3D/WorldGeometry/Structures" instance=ExtResource("new_sign")]
+position = Vector3(3.5, 0, 5)
+
+[node name="Text" parent="NavigationRegion3D/WorldGeometry/Structures/TrailheadSign"]
+text = "Route 8\nStatic Yard"
+
+[node name="ReturnSign" parent="NavigationRegion3D/WorldGeometry/Structures" instance=ExtResource("new_sign")]
+position = Vector3(-3.5, 0, 8)
+
+[node name="Text" parent="NavigationRegion3D/WorldGeometry/Structures/ReturnSign"]
+text = "ROUTE 7\nRETURN"

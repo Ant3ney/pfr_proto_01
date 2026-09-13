@@ -91,7 +91,7 @@ const requiredPaths = [
   'art/battle/sprites/generated/catalog.json',
   'data/creatures/experience.json',
 ];
-for (let routeIndex = 0; routeIndex < 40; routeIndex += 1) {
+for (let routeIndex = 0; routeIndex < 41; routeIndex += 1) {
   const id = `route_${String(routeIndex).padStart(2, '0')}`;
   requiredPaths.push(`game/world/levels/standalone_areas/routes/${id}/${id}.tscn.remap`);
   requiredPaths.push(`game/world/levels/standalone_areas/routes/${id}/area_definition.tres.remap`);
@@ -123,13 +123,14 @@ for (const removed of removedBasePaths) {
 const standaloneScenePaths = [...packPaths].filter((entry) => (
   /^game\/world\/levels\/standalone_areas\/(?:routes\/route_\d{2}\/route_\d{2}|gyms\/gym_\d{2}\/gym_\d{2}|champion\/champion_challenge\/champion_challenge)\.tscn\.remap$/.test(entry)
 ));
-if (standaloneScenePaths.length !== 49) {
-  throw new Error(`Export contains ${standaloneScenePaths.length} standalone-area scenes; expected 49.`);
+if (standaloneScenePaths.length !== 50) {
+  throw new Error(`Export contains ${standaloneScenePaths.length} standalone-area scenes; expected 50.`);
 }
 
 for (const forbiddenPrefix of [
   'source_assets/battle_sprites/',
   'battle_server/',
+  'loading_battle/',
   'core/',
   'demo/',
   'overworld/',

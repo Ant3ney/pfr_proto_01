@@ -73,9 +73,9 @@ func _run() -> void:
 	var catalog := ChallengeProgressionSystem.get_catalog()
 	_check(catalog != null, "Challenge progression should load the standalone-area catalog.")
 	if catalog != null:
-		_check(catalog.areas.size() == StandaloneAreaCatalog.TOTAL_AREA_COUNT, "The catalog should contain exactly 49 areas.")
+		_check(catalog.areas.size() == StandaloneAreaCatalog.TOTAL_AREA_COUNT, "The catalog should contain exactly 50 areas.")
 		_check(catalog.validate().is_empty(), "Every area and encounter resource should validate.")
-		_check(ChallengeProgressionSystem.get_destinations("route").size() == 40, "The Adventure Menu should receive 40 routes.")
+		_check(ChallengeProgressionSystem.get_destinations("route").size() == StandaloneAreaCatalog.ROUTE_COUNT, "The Adventure Menu should receive 41 routes.")
 		_check(ChallengeProgressionSystem.get_destinations("gym").size() == 8, "The Adventure Menu should receive eight gyms.")
 		_check(ChallengeProgressionSystem.get_destinations("champion").size() == 1, "The Adventure Menu should receive one champion challenge.")
 
@@ -106,7 +106,7 @@ func _run() -> void:
 	ChallengeProgressionSystem.load_save_data(original_challenge)
 
 	if _failures.is_empty():
-		print("Domain systems smoke test passed: economy, shop, inventory, loot boxes, rewards, 49-area catalog, route locks, badges, and champion progression verified.")
+		print("Domain systems smoke test passed: economy, shop, inventory, loot boxes, rewards, 50-area catalog, route locks, badges, and champion progression verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

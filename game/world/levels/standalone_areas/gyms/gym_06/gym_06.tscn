@@ -132,11 +132,13 @@ dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint 
 resource_local_to_scene = true
 script = ExtResource("6_j7vli")
 detection_distance = 8.0
+automatic_sight_encounter = false
 aggression_mode = 1
 
 [sub_resource type="Resource" id="Resource_2f8gk"]
 resource_local_to_scene = true
 script = ExtResource("7_srwyp")
+automatic_sight_encounter = false
 aggression_mode = 1
 dialog = SubResource("Resource_3jjr2")
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"

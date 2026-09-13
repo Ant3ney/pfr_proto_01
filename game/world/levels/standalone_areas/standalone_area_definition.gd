@@ -14,7 +14,7 @@ enum Category {
 @export_group("Identity")
 @export var area_id := ""
 @export var category: Category = Category.ROUTE
-@export_range(0, 39, 1) var numeric_order := 0
+@export_range(0, 40, 1) var numeric_order := 0
 @export var display_name := ""
 @export_multiline var description := ""
 @export var biome := ""
@@ -110,7 +110,7 @@ func validate() -> PackedStringArray:
 func _is_area_id_valid() -> bool:
 	match category:
 		Category.ROUTE:
-			return numeric_order >= 0 and numeric_order <= 39 and area_id == "route_%02d" % numeric_order
+			return numeric_order >= 0 and numeric_order < StandaloneAreaCatalog.ROUTE_COUNT and area_id == "route_%02d" % numeric_order
 		Category.GYM:
 			return numeric_order >= 1 and numeric_order <= 8 and area_id == "gym_%02d" % numeric_order
 		Category.CHAMPION:

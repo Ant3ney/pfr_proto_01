@@ -49,7 +49,7 @@ example:
 
 | Stage | Trainer behavior | Player movement |
 | --- | --- | --- |
-| `WAITING` | Casts forward for the player | Unchanged |
+| `WAITING` | Casts forward when automatic sight is enabled; otherwise waits for Talk | Unchanged |
 | Player detected | Locks one collision-safe approach target and starts navigation | Disabled |
 | `APPROACHING` | Continues toward the fixed target without following later player movement | Disabled |
 | Target reached | Enters `COMPLETE`, stops NPC navigation, and starts assigned dialog | Disabled |
@@ -60,19 +60,21 @@ The shared interaction HUD can also dispatch a trainer while it is `WAITING`.
 Interaction immediately marks the trainer `COMPLETE`, faces the player, and
 either starts the same dialog path or launches the configured battle directly
 when there is no dialog. `automatic_sight_encounter` controls the independent
-classic approach path. Kyle and all six city-line trainers use standard
-aggression: the first accepted battle consumes automatic sight for the current
-play session, and the returned trainer enters `WAITING` for HUD-driven manual
-rematches. Authored standalone-area opponents use Highly Aggro mode, stay
-`COMPLETE` only in the immediate suppressed return scene, and regain automatic
-sight when their area is launched as a fresh run. The HUD interaction
-remains available while a trainer is `WAITING`, including when the player
-approaches from outside that sight line.
+classic approach path. All Routes 0–40 use standard aggression: the first
+accepted battle consumes automatic sight regardless of outcome, and the returned
+trainer enters `WAITING` for HUD-driven manual rematches. Catalog trainer sight
+history persists across scene changes, new menu runs and save/reload. Gym leaders and every Elite
+Four/Champion opponent are manual-only Highly Aggro trainers. They do not cast
+for or approach the player, and they return in `WAITING` so Talk can immediately
+start the dialog and another battle. The HUD remains available while any trainer
+is `WAITING`, including when the player approaches an automatic trainer from
+outside its sight line.
 
 An absent or empty dialog in the automatic path and a failed UI instantiation
 use the finish path, restoring movement without starting a battle. `COMPLETE`
 is terminal for that behavior instance; battle return creates a new scene-local
-instance and applies the standard/manual or Highly Aggro/suppressed policy above.
+instance and applies the standard, automatic Highly Aggro, or manual-boss return
+policy above.
 
 ## Current Pokemon Center healer sequence
 

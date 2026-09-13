@@ -58,7 +58,7 @@ func _run() -> void:
 		menu._select_category(AdventureMenu.CATEGORY_POKEMON)
 		_check(offers != null and offers.item_count == 1025, "The Pokemon tab should render every catalog species.")
 		menu._select_category(AdventureMenu.CATEGORY_ROUTES)
-		_check(offers != null and offers.item_count == 40, "The Routes tab should contain Route 0 through Route 39.")
+		_check(offers != null and offers.item_count == StandaloneAreaCatalog.ROUTE_COUNT, "The Routes tab should contain Route 0 through Route 40.")
 		if offers != null and offers.item_count >= 2:
 			_check("AVAILABLE" in offers.get_item_text(0) and "LOCKED" in offers.get_item_text(1), "Fresh route availability should be visible in the menu.")
 		menu._select_category(AdventureMenu.CATEGORY_GYMS)
@@ -94,7 +94,7 @@ func _list_contains(list: ItemList, fragment: String) -> bool:
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, complete catalogs, 49 destinations, and direct launch contract verified.")
+		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, complete catalogs, 50 destinations, and direct launch contract verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
 
+[ext_resource type="Script" path="res://game/world/level_kits/gameplay/transitions/route_travel_trigger.gd" id="route_travel"]
+
 [sub_resource type="StandardMaterial3D" id="Material_desk"]
 albedo_color = Color(0.15, 0.08, 0.045, 1)
 roughness = 0.8
@@ -127,6 +129,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -2.9)
 mesh = SubResource("Mesh_route_exit_guide")
 
 [node name="ExitToRoute0" parent="Gameplay/Transitions/Route0ExitRoom" index="3" unique_id=1843778823 instance=ExtResource("5_transfer")]
+script = ExtResource("route_travel")
+destination_area_id = "route_00"
 transform = Transform3D(1.55, 0, 0, 0, 1, 0, 0, 0, 0.55, 0, 0, -3.7)
 destination_scene_path = "res://game/world/levels/standalone_areas/routes/route_00/route_00.tscn"
 destination_spawn_marker = &"Route0Start"

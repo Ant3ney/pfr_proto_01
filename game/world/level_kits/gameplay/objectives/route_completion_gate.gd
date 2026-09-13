@@ -7,7 +7,7 @@ extends Area3D
 
 signal completion_attempted(result: Dictionary)
 
-@export_range(0, 39, 1) var route_index := 0
+@export_range(0, 40, 1) var route_index := 0
 
 @onready var _label: Label3D = $RouteEndLabel
 
@@ -31,10 +31,10 @@ func attempt_completion() -> Dictionary:
 	var result := ChallengeProgressionSystem.complete_route_at_end(route_index)
 	if bool(result.get("ok", false)):
 		_resolved = true
-		monitoring = false
+		set_deferred("monitoring", false)
 		var next_route := int(result.get("next_route", -1))
 		_update_label(
-			"ALL 40 ROUTES COMPLETE"
+			"ALL %d ROUTES COMPLETE" % StandaloneAreaCatalog.ROUTE_COUNT
 			if next_route < 0
 			else "ROUTE %d COMPLETE • ROUTE %d UNLOCKED" % [route_index, next_route]
 		)

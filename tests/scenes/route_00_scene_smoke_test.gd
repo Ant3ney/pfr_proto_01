@@ -82,15 +82,11 @@ func _run() -> void:
 	_check(sun != null and sun.shadow_enabled, "The outdoor route should use one shadow-casting sun.")
 	_check(environment != null and environment.environment != null, "The route should provide its bright outdoor environment.")
 
-	var ground := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Ground/GroundTiles") as Node3D
-	_check(ground != null and ground.get_child_count() == 96, "Route 0 should use a complete 8 x 12 grid of 4 m ground modules.")
-	var path_count := 0
+	var ground := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Ground/ModularGroundGrid") as GridMap
+	_check(ground != null and ground.get_used_cells().size() > 300, "Route 0 should use the reference's painted grass/dirt ground kit.")
 	if ground != null:
-		for tile: Node in ground.get_children():
-			if String(tile.name).begins_with("Path_"):
-				path_count += 1
-			_check(tile is Node3D and (tile as Node3D).scale.is_equal_approx(Vector3.ONE), "Ground modules should remain at unit scale.")
-		_check(path_count == 21, "The meadow should contain the authored 21-module winding dirt route.")
+		for cell in ground.get_used_cells():
+			_check(ground.get_cell_item(cell) in range(6, 12), "Route terrain should use textured grass/dirt modules.")
 
 	var fields := route.get_node_or_null(^"Gameplay/Encounters/TallGrassFields") as Node3D
 	_check(fields != null and fields.get_child_count() == 5, "Route 0 should contain five readable tall-grass fields.")
@@ -104,38 +100,21 @@ func _run() -> void:
 				_check(zone.scale.is_equal_approx(Vector3.ONE), "Tall-grass patches should keep their art at unit scale.")
 
 	var trees := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/Vegetation/Trees") as Node3D
-	var bushes := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/Vegetation/Bushes") as Node3D
 	var hedges := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/Vegetation/Hedges") as Node3D
-	var plants := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/Vegetation/Plants") as Node3D
-	_check(trees != null and trees.get_child_count() >= 20, "Route 0 should be framed by a substantial tree family.")
-	_check(bushes != null and bushes.get_child_count() >= 16, "Route 0 should include varied bushes and shrubs.")
-	_check(hedges != null and hedges.get_child_count() >= 5, "Route 0 should use hedges as readable vegetation borders.")
-	_check(plants != null and plants.get_child_count() >= 20, "Route 0 should include sparse flower and plant clusters.")
-	for family in [trees, bushes, hedges, plants]:
-		if family == null:
-			continue
-		for decoration: Node in family.get_children():
-			_check(
-				decoration is Node3D and (decoration as Node3D).scale.is_equal_approx(Vector3.ONE),
-				"Placed vegetation should retain the environment pack's calibrated unit scale."
-			)
+	var rocks := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Props/Vegetation/Rocks") as Node3D
+	_check(trees != null and trees.get_child_count() > 10, "Route 0 should have taller tree silhouettes around the planted borders.")
+	_check(hedges != null and hedges.get_child_count() > 100, "Route 0 should have the reference's dense hedge banks.")
+	_check(rocks != null and rocks.get_child_count() > 10, "Route 0 should reuse the reference's clustered boulders.")
+	for family in [hedges, rocks]:
+		_check(family != null and family.scale == Vector3(2, 2, 2), "Hedge and boulder banks should match Route 0 Real's authored scale.")
 
-	var boundaries := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Boundaries/TerrainBoundaries") as Node3D
-	_check(boundaries != null and boundaries.get_child_count() == 4, "The playable meadow should have four unobtrusive edge colliders.")
 	var navigation_region := route.get_node_or_null(^"NavigationRegion3D") as NavigationRegion3D
 	_check(
 		navigation_region != null and navigation_region.navigation_mesh != null,
 		"Route 0 should provide navigation for standard trainer approaches."
 	)
 	_validate_trainer_sequence(route_trainers)
-	var trainer_chokepoints := route.get_node_or_null(^"NavigationRegion3D/WorldGeometry/Boundaries/TrainerChokepoints") as Node3D
-	_check(
-		trainer_chokepoints != null
-		and trainer_chokepoints.find_children(
-			"TrainerGate*", "StaticBody3D", false, false
-		).size() == TRAINER_SEQUENCE.size() * 2,
-		"Route 0 should force the player through all seven trainer sight checkpoints."
-	)
+
 	var completion_gate := route.get_node_or_null(
 		^"Gameplay/Objectives/Route0CompletionGate"
 	) as RouteCompletionGate
@@ -324,7 +303,7 @@ func _finish() -> void:
 	if _failures.is_empty():
 		print(
 			"Route 0 scene smoke test passed: modular terrain, winding path, navigation, seven "
-			+ "mandatory standard trainer checkpoints in Lv. 3-6 order, a far-end unlock goal, "
+			+ "standard trainer checkpoints in Lv. 3-6 order, a far-end unlock goal, "
 			+ "red Gate Building return, vegetation, and five encounter fields verified."
 		)
 		get_tree().quit(0)

@@ -53,11 +53,11 @@ function orderedUnique(values) {
 function mergeCompletedRoutes(first, second) {
   const completed = new Set(
     [...first, ...second].filter(
-      (value) => Number.isInteger(value) && value >= 0 && value < 40,
+      (value) => Number.isInteger(value) && value >= 0 && value < 41,
     ),
   );
   const result = [];
-  for (let route = 0; route < 40 && completed.has(route); route += 1) {
+  for (let route = 0; route < 41 && completed.has(route); route += 1) {
     result.push(route);
   }
   return result;

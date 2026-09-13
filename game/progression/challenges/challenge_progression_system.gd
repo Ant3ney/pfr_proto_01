@@ -59,7 +59,11 @@ func get_destinations(category_key: String) -> Array[Dictionary]:
 	return entries
 
 
-func launch_area(area_id: String) -> bool:
+func launch_area(
+	area_id: String,
+	spawn_marker: StringName = &"",
+	continue_journey: bool = false
+) -> bool:
 	_last_error = ""
 	var area := get_area(area_id)
 	if area == null:
@@ -75,11 +79,12 @@ func launch_area(area_id: String) -> bool:
 	var previous_defeated := _run_defeated_ids.duplicate(true)
 	var previous_run_id := _run_id
 	_active_area_id = area.area_id
-	_run_defeated_ids.clear()
-	_run_id += 1
+	if not continue_journey:
+		_run_defeated_ids.clear()
+		_run_id += 1
 	if not GameInstance.transfer_to_scene(
 		area.destination.resource_path,
-		area.entry_spawn_marker
+		area.entry_spawn_marker if spawn_marker.is_empty() else spawn_marker
 	):
 		_active_area_id = previous_area_id
 		_run_defeated_ids = previous_defeated
@@ -273,7 +278,7 @@ func validate_save_data(value: Variant) -> String:
 		return "Challenge progression has an invalid completed-route list."
 	var seen_routes: Dictionary = {}
 	for route_value: Variant in routes as Array:
-		if not _is_integer(route_value) or int(route_value) < 0 or int(route_value) >= 40:
+		if not _is_integer(route_value) or int(route_value) < 0 or int(route_value) >= StandaloneAreaCatalog.ROUTE_COUNT:
 			return "Challenge progression contains an invalid completed route."
 		var route_index := int(route_value)
 		if seen_routes.has(route_index):

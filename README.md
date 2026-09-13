@@ -139,6 +139,26 @@ See the [Godot battle client contract](ai_context/runtime/battle-client.md),
 request-driven UI, exact retry behavior, encounter schema, production setup,
 and offline animated-atlas pipeline.
 
+### Capture Battle Screenshots
+
+Open
+[`developer_battle_showcase.tscn`](tests/manual/battle_screenshot_showcase/developer_battle_showcase.tscn)
+and run it with F6. It is a network-free battle stage with ten curated matchups;
+the opening shot is Rayquaza versus Giratina. Press K to move to the next
+matchup and H to hide or restore the title card for a clean frame. The scene
+uses the production camera, HUD, animated sprites, scale fitting, grounding,
+and shadows without starting a battle session or changing save data.
+
+### Open Unlimited Developer Loot Boxes
+
+Open
+[`infinite_loot_box_lab.tscn`](tests/manual/infinite_loot_boxes/infinite_loot_box_lab.tscn)
+and run it with F6. All six production loot-box tiers are free and repeatable.
+Click a tier and the large Open button, press Space to repeat the selected tier,
+or press 1–6 to open that tier immediately. Prizes use the production odds,
+enter temporary Pokémon storage, and never alter the player's saved balance or
+profile.
+
 ## Show UI with the UI Template System
 
 Call `UIManager.show_ui(text)` to display the shared template, then configure and retain the returned `UITemplate`:
@@ -166,13 +186,19 @@ when the menu closes; it does not own shops, rewards, battles, or progression.
 The Adventure Menu calls the production domain autoloads directly:
 `EconomySystem`, `InventorySystem`, `ShopSystem`,
 `ChallengeProgressionSystem`, and `BattleRewardSystem`. Its walkable catalog
-contains exactly 49 Inspector-authored destinations under
-[`standalone_areas/`](game/world/levels/standalone_areas/): Route 00–39, Gym
+contains exactly 50 Inspector-authored destinations under
+[`standalone_areas/`](game/world/levels/standalone_areas/): Route 00–40, Gym
 01–08, and one Champion challenge. Each area folder contains its own scene,
 `area_definition.tres`, and only the local encounter resources it needs. All
-49 are native inherited scenes with static trainers, grass, gates, geometry,
+50 are native inherited scenes with static trainers, grass, gates, geometry,
 lights, objectives, and markers visible in Godot's Scene tree; routine
 authoring never invokes a world generator.
+
+Routes use the textured grass/dirt terrain and planted borders of Route 0 Real.
+Walk through the opened south alley to reach Route 0; the entrance east of the museum also remains available. Each route connects
+forward and backward. Route 0 completes at its far checkpoint; Routes 1–40
+require their authored trainer victories before the onward exit opens. The Gate
+Building also remains connected to Route 0.
 
 See the [standalone-area contract](ai_context/runtime/adventure-menu-and-standalone-areas.md)
 for domain ownership, resource fields, unlocks, rewards, save migration, and
@@ -244,7 +270,13 @@ the canonical Player path is the direct root child `Player`.
 
 The project registers [`game_instance.gd`](game/runtime/game_instance.gd) as the `GameInstance` autoload. Keep that autoload enabled because `PlayerController` checks it before accepting movement. A `NavigationRegion3D` is not required for player movement; navigation meshes are used by NPC controllers.
 
-The controller currently moves only on the XZ plane and does not apply gravity. Spawn the player directly on the floor rather than above it, and use a common walkable elevation for dependable traversal. Test slopes, steps, ledges, and drops individually before relying on them.
+The controller moves on XZ and does not apply gravity. Shared character
+movement instead casts down on scene start and every 0.25 seconds afterward,
+placing the character's foot-level root on the first layer-1 collision surface
+it finds. The default probe begins 0.5 m above the root and reaches 12 m below;
+all of those settings are configurable on the character's `CharacterMovement`
+resource. Ground still needs active physics collision, and slopes, steps,
+ledges, and drops should be tested in their authored scenes.
 
 ### Controls and Verification
 
@@ -259,7 +291,7 @@ Run the current scene with Godot's **Run Current Scene** command. Use **Debug �
 | The player is not visible | Confirm the camera is current and its target path resolves to the player |
 | Input does not move the player | Focus the game window and confirm `GameInstance.is_player_movement_enabled()` is true |
 | The player passes through scenery | Add active physics shapes and confirm their collision layer overlaps the player's mask |
-| The player floats or starts at the wrong height | Align the player root with the surface; the current controller does not fall onto the floor |
+| The player floats or starts at the wrong height | Confirm the surface has layer-1 collision and lies within the `CharacterMovement` ground ray's configured reach |
 | The character does not animate | Check Godot's output for missing art-pack, `AnimationPlayer`, idle-animation, or run-animation errors |
 
 The New Bouffalant City ground wrappers and imported reference assets already include profile-appropriate layer-1 collision: exact static meshes for hard surfaces, simple volumes for dense vegetation and trunks, and intentional pass-through behavior for soft decoration and water-only pieces. Navigation meshes are still authored per level. See the [environment asset guide](art/environments/new_bouffalant_city/README.md) for placement and collision details.
@@ -273,8 +305,9 @@ is the reference trainer role scene, and
 [`route_00.tscn`](game/world/levels/standalone_areas/routes/route_00/route_00.tscn)
 demonstrates all seven standard prototype placements in Lv. 3–6 order. A
 trainer uses the same character body, collision, movement, art-pack, and
-animation system as the player, but its controller waits for a line-of-sight
-detection and then navigates toward the player.
+animation system as the player. Route trainers can detect and approach the
+player from a forward sight line; manual-only bosses wait for the shared Talk
+interaction instead.
 
 A trainer-ready level adds these nodes to the playable-level structure above:
 
@@ -302,11 +335,11 @@ PFRWorldLevel
    tree. Do not copy its node hierarchy into the level. Keep its scale at
    `1, 1, 1`, and place its root directly on the walkable surface, inside the
    navigation mesh.
-2. Rotate the trainer root around the Y axis to face its detection lane. [`trainer_behavior.gd`](game/actors/npcs/trainers/trainer_behavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away.
-3. Keep the player's collision body on physics layer 1, or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
+2. For an automatic route trainer, rotate the root around the Y axis to face its detection lane. [`trainer_behavior.gd`](game/actors/npcs/trainers/trainer_behavior.gd) casts forward along the `Visual` node's local `-Z` axis, from `Y = 0.8`. The current Kyle configuration detects up to 80 meters away. Set **Automatic Sight Encounter** to `false` for a trainer that must be challenged through Talk; all gym leaders and the complete Champion challenge roster use that setting.
+3. For automatic sight, keep the player's collision body on physics layer 1 or update the trainer's detection mask to match. The detection ray stops at the first body it hits, so walls and other layer-1 collision correctly block the trainer's view.
 4. Add and bake the `NavigationRegion3D` using the recipe below. The baked surface must include both the trainer's starting position and the stopping point beside the player. Re-bake it whenever relevant level geometry changes.
 5. Assign a non-empty [`Dialog`](game/dialogue/dialog.gd) resource to the trainer's **Dialog** property. The bundled Kyle scene already uses [`trainer_kyle.tres`](game/dialogue/resources/trainers/trainer_kyle.tres); create another resource with a speaker name and ordered lines for a different trainer.
-6. Run the scene and walk into the trainer's forward sightline. The trainer should lock player movement, create its `NavigationAgent3D` at runtime, navigate around baked obstacles, stop beside the player, and open its dialog. Advancing the last line closes the template and restores player movement. Do not add a `NavigationAgent3D` manually.
+6. Run the scene. An automatic trainer should lock movement, navigate beside the player, and open dialog when its sight ray detects them. A manual-only trainer should stay put until the nearby player uses Talk, then open the same dialog and battle path. Do not add a `NavigationAgent3D` manually.
 
 Trainer navigation and physical collision are separate. The `NavigationMesh` supplies a path, while `StaticBody3D`, `GridMap`, and other collision shapes keep the characters out of walls and scenery. A trainer needs both systems to behave correctly.
 
@@ -337,11 +370,14 @@ dialog, and networked battle. After the result or an unrecoverable failure, it
 returns to the authored pose in `game/world/levels/standalone_areas/routes/route_00/route_00.tscn`.
 Standard authored trainers consume their forced sight encounter for the current
 play session, then remain available through the shared interaction prompt for
-manual rematches. Authored standalone-area trainers use **Highly Aggro** mode:
-the just-returned scene suppresses an immediate loop, but leaving and starting
-that destination again restores their forced sight challenge. Standard sight
-consumption is not yet persisted to disk. Avoid overlapping trainer sightlines
-because there is no encounter arbiter for simultaneous detections or UI templates.
+manual rematches. Routes 1–40 use **Highly Aggro** automatic trainers. Defeated trainers
+stay available for manual rematches when walking between routes; starting a
+fresh Adventure Menu run restores their forced sight challenge. All eight gym leaders and the five
+Elite Four/Champion opponents are Highly Aggro but manual-only; they never run
+at the player, and the returned instance is immediately available through Talk
+for another dialog and rematch. Standard sight consumption is not persisted to
+disk. Avoid overlapping automatic trainer sightlines because there is no
+encounter arbiter for simultaneous detections or UI templates.
 
 To author a genuinely new reusable character role, create an inherited scene
 from [`pfr_character.tscn`](game/actors/character/pfr_character.tscn); do not duplicate an
@@ -360,7 +396,9 @@ Run the shared-scene regression whenever character scene composition changes:
 ```sh
 godot --headless --path . --scene res://tests/scenes/level_base_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/pfr_character_scene_inheritance_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/pfr_character_grounding_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/player_input_movement_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_manual_boss_rematch_smoke_test.tscn
 godot --headless --editor --path . --script res://tests/scenes/pfr_character_editor_preview_smoke_test.gd
 ```
 

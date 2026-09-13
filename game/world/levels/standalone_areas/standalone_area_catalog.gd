@@ -2,9 +2,9 @@
 class_name StandaloneAreaCatalog
 extends Resource
 
-const ROUTE_COUNT := 40
+const ROUTE_COUNT := 41
 const GYM_COUNT := 8
-const TOTAL_AREA_COUNT := 49
+const TOTAL_AREA_COUNT := ROUTE_COUNT + GYM_COUNT + 1
 
 @export var areas: Array[StandaloneAreaDefinition] = []
 

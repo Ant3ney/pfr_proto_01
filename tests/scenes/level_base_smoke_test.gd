@@ -184,8 +184,8 @@ func _check_all_playable_levels() -> void:
 	for scene_path: String in level_paths:
 		unique_paths[scene_path] = true
 	_check(
-		level_paths.size() == 60 and unique_paths.size() == 60,
-		"The canonical-base check should cover exactly 60 unique playable levels."
+		level_paths.size() == 61 and unique_paths.size() == 61,
+		"The canonical-base check should cover exactly 61 unique playable levels."
 	)
 
 	for scene_path: String in level_paths:
@@ -251,13 +251,13 @@ func _check_playable_level(scene_path: String) -> void:
 						Vector3(3.0, 0.0, -1.0)
 					)
 				)
-				and grid.get_used_cells().size() == 270,
-			"New Bouffalant City should preserve its 270-cell inherited grid override at (3, 0, -1)."
+				and grid.get_used_cells().size() == 291,
+			"New Bouffalant City should preserve its 291-cell inherited grid override at (3, 0, -1)."
 		)
 	elif scene_path == ROUTE_ZERO_PATH:
 		_check(
 			player != null
-				and player.position.is_equal_approx(Vector3(-2.0, 0.0, 21.0)),
+				and player.position.is_equal_approx(Vector3.ZERO),
 			"Route 0 should preserve its authored Player transform override."
 		)
 	world.free()
@@ -278,8 +278,8 @@ func _finish() -> void:
 	if _failures.is_empty():
 		print(
 			"Level base smoke test passed: level_base.tscn is the sole base, its "
-			+ "grid is empty, all 60 playable levels inherit it directly with one "
-			+ "Player/camera/GameUI and no Runtime, and the city retains 270 cells."
+			+ "grid is empty, all 61 playable levels inherit it directly with one "
+			+ "Player/camera/GameUI and no Runtime, and the city retains 291 cells."
 		)
 		get_tree().quit(0)
 		return

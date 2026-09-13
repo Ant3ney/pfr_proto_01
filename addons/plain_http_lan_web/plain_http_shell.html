@@ -17,6 +17,7 @@
 	--cream: #fff5dc;
 	--ink: #101827;
 	--panel: rgba(13, 24, 42, 0.78);
+	--pfr-boot-dock-height: 94px;
 }
 
 * {
@@ -545,6 +546,43 @@ body {
 	line-height: 1.5;
 }
 
+.notice-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 22px;
+}
+
+.notice-action {
+	min-height: 44px;
+	padding: 10px 18px;
+	border: 1px solid rgba(211, 226, 245, 0.32);
+	border-radius: 999px;
+	background: rgba(109, 145, 188, 0.2);
+	color: #f4f8ff;
+	font: 700 0.78rem/1 ui-sans-serif, system-ui, sans-serif;
+	letter-spacing: 0.035em;
+	cursor: pointer;
+	touch-action: manipulation;
+}
+
+.notice-action:hover,
+.notice-action:focus-visible {
+	border-color: rgba(255, 224, 184, 0.68);
+	background: rgba(172, 96, 70, 0.34);
+	outline: none;
+}
+
+.notice-action:disabled {
+	cursor: wait;
+	opacity: 0.55;
+}
+
+.notice-action[hidden] {
+	display: none;
+}
+
 #status.mode-notice .loader {
 	display: none;
 }
@@ -552,6 +590,151 @@ body {
 #status.mode-notice .status-notice {
 	display: block;
 	animation: loader-arrive 450ms ease-out both;
+}
+
+.loading-battle-dock {
+	display: none;
+}
+
+#status.mode-boot {
+	inset: 0 0 auto;
+	display: block;
+	min-height: 0;
+	height: var(--pfr-boot-dock-height);
+	overflow: visible;
+	border-bottom: 1px solid rgba(243, 201, 120, 0.48);
+	background: linear-gradient(105deg, rgba(19, 55, 91, 0.98), rgba(25, 34, 51, 0.98) 52%, rgba(91, 39, 42, 0.98));
+	box-shadow: 0 8px 30px rgba(4, 8, 17, 0.42);
+	opacity: 1;
+	transition: none;
+}
+
+#status.mode-boot::before,
+#status.mode-boot::after,
+#status.mode-boot > :not(.loading-battle-dock) {
+	display: none;
+}
+
+#status.mode-boot .loading-battle-dock {
+	display: grid;
+	grid-template-columns: minmax(190px, auto) minmax(240px, 1fr) auto;
+	align-items: center;
+	gap: clamp(12px, 2vw, 28px);
+	height: 100%;
+	padding: 10px max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+}
+
+.dock-title strong,
+.dock-title small {
+	display: block;
+}
+
+.dock-title strong {
+	color: var(--cream);
+	font: 800 clamp(0.92rem, 2vw, 1.12rem)/1.15 "Trebuchet MS", ui-sans-serif, sans-serif;
+	letter-spacing: 0.035em;
+}
+
+.dock-title small {
+	margin-top: 3px;
+	color: rgba(225, 236, 249, 0.62);
+	font-size: 0.68rem;
+	font-weight: 750;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.dock-progress {
+	min-width: 0;
+}
+
+.dock-progress-meta {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 6px;
+	color: rgba(239, 246, 255, 0.78);
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+#loading-battle-progress {
+	position: relative;
+	height: 10px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 999px;
+	background: rgba(5, 12, 23, 0.7);
+}
+
+#loading-battle-progress-fill {
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--fracture), var(--gold), var(--revolt));
+	box-shadow: 0 0 12px rgba(124, 200, 244, 0.42);
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: transform 180ms ease-out;
+}
+
+#loading-battle-dock-state {
+	margin: 5px 0 0;
+	overflow: hidden;
+	color: rgba(220, 231, 244, 0.58);
+	font-size: 0.65rem;
+	line-height: 1.15;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dock-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 7px;
+}
+
+.dock-action {
+	min-height: 44px;
+	padding: 9px 14px;
+	border: 1px solid rgba(222, 236, 252, 0.32);
+	border-radius: 11px;
+	background: rgba(82, 123, 166, 0.28);
+	color: #f7fbff;
+	font: 800 0.7rem/1.1 ui-sans-serif, system-ui, sans-serif;
+	white-space: nowrap;
+	cursor: pointer;
+	touch-action: manipulation;
+}
+
+.dock-action--enter {
+	border-color: rgba(255, 230, 173, 0.75);
+	background: linear-gradient(135deg, #bd7a32, #a34337);
+	box-shadow: 0 0 18px rgba(243, 201, 120, 0.22);
+}
+
+.dock-action:hover,
+.dock-action:focus-visible {
+	border-color: var(--cream);
+	outline: none;
+}
+
+.dock-action:disabled {
+	cursor: wait;
+	opacity: 0.55;
+}
+
+.dock-action[hidden] {
+	display: none;
+}
+
+body.pfr-boot-active #canvas {
+	position: fixed !important;
+	top: var(--pfr-boot-dock-height) !important;
+	left: 0 !important;
+	width: 100vw !important;
+	height: calc(100vh - var(--pfr-boot-dock-height)) !important;
+	height: calc(100dvh - var(--pfr-boot-dock-height)) !important;
 }
 
 .region-caption {
@@ -625,6 +808,34 @@ body {
 }
 
 @media (max-width: 620px) {
+	:root {
+		--pfr-boot-dock-height: 116px;
+	}
+
+	#status.mode-boot .loading-battle-dock {
+		grid-template-columns: minmax(120px, 0.7fr) minmax(150px, 1.3fr);
+		grid-template-rows: auto auto;
+		gap: 4px 10px;
+		padding-top: max(7px, env(safe-area-inset-top));
+		padding-bottom: 7px;
+	}
+
+	.dock-actions {
+		grid-column: 1 / -1;
+		min-height: 44px;
+	}
+
+	.dock-action {
+		min-width: 0;
+		padding-right: 10px;
+		padding-left: 10px;
+		white-space: normal;
+	}
+
+	#loading-battle-dock-state {
+		display: none;
+	}
+
 	.loader {
 		width: min(94vw, 480px);
 		border-radius: 22px;
@@ -805,9 +1016,36 @@ body {
 
 			<section id="status-notice" class="status-notice" role="alert">
 				<div class="notice-mark" aria-hidden="true">!</div>
-				<h2>The road ahead is blocked</h2>
+				<h2 id="status-notice-title">The road ahead is blocked</h2>
 				<p id="status-notice-message"></p>
-				<p class="notice-advice">Try reloading the page or opening it in a current version of Chrome, Edge, Firefox, or Safari.</p>
+				<div class="notice-actions">
+					<button id="status-retry" class="notice-action" type="button">Retry loading</button>
+					<button id="status-restart" class="notice-action" type="button" hidden>Restart download</button>
+				</div>
+				<p id="status-notice-advice" class="notice-advice">A current version of Chrome, Edge, Firefox, or Safari is recommended.</p>
+			</section>
+
+			<section id="loading-battle-dock" class="loading-battle-dock" aria-label="Adventure download progress">
+				<div class="dock-title">
+					<strong>Loading Battle</strong>
+					<small>Practice only</small>
+				</div>
+				<div class="dock-progress">
+					<div class="dock-progress-meta">
+						<span id="loading-battle-label">Downloading the adventure…</span>
+						<output id="loading-battle-bytes">0% · 0 B</output>
+					</div>
+					<div id="loading-battle-progress" role="progressbar" aria-label="Full game download" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+						<div id="loading-battle-progress-fill"></div>
+					</div>
+					<p id="loading-battle-dock-state">Practice while the full game downloads in the background.</p>
+				</div>
+				<div class="dock-actions">
+					<button id="loading-battle-retry-download" class="dock-action" type="button" hidden>Retry Download</button>
+					<button id="loading-battle-restart-download" class="dock-action" type="button" hidden>Restart Download</button>
+					<button id="loading-battle-load-normal" class="dock-action" type="button" hidden>Load Game Normally</button>
+					<button id="loading-battle-enter" class="dock-action dock-action--enter" type="button" hidden>Enter Game</button>
+				</div>
 			</section>
 
 			<div class="region-caption" aria-hidden="true">New Bouffalant City &nbsp;&bull;&nbsp; The future is yours to shape</div>
@@ -816,20 +1054,300 @@ body {
 		<script>
 const PFR_BUILD_VERSION = '__PFR_CACHE_VERSION__';
 const PFR_HAS_BUILD_VERSION = !PFR_BUILD_VERSION.startsWith('__PFR_');
-const PFR_VERSIONED_ASSETS = new Set(['index.pck', 'index.wasm']);
+const PFR_ASSET_MANIFEST = PFR_HAS_BUILD_VERSION
+	? __PFR_ASSET_MANIFEST__
+	: { assets: { 'index.pck': {}, 'index.wasm': {}, 'pfr-loading-battle.pck': {} } };
+const PFR_VERSIONED_ASSETS = new Set(Object.keys(PFR_ASSET_MANIFEST.assets || {}));
+
+/* PFR_RECOVERY_API_START */
+window.PFRRecovery = Object.freeze((function () {
+	function withTimeout(promise, milliseconds, fallbackValue) {
+		return new Promise((resolve, reject) => {
+			let settled = false;
+			const timer = window.setTimeout(() => {
+				if (!settled) {
+					settled = true;
+					resolve(fallbackValue);
+				}
+			}, milliseconds);
+			Promise.resolve(promise).then((value) => {
+				if (!settled) {
+					settled = true;
+					window.clearTimeout(timer);
+					resolve(value);
+				}
+			}, (error) => {
+				if (!settled) {
+					settled = true;
+					window.clearTimeout(timer);
+					reject(error);
+				}
+			});
+		});
+	}
+
+	function createRetryGate(storage, key) {
+		return Object.freeze({
+			claim() {
+				try {
+					if (!storage || storage.getItem(key) === 'used') {
+						return false;
+					}
+					storage.setItem(key, 'used');
+					return storage.getItem(key) === 'used';
+				} catch (error) {
+					console.warn('[PFR loader] Automatic recovery storage is unavailable:', error);
+					return false;
+				}
+			},
+			reset() {
+				try {
+					if (storage) {
+						storage.removeItem(key);
+					}
+				} catch (error) {
+					console.warn('[PFR loader] Could not reset automatic recovery:', error);
+				}
+			},
+		});
+	}
+
+	function createWatchdog(options = {}) {
+		const now = options.now || (() => performance.now());
+		const onTimeout = options.onTimeout || (() => {});
+		const downloadLimit = options.downloadLimit || 45000;
+		const initializationLimit = options.initializationLimit || 120000;
+		let lastTick = now();
+		let inactiveTime = 0;
+		let initializationTime = 0;
+		let phase = 'download';
+		let paused = false;
+		let stopped = false;
+		let timedOut = false;
+
+		function activity() {
+			lastTick = now();
+			if (phase === 'download') {
+				inactiveTime = 0;
+			}
+		}
+
+		function setPaused(value) {
+			const nextPaused = Boolean(value);
+			if (paused && !nextPaused && phase === 'download') {
+				inactiveTime = 0;
+			}
+			paused = nextPaused;
+			lastTick = now();
+		}
+
+		function enterInitialization() {
+			if (phase !== 'initialization') {
+				phase = 'initialization';
+				initializationTime = 0;
+				lastTick = now();
+			}
+		}
+
+		function tick() {
+			const current = now();
+			const elapsed = Math.max(0, current - lastTick);
+			lastTick = current;
+			if (paused || stopped || timedOut) {
+				return null;
+			}
+			if (phase === 'download') {
+				inactiveTime += elapsed;
+				if (inactiveTime >= downloadLimit) {
+					timedOut = true;
+					onTimeout('download-stall');
+					return 'download-stall';
+				}
+			} else {
+				initializationTime += elapsed;
+				if (initializationTime >= initializationLimit) {
+					timedOut = true;
+					onTimeout('initialization-timeout');
+					return 'initialization-timeout';
+				}
+			}
+			return null;
+		}
+
+		return Object.freeze({
+			activity,
+			enterInitialization,
+			setPaused,
+			tick,
+			stop() {
+				stopped = true;
+			},
+			getState() {
+				return { phase, paused, stopped, timedOut, inactiveTime, initializationTime };
+			},
+		});
+	}
+
+	function classifyFailure(error, workerFailure, online = true) {
+		const rawMessage = error && error.message
+			? error.message
+			: (typeof error === 'string' ? error : 'Unknown startup failure');
+		const code = (workerFailure && workerFailure.code) || (error && error.code) || '';
+		const searchable = `${code} ${rawMessage}`.toLowerCase();
+		if (!online || code === 'offline') {
+			return {
+				kind: 'offline',
+				code: 'offline',
+				message: 'Waiting for an internet connection. Loading will continue when this device is online.',
+				transient: false,
+				canRestart: false,
+			};
+		}
+		if (['integrity-failure', 'range-invalid', 'corrupt-cache'].includes(code)
+				|| /corrupt|integrity|unexpected full-file size/.test(searchable)) {
+			return {
+				kind: 'corrupt-file',
+				code: code || 'corrupt-file',
+				message: 'A saved game file appears incomplete or damaged. Restart the download to replace only the game files; your save data will be kept.',
+				transient: false,
+				canRestart: true,
+			};
+		}
+		if (code === 'storage-unavailable' || /indexeddb|quota|storage|initfs/.test(searchable)) {
+			return {
+				kind: 'storage',
+				code: code || 'storage-unavailable',
+				message: 'This browser could not open the storage needed to start the game. Check available device space or leave private browsing, then retry.',
+				transient: false,
+				canRestart: false,
+			};
+		}
+		if (code === 'download-stall' || code === 'stream-interrupted'
+				|| code === 'range-truncated' || code === 'network-error' || code === 'http-error'
+				|| /fetch|network|load failed|response stream|failed loading file/.test(searchable)) {
+			return {
+				kind: 'network',
+				code: code || 'network-error',
+				message: 'The game download was interrupted. Check the connection and retry; completed portions will be reused when browser storage is available.',
+				transient: true,
+				canRestart: false,
+			};
+		}
+		if (code === 'incompatible-browser' || /webgl|webassembly|missing features|compile/.test(searchable)) {
+			return {
+				kind: 'incompatible-browser',
+				code: code || 'incompatible-browser',
+				message: 'This browser cannot start the web version of the game. Update it or try a current version of Chrome, Edge, Firefox, or Safari.',
+				transient: false,
+				canRestart: false,
+			};
+		}
+		if (code === 'initialization-timeout') {
+			return {
+				kind: 'engine-start',
+				code,
+				message: 'The download finished, but the game took too long to start. Close other memory-heavy tabs, then retry.',
+				transient: true,
+				canRestart: false,
+			};
+		}
+		return {
+			kind: 'engine-start',
+			code: code || 'engine-start',
+			message: 'The game files downloaded, but the game could not finish starting. Retry loading, or update the browser if the problem continues.',
+			transient: false,
+			canRestart: false,
+		};
+	}
+
+	return { classifyFailure, createRetryGate, createWatchdog, withTimeout };
+}()));
+/* PFR_RECOVERY_API_END */
+
+/* PFR_BOOT_API_START */
+window.PFRBoot = Object.freeze((function () {
+	function selectLaunchMode(options) {
+		if (options.fullPackReady) {
+			return 'full';
+		}
+		if (options.requestedMode === 'game'
+				&& options.requestedBuild === options.buildVersion) {
+			return 'full';
+		}
+		return options.hasBuildVersion
+			&& options.productionHttps
+			&& options.bootRuntimeSupported
+			&& options.cacheWorkerReady
+			&& options.storageAvailable
+			? 'boot'
+			: 'full';
+	}
+
+	function monotonicProgress(previousLoaded, loaded, total) {
+		const safeTotal = Number.isFinite(total) && total > 0 ? total : 0;
+		const safeLoaded = Number.isFinite(loaded) && loaded >= 0 ? loaded : 0;
+		return {
+			loaded: safeTotal > 0
+				? Math.min(Math.max(previousLoaded || 0, safeLoaded), safeTotal)
+				: Math.max(previousLoaded || 0, safeLoaded),
+			total: safeTotal,
+		};
+	}
+
+	function handoffUrl(href, buildVersion) {
+		const url = new URL(href);
+		url.searchParams.set('pfr-mode', 'game');
+		url.searchParams.set('pfr-build', buildVersion);
+		return url.href;
+	}
+
+	function cleanModeUrl(href) {
+		const url = new URL(href);
+		url.searchParams.delete('pfr-mode');
+		url.searchParams.delete('pfr-build');
+		return url.href;
+	}
+
+	function formatBytes(value) {
+		const bytes = Number.isFinite(value) && value > 0 ? value : 0;
+		if (bytes < 1024) return `${Math.round(bytes)} B`;
+		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`;
+		return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`;
+	}
+
+	return { cleanModeUrl, formatBytes, handoffUrl, monotonicProgress, selectLaunchMode };
+}()));
+/* PFR_BOOT_API_END */
+
+window.PFR_EARLY_STARTUP_ERRORS = [];
+window.PFR_EARLY_ERROR_HANDLER = (event) => {
+	if (event.error || (event.target && event.target.tagName === 'SCRIPT')) {
+		window.PFR_EARLY_STARTUP_ERRORS.push(
+			event.error || new Error(event.message || 'The game loader script could not be loaded.'),
+		);
+	}
+};
+window.PFR_EARLY_REJECTION_HANDLER = (event) => {
+	window.PFR_EARLY_STARTUP_ERRORS.push(
+		event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
+	);
+};
+window.addEventListener('error', window.PFR_EARLY_ERROR_HANDLER);
+window.addEventListener('unhandledrejection', window.PFR_EARLY_REJECTION_HANDLER);
 
 // Give each exported game pack and runtime a content-derived URL. This keeps
 // cached files update-safe even though Godot exports them with fixed names.
-if (PFR_HAS_BUILD_VERSION) {
+if (PFR_HAS_BUILD_VERSION && typeof window.fetch === 'function') {
 	const nativeFetch = window.fetch.bind(window);
 	window.fetch = function (input, init) {
 		try {
-			const inputUrl = input instanceof Request ? input.url : input;
+			const isRequest = typeof Request !== 'undefined' && input instanceof Request;
+			const inputUrl = isRequest ? input.url : input;
 			const url = new URL(inputUrl, window.location.href);
 			const fileName = url.pathname.slice(url.pathname.lastIndexOf('/') + 1);
 			if (url.origin === window.location.origin && PFR_VERSIONED_ASSETS.has(fileName)) {
 				url.searchParams.set('v', PFR_BUILD_VERSION);
-				input = input instanceof Request ? new Request(url.href, input) : url.href;
+				input = isRequest ? new Request(url.href, input) : url.href;
 			}
 		} catch (error) {
 			console.warn('[PFR cache] Could not version request:', error);
@@ -848,12 +1366,7 @@ window.PFR_CACHE_READY = (async function () {
 			return Promise.resolve();
 		}
 		return new Promise((resolve) => {
-			let settled = false;
 			const finish = () => {
-				if (settled) {
-					return;
-				}
-				settled = true;
 				worker.removeEventListener('statechange', onStateChange);
 				resolve();
 			};
@@ -863,40 +1376,47 @@ window.PFR_CACHE_READY = (async function () {
 				}
 			};
 			worker.addEventListener('statechange', onStateChange);
-			window.setTimeout(finish, 2500);
 		});
 	}
 
-	function waitForController() {
-		if (navigator.serviceWorker.controller) {
+	function waitForController(expectedScriptUrl) {
+		const isCurrentController = () => (
+			navigator.serviceWorker.controller
+			&& navigator.serviceWorker.controller.scriptURL === expectedScriptUrl
+		);
+		if (isCurrentController()) {
 			return Promise.resolve();
 		}
 		return new Promise((resolve) => {
-			let settled = false;
-			const finish = () => {
-				if (settled) {
-					return;
+			const onControllerChange = () => {
+				if (isCurrentController()) {
+					navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+					resolve();
 				}
-				settled = true;
-				navigator.serviceWorker.removeEventListener('controllerchange', finish);
-				resolve();
 			};
-			navigator.serviceWorker.addEventListener('controllerchange', finish);
-			window.setTimeout(finish, 2500);
+			navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
 		});
 	}
 
 	try {
-		const workerUrl = `pfr-cache-sw.js?v=${encodeURIComponent(PFR_BUILD_VERSION)}`;
-		const registration = await navigator.serviceWorker.register(workerUrl, {
-			scope: './',
-			updateViaCache: 'none',
-		});
-		const pendingWorker = registration.installing || registration.waiting;
-		await waitForActivation(pendingWorker);
-		await navigator.serviceWorker.ready;
-		await waitForController();
-		return navigator.serviceWorker.controller !== null;
+		const setup = (async () => {
+			const workerUrl = `pfr-cache-sw.js?v=${encodeURIComponent(PFR_BUILD_VERSION)}`;
+			const expectedScriptUrl = new URL(workerUrl, window.location.href).href;
+			const registration = await navigator.serviceWorker.register(workerUrl, {
+				scope: './',
+				updateViaCache: 'none',
+			});
+			const pendingWorker = registration.installing || registration.waiting;
+			await waitForActivation(pendingWorker);
+			await navigator.serviceWorker.ready;
+			await waitForController(expectedScriptUrl);
+			return navigator.serviceWorker.controller !== null;
+		})();
+		const ready = await window.PFRRecovery.withTimeout(setup, 8000, false);
+		if (!ready) {
+			console.warn('[PFR cache] Service worker setup timed out; using the ordinary network path.');
+		}
+		return ready;
 	} catch (error) {
 		// Caching is an optimization. Storage policies, private browsing, or an
 		// unsupported browser must never prevent the game from starting.
@@ -915,8 +1435,6 @@ if (!window.isSecureContext) {
 	GODOT_CONFIG.args.push('--audio-driver', 'Dummy');
 }
 
-const engine = new Engine(GODOT_CONFIG);
-
 (function () {
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
@@ -924,10 +1442,82 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusPercent = document.getElementById('status-percent');
 	const statusLabel = document.getElementById('status-label');
 	const statusHint = document.getElementById('status-hint');
+	const statusNoticeTitle = document.getElementById('status-notice-title');
 	const statusNoticeMessage = document.getElementById('status-notice-message');
+	const statusNoticeAdvice = document.getElementById('status-notice-advice');
+	const retryButton = document.getElementById('status-retry');
+	const restartButton = document.getElementById('status-restart');
+	const bootDockLabel = document.getElementById('loading-battle-label');
+	const bootDockBytes = document.getElementById('loading-battle-bytes');
+	const bootDockProgress = document.getElementById('loading-battle-progress');
+	const bootDockProgressFill = document.getElementById('loading-battle-progress-fill');
+	const bootDockState = document.getElementById('loading-battle-dock-state');
+	const bootRetryDownload = document.getElementById('loading-battle-retry-download');
+	const bootRestartDownload = document.getElementById('loading-battle-restart-download');
+	const bootLoadNormal = document.getElementById('loading-battle-load-normal');
+	const bootEnterGame = document.getElementById('loading-battle-enter');
 
 	let initializing = true;
 	let statusMode = '';
+	let launchMode = 'pending';
+	let failureHandled = false;
+	let pendingLifecycleFailure = null;
+	let lastWorkerFailure = null;
+	let storageFallback = false;
+	let engine = null;
+	let bootFallbackStarted = false;
+	let bootStorageFailed = false;
+	let backgroundController = null;
+	let backgroundRunning = false;
+	let backgroundResumePending = false;
+	let backgroundAutoRetryUsed = false;
+	let backgroundLoaded = 0;
+	let backgroundLastActivity = 0;
+	let backgroundLastFailure = null;
+	let backgroundReady = false;
+	let backgroundWatchdogTimer = null;
+
+	function resizeBootCanvas() {
+		if (launchMode !== 'boot') {
+			return;
+		}
+		const canvas = document.getElementById('canvas');
+		const dockHeight = Number.parseFloat(
+			window.getComputedStyle(document.documentElement)
+				.getPropertyValue('--pfr-boot-dock-height'),
+		) || 94;
+		const cssWidth = Math.max(1, window.innerWidth);
+		const cssHeight = Math.max(1, window.innerHeight - dockHeight);
+		const pixelRatio = Math.max(1, Number(window.devicePixelRatio) || 1);
+		const bufferWidth = Math.max(1, Math.floor(cssWidth * pixelRatio));
+		const bufferHeight = Math.max(1, Math.floor(cssHeight * pixelRatio));
+		if (canvas.width !== bufferWidth) canvas.width = bufferWidth;
+		if (canvas.height !== bufferHeight) canvas.height = bufferHeight;
+		canvas.style.width = `${cssWidth}px`;
+		canvas.style.height = `${cssHeight}px`;
+	}
+
+	window.addEventListener('resize', resizeBootCanvas);
+
+	let retryStorage = null;
+	try {
+		retryStorage = window.sessionStorage;
+	} catch (error) {
+		console.warn('[PFR loader] Session storage is unavailable:', error);
+	}
+	const retryGate = window.PFRRecovery.createRetryGate(
+		retryStorage,
+		`pfr-auto-retry:${PFR_BUILD_VERSION}`,
+	);
+	const watchdog = window.PFRRecovery.createWatchdog({
+		onTimeout(code) {
+			const error = new Error(code === 'download-stall'
+				? 'No download activity was received for 45 seconds.'
+				: 'Game initialization exceeded 120 seconds.');
+			handleStartupFailure(error, { code });
+		},
+	});
+	const watchdogTimer = window.setInterval(() => watchdog.tick(), 1000);
 
 	function setStatusMode(mode) {
 		if (statusMode === mode || !initializing) {
@@ -942,7 +1532,17 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 		statusOverlay.classList.toggle('mode-progress', mode === 'progress');
 		statusOverlay.classList.toggle('mode-notice', mode === 'notice');
+		statusOverlay.classList.toggle('mode-boot', mode === 'boot');
 		statusMode = mode;
+	}
+
+	function setIndeterminateProgress() {
+		statusProgress.classList.add('is-indeterminate');
+		statusProgressFill.style.removeProperty('transform');
+		statusProgress.removeAttribute('aria-valuemin');
+		statusProgress.removeAttribute('aria-valuemax');
+		statusProgress.removeAttribute('aria-valuenow');
+		statusPercent.value = '...';
 	}
 
 	function setStatusNotice(text) {
@@ -956,20 +1556,90 @@ const engine = new Engine(GODOT_CONFIG);
 		});
 	}
 
-	function displayFailureNotice(err) {
-		console.error(err);
-		if (err instanceof Error) {
-			setStatusNotice(err.message);
-		} else if (typeof err === 'string') {
-			setStatusNotice(err);
-		} else {
-			setStatusNotice('An unknown error occurred.');
+	function showWaitingForConnection() {
+		if (!initializing || failureHandled) {
+			return;
 		}
+		setStatusMode('progress');
+		statusLabel.textContent = 'Waiting for connection...';
+		statusHint.textContent = 'Loading will resume when this device is back online.';
+	}
+
+	function showResuming() {
+		if (!initializing || failureHandled) {
+			return;
+		}
+		setStatusMode('progress');
+		statusLabel.textContent = 'Resuming saved download...';
+		statusHint.textContent = storageFallback
+			? 'The connection is back. Download progress cannot be saved during this visit.'
+			: 'Completed game-file chunks on this device will be reused.';
+		watchdog.activity();
+	}
+
+	function displayFailureNotice(failure) {
+		statusNoticeTitle.textContent = failure.kind === 'incompatible-browser'
+			? 'This browser cannot open the region'
+			: 'The road ahead is blocked';
+		setStatusNotice(failure.message);
+		statusNoticeAdvice.textContent = failure.kind === 'storage'
+			? 'Make some device space available or leave private browsing before trying again.'
+			: 'A current version of Chrome, Edge, Firefox, or Safari is recommended.';
+		restartButton.hidden = !(failure.canRestart && PFR_HAS_BUILD_VERSION
+			&& 'serviceWorker' in navigator);
+		retryButton.disabled = false;
+		restartButton.disabled = false;
 		setStatusMode('notice');
 		initializing = false;
 	}
 
+	function finishStartupFailure(error, workerFailure) {
+		const failure = window.PFRRecovery.classifyFailure(
+			error,
+			workerFailure,
+			navigator.onLine !== false,
+		);
+		if (failure.kind === 'offline') {
+			pendingLifecycleFailure = { error, workerFailure };
+			showWaitingForConnection();
+			return;
+		}
+		if (failure.transient && retryGate.claim()) {
+			failureHandled = true;
+			watchdog.stop();
+			window.clearInterval(watchdogTimer);
+			statusLabel.textContent = 'Restoring the journey...';
+			statusHint.textContent = 'The download was interrupted. Retrying once with saved progress.';
+			window.setTimeout(() => window.location.reload(), 700);
+			return;
+		}
+		failureHandled = true;
+		watchdog.stop();
+		window.clearInterval(watchdogTimer);
+		displayFailureNotice(failure);
+	}
+
+	function handleStartupFailure(error, workerFailure = null) {
+		if (!initializing || failureHandled) {
+			return;
+		}
+		console.error('[PFR loader] Startup failed:', error, workerFailure || '');
+		const isPaused = document.visibilityState === 'hidden' || navigator.onLine === false;
+		if (isPaused) {
+			pendingLifecycleFailure = { error, workerFailure };
+			if (navigator.onLine === false) {
+				showWaitingForConnection();
+			}
+			return;
+		}
+		finishStartupFailure(error, workerFailure);
+	}
+
 	function setLoadingProgress(current, total) {
+		if (!initializing || failureHandled) {
+			return;
+		}
+		watchdog.activity();
 		if (current > 0 && total > 0) {
 			const ratio = Math.min(Math.max(current / total, 0), 1);
 			const percentage = Math.round(ratio * 100);
@@ -980,7 +1650,22 @@ const engine = new Engine(GODOT_CONFIG);
 			statusProgress.setAttribute('aria-valuenow', String(percentage));
 			statusPercent.value = `${percentage}%`;
 
-			if (ratio < 0.24) {
+			if (launchMode === 'boot') {
+				if (ratio >= 1) {
+					watchdog.enterInitialization();
+					statusLabel.textContent = 'Opening the practice arena...';
+					statusHint.textContent = 'The loading battle is ready to take the field.';
+				} else {
+					statusLabel.textContent = 'Preparing Loading Battle...';
+					statusHint.textContent = 'Loading the shared engine and a small practice pack first.';
+				}
+				return;
+			}
+			if (ratio >= 1) {
+				watchdog.enterInitialization();
+				statusLabel.textContent = 'Preparing the region...';
+				statusHint.textContent = 'The download is complete. Starting the game engine now.';
+			} else if (ratio < 0.24) {
 				statusLabel.textContent = 'Opening the city gates...';
 				statusHint.textContent = 'Restoring roads, raising banners, and waking New Bouffalant City.';
 			} else if (ratio < 0.58) {
@@ -994,13 +1679,463 @@ const engine = new Engine(GODOT_CONFIG);
 				statusHint.textContent = 'Choose your path. Shape what this region becomes.';
 			}
 		} else {
-			statusProgress.classList.add('is-indeterminate');
-			statusProgressFill.style.removeProperty('transform');
-			statusProgress.removeAttribute('aria-valuemin');
-			statusProgress.removeAttribute('aria-valuemax');
-			statusProgress.removeAttribute('aria-valuenow');
-			statusPercent.value = '...';
+			setIndeterminateProgress();
 		}
+	}
+
+	function updateLifecycleState(shouldDescribeResume = true) {
+		const paused = document.visibilityState === 'hidden' || navigator.onLine === false;
+		watchdog.setPaused(paused);
+		if (launchMode === 'boot' && !initializing) {
+			updateBackgroundLifecycle(shouldDescribeResume);
+			return;
+		}
+		if (!initializing || failureHandled) {
+			return;
+		}
+		if (navigator.onLine === false) {
+			showWaitingForConnection();
+			return;
+		}
+		if (document.visibilityState !== 'hidden') {
+			if (shouldDescribeResume) {
+				showResuming();
+			}
+			if (pendingLifecycleFailure) {
+				const pending = pendingLifecycleFailure;
+				pendingLifecycleFailure = null;
+				finishStartupFailure(pending.error, pending.workerFailure);
+			}
+		}
+	}
+
+	async function getCacheWorker() {
+		if (!('serviceWorker' in navigator)) {
+			return null;
+		}
+		if (navigator.serviceWorker.controller) {
+			return navigator.serviceWorker.controller;
+		}
+		const registration = await navigator.serviceWorker.getRegistration('./');
+		return registration && (registration.active || registration.waiting || registration.installing);
+	}
+
+	async function requestCacheWorker(type, values = {}, timeoutMilliseconds = 5000) {
+		const worker = await getCacheWorker();
+		if (!worker) {
+			throw new Error('The download worker is not available.');
+		}
+		const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+		const channel = new MessageChannel();
+		const acknowledgment = new Promise((resolve) => {
+			channel.port1.onmessage = (event) => resolve(event.data || {});
+		});
+		worker.postMessage({
+			type,
+			buildVersion: PFR_BUILD_VERSION,
+			requestId,
+			...values,
+		}, [channel.port2]);
+		const result = await window.PFRRecovery.withTimeout(
+			acknowledgment,
+			timeoutMilliseconds,
+			{ ok: false, message: 'The download worker did not respond in time.' },
+		);
+		channel.port1.close();
+		if (result.requestId !== requestId) {
+			throw new Error(result.message || 'The download worker response was invalid.');
+		}
+		return result;
+	}
+
+	async function queryAssetReadiness(assetNames = ['index.pck']) {
+		const result = await requestCacheWorker(
+			'pfr-query-asset-readiness',
+			{ assets: assetNames },
+			5000,
+		);
+		return {
+			storageAvailable: result.storageAvailable === true,
+			assets: result.assets && typeof result.assets === 'object' ? result.assets : {},
+		};
+	}
+
+	async function clearAssetDownload(assetNames = null) {
+		const values = Array.isArray(assetNames) ? { assets: assetNames } : {};
+		const result = await requestCacheWorker('pfr-clear-asset-cache', values, 5000);
+		if (!result.ok) {
+			throw new Error(result.message || 'The saved game-file download could not be cleared.');
+		}
+	}
+
+	function setBackgroundProgress(loaded, total) {
+		const expectedTotal = Number(PFR_ASSET_MANIFEST.assets['index.pck'].size) || total || 0;
+		const progress = window.PFRBoot.monotonicProgress(
+			backgroundLoaded,
+			loaded,
+			expectedTotal,
+		);
+		backgroundLoaded = progress.loaded;
+		const ratio = progress.total > 0 ? progress.loaded / progress.total : 0;
+		const percentage = Math.round(ratio * 100);
+		bootDockProgressFill.style.transform = `scaleX(${ratio})`;
+		bootDockProgress.setAttribute('aria-valuenow', String(percentage));
+		bootDockBytes.value = `${percentage}% · ${window.PFRBoot.formatBytes(progress.loaded)} / ${window.PFRBoot.formatBytes(progress.total)}`;
+		backgroundLastActivity = performance.now();
+	}
+
+	function navigateToFullGame() {
+		if (bootFallbackStarted) {
+			return;
+		}
+		bootFallbackStarted = true;
+		bootEnterGame.disabled = true;
+		bootLoadNormal.disabled = true;
+		window.location.replace(window.PFRBoot.handoffUrl(window.location.href, PFR_BUILD_VERSION));
+	}
+
+	function showBackgroundReady() {
+		backgroundReady = true;
+		backgroundRunning = false;
+		backgroundResumePending = false;
+		if (backgroundWatchdogTimer !== null) {
+			window.clearInterval(backgroundWatchdogTimer);
+			backgroundWatchdogTimer = null;
+		}
+		const total = Number(PFR_ASSET_MANIFEST.assets['index.pck'].size) || 0;
+		setBackgroundProgress(total, total);
+		bootDockLabel.textContent = 'Adventure Ready — Enter Game';
+		bootDockState.textContent = 'Your battle will remain here until you choose to enter.';
+		bootRetryDownload.hidden = true;
+		bootRestartDownload.hidden = true;
+		bootLoadNormal.hidden = true;
+		bootEnterGame.hidden = false;
+		bootEnterGame.disabled = false;
+	}
+
+	function handleBootStorageFailure(message) {
+		if (launchMode !== 'boot' || backgroundReady || bootStorageFailed) {
+			return;
+		}
+		bootStorageFailed = true;
+		backgroundResumePending = false;
+		if (backgroundController) {
+			backgroundController.abort();
+		}
+		bootDockLabel.textContent = 'Download storage became unavailable';
+		bootDockState.textContent = message || 'The full pack was not kept. Practice can continue, or load the game normally.';
+		bootRetryDownload.hidden = true;
+		bootRestartDownload.hidden = true;
+		bootEnterGame.hidden = true;
+		bootLoadNormal.hidden = false;
+		bootLoadNormal.disabled = false;
+	}
+
+	function showBackgroundFailure(error) {
+		const failure = window.PFRRecovery.classifyFailure(
+			error,
+			backgroundLastFailure,
+			navigator.onLine !== false,
+		);
+		bootDockLabel.textContent = failure.kind === 'corrupt-file'
+			? 'The saved download needs repair'
+			: 'Adventure download paused';
+		bootDockState.textContent = failure.message;
+		bootRetryDownload.hidden = false;
+		bootRetryDownload.disabled = false;
+		bootRestartDownload.hidden = false;
+		bootRestartDownload.disabled = false;
+		bootLoadNormal.hidden = true;
+		bootEnterGame.hidden = true;
+	}
+
+	function ensureBackgroundWatchdog() {
+		if (backgroundWatchdogTimer !== null) {
+			return;
+		}
+		backgroundWatchdogTimer = window.setInterval(() => {
+			if (!backgroundRunning || backgroundReady || bootStorageFailed
+					|| document.visibilityState === 'hidden' || navigator.onLine === false) {
+				return;
+			}
+			if (performance.now() - backgroundLastActivity < 45000) {
+				return;
+			}
+			backgroundLastFailure = {
+				code: 'download-stall',
+				message: 'No full-game download activity was received for 45 seconds.',
+			};
+			if (backgroundController) {
+				backgroundController.abort();
+			}
+		}, 1000);
+	}
+
+	async function startBackgroundDownload() {
+		if (backgroundRunning || backgroundReady || bootStorageFailed) {
+			return;
+		}
+		if (navigator.onLine === false) {
+			backgroundResumePending = true;
+			bootDockLabel.textContent = 'Offline — download paused';
+			bootDockState.textContent = 'Practice remains available. The adventure download will resume after reconnection.';
+			return;
+		}
+		backgroundRunning = true;
+		backgroundResumePending = false;
+		backgroundLastFailure = null;
+		backgroundLastActivity = performance.now();
+		bootDockLabel.textContent = backgroundLoaded > 0
+			? 'Resuming the adventure download…'
+			: 'Downloading the adventure…';
+		bootDockState.textContent = 'Practice while the full game downloads in the background.';
+		bootRetryDownload.hidden = true;
+		bootRestartDownload.hidden = true;
+		bootLoadNormal.hidden = true;
+		const controller = new AbortController();
+		backgroundController = controller;
+		ensureBackgroundWatchdog();
+		try {
+			const response = await fetch('index.pck', {
+				cache: 'no-store',
+				signal: controller.signal,
+			});
+			if (!response.ok || !response.body) {
+				throw new Error(`Downloading index.pck failed with HTTP ${response.status}.`);
+			}
+			const reader = response.body.getReader();
+			let receivedThisAttempt = 0;
+			while (true) {
+				const result = await reader.read();
+				if (result.done) {
+					break;
+				}
+				if (result.value) {
+					receivedThisAttempt += result.value.byteLength;
+					setBackgroundProgress(
+						receivedThisAttempt,
+						Number(PFR_ASSET_MANIFEST.assets['index.pck'].size) || 0,
+					);
+				}
+			}
+			const readiness = await queryAssetReadiness(['index.pck']);
+			if (!readiness.storageAvailable || readiness.assets['index.pck'] !== true) {
+				handleBootStorageFailure(
+					'The full pack downloaded, but the browser could not preserve it for the clean restart.',
+				);
+				return;
+			}
+			showBackgroundReady();
+		} catch (error) {
+			if (bootStorageFailed || backgroundReady) {
+				return;
+			}
+			if (navigator.onLine === false) {
+				backgroundResumePending = true;
+				bootDockLabel.textContent = 'Offline — download paused';
+				bootDockState.textContent = 'Practice remains available. Reconnecting will reuse completed chunks.';
+				return;
+			}
+			if (!backgroundAutoRetryUsed) {
+				backgroundAutoRetryUsed = true;
+				bootDockLabel.textContent = 'Recovering the adventure download…';
+				bootDockState.textContent = 'Retrying once in place; completed chunks will be reused.';
+				window.setTimeout(() => startBackgroundDownload(), 750);
+				return;
+			}
+			showBackgroundFailure(error);
+		} finally {
+			if (backgroundController === controller) {
+				backgroundController = null;
+				backgroundRunning = false;
+			}
+		}
+	}
+
+	function updateBackgroundLifecycle(shouldDescribeResume) {
+		backgroundLastActivity = performance.now();
+		if (backgroundReady || bootStorageFailed) {
+			return;
+		}
+		if (navigator.onLine === false) {
+			bootDockLabel.textContent = 'Offline — download paused';
+			bootDockState.textContent = 'Practice remains available. Download watchdogs are paused.';
+			return;
+		}
+		if (shouldDescribeResume) {
+			bootDockLabel.textContent = 'Resuming the adventure download…';
+			bootDockState.textContent = 'Completed chunks on this device will be reused.';
+		}
+		if (backgroundResumePending && !backgroundRunning) {
+			startBackgroundDownload();
+		}
+	}
+
+	function activateBootDock() {
+		watchdog.stop();
+		window.clearInterval(watchdogTimer);
+		setStatusMode('boot');
+		document.body.classList.add('pfr-boot-active');
+		window.dispatchEvent(new Event('resize'));
+		initializing = false;
+		setBackgroundProgress(0, Number(PFR_ASSET_MANIFEST.assets['index.pck'].size) || 0);
+		if (bootStorageFailed || storageFallback) {
+			handleBootStorageFailure('The browser could not preserve the full game for a clean restart.');
+			return;
+		}
+		startBackgroundDownload();
+	}
+
+	function fallbackFromBoot(error) {
+		if (bootFallbackStarted) {
+			return;
+		}
+		console.error('[PFR loader] Loading Battle failed; switching to the normal loader:', error);
+		statusLabel.textContent = 'Opening the normal game loader…';
+		statusHint.textContent = 'The practice arena could not start. Your adventure will load normally.';
+		navigateToFullGame();
+	}
+
+	retryButton.addEventListener('click', () => {
+		retryButton.disabled = true;
+		restartButton.disabled = true;
+		retryGate.reset();
+		window.location.reload();
+	});
+
+	restartButton.addEventListener('click', async () => {
+		retryButton.disabled = true;
+		restartButton.disabled = true;
+		statusNoticeAdvice.textContent = 'Removing only this build\'s downloaded game-file chunks...';
+		try {
+			await clearAssetDownload();
+			retryGate.reset();
+			window.location.reload();
+		} catch (error) {
+			console.error('[PFR loader] Restart download failed:', error);
+			setStatusNotice(error.message || String(error));
+			statusNoticeAdvice.textContent = 'Reload the page once, then use Restart download again.';
+			retryButton.disabled = false;
+			restartButton.disabled = false;
+		}
+	});
+
+	bootEnterGame.addEventListener('click', navigateToFullGame);
+	bootLoadNormal.addEventListener('click', navigateToFullGame);
+	bootRetryDownload.addEventListener('click', () => {
+		bootRetryDownload.disabled = true;
+		bootRestartDownload.disabled = true;
+		startBackgroundDownload();
+	});
+	bootRestartDownload.addEventListener('click', async () => {
+		bootRetryDownload.disabled = true;
+		bootRestartDownload.disabled = true;
+		bootDockState.textContent = 'Removing only the current full-game pack chunks…';
+		try {
+			await clearAssetDownload(['index.pck']);
+			backgroundLoaded = 0;
+			backgroundAutoRetryUsed = false;
+			backgroundLastFailure = null;
+			setBackgroundProgress(0, Number(PFR_ASSET_MANIFEST.assets['index.pck'].size) || 0);
+			startBackgroundDownload();
+		} catch (error) {
+			console.error('[PFR loader] Scoped restart failed:', error);
+			bootDockState.textContent = error.message || String(error);
+			bootRetryDownload.disabled = false;
+			bootRestartDownload.disabled = false;
+		}
+	});
+
+	function onWorkerMessage(event) {
+		const message = event.data || {};
+		if (message.buildVersion !== PFR_BUILD_VERSION) {
+			return;
+		}
+		if (message.type === 'pfr-download-activity') {
+			if (launchMode === 'boot' && message.asset === 'index.pck') {
+				setBackgroundProgress(Number(message.loaded), Number(message.total));
+				if (message.phase === 'complete' && !bootStorageFailed) {
+					bootDockLabel.textContent = 'Verifying the saved adventure…';
+				}
+				return;
+			}
+			watchdog.activity();
+			if (message.source === 'cache' && statusLabel.textContent === 'Checking saved game files...') {
+				statusLabel.textContent = 'Resuming saved download...';
+			}
+			return;
+		}
+		if (message.type === 'pfr-storage-fallback') {
+			storageFallback = true;
+			console.warn('[PFR loader] Resumable storage unavailable:', message);
+			if (launchMode === 'boot') {
+				handleBootStorageFailure(message.message || 'Browser storage became unavailable.');
+				return;
+			}
+			if (initializing && !failureHandled) {
+				statusHint.textContent = 'Loading from the network. Progress cannot be saved during this visit.';
+			}
+			return;
+		}
+		if (message.type === 'pfr-load-failure') {
+			console.error('[PFR loader] Asset worker failure:', message);
+			if (launchMode === 'boot' && message.asset === 'index.pck') {
+				backgroundLastFailure = message;
+				if (message.recovered) {
+					backgroundLastActivity = performance.now();
+					bootDockLabel.textContent = 'Repairing a saved download chunk…';
+					bootDockState.textContent = 'The damaged chunk was removed; practice can continue.';
+				}
+				return;
+			}
+			if (message.recovered) {
+				watchdog.activity();
+				statusLabel.textContent = 'Repairing saved download...';
+				statusHint.textContent = 'A damaged chunk was removed and is being downloaded again.';
+				return;
+			}
+			lastWorkerFailure = message;
+			handleStartupFailure(new Error(message.message || 'Asset loading failed.'), message);
+		}
+	}
+
+	function onGlobalError(event) {
+		const error = event.error || new Error(event.message || 'A startup script failed.');
+		if (launchMode === 'boot' && initializing) {
+			fallbackFromBoot(error);
+			return;
+		}
+		handleStartupFailure(error, { code: 'engine-start' });
+	}
+
+	function onUnhandledRejection(event) {
+		const error = event.reason instanceof Error
+			? event.reason
+			: new Error(String(event.reason || 'An asynchronous startup task failed.'));
+		if (launchMode === 'boot' && initializing) {
+			fallbackFromBoot(error);
+			return;
+		}
+		handleStartupFailure(error, lastWorkerFailure);
+	}
+
+	if (window.PFR_EARLY_ERROR_HANDLER) {
+		window.removeEventListener('error', window.PFR_EARLY_ERROR_HANDLER);
+		window.removeEventListener('unhandledrejection', window.PFR_EARLY_REJECTION_HANDLER);
+	}
+	window.addEventListener('error', onGlobalError);
+	window.addEventListener('unhandledrejection', onUnhandledRejection);
+	window.addEventListener('online', () => updateLifecycleState(true));
+	window.addEventListener('offline', () => updateLifecycleState(false));
+	window.addEventListener('pageshow', (event) => updateLifecycleState(event.persisted));
+	document.addEventListener('visibilitychange', () => updateLifecycleState(true));
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.addEventListener('message', onWorkerMessage);
+	}
+	updateLifecycleState(false);
+	if (window.PFR_EARLY_STARTUP_ERRORS.length > 0) {
+		handleStartupFailure(window.PFR_EARLY_STARTUP_ERRORS[0], { code: 'engine-start' });
+		return;
 	}
 
 	const missing = Engine.getMissingFeatures({
@@ -1008,47 +2143,94 @@ const engine = new Engine(GODOT_CONFIG);
 	}).filter((feature) => feature !== SECURE_CONTEXT_FEATURE);
 
 	if (missing.length !== 0) {
-		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			let serviceWorkerRegistrationPromise;
-			try {
-				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
-			} catch (err) {
-				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
-			}
-			// There's a chance that installing the service worker would fix the issue.
-			Promise.race([
-				serviceWorkerRegistrationPromise.then((registration) => {
-					if (registration != null) {
-						return Promise.reject(new Error('Service worker already exists.'));
-					}
-					return registration;
-				}).then(() => engine.installServiceWorker()),
-				// Some browsers can stall while retrieving a registration.
-				new Promise((resolve) => {
-					setTimeout(() => resolve(), 2000);
-				}),
-			]).then(() => {
-				// Reload if there was no error.
-				window.location.reload();
-			}).catch((err) => {
-				console.error('Error while registering service worker:', err);
-			});
-		} else {
-			const missingMsg = 'This browser is missing features required to run the game:\n';
-			displayFailureNotice(missingMsg + missing.join('\n'));
-		}
+		const missingError = new Error(`Missing browser features: ${missing.join(', ')}`);
+		handleStartupFailure(missingError, { code: 'incompatible-browser' });
 	} else {
 		setStatusMode('progress');
 		statusLabel.textContent = 'Checking saved game files...';
 		statusHint.textContent = 'Previously downloaded game data will be reused from this device.';
 		setLoadingProgress(0, 0);
-		Promise.resolve(window.PFR_CACHE_READY).then(() => {
-			return engine.startGame({
-				'onProgress': setLoadingProgress,
-			});
+		chooseAndStartMode();
+	}
+
+	async function chooseAndStartMode() {
+		const cacheWorkerReady = await Promise.resolve(window.PFR_CACHE_READY);
+		const requestedUrl = new URL(window.location.href);
+		const requestedMode = requestedUrl.searchParams.get('pfr-mode') || '';
+		const requestedBuild = requestedUrl.searchParams.get('pfr-build') || '';
+		let readiness = { storageAvailable: false, assets: {} };
+		if (cacheWorkerReady) {
+			try {
+				readiness = await queryAssetReadiness(['index.pck']);
+			} catch (error) {
+				console.warn('[PFR loader] Cache readiness query failed; using the normal loader:', error);
+			}
+		}
+		launchMode = window.PFRBoot.selectLaunchMode({
+			buildVersion: PFR_BUILD_VERSION,
+			hasBuildVersion: PFR_HAS_BUILD_VERSION,
+			productionHttps: window.location.protocol === 'https:' && window.isSecureContext,
+			bootRuntimeSupported: typeof AbortController === 'function',
+			cacheWorkerReady,
+			storageAvailable: readiness.storageAvailable,
+			fullPackReady: readiness.assets['index.pck'] === true,
+			requestedMode,
+			requestedBuild,
+		});
+		if (launchMode === 'boot') {
+			startBootGame();
+		} else {
+			startFullGame();
+		}
+	}
+
+	function startFullGame() {
+		try {
+			engine = new Engine(GODOT_CONFIG);
+		} catch (error) {
+			handleStartupFailure(error, { code: 'incompatible-browser' });
+			return;
+		}
+		statusLabel.textContent = 'Checking saved game files...';
+		statusHint.textContent = 'Previously downloaded game data will be reused from this device.';
+		engine.startGame({
+			'onProgress': setLoadingProgress,
 		}).then(() => {
+			watchdog.stop();
+			window.clearInterval(watchdogTimer);
+			const cleanUrl = window.PFRBoot.cleanModeUrl(window.location.href);
+			if (cleanUrl !== window.location.href && window.history && window.history.replaceState) {
+				window.history.replaceState(null, '', cleanUrl);
+			}
 			setStatusMode('hidden');
-		}, displayFailureNotice);
+		}, (error) => handleStartupFailure(error, lastWorkerFailure));
+	}
+
+	function startBootGame() {
+		const bootPack = 'pfr-loading-battle.pck';
+		document.body.classList.add('pfr-boot-active');
+		resizeBootCanvas();
+		const bootConfig = {
+			...GODOT_CONFIG,
+			args: [...GODOT_CONFIG.args, '--audio-driver', 'Dummy'],
+			canvasResizePolicy: 0,
+			fileSizes: {
+				...GODOT_CONFIG.fileSizes,
+				[bootPack]: Number(PFR_ASSET_MANIFEST.assets[bootPack].size) || 0,
+			},
+			mainPack: bootPack,
+		};
+		try {
+			engine = new Engine(bootConfig);
+		} catch (error) {
+			fallbackFromBoot(error);
+			return;
+		}
+		statusLabel.textContent = 'Preparing Loading Battle...';
+		statusHint.textContent = 'Loading the shared engine and a small practice pack first.';
+		engine.startGame({
+			'onProgress': setLoadingProgress,
+		}).then(activateBootDock, fallbackFromBoot);
 	}
 }());
 		</script>

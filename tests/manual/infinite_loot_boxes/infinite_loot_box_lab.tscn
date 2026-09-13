@@ -1,0 +1,357 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://tests/manual/infinite_loot_boxes/infinite_loot_box_lab.gd" id="1_lab"]
+
+[sub_resource type="Theme" id="Theme_lab"]
+default_font_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_header"]
+bg_color = Color(0.055, 0.044, 0.12, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.51, 0.38, 0.94, 0.72)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_body"]
+bg_color = Color(0.018, 0.025, 0.061, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.19, 0.48, 0.72, 0.66)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tier_normal"]
+bg_color = Color(0.042, 0.071, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.17, 0.32, 0.5, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tier_hover"]
+bg_color = Color(0.075, 0.12, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.31, 0.7, 0.95, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tier_pressed"]
+bg_color = Color(0.18, 0.11, 0.3, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.69, 0.18, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_open_normal"]
+bg_color = Color(0.91, 0.52, 0.08, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.48)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_open_hover"]
+bg_color = Color(1, 0.68, 0.16, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.48)
+shadow_size = 7
+shadow_offset = Vector2(0, 3)
+
+[node name="InfiniteLootBoxLab" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_lab")
+script = ExtResource("1_lab")
+editor_description = "Developer-only scene for opening every production loot-box tier repeatedly and for free."
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.006, 0.011, 0.033, 1)
+
+[node name="TopGlow" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 155.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.12, 0.04, 0.24, 0.64)
+
+[node name="AccentLine" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 3.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(1, 0.65, 0.16, 1)
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 20
+
+[node name="Column" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="PanelContainer" parent="MainMargin/Column"]
+custom_minimum_size = Vector2(0, 78)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_header")
+
+[node name="Margin" type="MarginContainer" parent="MainMargin/Column/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 9
+
+[node name="Row" type="HBoxContainer" parent="MainMargin/Column/Header/Margin"]
+layout_mode = 2
+
+[node name="TitleStack" type="VBoxContainer" parent="MainMargin/Column/Header/Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="MainMargin/Column/Header/Margin/Row/TitleStack"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 30
+text = "INFINITE LOOT-BOX LAB"
+
+[node name="Subtitle" type="Label" parent="MainMargin/Column/Header/Margin/Row/TitleStack"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 14
+text = "Production odds and rewards • zero cost • unlimited openings"
+
+[node name="Infinity" type="Label" parent="MainMargin/Column/Header/Margin/Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.39, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.61, 0.1, 0.7)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 49
+text = "∞ FREE"
+vertical_alignment = 1
+
+[node name="Body" type="PanelContainer" parent="MainMargin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBox_body")
+
+[node name="Margin" type="MarginContainer" parent="MainMargin/Column/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 13
+
+[node name="Content" type="VBoxContainer" parent="MainMargin/Column/Body/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SelectedTier" type="Label" parent="MainMargin/Column/Body/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.25, 1)
+theme_override_font_sizes/font_size = 23
+text = "TIER 6  •  LEGEND VAULT"
+horizontal_alignment = 1
+
+[node name="SelectedDetails" type="Label" parent="MainMargin/Column/Body/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.84, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Lv. 60 prize  •  10% high-quality chance\nTop box-art and restricted legendaries"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="MainMargin/Column/Body/Margin/Content"]
+layout_mode = 2
+
+[node name="TierGrid" type="GridContainer" parent="MainMargin/Column/Body/Margin/Content"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Tier1" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "1  SCUFFED PARCEL\nLv. 10  •  FREE"
+
+[node name="Tier2" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "2  BRONZE SPINNER\nLv. 20  •  FREE"
+
+[node name="Tier3" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "3  SILVER SPINNER\nLv. 30  •  FREE"
+
+[node name="Tier4" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "4  GOLD SPINNER\nLv. 40  •  FREE"
+
+[node name="Tier5" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "5  ULTRA VAULT\nLv. 50  •  FREE"
+
+[node name="Tier6" type="Button" parent="MainMargin/Column/Body/Margin/Content/TierGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_colors/font_color = Color(0.78, 0.87, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBox_tier_normal")
+theme_override_styles/hover = SubResource("StyleBox_tier_hover")
+theme_override_styles/pressed = SubResource("StyleBox_tier_pressed")
+text = "6  LEGEND VAULT\nLv. 60  •  FREE"
+
+[node name="OpenButton" type="Button" parent="MainMargin/Column/Body/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 53)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.055, 0.01, 1)
+theme_override_colors/font_hover_color = Color(0.08, 0.025, 0, 1)
+theme_override_colors/font_focus_color = Color(0.12, 0.055, 0.01, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBox_open_normal")
+theme_override_styles/hover = SubResource("StyleBox_open_hover")
+theme_override_styles/focus = SubResource("StyleBox_open_hover")
+theme_override_styles/pressed = SubResource("StyleBox_open_hover")
+text = "OPEN LEGEND VAULT — FREE  ∞"
+
+[node name="Status" type="Label" parent="MainMargin/Column/Body/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.94, 0.76, 1)
+theme_override_font_sizes/font_size = 14
+text = "Ready. Rewards are added to temporary Pokémon storage for this run."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RecentPrizes" type="Label" parent="MainMargin/Column/Body/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.66, 0.71, 0.84, 1)
+theme_override_font_sizes/font_size = 12
+text = "RECENT  No boxes opened yet"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="Controls" type="Label" parent="MainMargin/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.65, 0.82, 1)
+theme_override_font_sizes/font_size = 13
+text = "SPACE  OPEN SELECTED     •     1–6  OPEN A TIER     •     ESC  SKIP / CLOSE REEL"
+horizontal_alignment = 1

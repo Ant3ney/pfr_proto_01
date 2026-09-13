@@ -1,7 +1,8 @@
 class_name TrainerBehavior
 extends NPCBehavior
 
-## Detects the player directly ahead, approaches them once, and stops nearby.
+## Runs repeatable trainer dialog and battles, with an optional forward-sight
+## approach for ordinary route encounters.
 
 enum ApproachState {
 	WAITING,
@@ -25,7 +26,8 @@ var ray_height := 0.8
 @export var automatic_sight_encounter := true
 ## Standard trainers force one sight encounter per play session, then remain
 ## available for manual rematches. Highly Aggro is reserved for repeatable
-## standalone-area opponents and resets whenever their area is entered anew.
+## standalone-area opponents; automatic ones reset their sight challenge when
+## their area is entered anew, while manual-only bosses always wait for talk.
 @export var aggression_mode: AggressionMode = AggressionMode.STANDARD
 
 @export_group("Approach")
@@ -146,6 +148,10 @@ func is_highly_aggro() -> bool:
 func _can_start_automatic_sight_encounter() -> bool:
 	return (
 		automatic_sight_encounter
+		and not (
+			is_highly_aggro()
+			and ChallengeProgressionSystem.is_encounter_defeated(encounter_id)
+		)
 		and (
 			is_highly_aggro()
 			or not GameInstance.has_consumed_standard_trainer_sight_encounter(
@@ -330,12 +336,12 @@ func _apply_encounter_suppression(
 		return
 	_suppression_checked = true
 	if GameInstance.is_encounter_suppressed(encounter_id):
-		# A standard trainer returns ready for a manual rematch, while a Highly
-		# Aggro destination trainer stays quiet for this one return scene so it
-		# cannot immediately loop back into battle underneath the player.
+		# Only automatic Highly Aggro trainers become terminal in the immediate
+		# return scene, preventing another sight-trigger loop under the player.
+		# Manual-only bosses remain waiting so the HUD can start a rematch.
 		_approach_state = (
 			ApproachState.COMPLETE
-			if is_highly_aggro()
+			if is_highly_aggro() and automatic_sight_encounter
 			else ApproachState.WAITING
 		)
 		controller.stop_moving(character)

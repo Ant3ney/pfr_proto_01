@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://tests/scenes/pfr_character_grounding_smoke_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://game/actors/character/pfr_character.tscn" id="2_character"]
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="3_movement"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/zach.tres" id="4_art"]
+
+[sub_resource type="BoxShape3D" id="BoxShape_slope"]
+size = Vector3(10, 0.5, 4)
+
+[sub_resource type="Resource" id="Resource_movement"]
+resource_local_to_scene = true
+script = ExtResource("3_movement")
+ground_check_interval = 0.05
+ground_snap_tolerance = 0.005
+
+[node name="PFRCharacterGroundingSmokeTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="SlopedGround" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, 0)
+rotation_degrees = Vector3(0, 0, -11.3099)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SlopedGround"]
+shape = SubResource("BoxShape_slope")
+
+[node name="GroundedCharacter" parent="." instance=ExtResource("2_character")]
+position = Vector3(-3.5, 5, 0)
+character_movement = SubResource("Resource_movement")
+character_art_asset_pack = ExtResource("4_art")

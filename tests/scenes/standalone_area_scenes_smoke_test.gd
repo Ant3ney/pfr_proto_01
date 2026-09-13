@@ -16,8 +16,8 @@ func _run() -> void:
 	if catalog == null:
 		_finish()
 		return
-	_check(catalog.validate().is_empty(), "The 49-area catalog and its encounter resources should validate.")
-	_check(catalog.areas.size() == 49, "The catalog should contain exactly 40 routes, eight gyms, and one champion challenge.")
+	_check(catalog.validate().is_empty(), "The 50-area catalog and its encounter resources should validate.")
+	_check(catalog.areas.size() == StandaloneAreaCatalog.TOTAL_AREA_COUNT, "The catalog should contain exactly 41 routes, eight gyms, and one champion challenge.")
 
 	var seen_scene_paths: Dictionary = {}
 	var seen_area_ids: Dictionary = {}
@@ -38,7 +38,7 @@ func _run() -> void:
 		_check(_source_uses_level_base(scene_path), "%s should inherit the canonical level base directly." % area.area_id)
 		_check_area_scene(area)
 
-	for route_index in 40:
+	for route_index in StandaloneAreaCatalog.ROUTE_COUNT:
 		_check(seen_area_ids.has("route_%02d" % route_index), "The catalog should contain route_%02d." % route_index)
 	for gym_index in range(1, 9):
 		_check(seen_area_ids.has("gym_%02d" % gym_index), "The catalog should contain gym_%02d." % gym_index)
@@ -86,10 +86,51 @@ func _check_area_scene(area: StandaloneAreaDefinition) -> void:
 		var controller := trainer.controller as TrainerController
 		var behavior := controller.npc_behavior as TrainerBehavior if controller != null else null
 		_check(controller != null and behavior != null, "%s trainers should inherit the shared trainer controller and behavior." % area.area_id)
+		if controller == null:
+			continue
 		_check(
 			trainer.has_meta("encounter_id") or not controller.encounter_id.is_empty(),
 			"%s trainers should expose encounter IDs in the Inspector." % area.area_id
 		)
+		_check(
+			controller.dialog != null and not controller.dialog.is_empty(),
+			"%s trainer %s should have non-empty pre-battle dialog."
+			% [area.area_id, trainer.name]
+		)
+		_check(
+			ResourceLoader.exists(controller.battle_scene_path, "PackedScene"),
+			"%s trainer %s should reference a loadable battle scene."
+			% [area.area_id, trainer.name]
+		)
+		_check(
+			_encounter_list_has_id(area.battle_encounters, controller.encounter_id),
+			"%s trainer %s should reference an encounter owned by its area."
+			% [area.area_id, trainer.name]
+		)
+		if area.category == StandaloneAreaDefinition.Category.ROUTE:
+			_check(
+				controller.aggression_mode == TrainerBehavior.AggressionMode.STANDARD
+				and behavior != null and not behavior.is_highly_aggro(),
+				"%s trainer %s should allow only one forced sight battle, then manual rematches."
+				% [area.area_id, trainer.name]
+			)
+			_check(
+				controller.automatic_sight_encounter
+				and behavior != null and behavior.automatic_sight_encounter,
+				"%s trainer %s should retain the initial sight challenge."
+				% [area.area_id, trainer.name]
+			)
+		else:
+			_check(
+				not controller.automatic_sight_encounter,
+				"%s boss %s should wait for player interaction instead of sight detection."
+				% [area.area_id, trainer.name]
+			)
+			_check(
+				behavior != null and not behavior.automatic_sight_encounter,
+				"%s boss %s should synchronize manual-only interaction into its behavior."
+				% [area.area_id, trainer.name]
+			)
 
 	if area.category == StandaloneAreaDefinition.Category.ROUTE:
 		var grass_zones := world.find_children("*", "TallGrassEncounterZone", true, false)
@@ -122,7 +163,7 @@ func _encounter_list_has_id(encounters: Array[BattleEncounterDefinition], encoun
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("Standalone area scene smoke test passed: exactly 49 independent scenes inherit the canonical level base with local definitions, static trainers, grass, gates, encounters, and common level structure verified.")
+		print("Standalone area scene smoke test passed: exactly 50 independent scenes inherit the canonical level base with local definitions, static trainers, manual bosses, grass, gates, encounters, and common level structure verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

@@ -47,10 +47,13 @@ trainer without dialog can launch its configured battle directly. Its exported
 `automatic_sight_encounter` flag independently controls the classic forward-ray
 approach. Kyle and all six standard prototype trainers use `STANDARD` aggression: their
 first battle consumes forced sight for the current play session, and later
-rematches start only from the HUD. Authored standalone-area opponents use
-`HIGHLY_AGGRO`; they are quiet in the immediate battle-return scene, then force
-their sight challenge again after the player leaves and launches that area
-anew. The HUD remains an alternate way to talk while a trainer is `WAITING`,
+rematches start only from the HUD. Routes 1–40 use automatic `HIGHLY_AGGRO`
+opponents; they are quiet in the immediate battle-return scene, then force
+their sight challenge again when the area is launched anew. All gym leaders
+and the full five-opponent Champion challenge set `automatic_sight_encounter`
+to `false`: they stay put until Talk, and immediate-return suppression leaves
+them in `WAITING` so Talk can launch the same dialog and a rematch. The HUD is
+also an alternate way to talk to an automatic trainer while it is `WAITING`,
 such as when the player approaches from the side or behind.
 
 Every stateful NPC scene explicitly marks its controller resource
@@ -91,5 +94,6 @@ godot --headless --path . --scene res://tests/scenes/interaction_hud_smoke_test.
 godot --headless --path . --scene res://tests/scenes/standalone_area_scenes_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/pokemon_center_healer_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/trainer_dialog_battle_start_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/trainer_manual_boss_rematch_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/town_npc_smoke_test.tscn
 ```

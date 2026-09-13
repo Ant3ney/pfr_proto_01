@@ -232,6 +232,28 @@ test("domain conflicts preserve achievements, gifts, and newer economy", () => {
   );
 });
 
+test("concurrent route achievements retain Route 40 and reject out-of-range routes", () => {
+  const created = resolveCloudSave(null, incoming(), NOW);
+  const cloudChange = incoming({
+    base_revision: 1,
+    changed_sections: ["challenge_progression"],
+  });
+  cloudChange.payload.challenge_progression.completed_routes = Array.from({ length: 40 }, (_, i) => i);
+  cloudChange.payload.save_meta.section_updated_at_ms.challenge_progression = NOW + 10;
+  const cloudSaved = resolveCloudSave(documentFrom(created), cloudChange, NOW + 20);
+  const offline = incoming({
+    base_revision: 1,
+    changed_sections: ["challenge_progression"],
+  });
+  offline.payload.challenge_progression.completed_routes = [40, 41, -1];
+  offline.payload.save_meta.section_updated_at_ms.challenge_progression = NOW + 30;
+  const merged = resolveCloudSave(documentFrom(cloudSaved), offline, NOW + 40);
+  assert.deepEqual(
+    merged.payload.challenge_progression.completed_routes,
+    Array.from({ length: 41 }, (_, i) => i),
+  );
+});
+
 test("a reset epoch replaces old data and old devices cannot undo it", () => {
   const created = resolveCloudSave(null, incoming(), NOW);
   const resetRequest = incoming({ epoch: 1, base_revision: 1 });

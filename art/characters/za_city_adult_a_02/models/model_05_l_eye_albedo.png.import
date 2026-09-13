@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0tvanurfqg2x"
-path="res://.godot/imported/model_05_l_eye_albedo.png-f0f91b3406dfff34346493d679adef45.ctex"
+path.s3tc="res://.godot/imported/model_05_l_eye_albedo.png-f0f91b3406dfff34346493d679adef45.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "94e1c750abe48eb97e96b41e89012d82"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://art/characters/za_city_adult_a_02/models/model_05_l_eye_albedo.png"
-dest_files=["res://.godot/imported/model_05_l_eye_albedo.png-f0f91b3406dfff34346493d679adef45.ctex"]
+dest_files=["res://.godot/imported/model_05_l_eye_albedo.png-f0f91b3406dfff34346493d679adef45.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

@@ -16,6 +16,7 @@ template_archive_url="https://downloads.godotengine.org/?version=${godot_version
 godot_bin=""
 
 npm --prefix "${project_root}" run test:cloud-save
+npm --prefix "${project_root}" run test:web-loader
 
 download_file() {
 	local url="$1"
@@ -55,51 +56,73 @@ if [[ ! -f "${template_root}/${web_template_name}" ]] || \
 fi
 
 mkdir -p "${project_root}/build/web/v1"
+web_output="${project_root}/build/web/v1"
+loading_battle_stage="$(mktemp -d "${TMPDIR:-/tmp}/pfr-loading-battle.XXXXXX")"
+trap 'rm -rf -- "${loading_battle_stage}"' EXIT
+
+bash "${project_root}/tools/stage_loading_battle.sh" "${loading_battle_stage}"
+"${godot_bin}" \
+	--quiet \
+	--headless \
+	--path "${loading_battle_stage}" \
+	--import
+"${godot_bin}" \
+	--headless \
+	--path "${loading_battle_stage}" \
+	--scene res://tests/loading_battle_smoke_test.tscn
+"${godot_bin}" \
+	--quiet \
+	--headless \
+	--path "${loading_battle_stage}" \
+	--export-pack LoadingBattlePack \
+	"${web_output}/pfr-loading-battle.pck"
+node "${project_root}/tools/verify_loading_battle_pack.mjs" \
+	"${web_output}/pfr-loading-battle.pck"
+
 "${godot_bin}" \
 	--quiet \
 	--headless \
 	--path "${project_root}" \
 	--export-release WebBuild \
-	"${project_root}/build/web/v1/index.html"
+	"${web_output}/index.html"
 
-for artifact in index.html index.js index.pck index.wasm; do
-	test -s "${project_root}/build/web/v1/${artifact}"
+for artifact in index.html index.js index.pck index.wasm pfr-loading-battle.pck; do
+	test -s "${web_output}/${artifact}"
 done
 
-web_output="${project_root}/build/web/v1"
+node "${project_root}/tools/patch_godot_web_loader.mjs" \
+	"${web_output}/index.js"
+
 if ! grep -q '"experimentalVK":true' "${web_output}/index.html"; then
 	echo "Web export must embed touchscreen virtual-keyboard support." >&2
 	exit 1
 fi
 
 cache_worker_template="${project_root}/addons/plain_http_lan_web/pfr_cache_service_worker.js"
-cache_version="$(
-	sha256sum \
-		"${web_output}/index.js" \
-		"${web_output}/index.pck" \
-		"${web_output}/index.wasm" \
-	| cut -d ' ' -f 1 \
-	| sha256sum \
-	| cut -c 1-20
-)"
-
-# Godot's output filenames are stable between builds. Injecting a content hash
-# lets the browser persist the large pack/runtime while still fetching updates.
-sed \
-	"s/__PFR_CACHE_VERSION__/${cache_version}/g" \
-	"${cache_worker_template}" \
-	> "${web_output}/pfr-cache-sw.js"
-sed -i \
-	"s/__PFR_CACHE_VERSION__/${cache_version}/g" \
-	"${web_output}/index.html"
+node "${project_root}/tools/finalize_web_export.mjs" \
+	"${web_output}" \
+	"${cache_worker_template}"
 
 test -s "${web_output}/pfr-cache-sw.js"
-if grep -q "__PFR_CACHE_VERSION__" \
+test -s "${web_output}/pfr-asset-manifest.json"
+if grep -Eq '__PFR_[A-Z_]+__|\$GODOT_[A-Z_]+' \
 	"${web_output}/index.html" \
 	"${web_output}/pfr-cache-sw.js"; then
-	echo "Web cache version placeholder was not replaced." >&2
+	echo "A generated web loader placeholder was not replaced." >&2
 	exit 1
 fi
+
+node --check "${web_output}/index.js"
+node --check "${web_output}/pfr-cache-sw.js"
+node "${project_root}/tools/verify_web_loader.mjs" "${web_output}"
+node "${project_root}/tools/battle_sprite_pipeline/verify_export_pack.cjs" \
+	"${web_output}/index.pck"
+
+"${godot_bin}" \
+	--quiet \
+	--headless \
+	--main-pack "${web_output}/pfr-loading-battle.pck" \
+	--quit-after 2
 
 "${godot_bin}" \
 	--quiet \

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/scenes/trainer_manual_boss_rematch_smoke_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://game/world/levels/standalone_areas/gyms/gym_01/gym_01.tscn" id="2_gym"]
+
+[node name="TrainerManualBossRematchSmokeTest" type="Node"]
+script = ExtResource("1_test")
+
+[node name="Gym01" parent="." instance=ExtResource("2_gym")]

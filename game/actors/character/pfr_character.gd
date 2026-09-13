@@ -41,6 +41,7 @@ func _ready() -> void:
 	add_to_group(&"pfr_characters")
 	if not character_movement:
 		character_movement = CharacterMovement.new()
+	character_movement.prepare_for_character(self)
 	if not controller:
 		controller = NPCController.new()
 	controller.prepare_for_character(self)

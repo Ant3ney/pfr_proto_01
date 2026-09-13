@@ -31,9 +31,11 @@ and Tourist. Every lineup trainer owns an independent encounter resource even
 when two encounters happen to reuse a species.
 
 `trainer_aggression_mode` distinguishes ordinary authored trainers from
-Stretchman's `HIGHLY_AGGRO` opponents. `GameInstance` records a standard
-trainer's accepted encounter ID as sight-consumed for the current play session;
-Highly Aggro launches do not enter that set.
+repeatable `HIGHLY_AGGRO` challenge opponents. `GameInstance` records a
+standard trainer's accepted encounter ID as sight-consumed for the current play
+session; Highly Aggro launches do not enter that set. Automatic sight remains a
+separate trainer setting: gym leaders and the Elite Four/Champion roster are
+Highly Aggro but manual-only.
 
 Route 0 wild grass follows the same launch boundary without a trainer dialog.
 `TallGrassEncounterZone` supplies `encounter_type = "wild"`, the concrete
@@ -104,9 +106,11 @@ returned scene instance. `TrainerBehavior` checks
 `GameInstance.is_encounter_suppressed()` before detection. A standard trainer
 returns in `WAITING`; its session-level consumed ID blocks another forced sight
 encounter but leaves HUD interaction available for manual rematches. A Highly
-Aggro trainer returns in `COMPLETE` so it cannot immediately loop beneath the
-player, then regains forced sight after leaving and starting the destination
-again. Standard sight consumption is transient and is not autosaved.
+Aggro trainer with automatic sight returns in `COMPLETE` so it cannot
+immediately loop beneath the player, then regains forced sight after leaving
+and starting the destination again. A manual-only Highly Aggro boss returns in
+`WAITING`, because it cannot start another battle until the player deliberately
+uses Talk. Standard sight consumption is transient and is not autosaved.
 
 ## Ownership boundaries
 

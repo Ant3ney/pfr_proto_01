@@ -95,7 +95,7 @@ Protocol version 1 resolves a single Atlas document in this order:
    and never reduce already-earned XP or level. Inventory conflicts retain the
    preferred item quantities while unioning one-time gifts. Challenge conflicts
    retain the preferred active-run state while unioning badges, the contiguous
-   completed-route prefix, Champion completion, and defeated IDs when both
+   completed-route prefix (Routes 0–40), Champion completion, and defeated IDs when both
    versions describe the same active run. Economy uses the preferred section as
    a whole, so its balance and last reward remain internally consistent.
 

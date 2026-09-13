@@ -45,7 +45,7 @@ function collectRuntimeResources(directory) {
 }
 
 // Dynamic menu travel cannot be discovered from the main-scene dependency graph.
-// Select every runtime-authored game resource so all 49 standalone area scenes,
+// Select every runtime-authored game resource so all 50 standalone area scenes,
 // their adjacent definitions, and their encounter resources ship together.
 const required = [
   ...collectRuntimeResources(path.join(projectRoot, 'game')),

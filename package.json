@@ -8,7 +8,8 @@
     "node": ">=20.19 <25"
   },
   "scripts": {
-    "test:cloud-save": "node --test netlify/cloud-save/cloud-save-resolver.test.mjs"
+    "test:cloud-save": "node --test netlify/cloud-save/cloud-save-resolver.test.mjs",
+    "test:web-loader": "node --test tests/web/*.test.mjs"
   },
   "dependencies": {
     "mongodb": "7.6.0"

@@ -26,7 +26,7 @@ from undoing a confirmed reset. See
 
 Walkable worlds are authored as native Godot inherited scenes with modular
 assets, the FileSystem dock, the Scene tree, Inspector resources, and
-drag-and-drop. All 60 playable cities, routes, gyms, Champion areas, and
+drag-and-drop. All 61 playable cities, routes, gyms, Champion areas, and
 interiors inherit the single canonical
 [`level_base.tscn`](../game/world/level_bases/level_base.tscn) directly.
 `PFRWorldLevel` provides `get_player()` and `find_spawn_marker()` and warns when
@@ -35,36 +35,37 @@ NavigationRegion3D/WorldGeometry, Gameplay, Markers, or Backdrop hierarchy is
 incomplete. `player.tscn` owns the camera and HUD; there is no Runtime wrapper.
 
 New Bouffalant City and its directly connected interiors live together under
-[`new_bouffalant_city/`](../game/world/levels/new_bouffalant_city/). The 49
+[`new_bouffalant_city/`](../game/world/levels/new_bouffalant_city/). The 50
 walkable areas opened from the Adventure Menu live together under
-[`standalone_areas/`](../game/world/levels/standalone_areas/): 40 routes, eight
+[`standalone_areas/`](../game/world/levels/standalone_areas/): 41 routes, eight
 gyms, and one Champion challenge. Battle-only scenes remain under
 `game/battle/`.
 
-### Routes 0–39 and wild grass
+### Routes 0–40 and wild grass
 
 Every route is an independent, directly editable inherited scene. The opening
 level is
 [`route_00.tscn`](../game/world/levels/standalone_areas/routes/route_00/route_00.tscn).
-It uses 96 unit-scale 4 × 4 m route modules, five encounter fields, and the
-calibrated tree, hedge, shrub, flower, stump, and boulder families from the New
-Bouffalant City environment pack. Its authored `NavigationRegion3D` supports
-seven standard trainers in nondecreasing battle order: Kyle and Delivery Worker
-at Lv. 3, Police Officer and Businessman at Lv. 4, Backpacker and Tourist at
-Lv. 5, then Jogger at Lv. 6. Map-wide checkpoint walls force the player through
-each unobstructed sight lane. Their first sight battle is forced once per play
-session; later rematches use normal interaction. `Route0Start` is the stable
-entry marker.
+It uses the painted grass/dirt MeshLibrary, dense hedge and boulder banks,
+side trails and tall-grass clearings from the `route_00_Real` visual direction.
+Its seven original standard trainers retain their encounter data and Lv. 3–6
+order, and `Route0Start` remains the stable entry marker. Routes 1–39 retain
+their trainer and wild rosters in rebuilt textured layouts; Route 40 adds the
+final Homeward Crown area.
 
-Routes 1–39 retain the seeded deterministic winding layouts, continuous side
-walls, biome lighting/decoration, route-specific grass, four-to-eight Highly
-Aggro trainer chokepoints, and increasing length, but all of those elements are
-now ordinary authored scene nodes. Every route ends at a physical completion
-goal. Route 0 begins unlocked; a later route requires the preceding route's
-completion, and Routes 1–39 additionally require every authored trainer win in
-the current run. The exact 49-entry catalog, encounter resources, rewards, and
-authoring contracts are documented in
-[`runtime/adventure-menu-and-standalone-areas.md`](runtime/adventure-menu-and-standalone-areas.md).
+Physical exits connect every route in both directions. The southeast city
+approach enters Route 0, and Route 0's south exit returns to the city. The
+Gate Building remains an additional connection. Far checkpoints retain the
+route unlock and trainer-win requirements. Walking between areas
+preserves journey victories; menu launches start fresh runs. See
+[`runtime/adventure-menu-and-standalone-areas.md`](runtime/adventure-menu-and-standalone-areas.md)
+for the verified 50-area catalog, authoring, navigation and travel contracts.
+
+All eight gym leaders and the five Elite Four/Champion opponents keep Highly
+Aggro encounter identity for repeatable challenge progression, but disable
+automatic sight encounters. They stay in place until the nearby player uses
+the shared Talk interaction, and a returned scene leaves the defeated boss in
+`WAITING` so the same dialog can start a rematch immediately.
 
 [`TallGrassEncounterZone`](../game/world/level_kits/gameplay/encounters/tall_grass_encounter_zone.gd)
 is the reusable player-only `Area3D`. Its ready-made
@@ -109,6 +110,14 @@ covers this inherited-scene boundary.
 The root can be a player or NPC. It takes input represented by the player
 controller component or an NPC controller that decides what it does and where
 it goes.
+
+`CharacterMovement` keeps every runtime `PFRCharacter` on the configured
+collision surface without applying gravity. It casts downward once from
+`PFRCharacter._ready()`, then repeats the probe at a configurable interval
+after planar movement. A hit moves the character's foot-level root to the hit
+height; a miss leaves the transform unchanged. The shared defaults use physics
+layer 1, probe every 0.25 seconds, begin 0.5 m above the root, and recover
+ground up to 12 m below.
 
 ### Controllers
 

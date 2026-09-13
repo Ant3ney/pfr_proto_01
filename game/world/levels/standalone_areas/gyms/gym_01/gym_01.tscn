@@ -3,11 +3,19 @@
 [ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_cj23x"]
 [ext_resource type="PackedScene" path="res://game/actors/npcs/trainers/presets/trainer_backpacker.tscn" id="2_leader"]
 [ext_resource type="Script" path="res://game/actors/npcs/trainers/trainer_controller.gd" id="3_controller"]
+[ext_resource type="Script" path="res://game/dialogue/dialog.gd" id="4_dialog"]
+
+[sub_resource type="Resource" id="Resource_gym_01_leader_dialog"]
+script = ExtResource("4_dialog")
+character_name = "Leader Petra"
+dialog_lines = Array[String](["This route has no shortcuts. Clear my checkpoint to keep climbing!"])
 
 [sub_resource type="Resource" id="Resource_gym_01_leader_controller"]
 resource_local_to_scene = true
 script = ExtResource("3_controller")
+automatic_sight_encounter = false
 aggression_mode = 1
+dialog = SubResource("Resource_gym_01_leader_dialog")
 battle_scene_path = "res://game/battle/scenes/challenge_battle.tscn"
 encounter_id = "gym-01-leader"
 
