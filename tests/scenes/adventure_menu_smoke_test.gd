@@ -49,16 +49,24 @@ func _run() -> void:
 		var filter := menu.find_child("Filter", true, false) as OptionButton
 		var action := menu.find_child("Action", true, false) as Button
 		_check(panel != null and panel.get_combined_minimum_size().y <= panel.size.y + 1.0, "The complete menu should fit the 960x540 viewport.")
-		_check(offers != null and offers.item_count == 2223, "The default tab should render the complete item catalog.")
+		_check(
+			offers != null
+			and offers.item_count == 2
+			and _list_contains(offers, "Rare Candy")
+			and _list_contains(offers, "Exp. Share")
+			and not _list_contains(offers, "Potion"),
+			"The default tab should show only the two implemented item offers."
+		)
 		_check(search != null and filter != null and action != null, "Search, filters, and the selected action should remain native editable controls.")
-		if offers != null:
-			_verify_touch_scroll(menu, offers)
 		if search != null and offers != null:
 			search.text = "exp share"
 			await get_tree().process_frame
 			_check(_list_contains(offers, "Exp. Share") and _list_contains(offers, "$100,000"), "Item search should expose the persistent Exp. Share offer.")
 		menu._select_category(AdventureMenu.CATEGORY_POKEMON)
 		_check(offers != null and offers.item_count == 1025, "The Pokemon tab should render every catalog species.")
+		if offers != null:
+			await get_tree().process_frame
+			_verify_touch_scroll(menu, offers)
 		menu._select_category(AdventureMenu.CATEGORY_ROUTES)
 		_check(offers != null and offers.item_count == StandaloneAreaCatalog.ROUTE_COUNT, "The Routes tab should contain Route 0 through Route 40.")
 		if offers != null and offers.item_count >= 2:
@@ -149,7 +157,7 @@ func _verify_touch_scroll(menu: AdventureMenu, offers: ItemList) -> void:
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, touch-safe scrolling, complete catalogs, 50 destinations, and direct launch contract verified.")
+		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, implemented-item storefront, touch-safe scrolling, complete Pokemon catalog, 50 destinations, and direct launch contract verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

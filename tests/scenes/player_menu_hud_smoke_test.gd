@@ -21,8 +21,8 @@ func _run() -> void:
 		}),
 		"The player-menu fixture should load a funded economy."
 	)
-	_check(bool(ShopSystem.buy_item("potion").get("ok", false)), "The fixture should buy its first Potion.")
-	_check(bool(ShopSystem.buy_item("potion").get("ok", false)), "The fixture should buy its second Potion.")
+	_check(bool(ShopSystem.buy_item("rare-candy").get("ok", false)), "The fixture should buy its first Rare Candy.")
+	_check(bool(ShopSystem.buy_item("rare-candy").get("ok", false)), "The fixture should buy its second Rare Candy.")
 	_check(
 		bool(InventorySystem.claim_unique_item(
 			"player-menu-xp-share",
@@ -69,6 +69,7 @@ func _run() -> void:
 		var party_slot := menu.find_child("PartySlot", true, false) as OptionButton
 		var evolve_action := menu.find_child("EvolutionAction", true, false) as Button
 		var held_item_action := menu.find_child("HeldItemAction", true, false) as Button
+		var rare_candy_action := menu.find_child("RareCandyAction", true, false) as Button
 		var evolution_prompt := menu.find_child("EvolutionPrompt", true, false) as Control
 		var evolution_choice := menu.find_child("EvolutionChoice", true, false) as OptionButton
 		var save_data_button := menu.find_child("SaveData", true, false) as Button
@@ -180,10 +181,25 @@ func _run() -> void:
 			"Party management controls should be keyboard/gamepad focusable."
 		)
 		_check(
-			held_item_action != null and held_item_action.focus_mode != Control.FOCUS_NONE,
-			"The held-item action should be keyboard/gamepad focusable."
+			held_item_action != null and held_item_action.focus_mode != Control.FOCUS_NONE
+			and rare_candy_action != null
+			and rare_candy_action.focus_mode != Control.FOCUS_NONE,
+			"The held-item and Rare Candy actions should be keyboard/gamepad focusable."
 		)
 		menu._refresh_entries(storage_pcl_id)
+		var level_before_candy := int((
+			CollectionSystem.get_pcl(storage_pcl_id).get("instanceStats", {}) as Dictionary
+		).get("level", 0))
+		_check(
+			rare_candy_action.visible
+			and "Use Rare Candy (x2)" in rare_candy_action.text
+			and menu.use_rare_candy_on_pokemon(storage_pcl_id)
+			and int((
+				CollectionSystem.get_pcl(storage_pcl_id).get("instanceStats", {}) as Dictionary
+			).get("level", 0)) == level_before_candy + 1
+			and InventorySystem.get_item_count(InventoryService.RARE_CANDY_ITEM_KEY) == 1,
+			"The selected Pokemon should consume one Rare Candy and gain exactly one level."
+		)
 		_check(
 			evolve_action.visible and "Metapod" in evolve_action.text,
 			"A Pokemon obtained above its evolution level should expose an Evolve action."
@@ -276,24 +292,33 @@ func _run() -> void:
 		)
 
 		menu.select_tab(PlayerMenuUI.TAB_BAG)
-		_check(entries.item_count == 1 and _list_contains(entries, "x2  Potion"), "The Bag should show owned item quantities only.")
+		_check(
+			entries.item_count == 1 and _list_contains(entries, "x1  Rare Candy"),
+			"The Bag should show the remaining functional item quantity."
+		)
 		search.grab_focus()
 		await get_tree().process_frame
-		search.text = "p"
+		search.text = "c"
 		await get_tree().process_frame
 		_check(
 			search.has_focus(),
 			"Typing a search character should not transfer focus to the player-menu results."
 		)
-		search.text = "poton"
+		search.text = "rare candi"
 		await get_tree().process_frame
 		_check(
-			search.has_focus() and _list_contains(entries, "Potion"),
-			"Player-menu search should retain focus across multiple characters and recover a typo."
+			search.has_focus() and _list_contains(entries, "Rare Candy"),
+			"Player-menu search should retain focus and recover a Rare Candy typo."
 		)
-		var discard_result := InventorySystem.discard_item("potion", 1)
+		var discard_result := InventorySystem.discard_item(
+			InventoryService.RARE_CANDY_ITEM_KEY,
+			1
+		)
 		_check(bool(discard_result.get("ok", false)), "Owned item quantities should be manageable from the inventory API.")
-		_check(InventorySystem.get_item_count("potion") == 1, "Discarding one item should leave the remaining stack intact.")
+		_check(
+			InventorySystem.get_item_count(InventoryService.RARE_CANDY_ITEM_KEY) == 0,
+			"Discarding the remaining Rare Candy should remove its bag stack."
+		)
 
 		menu.select_tab(PlayerMenuUI.TAB_POKEDEX)
 		_check(entries.item_count == 1025, "The Pokedex should expose all 1,025 default Pokemon.")
@@ -335,7 +360,7 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"Player menu HUD smoke test passed: persistent button, retained search "
-			+ "focus, leveled evolution choices, held-item transfers, Party/PC swaps, bag "
+			+ "focus, working Rare Candy, leveled evolution choices, held-item transfers, Party/PC swaps, bag "
 			+ "management, JSON transfer, cloud opt-in/out, complete Pokedex, GIF art, "
 			+ "focus, and cleanup verified."
 		)

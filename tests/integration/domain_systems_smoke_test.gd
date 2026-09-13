@@ -28,35 +28,85 @@ func _run() -> void:
 	var items := ShopSystem.get_item_catalog()
 	var pokemon := ShopSystem.get_pokemon_catalog()
 	var boxes := ShopSystem.get_loot_box_catalog()
-	_check(items.size() == 2223, "The shop should expose all 2,223 pinned items.")
+	_check(
+		ShopSystem.get_known_item_catalog().size() == 2223,
+		"The runtime should retain metadata for all 2,223 pinned items."
+	)
+	_check(
+		items.size() == 2
+		and String(items[0].get("slug", "")) == InventoryService.RARE_CANDY_ITEM_KEY
+		and String(items[1].get("slug", "")) == InventoryService.XP_SHARE_ITEM_KEY,
+		"The store should expose only the implemented Rare Candy and Exp. Share."
+	)
 	_check(pokemon.size() == 1025, "The shop should expose all 1,025 default species forms.")
 	_check(boxes.size() == 6, "The loot-box catalog should contain six tiers.")
-	_check(int(_find_entry(items, "slug", "potion").get("price", 0)) == 20, "Potion should retain its low-cash $20 price.")
+	_check(int(_find_entry(items, "slug", "rare-candy").get("price", 0)) == 1_000, "Rare Candy should retain its $1,000 price.")
 	_check(int(_find_entry(items, "slug", "exp-share").get("price", 0)) == 100_000, "Exp. Share should retain its $100,000 price.")
 	_check(ShopSystem.get_pokemon_purchase_level(10) == ShopService.PURCHASED_POKEMON_MIN_LEVEL, "A floor-price Pokemon should arrive at Lv. 5.")
 	_check(ShopSystem.get_pokemon_purchase_level(150) == ShopService.PURCHASED_POKEMON_MAX_LEVEL, "A premium Pokemon should arrive at Lv. 20.")
 
 	var balance_before := EconomySystem.get_balance()
-	var item_purchase := ShopSystem.buy_item("potion")
-	_check(bool(item_purchase.get("ok", false)), "A funded item purchase should succeed.")
-	_check(InventorySystem.get_item_count("potion") == 1, "Purchased items should enter InventorySystem.")
-	_check(EconomySystem.get_balance() == balance_before - 20, "ShopSystem should spend through EconomySystem.")
+	var hidden_item_purchase := ShopSystem.buy_item("potion")
+	_check(
+		not bool(hidden_item_purchase.get("ok", true))
+		and EconomySystem.get_balance() == balance_before
+		and InventorySystem.get_item_count("potion") == 0,
+		"A known but unimplemented item should stay hidden and reject direct purchase."
+	)
+	var item_purchase := ShopSystem.buy_item(InventoryService.RARE_CANDY_ITEM_KEY)
+	_check(bool(item_purchase.get("ok", false)), "A funded Rare Candy purchase should succeed.")
+	_check(
+		InventorySystem.get_item_count(InventoryService.RARE_CANDY_ITEM_KEY) == 1,
+		"A purchased Rare Candy should enter InventorySystem."
+	)
+	_check(EconomySystem.get_balance() == balance_before - 1_000, "ShopSystem should spend through EconomySystem.")
 
 	var gift := InventorySystem.claim_unique_item("domain-smoke-exp-share", InventoryService.XP_SHARE_ITEM_KEY)
 	var repeated_gift := InventorySystem.claim_unique_item("domain-smoke-exp-share", InventoryService.XP_SHARE_ITEM_KEY)
 	_check(bool(gift.get("ok", false)) and bool((gift.get("summary", {}) as Dictionary).get("newly_claimed", false)), "A stable world gift should be claimable once.")
 	_check(bool(repeated_gift.get("ok", false)) and not bool((repeated_gift.get("summary", {}) as Dictionary).get("newly_claimed", true)), "Repeating a claimed gift should not duplicate it.")
 	_check(InventorySystem.get_item_count(InventoryService.XP_SHARE_ITEM_KEY) == 1, "A repeated gift should leave one item in the bag.")
+	var candy_pokemon := CollectionSystem.add_pokemon(10, 5, 0.55, -1, 0)
+	var candy_pcl_id := String(candy_pokemon.get("pclID", ""))
+	var previous_stats := candy_pokemon.get("instanceStats", {}) as Dictionary
+	var previous_level := int(previous_stats.get("level", 0))
+	var expected_next_xp := CreatureSystem.get_experience_for_level(10, previous_level + 1)
+	var candy_result := InventorySystem.use_rare_candy_on_pokemon(candy_pcl_id)
+	var leveled_pcl := CollectionSystem.get_pcl(candy_pcl_id)
+	var leveled_stats := leveled_pcl.get("instanceStats", {}) as Dictionary
+	_check(
+		bool(candy_result.get("ok", false))
+		and int(leveled_stats.get("level", 0)) == previous_level + 1
+		and int(leveled_stats.get("currentXp", -1)) == expected_next_xp
+		and is_equal_approx(float(leveled_stats.get("health", -1.0)), 0.55)
+		and InventorySystem.get_item_count(InventoryService.RARE_CANDY_ITEM_KEY) == 0,
+		"Rare Candy should consume once, reach the exact next-level XP threshold, and preserve health."
+	)
 
 	var party := CollectionSystem.get_party()
 	if party.is_empty():
-		_check(false, "The held-item fixture requires the existing test party.")
+		_check(false, "The item-effect fixture requires the existing test party.")
 	else:
 		var pcl_id := String(party[0].get("pclID", ""))
 		var equipped := InventorySystem.give_item_to_pokemon(InventoryService.XP_SHARE_ITEM_KEY, pcl_id)
 		_check(bool(equipped.get("ok", false)) and CollectionSystem.get_held_item(pcl_id) == InventoryService.XP_SHARE_ITEM_KEY, "Equipping should atomically transfer an item from the bag.")
 		var taken := InventorySystem.take_held_item_from_pokemon(pcl_id)
 		_check(bool(taken.get("ok", false)) and CollectionSystem.get_held_item(pcl_id).is_empty(), "Taking a held item should return it to the bag.")
+	var max_level_pokemon := CollectionSystem.add_pokemon(10, 100, 1.0, -1, 0)
+	_check(not max_level_pokemon.is_empty(), "The Rare Candy cap fixture should be created.")
+	_check(
+		bool(InventorySystem.add_item(InventoryService.RARE_CANDY_ITEM_KEY).get("ok", false)),
+		"The Rare Candy cap fixture should receive one candy."
+	)
+	var capped_candy_result := InventorySystem.use_rare_candy_on_pokemon(
+		String(max_level_pokemon.get("pclID", ""))
+	)
+	_check(
+		not bool(capped_candy_result.get("ok", true))
+		and InventorySystem.get_item_count(InventoryService.RARE_CANDY_ITEM_KEY) == 1,
+		"Rare Candy should not be consumed by a Lv. 100 Pokemon."
+	)
+	InventorySystem.discard_item(InventoryService.RARE_CANDY_ITEM_KEY)
 
 	var collection_size := CollectionSystem.get_collection_size()
 	var pokemon_purchase := ShopSystem.buy_pokemon(10)
@@ -139,7 +189,7 @@ func _run() -> void:
 	ChallengeProgressionSystem.load_save_data(original_challenge)
 
 	if _failures.is_empty():
-		print("Domain systems smoke test passed: economy, shop, inventory, loot boxes, trainer jackpots, 50-area catalog, route locks, badges, and champion progression verified.")
+		print("Domain systems smoke test passed: implemented-item storefront, Rare Candy, inventory, loot boxes, trainer jackpots, 50-area catalog, route locks, badges, and champion progression verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

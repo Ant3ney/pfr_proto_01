@@ -34,6 +34,9 @@ observes real `CollectionSystem.collection_changed` level increases and queues
 every learnset threshold crossed, including several levels or several moves at
 one level. It queues only battle-supported PCLs with a `battleProfile`, skips a
 move already equipped, and caps persisted pending work at 512 requests.
+Rare Candy uses the same CollectionSystem XP mutation and signal, so its single
+level increase crosses the ordinary learnset boundary rather than bypassing
+move learning.
 
 Equipped moves remain owned by `CollectionSystem`. If the Pokemon has fewer
 than four moves, the system appends the learned move automatically through

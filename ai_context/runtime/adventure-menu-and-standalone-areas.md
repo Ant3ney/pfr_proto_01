@@ -78,11 +78,16 @@ PokeAPI item rows and
 [`generate_shop_catalogs.py`](../../tools/catalogs/generate_shop_catalogs.py).
 The generator, not UI code, is the price authority.
 
-Basic items fit the low-cash economy (`Potion` and `Poke Ball` cost `$20`), and
-`exp-share` has a fixed `$100,000` price. Direct Pokémon purchases cost at least
-`$500` and arrive in PC storage from Lv. 5 through Lv. 20 using the one-way
-logarithmic price projection in `ShopSystem`. Later evolution stages retain the
-catalog generator's monotonic price constraint.
+The active item storefront exposes exactly `rare-candy` for `$1,000` and
+`exp-share` for `$100,000`, the two items with implemented runtime effects.
+`ShopSystem.get_item_catalog()` returns only those offers and `buy_item()` also
+rejects direct requests for hidden work-in-progress items. The full generated
+metadata remains available through `get_known_item_catalog()` so an older save
+that already owns a hidden item stays valid and can still display or discard
+it. Direct Pokémon purchases cost at least `$500` and arrive in PC storage from
+Lv. 5 through Lv. 20 using the one-way logarithmic price projection in
+`ShopSystem`. Later evolution stages retain the catalog generator's monotonic
+price constraint.
 
 [`LootBoxCatalog`](../../game/economy/loot_boxes/loot_box_catalog.gd) owns the
 six tier offers and the common/high-quality pools. Every tier uses the same

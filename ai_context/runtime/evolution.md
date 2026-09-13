@@ -49,6 +49,11 @@ The ordinary collection payload already persists the evolved Pokemon ID and
 reconciled stats/profile, so evolution requires no autosave schema field or
 migration.
 
+Rare Candy raises the selected PCL through the ordinary CollectionSystem level
+path. If that level reaches a direct evolution threshold, the existing derived
+Pokemon-menu evolution action becomes available; the candy never evolves the
+Pokemon automatically.
+
 ## Player and battle presentation
 
 The Party & PC detail view lists every direct target and its level. Once at

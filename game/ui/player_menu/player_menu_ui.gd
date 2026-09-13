@@ -47,6 +47,7 @@ var _party_slot_picker: OptionButton
 var _item_amount_row: HBoxContainer
 var _item_amount: SpinBox
 var _held_item_action: Button
+var _rare_candy_action: Button
 var _evolve_action: Button
 var _primary_action: Button
 var _secondary_action: Button
@@ -379,7 +380,10 @@ func select_tab(tab: String) -> void:
 			_status.text = "Move Pokémon between the party and PC, evolve them, or manage their held item."
 		TAB_BAG:
 			_search.placeholder_text = "Search the items you own…"
-			_status.text = "The bag uses the same persistent inventory as the shop."
+			_status.text = (
+				"Use Rare Candy and Exp. Share from a selected Pokemon in Party & PC. "
+				+ "Every owned stack can also be discarded here."
+			)
 		TAB_POKEDEX:
 			_search.placeholder_text = "Search all 1,025 Pokemon…"
 			_status.text = "Owned entries are derived from your complete collection, including PC storage."
@@ -461,6 +465,29 @@ func take_held_item_from_pokemon(pcl_id: String) -> bool:
 		String(summary.get("item_name", "the held item")),
 		pokemon_name,
 	]
+	_refresh_entries(pcl_id)
+	return true
+
+
+func use_rare_candy_on_pokemon(pcl_id: String) -> bool:
+	var pcl := CollectionSystem.get_pcl(pcl_id)
+	if pcl.is_empty():
+		_status.text = CollectionSystem.get_last_error()
+		return false
+	var pokemon_name := _pokemon_name(int(pcl.get("pokemonId", 0)))
+	var result := InventorySystem.use_rare_candy_on_pokemon(pcl_id)
+	if not bool(result.get("ok", false)):
+		_status.text = String(result.get("error", "The Rare Candy could not be used."))
+		return false
+	var summary := result.get("summary", {}) as Dictionary
+	_status.text = "%s grew from Lv. %d to Lv. %d. %d Rare Candies remain." % [
+		pokemon_name,
+		int(summary.get("previous_level", 0)),
+		int(summary.get("level", 0)),
+		int(summary.get("remaining", 0)),
+	]
+	if bool(summary.get("evolution_available", false)):
+		_status.text += " An evolution is now available."
 	_refresh_entries(pcl_id)
 	return true
 
@@ -744,13 +771,26 @@ func _build_interface() -> void:
 	_held_item_action.pressed.connect(_activate_held_item)
 	detail_column.add_child(_held_item_action)
 
+	var progression_actions := HBoxContainer.new()
+	progression_actions.name = "PokemonProgressionActions"
+	progression_actions.add_theme_constant_override("separation", 8)
+	detail_column.add_child(progression_actions)
+
+	_rare_candy_action = Button.new()
+	_rare_candy_action.name = "RareCandyAction"
+	_rare_candy_action.custom_minimum_size = Vector2(0.0, 42.0)
+	_rare_candy_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_rare_candy_action.visible = false
+	_rare_candy_action.pressed.connect(_activate_rare_candy)
+	progression_actions.add_child(_rare_candy_action)
+
 	_evolve_action = Button.new()
 	_evolve_action.name = "EvolutionAction"
 	_evolve_action.custom_minimum_size = Vector2(0.0, 42.0)
 	_evolve_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_evolve_action.visible = false
 	_evolve_action.pressed.connect(_activate_evolution)
-	detail_column.add_child(_evolve_action)
+	progression_actions.add_child(_evolve_action)
 
 	var action_row := HBoxContainer.new()
 	action_row.name = "Actions"
@@ -1362,7 +1402,7 @@ func _configure_filter() -> void:
 		TAB_BAG:
 			var owned_categories: Array[String] = []
 			var inventory := InventorySystem.get_item_inventory()
-			for item in ShopSystem.get_item_catalog():
+			for item in ShopSystem.get_known_item_catalog():
 				var item_key := String(item.get("key", item.get("slug", "")))
 				if int(inventory.get(item_key, 0)) <= 0:
 					continue
@@ -1475,7 +1515,7 @@ func _pcl_entry(pcl: Dictionary, location: String) -> Dictionary:
 func _build_bag_entries() -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
 	var inventory := InventorySystem.get_item_inventory()
-	for item in ShopSystem.get_item_catalog():
+	for item in ShopSystem.get_known_item_catalog():
 		var item_key := String(item.get("key", item.get("slug", "")))
 		var quantity := int(inventory.get(item_key, 0))
 		if quantity <= 0:
@@ -1691,6 +1731,7 @@ func _hide_actions() -> void:
 	_party_slot_row.visible = false
 	_item_amount_row.visible = false
 	_held_item_action.visible = false
+	_rare_candy_action.visible = false
 	_evolve_action.visible = false
 	_primary_action.visible = false
 	_secondary_action.visible = false
@@ -1736,6 +1777,18 @@ func _configure_party_actions() -> void:
 		_held_item_action.disabled = (
 			InventorySystem.get_item_count(InventorySystem.XP_SHARE_ITEM_KEY) <= 0
 		)
+	var stats := pcl.get("instanceStats", {}) as Dictionary
+	var level := int(stats.get("level", 1))
+	var rare_candy_count := InventorySystem.get_item_count(
+		InventorySystem.RARE_CANDY_ITEM_KEY
+	)
+	_rare_candy_action.visible = rare_candy_count > 0
+	_rare_candy_action.disabled = level >= CollectionSystem.MAX_LEVEL
+	_rare_candy_action.text = (
+		"Rare Candy unavailable at Lv. 100"
+		if level >= CollectionSystem.MAX_LEVEL
+		else "Use Rare Candy (x%d)" % rare_candy_count
+	)
 	var evolution_options := CollectionSystem.get_evolution_options(pcl_id)
 	_evolve_action.visible = not evolution_options.is_empty()
 	if evolution_options.size() > 1:
@@ -1818,6 +1871,12 @@ func _activate_held_item() -> void:
 		give_xp_share_to_pokemon(pcl_id)
 	else:
 		take_held_item_from_pokemon(pcl_id)
+
+
+func _activate_rare_candy() -> void:
+	if String(_selected_entry.get("kind", "")) != "pcl":
+		return
+	use_rare_candy_on_pokemon(String(_selected_entry.get("pcl_id", "")))
 
 
 func _close_evolution_prompt() -> void:
@@ -1946,13 +2005,10 @@ func _evolution_level_summary(pokemon_id: int, level: int) -> String:
 
 
 func _item_details(entry: Dictionary) -> String:
-	var item_key := String(entry.get("item_key", ""))
-	var effect_note := (
-		"Give this to a Pokémon from the Pokémon Party & PC tab. A party holder that "
-		+ "does not enter battle receives half of its normal knockout XP."
-		if item_key == InventorySystem.XP_SHARE_ITEM_KEY
-		else "This item's battle effect is not wired yet; it can still be stored or discarded."
-	)
+	var effect_note := String(entry.get(
+		"gameplay_usage",
+		"This legacy item is not currently usable and is no longer sold."
+	))
 	return (
 		"[font_size=23][b]%s[/b][/font_size]\n\n"
 		+ "[b]Quantity:[/b] %d\n[b]Category:[/b] %s\n[b]Shop value:[/b] %s\n\n%s\n\n"
@@ -2038,7 +2094,7 @@ func _pokemon_slug(pokemon_id: int) -> String:
 
 
 func _item_name(item_key: String) -> String:
-	for item in ShopSystem.get_item_catalog():
+	for item in ShopSystem.get_known_item_catalog():
 		if String(item.get("key", item.get("slug", ""))) == item_key:
 			return String(item.get("name", item_key.replace("-", " ").capitalize()))
 	return item_key.replace("-", " ").capitalize()

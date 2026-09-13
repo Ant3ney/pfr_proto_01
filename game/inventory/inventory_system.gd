@@ -8,6 +8,7 @@ signal inventory_changed
 
 const MAX_ITEM_QUANTITY := 999_999
 const XP_SHARE_ITEM_KEY := "exp-share"
+const RARE_CANDY_ITEM_KEY := "rare-candy"
 
 var _item_quantities: Dictionary = {}
 var _claimed_gifts: Dictionary = {}
@@ -119,6 +120,66 @@ func discard_item(item_key: String, quantity := 1) -> Dictionary:
 			"name": String(item.get("name", normalized_key)),
 			"quantity": quantity,
 			"remaining": remaining,
+		},
+	}
+
+
+## Consumes one Rare Candy only after the selected captured Pokemon has been
+## advanced to the exact XP threshold for its next level. CollectionSystem's
+## ordinary change signal keeps move learning, evolution, and autosave aligned.
+func use_rare_candy_on_pokemon(pcl_id: String) -> Dictionary:
+	_last_error = ""
+	if get_item_count(RARE_CANDY_ITEM_KEY) <= 0:
+		return _failure("You do not have a Rare Candy in the bag.")
+	var normalized_pcl_id := pcl_id.strip_edges()
+	var pcl := CollectionSystem.get_pcl(normalized_pcl_id)
+	if pcl.is_empty():
+		return _failure(CollectionSystem.get_last_error())
+	var stats := pcl.get("instanceStats", {}) as Dictionary
+	var previous_level := int(stats.get("level", 0))
+	if previous_level >= CollectionSystem.MAX_LEVEL:
+		return _failure("Rare Candy cannot be used on a Lv. 100 Pokemon.")
+	var pokemon_id := int(pcl.get("pokemonId", 0))
+	var current_xp := int(stats.get("currentXp", -1))
+	var next_level_xp := CreatureSystem.get_experience_for_level(
+		pokemon_id,
+		previous_level + 1
+	)
+	if (
+		next_level_xp <= current_xp
+		or CreatureSystem.get_level_for_experience(pokemon_id, next_level_xp)
+		!= previous_level + 1
+	):
+		return _failure("The next level could not be resolved for that Pokemon.")
+	var award := CollectionSystem.grant_experience(
+		normalized_pcl_id,
+		next_level_xp - current_xp
+	)
+	if award.is_empty():
+		return _failure(CollectionSystem.get_last_error())
+	var remaining := get_item_count(RARE_CANDY_ITEM_KEY) - 1
+	if remaining <= 0:
+		_item_quantities.erase(RARE_CANDY_ITEM_KEY)
+	else:
+		_item_quantities[RARE_CANDY_ITEM_KEY] = remaining
+	_emit_change()
+	var item := ShopSystem.get_item_offer(RARE_CANDY_ITEM_KEY)
+	return {
+		"ok": true,
+		"summary": {
+			"kind": "rare_candy_used",
+			"id": RARE_CANDY_ITEM_KEY,
+			"name": String(item.get("name", "Rare Candy")),
+			"pcl_id": normalized_pcl_id,
+			"pokemon_id": pokemon_id,
+			"previous_level": previous_level,
+			"level": int(award.get("level", previous_level + 1)),
+			"xp_granted": int(award.get("appliedAmount", 0)),
+			"remaining": remaining,
+			"evolution_available": bool(award.get("evolutionAvailable", false)),
+			"evolution_options": (
+				award.get("evolutionOptions", []) as Array
+			).duplicate(true),
 		},
 	}
 

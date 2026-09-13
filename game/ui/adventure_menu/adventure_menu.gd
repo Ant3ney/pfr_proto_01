@@ -1094,14 +1094,14 @@ func _item_details(entry: Dictionary) -> String:
 	return (
 		"[font_size=26][b]%s[/b][/font_size]\n\n"
 		+ "[b]Price:[/b] %s\n[b]Category:[/b] %s\n[b]Owned:[/b] %d\n\n%s\n\n"
-		+ "[color=#e4b663]Bag ownership is persistent, but using item "
-		+ "effects is intentionally deferred.[/color]"
+		+ "[color=#e4b663]%s[/color]"
 	) % [
 		String(entry.get("name", "Item")),
 		EconomySystem.format_money(int(entry.get("price", 0))),
 		String(entry.get("category", "miscellaneous")).replace("-", " ").capitalize(),
 		owned,
 		String(entry.get("description", "No description available.")),
+		String(entry.get("gameplay_usage", "This item is not currently usable.")),
 	]
 
 

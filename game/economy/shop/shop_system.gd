@@ -14,8 +14,24 @@ const PURCHASED_POKEMON_MIN_LEVEL := 5
 const PURCHASED_POKEMON_MAX_LEVEL := 20
 const PURCHASED_POKEMON_LEVEL_PRICE_FLOOR := 500
 const PURCHASED_POKEMON_LEVEL_PRICE_CAP := 2_000_000_000
+const PURCHASABLE_ITEM_KEYS: Array[String] = ["rare-candy", "exp-share"]
+const ITEM_GAMEPLAY_USAGE := {
+	"rare-candy": (
+		"Use it on a selected Pokemon from the Pokemon Party & PC tab to raise "
+		+ "that Pokemon by exactly one level. It cannot be used at Lv. 100."
+	),
+	"exp-share": (
+		"Give it to a selected Pokemon from the Pokemon Party & PC tab. A party "
+		+ "holder that sits out receives half of its normal knockout XP."
+	),
+}
+const ITEM_GAMEPLAY_DESCRIPTIONS := {
+	"rare-candy": "Raises one selected Pokemon by exactly one level.",
+	"exp-share": "Lets its holder earn knockout XP while sitting out a battle.",
+}
 
-var _item_catalog: Array[Dictionary] = []
+var _known_item_catalog: Array[Dictionary] = []
+var _store_item_catalog: Array[Dictionary] = []
 var _pokemon_catalog: Array[Dictionary] = []
 var _items_by_key: Dictionary = {}
 var _pokemon_by_id: Dictionary = {}
@@ -29,7 +45,13 @@ func _ready() -> void:
 
 
 func get_item_catalog() -> Array[Dictionary]:
-	return _item_catalog.duplicate(true)
+	return _store_item_catalog.duplicate(true)
+
+
+## Returns metadata for every recognized item so old saves and owned WIP items
+## remain valid even though only implemented items are offered by the store.
+func get_known_item_catalog() -> Array[Dictionary]:
+	return _known_item_catalog.duplicate(true)
 
 
 func get_pokemon_catalog() -> Array[Dictionary]:
@@ -42,6 +64,10 @@ func get_loot_box_catalog() -> Array[Dictionary]:
 
 func has_item(item_key: String) -> bool:
 	return _items_by_key.has(item_key.strip_edges())
+
+
+func is_item_purchasable(item_key: String) -> bool:
+	return item_key.strip_edges() in PURCHASABLE_ITEM_KEYS
 
 
 func get_item_offer(item_key: String) -> Dictionary:
@@ -70,6 +96,10 @@ func buy_item(item_key: String) -> Dictionary:
 	var item := get_item_offer(normalized_key)
 	if item.is_empty():
 		return _purchase_failure("Unknown shop item: %s" % normalized_key)
+	if not is_item_purchasable(normalized_key):
+		return _purchase_failure(
+			"That item is not for sale because its gameplay effect is still in development."
+		)
 	var price := int(item.get("price", 0))
 	if not EconomySystem.can_afford(price):
 		return _purchase_failure(EconomySystem.get_last_error() if not EconomySystem.get_last_error().is_empty() else (
@@ -213,7 +243,8 @@ func get_last_error() -> String:
 
 
 func _load_catalogs() -> void:
-	_item_catalog.clear()
+	_known_item_catalog.clear()
+	_store_item_catalog.clear()
 	_pokemon_catalog.clear()
 	_items_by_key.clear()
 	_pokemon_by_id.clear()
@@ -230,8 +261,18 @@ func _load_catalogs() -> void:
 			if _items_by_key.has(catalog_key):
 				catalog_key = "%s#%d" % [slug, int(row.get("id", 0))]
 			row["key"] = catalog_key
-			_item_catalog.append(row)
+			if ITEM_GAMEPLAY_USAGE.has(catalog_key):
+				row["description"] = String(ITEM_GAMEPLAY_DESCRIPTIONS[catalog_key])
+				row["gameplay_usage"] = String(ITEM_GAMEPLAY_USAGE[catalog_key])
+			_known_item_catalog.append(row)
 			_items_by_key[catalog_key] = row
+	for item_key in PURCHASABLE_ITEM_KEYS:
+		if not _items_by_key.has(item_key):
+			push_error("Implemented shop item is missing from the catalog: %s" % item_key)
+			continue
+		_store_item_catalog.append(
+			(_items_by_key[item_key] as Dictionary).duplicate(true)
+		)
 	var pokemon_rows: Variant = _read_json_dictionary(POKEMON_CATALOG_PATH).get("pokemon", [])
 	if typeof(pokemon_rows) == TYPE_ARRAY:
 		for row_value: Variant in pokemon_rows as Array:
@@ -243,7 +284,11 @@ func _load_catalogs() -> void:
 				continue
 			_pokemon_catalog.append(row)
 			_pokemon_by_id[pokemon_id] = row
-	if _item_catalog.is_empty() or _pokemon_catalog.is_empty():
+	if (
+		_store_item_catalog.size() != PURCHASABLE_ITEM_KEYS.size()
+		or _known_item_catalog.is_empty()
+		or _pokemon_catalog.is_empty()
+	):
 		push_error("Shop catalogs could not be loaded.")
 
 

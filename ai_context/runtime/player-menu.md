@@ -67,13 +67,21 @@ battle party members only through the organizer.
 ## Bag and Pokedex
 
 The Bag lists only owned item stacks from `InventorySystem`'s persisted
-`item_quantities`, with search and category filters. Discards require a quantity
-and confirmation, then call `InventorySystem.discard_item()`. Most item
-effects remain outside this screen, but the Pokemon detail panel can give
-an owned Exp. Share to the selected PCL or take its held item back. A give
-removes one item from the bag, a take returns it, and replacing an item returns
-the previous item in the same synchronous transaction. Party/PC moves retain
-the held item because it belongs to the PCL rather than its slot.
+`item_quantities`, with search and category filters. It reads the complete known
+item metadata so unsupported items retained by an older save remain visible
+even though the store no longer sells them. Discards require a quantity and
+confirmation, then call `InventorySystem.discard_item()`.
+
+Implemented item effects are used against a selected PCL on the Pokemon detail
+panel. An owned Rare Candy exposes a use action that consumes one only after
+`CollectionSystem` advances the target to the exact XP threshold for its next
+level; health is preserved, Lv. 100 rejects use without consumption, and the
+ordinary collection signal drives move learning, evolution eligibility, and
+autosave. The Exp. Share action gives the held item to the selected PCL or takes
+its held item back. A give removes one item from the bag, a take returns it, and
+replacing an item returns the previous item in the same synchronous transaction.
+Party/PC moves retain the held item because it belongs to the PCL rather than
+its slot.
 
 The Pokedex browses all 1,025 default entries in the committed shop Pokémon
 catalog. Owned counts are derived from the complete collection,
