@@ -5,8 +5,14 @@ extends Node
 
 signal reward_granted(summary: Dictionary)
 
+const TRAINER_JACKPOT_CHANCE := 0.10
+const TRAINER_JACKPOT_MULTIPLIER := 20
+
+var _reward_rng := RandomNumberGenerator.new()
+
 
 func _ready() -> void:
+	_reward_rng.randomize()
 	if not BattleSystem.battle_ended.is_connected(_on_battle_ended):
 		BattleSystem.battle_ended.connect(_on_battle_ended)
 
@@ -21,10 +27,18 @@ func _on_battle_ended(result: Dictionary) -> void:
 	var reason := String(result.get("reason", ""))
 	if winner == "player" and area != null:
 		ChallengeProgressionSystem.record_encounter_victory(encounter_id)
-	var requested_reward := _calculate_reward(area, encounter_id, winner, reason)
+	var normal_reward := _calculate_reward(area, encounter_id, winner, reason)
+	var payout := _resolve_payout(
+		normal_reward,
+		String(launch_data.get("encounter_type", ""))
+	)
+	var requested_reward := int(payout.get("amount", normal_reward))
 	var granted_reward := EconomySystem.grant_money(requested_reward)
 	var summary := {
 		"amount": granted_reward,
+		"normal_amount": normal_reward,
+		"jackpot": bool(payout.get("jackpot", false)),
+		"payout_multiplier": int(payout.get("multiplier", 1)),
 		"winner": winner,
 		"reason": reason,
 		"encounter_id": encounter_id,
@@ -33,6 +47,31 @@ func _on_battle_ended(result: Dictionary) -> void:
 	}
 	EconomySystem.record_battle_reward(summary)
 	reward_granted.emit(summary.duplicate(true))
+
+
+func _resolve_payout(normal_reward: int, encounter_type: String) -> Dictionary:
+	if normal_reward <= 0 or encounter_type.strip_edges().to_lower() != "trainer":
+		return _apply_trainer_jackpot(normal_reward, encounter_type, 1.0)
+	return _apply_trainer_jackpot(normal_reward, encounter_type, _reward_rng.randf())
+
+
+func _apply_trainer_jackpot(
+	normal_reward: int,
+	encounter_type: String,
+	roll: float
+) -> Dictionary:
+	var jackpot := (
+		normal_reward > 0
+		and encounter_type.strip_edges().to_lower() == "trainer"
+		and roll >= 0.0
+		and roll < TRAINER_JACKPOT_CHANCE
+	)
+	var multiplier := TRAINER_JACKPOT_MULTIPLIER if jackpot else 1
+	return {
+		"amount": normal_reward * multiplier,
+		"jackpot": jackpot,
+		"multiplier": multiplier,
+	}
 
 
 func _calculate_reward(

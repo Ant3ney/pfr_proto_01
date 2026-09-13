@@ -244,8 +244,12 @@ remains the editable visual reference.
 Route battle wins follow the quadratic curve from the `$20` Route 0 baseline to
 `$94,610` at Route 39. Gym wins pay `$200` through `$6,000`; the Elite Four and
 Champion pay `$8,000` through `$12,000`. A non-forfeit tie pays 25%, a loss pays
-10%, and a forfeit pays zero. Battles not found in the standalone catalog use
-the `$20` beginner win baseline.
+10%, and a forfeit pays zero. Each trainer battle with a positive payout has an
+independent 10% chance to multiply that outcome's normal payout by 20; wild
+battles and zero-payout forfeits are ineligible. The saved last-reward summary
+records the normal amount, applied multiplier, and jackpot status so the
+Adventure Menu can identify the bonus. Battles not found in the standalone
+catalog use the `$20` beginner win baseline.
 
 `ProgressionAutosave` schema 6 persists economy, inventory, and challenge
 progression as independent sections. It migrates schema 1–5 saves by splitting

@@ -1176,9 +1176,15 @@ func _destination_details(entry: Dictionary, heading: String) -> String:
 	var last_reward := EconomySystem.get_last_battle_reward()
 	var reward_text := ""
 	if not last_reward.is_empty():
-		reward_text = "\n\n[b]Last battle payout:[/b] %s against %s" % [
+		var jackpot_text := (
+			" [color=#ffd166][b](20x trainer jackpot!)[/b][/color]"
+			if bool(last_reward.get("jackpot", false))
+			else ""
+		)
+		reward_text = "\n\n[b]Last battle payout:[/b] %s against %s%s" % [
 			EconomySystem.format_money(int(last_reward.get("amount", 0))),
 			String(last_reward.get("opponent", "an opponent")),
+			jackpot_text,
 		]
 	var route_progress_text := ""
 	if _category == CATEGORY_ROUTES:

@@ -99,6 +99,39 @@ func _run() -> void:
 	_check(ChallengeProgressionSystem.is_champion_completed(), "The champion victory should complete the challenge.")
 	var route_one_reward := int(BattleRewardSystem.call("_calculate_reward", route_one, "route-01-trainer-01", "player", "all_pokemon_fainted"))
 	_check(route_one_reward == 80, "Route 1's battle reward should preserve the scaled $80 payout.")
+	var jackpot_payout := BattleRewardSystem.call(
+		"_apply_trainer_jackpot", route_one_reward, "trainer", 0.099999
+	) as Dictionary
+	_check(
+		int(jackpot_payout.get("amount", 0)) == route_one_reward * 20
+		and bool(jackpot_payout.get("jackpot", false))
+		and int(jackpot_payout.get("multiplier", 0)) == 20,
+		"A trainer jackpot roll below 10% should pay exactly 20 times the normal reward."
+	)
+	var ordinary_payout := BattleRewardSystem.call(
+		"_apply_trainer_jackpot", route_one_reward, "trainer", 0.1
+	) as Dictionary
+	_check(
+		int(ordinary_payout.get("amount", 0)) == route_one_reward
+		and not bool(ordinary_payout.get("jackpot", true)),
+		"The 10% boundary should begin the ordinary trainer-payout range."
+	)
+	var wild_payout := BattleRewardSystem.call(
+		"_apply_trainer_jackpot", route_one_reward, "wild", 0.0
+	) as Dictionary
+	_check(
+		int(wild_payout.get("amount", 0)) == route_one_reward
+		and not bool(wild_payout.get("jackpot", true)),
+		"Wild battles should never receive the trainer jackpot."
+	)
+	var forfeit_payout := BattleRewardSystem.call(
+		"_apply_trainer_jackpot", 0, "trainer", 0.0
+	) as Dictionary
+	_check(
+		int(forfeit_payout.get("amount", -1)) == 0
+		and not bool(forfeit_payout.get("jackpot", true)),
+		"A zero-payout trainer battle should remain ineligible for a jackpot."
+	)
 
 	CollectionSystem.load_save_data(original_collection)
 	EconomySystem.load_save_data(original_economy)
@@ -106,7 +139,7 @@ func _run() -> void:
 	ChallengeProgressionSystem.load_save_data(original_challenge)
 
 	if _failures.is_empty():
-		print("Domain systems smoke test passed: economy, shop, inventory, loot boxes, rewards, 50-area catalog, route locks, badges, and champion progression verified.")
+		print("Domain systems smoke test passed: economy, shop, inventory, loot boxes, trainer jackpots, 50-area catalog, route locks, badges, and champion progression verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:
