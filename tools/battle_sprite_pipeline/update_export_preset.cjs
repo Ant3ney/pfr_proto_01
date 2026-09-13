@@ -15,6 +15,7 @@ const catalogPath = path.join(
   'generated',
   'catalog.json'
 );
+const managedPresetNames = ['WebBuild', 'Linux', 'Windows'];
 
 const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 if (catalog.complete !== true || !Array.isArray(catalog.entries) || catalog.entries.length !== 2106) {
@@ -23,7 +24,27 @@ if (catalog.complete !== true || !Array.isArray(catalog.entries) || catalog.entr
 
 const preset = fs.readFileSync(presetPath, 'utf8');
 const exportLinePattern = /^export_files=PackedStringArray\((.*)\)$/m;
-const match = preset.match(exportLinePattern);
+
+function findPresetBounds(source, presetName) {
+  const headers = [...source.matchAll(/^\[preset\.\d+\]\s*$/gm)];
+  for (let index = 0; index < headers.length; index += 1) {
+    const start = headers[index].index;
+    const end = index + 1 < headers.length ? headers[index + 1].index : source.length;
+    const block = source.slice(start, end);
+    if (block.includes(`\nname=${JSON.stringify(presetName)}\n`)) {
+      return { start, end, block };
+    }
+  }
+  throw new Error(`${presetName} export preset was not found.`);
+}
+
+function updatePresetBlock(source, presetName, transform) {
+  const { start, end, block } = findPresetBounds(source, presetName);
+  return source.slice(0, start) + transform(block) + source.slice(end);
+}
+
+const webPreset = findPresetBounds(preset, 'WebBuild').block;
+const match = webPreset.match(exportLinePattern);
 if (!match) throw new Error('WebBuild export_files line was not found.');
 
 const existing = [...match[1].matchAll(/"([^"]+)"/g)].map((entry) => entry[1]);
@@ -81,14 +102,25 @@ const exportLine = `export_files=PackedStringArray(${[...prefix, ...appended]
   .map((file) => JSON.stringify(file))
   .join(', ')})`;
 
-let updated = preset.replace(exportLinePattern, exportLine);
-updated = updated.replace(/^exclude_filter="([^"]*)"$/m, (_line, current) => {
-  const patterns = current.split(',').map((value) => value.trim()).filter(Boolean);
-  for (const pattern of ['source_assets/battle_sprites/*', 'source_assets/battle_sprites/**']) {
-    if (!patterns.includes(pattern)) patterns.push(pattern);
-  }
-  return `exclude_filter=${JSON.stringify(patterns.join(','))}`;
-});
+let updated = preset;
+for (const presetName of managedPresetNames) {
+  updated = updatePresetBlock(updated, presetName, (block) => {
+    if (!exportLinePattern.test(block)) {
+      throw new Error(`${presetName} export_files line was not found.`);
+    }
+    const withFiles = block.replace(exportLinePattern, exportLine);
+    return withFiles.replace(/^exclude_filter="([^"]*)"$/m, (_line, current) => {
+      const patterns = current.split(',').map((value) => value.trim()).filter(Boolean);
+      for (const pattern of ['source_assets/battle_sprites/*', 'source_assets/battle_sprites/**']) {
+        if (!patterns.includes(pattern)) patterns.push(pattern);
+      }
+      return `exclude_filter=${JSON.stringify(patterns.join(','))}`;
+    });
+  });
+}
 
 fs.writeFileSync(presetPath, updated, 'utf8');
-console.log(`WebBuild now selects ${files.length} resources, including ${catalog.entries.length} sprite atlases.`);
+console.log(
+  `${managedPresetNames.join(', ')} now select ${files.length} resources, `
+  + `including ${catalog.entries.length} sprite atlases.`
+);

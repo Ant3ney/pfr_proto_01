@@ -118,3 +118,13 @@ signatures. The build also runs the boot-project smoke test and exact pack
 allowlist. Physical iPhone screen-lock, app-switching, orientation, touch-target,
 memory, airplane-mode, and prolonged-play behavior still requires device testing
 before a high-risk release.
+
+## itch.io release channels
+
+The linked itch.io project is `ant3ney/pokemon-fracture-revolt`. Butler uploads
+the unpacked export directories to `windows`, `linux`, and `html5`; these names
+let itch.io identify each platform. The `Linux` and `Windows` Godot export
+presets use the same selected-resource list as `WebBuild`, kept synchronized by
+`tools/battle_sprite_pipeline/update_export_preset.cjs`. Desktop exports keep
+the executable and PCK separate for patch-efficient Butler updates. The HTML5
+channel receives `build/web/v1` so `index.html` remains at the upload root.
