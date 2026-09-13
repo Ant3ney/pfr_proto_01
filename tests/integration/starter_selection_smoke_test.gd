@@ -253,6 +253,7 @@ func _test_scary_reset_warnings() -> void:
 		"ProgressResetConfirmation", true, false
 	) as ProgressResetConfirmation
 	var warning_message := menu.find_child("ResetWarningMessage", true, false) as Label
+	var warning_title := menu.find_child("ResetWarningTitle", true, false) as Label
 	var final_button := menu.find_child("ConfirmProgressReset", true, false) as Button
 	_check(
 		reset_button != null and reset_button.visible and reset_button.focus_mode != Control.FOCUS_NONE,
@@ -278,7 +279,9 @@ func _test_scary_reset_warnings() -> void:
 	)
 	menu.open_reset_warnings()
 	_check(
-		menu.advance_reset_warning() and menu.get_reset_warning_step() == 2,
+		menu.advance_reset_warning()
+		and menu.get_reset_warning_step() == 2
+		and warning_title.text == "ARE YOU SURE?",
 		"The first Yes should reveal the irreversible-backup warning."
 	)
 	var combined_warning_text := warning_message.text
@@ -292,7 +295,8 @@ func _test_scary_reset_warnings() -> void:
 	menu.advance_reset_warning()
 	_check(
 		menu.advance_reset_warning()
-		and menu.get_reset_warning_step() == 3,
+		and menu.get_reset_warning_step() == 3
+		and warning_title.text == "ARE YOU ABSOLUTELY SURE?",
 		"The second Yes should reveal the linked-cloud replacement warning."
 	)
 	combined_warning_text += " " + warning_message.text

@@ -9,8 +9,8 @@ signal cancelled
 
 const WARNING_TITLES: Array[String] = [
 	"RESET ALL PROGRESS?",
-	"THIS CANNOT BE UNDONE",
-	"REPLACE LOCAL AND CLOUD PROGRESS?",
+	"ARE YOU SURE?",
+	"ARE YOU ABSOLUTELY SURE?",
 ]
 const WARNING_MESSAGES: Array[String] = [
 	(
@@ -22,9 +22,9 @@ const WARNING_MESSAGES: Array[String] = [
 		+ "resetting. Separately exported backup files are not deleted."
 	),
 	(
-		"If cloud saving is linked, the new profile will replace the linked cloud "
-		+ "save after you choose a starter. Older linked copies cannot restore the "
-		+ "progress you are deleting."
+		"This is the final confirmation. Press YES — ERASE EVERYTHING to permanently "
+		+ "remove this progress. If cloud saving is linked, the new profile will "
+		+ "replace the linked cloud save after you choose a starter."
 	),
 ]
 
