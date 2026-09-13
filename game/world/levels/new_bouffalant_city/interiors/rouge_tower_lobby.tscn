@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_door.tscn" id="4_door"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/rouge_clerk_vesper.tscn" id="6_vesper"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/ambient_roaming_navigation.tscn" id="7_ambient_nav"]
 
 [sub_resource type="StandardMaterial3D" id="Material_walnut"]
 albedo_color = Color(0.14, 0.07, 0.045, 1)
@@ -82,6 +84,12 @@ transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 4.67
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/DirectoryCollision" index="0" unique_id=1360432347]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, -0.45)
 shape = SubResource("Shape_directory")
+
+[node name="VesperRoamingNavigation" parent="." instance=ExtResource("7_ambient_nav")]
+position = Vector3(-2.5, 0, 1.4)
+
+[node name="Vesper" parent="Gameplay/Actors" index="0" instance=ExtResource("6_vesper")]
+position = Vector3(-2.5, 0, 1.4)
 
 [node name="ExitSouth" parent="Gameplay/Transitions" index="0" unique_id=1190257815 instance=ExtResource("5_transfer")]
 transform = Transform3D(1.25, 0, 0, 0, 1, 0, 0, 0, 0.85, 0, 0, 4.15)

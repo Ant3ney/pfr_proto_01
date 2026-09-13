@@ -1,0 +1,31 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/resident_base.tscn" id="1_resident"]
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="2_movement"]
+[ext_resource type="Script" path="res://game/actors/npcs/shared/npc_controller.gd" id="3_controller"]
+[ext_resource type="Script" path="res://game/actors/npcs/residents/behaviors/roaming_town_npc_behavior.gd" id="4_behavior"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_collector.tres" id="5_art"]
+
+[sub_resource type="Resource" id="Movement"]
+resource_local_to_scene = true
+script = ExtResource("2_movement")
+move_speed = 1.1
+
+[sub_resource type="Resource" id="Behavior"]
+resource_local_to_scene = true
+script = ExtResource("4_behavior")
+roaming_radius = 0.65
+minimum_pause_seconds = 1.2
+maximum_pause_seconds = 3.0
+speaker_name = "Miko"
+dialog_lines = Array[String](["This annex carries the practical supplies Trainers forget until they need them.", "I compare every label twice before packing my bag."])
+
+[sub_resource type="Resource" id="Controller"]
+resource_local_to_scene = true
+script = ExtResource("3_controller")
+npc_behavior = SubResource("Behavior")
+
+[node name="Miko" instance=ExtResource("1_resident")]
+character_movement = SubResource("Movement")
+controller = SubResource("Controller")
+character_art_asset_pack = ExtResource("5_art")

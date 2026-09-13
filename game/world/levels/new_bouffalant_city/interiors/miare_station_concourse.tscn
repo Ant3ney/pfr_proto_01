@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="4_transfer"]
 [ext_resource type="PackedScene" path="res://game/actors/npcs/residents/stretchman/stretchman.tscn" id="5_stretchman"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/station_commuter_pia.tscn" id="6_pia"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/ambient_roaming_navigation.tscn" id="7_ambient_nav"]
 
 [sub_resource type="StandardMaterial3D" id="Material_walnut"]
 albedo_color = Color(0.16, 0.085, 0.05, 1)
@@ -41,6 +43,17 @@ radial_segments = 20
 [sub_resource type="BoxMesh" id="Mesh_bench"]
 material = SubResource("Material_walnut")
 size = Vector3(3.6, 0.62, 0.78)
+
+[sub_resource type="StandardMaterial3D" id="Material_city_exit_mat"]
+albedo_color = Color(0.78, 0.035, 0.055, 1)
+roughness = 0.74
+emission_enabled = true
+emission = Color(0.22, 0.004, 0.008, 1)
+emission_energy_multiplier = 0.45
+
+[sub_resource type="BoxMesh" id="Mesh_city_exit_mat"]
+material = SubResource("Material_city_exit_mat")
+size = Vector3(2.9, 0.025, 0.9)
 
 [sub_resource type="BoxShape3D" id="Shape_counter"]
 size = Vector3(7.45, 1.12, 1.4)
@@ -84,6 +97,12 @@ mesh = SubResource("Mesh_bench")
 transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, 4.9, 0.31, 0.5)
 mesh = SubResource("Mesh_bench")
 
+[node name="CityExitMat" type="MeshInstance3D" parent="NavigationRegion3D/WorldGeometry/Props" index="6"]
+editor_description = "Visible red mat directly beneath the ExitToCity contact volume. It is visual only and does not own collision."
+position = Vector3(0, 0.0125, 4.68)
+cast_shadow = 0
+mesh = SubResource("Mesh_city_exit_mat")
+
 [node name="FurnitureCollision" type="StaticBody3D" parent="NavigationRegion3D/WorldGeometry/Boundaries" index="0" unique_id=1404661112]
 
 [node name="TicketCounter" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="0" unique_id=1697581964]
@@ -100,6 +119,12 @@ shape = SubResource("Shape_bench")
 
 [node name="Stretchman" parent="Gameplay/Actors" index="0" unique_id=1723258779 instance=ExtResource("5_stretchman")]
 transform = Transform3D(-1, 0, -3.2584137e-07, 0, 1, 0, 3.2584137e-07, 0, -1, 2.8, 0, -1.6)
+
+[node name="PiaRoamingNavigation" parent="." instance=ExtResource("7_ambient_nav")]
+position = Vector3(-1.8, 0, 0.7)
+
+[node name="Pia" parent="Gameplay/Actors" index="1" instance=ExtResource("6_pia")]
+position = Vector3(-1.8, 0, 0.7)
 
 [node name="ExitToCity" parent="Gameplay/Transitions" index="0" unique_id=598450081 instance=ExtResource("4_transfer")]
 transform = Transform3D(1.45, 0, 0, 0, 1, 0, 0, 0, 0.9, 0, 0, 4.68)

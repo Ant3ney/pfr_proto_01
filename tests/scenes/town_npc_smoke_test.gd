@@ -1,7 +1,62 @@
 extends Node
 
 const CITY_PATH := "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+const MIARE_STATION_PATH := (
+	"res://game/world/levels/new_bouffalant_city/interiors/miare_station_concourse.tscn"
+)
 const XP_SHARE_GIFT_ID := "new-bouffalant-lumen-exp-share"
+const INTERIOR_RESIDENT_FIXTURES := [
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/city_hall_interior.tscn",
+		"resident_name": "Elian",
+		"navigation_name": "ElianRoamingNavigation",
+	},
+	{
+		"scene_path": MIARE_STATION_PATH,
+		"resident_name": "Pia",
+		"navigation_name": "PiaRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/gatehouse_interior.tscn",
+		"resident_name": "Ren",
+		"navigation_name": "RenRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/west_tenant_lobby.tscn",
+		"resident_name": "Jo",
+		"navigation_name": "JoRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/north_tenant_lobby.tscn",
+		"resident_name": "Jo",
+		"navigation_name": "JoRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/museum_gallery.tscn",
+		"resident_name": "Sol",
+		"navigation_name": "SolRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_interior.tscn",
+		"resident_name": "Arden",
+		"navigation_name": "ArdenRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/pokemon_center/pokemon_center_annex.tscn",
+		"resident_name": "Miko",
+		"navigation_name": "MikoRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/garage_workshop.tscn",
+		"resident_name": "Dax",
+		"navigation_name": "DaxRoamingNavigation",
+	},
+	{
+		"scene_path": "res://game/world/levels/new_bouffalant_city/interiors/rouge_tower_lobby.tscn",
+		"resident_name": "Vesper",
+		"navigation_name": "VesperRoamingNavigation",
+	},
+]
 
 var _failures: Array[String] = []
 
@@ -32,7 +87,7 @@ func _run() -> void:
 		city.queue_free()
 		_finish(original_collection, original_inventory)
 		return
-	_check(residents.get_child_count() == 7, "The town should contain seven conversational residents.")
+	_check(residents.get_child_count() == 13, "The town should contain thirteen conversational residents.")
 
 	var resident_names: Array[String] = []
 	var roaming_count := 0
@@ -68,19 +123,34 @@ func _run() -> void:
 			or "za_tr0006_secretary" in art_path
 		):
 			women_model_count += 1
+		var static_blocker := _static_blocker_at(resident.global_position, city)
 		_check(
-			_static_blocker_at(resident.global_position, city).is_empty(),
-			"%s should begin on open town ground rather than inside a building collider."
-			% resident.name
+			static_blocker.is_empty(),
+			"%s should begin on open town ground rather than inside a building collider (%s)."
+			% [resident.name, static_blocker]
 		)
 
 	resident_names.sort()
 	_check(
-		resident_names == ["Bram", "Cam", "Iris", "Mara", "Nia", "ResearcherLumen", "Theo"],
+		resident_names == [
+			"Aya",
+			"Bram",
+			"Cam",
+			"Dax",
+			"Elian",
+			"Iris",
+			"Mara",
+			"Nia",
+			"Pia",
+			"Ren",
+			"ResearcherLumen",
+			"Sol",
+			"Theo",
+		],
 		"The authored resident roster should remain stable."
 	)
 	_check(women_model_count >= 3, "At least three town residents should use clearly authored women models.")
-	_check(roaming_count == 3, "Exactly three residents should use the separate local-roaming behavior.")
+	_check(roaming_count == 9, "Exactly nine residents should use the separate local-roaming behavior.")
 	_check(
 		"Team Bastion" in combined_lore
 		and "rival borough" in combined_lore
@@ -164,7 +234,174 @@ func _run() -> void:
 
 	city.queue_free()
 	await get_tree().process_frame
+	await _test_interior_residents()
 	_finish(original_collection, original_inventory)
+
+
+func _test_interior_residents() -> void:
+	for fixture: Dictionary in INTERIOR_RESIDENT_FIXTURES:
+		var scene_path := String(fixture["scene_path"])
+		var resident_name := String(fixture["resident_name"])
+		var navigation_name := String(fixture["navigation_name"])
+		var packed := load(scene_path) as PackedScene
+		_check(packed != null, "%s should load." % scene_path)
+		if packed == null:
+			continue
+
+		var interior := packed.instantiate() as Node3D
+		_check(interior != null, "%s should instantiate." % scene_path)
+		if interior == null:
+			continue
+		add_child(interior)
+		for _frame in 8:
+			await get_tree().physics_frame
+
+		var resident := interior.get_node_or_null(
+			"Gameplay/Actors/%s" % resident_name
+		) as PFRCharacter
+		var navigation := interior.get_node_or_null(navigation_name) as NavigationRegion3D
+		_check(
+			resident != null,
+			"%s should contain the ambient resident %s." % [scene_path, resident_name]
+		)
+		_check(
+			navigation != null and navigation.navigation_mesh != null,
+			"%s should provide %s with a bounded navigation patch."
+			% [scene_path, resident_name]
+		)
+
+		if resident != null:
+			_check(
+				_static_blocker_at(resident.global_position, interior).is_empty(),
+				"%s should begin clear of interior static collision." % resident_name
+			)
+			var behavior := (
+				resident.controller.npc_behavior if resident.controller != null else null
+			)
+			_check(
+				behavior is RoamingTownNpcBehavior,
+				"%s should use bounded roaming behavior indoors." % resident_name
+			)
+			if behavior is RoamingTownNpcBehavior:
+				_verify_interior_roaming_clearance(
+					resident,
+					behavior as RoamingTownNpcBehavior,
+					interior
+				)
+				await _verify_resident_roams(resident, behavior as RoamingTownNpcBehavior)
+
+		if scene_path == MIARE_STATION_PATH:
+			_verify_miare_station_exit_mat(interior)
+
+		interior.queue_free()
+		await get_tree().process_frame
+
+
+func _verify_interior_roaming_clearance(
+	resident: PFRCharacter,
+	roaming: RoamingTownNpcBehavior,
+	interior: Node3D
+) -> void:
+	for direction: Vector3 in [
+		Vector3.FORWARD,
+		Vector3.BACK,
+		Vector3.LEFT,
+		Vector3.RIGHT,
+		Vector3(-1.0, 0.0, -1.0).normalized(),
+		Vector3(1.0, 0.0, -1.0).normalized(),
+		Vector3(-1.0, 0.0, 1.0).normalized(),
+		Vector3(1.0, 0.0, 1.0).normalized(),
+	]:
+		var patrol_point: Vector3 = (
+			resident.global_position + direction * roaming.roaming_radius
+		)
+		var blocker := _static_blocker_at(patrol_point, interior)
+		_check(
+			blocker.is_empty(),
+			"%s's indoor roaming radius should stay clear of static collision (%s)."
+			% [resident.name, blocker]
+		)
+
+
+func _verify_resident_roams(
+	resident: PFRCharacter,
+	roaming: RoamingTownNpcBehavior
+) -> void:
+	var starting_position := resident.global_position
+	roaming.minimum_pause_seconds = 0.0
+	roaming.maximum_pause_seconds = 0.0
+	resident.controller.stop_moving(resident)
+	roaming._origin_initialized = false
+	roaming._moving = false
+	roaming._wait_until_msec = 0
+	roaming.process_behavior(resident, resident.controller)
+	_check(
+		roaming.is_currently_roaming(),
+		"%s should choose a nearby indoor patrol target." % resident.name
+	)
+	var patrol_offset := resident.controller.map_coordinates - roaming.get_roaming_origin()
+	patrol_offset.y = 0.0
+	_check(
+		patrol_offset.length() <= roaming.roaming_radius + 0.01,
+		"%s should remain within its authored indoor roaming radius." % resident.name
+	)
+
+	var moved := false
+	for _frame in 75:
+		await get_tree().physics_frame
+		var planar_offset := resident.global_position - starting_position
+		planar_offset.y = 0.0
+		if planar_offset.length() > 0.08:
+			moved = true
+			break
+	_check(moved, "%s should physically move on its interior navigation patch." % resident.name)
+
+
+func _verify_miare_station_exit_mat(interior: Node3D) -> void:
+	var exit_to_city := interior.get_node_or_null(
+		^"Gameplay/Transitions/ExitToCity"
+	) as Area3D
+	var exit_mat := interior.get_node_or_null(
+		^"NavigationRegion3D/WorldGeometry/Props/CityExitMat"
+	) as MeshInstance3D
+	_check(exit_to_city != null, "Miare Station should retain its ExitToCity transition.")
+	_check(exit_mat != null, "Miare Station should show a red mat beneath its city exit.")
+	if exit_to_city == null or exit_mat == null:
+		return
+
+	var trigger_collision := exit_to_city.get_node_or_null(^"CollisionShape3D") as CollisionShape3D
+	var trigger_shape := (
+		trigger_collision.shape as BoxShape3D if trigger_collision != null else null
+	)
+	var mat_mesh := exit_mat.mesh as BoxMesh
+	var mat_material := mat_mesh.material as StandardMaterial3D if mat_mesh != null else null
+	_check(
+		exit_to_city.position.is_equal_approx(Vector3(0.0, 0.0, 4.68))
+		and exit_to_city.scale.is_equal_approx(Vector3(1.45, 1.0, 0.9))
+		and trigger_collision != null
+		and trigger_collision.position.is_equal_approx(Vector3(0.0, 1.0, 0.0))
+		and trigger_shape != null
+		and trigger_shape.size.is_equal_approx(Vector3(2.0, 2.0, 1.0)),
+		"Adding the station exit affordance must not change its transition collision."
+	)
+	_check(
+		mat_mesh != null
+		and mat_mesh.size.is_equal_approx(Vector3(2.9, 0.025, 0.9))
+		and is_equal_approx(exit_mat.global_position.x, exit_to_city.global_position.x)
+		and is_equal_approx(exit_mat.global_position.z, exit_to_city.global_position.z),
+		"The station exit mat should match and center beneath the transition footprint."
+	)
+	_check(
+		mat_material != null
+		and mat_material.albedo_color.r > 0.6
+		and mat_material.albedo_color.g < 0.1
+		and mat_material.albedo_color.b < 0.1,
+		"The station exit affordance should be visibly red."
+	)
+	_check(
+		exit_mat.find_children("*", "CollisionShape3D", true, false).is_empty(),
+		"The station exit mat should remain visual-only and add no collision."
+	)
 
 
 func _static_blocker_at(position: Vector3, city: Node3D) -> String:
@@ -192,8 +429,9 @@ func _finish(original_collection: Array[Dictionary], original_inventory: Diction
 	InventorySystem.load_save_data(original_inventory)
 	if _failures.is_empty():
 		print(
-			"Town NPC smoke test passed: seven non-battling lore residents, three women models, "
-			+ "three local roamers, repeatable dialog, and Lumen's one-time Exp. Share gift verified."
+			"Town NPC smoke test passed: thirteen outdoor residents, nine outdoor roamers, "
+			+ "ten interior roamers, the Miare Station exit mat, repeatable dialog, and "
+			+ "Lumen's one-time Exp. Share gift verified."
 		)
 		get_tree().quit(0)
 		return

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_ambient"]
+vertices = PackedVector3Array(-1.5, 0, -1.5, 1.5, 0, -1.5, 1.5, 0, 1.5, -1.5, 0, 1.5)
+polygons = [PackedInt32Array(0, 1, 2, 3)]
+
+[node name="AmbientRoamingNavigation" type="NavigationRegion3D"]
+editor_description = "Small authored navigation patch for one bounded interior resident. Position it at the resident's roaming origin and keep it clear of furniture and exits."
+navigation_mesh = SubResource("NavigationMesh_ambient")

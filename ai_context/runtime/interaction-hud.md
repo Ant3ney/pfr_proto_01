@@ -80,9 +80,11 @@ an optional one-time catalog-item gift; it never enters trainer state or starts
 a battle. [`RoamingTownNpcBehavior`](../../game/actors/npcs/residents/behaviors/roaming_town_npc_behavior.gd)
 adds short, deterministic local strolls and pauses whenever a conversation or
 another gameplay sequence owns movement. The primary development environment's
-`TownResidents` group contains seven lore-focused residents, including three
-women models and three roamers. Researcher Lumen stands on the interior plaza
-cobblestone and grants the persistent one-time Exp. Share gift.
+`TownResidents` group contains thirteen lore-focused residents, including nine
+roamers. Each of the ten New Bouffalant City interior scenes also owns one
+ambient roamer on a small, collision-free navigation patch. Researcher Lumen
+stands on the interior plaza cobblestone and grants the persistent one-time
+Exp. Share gift.
 
 ## Regression checks
 

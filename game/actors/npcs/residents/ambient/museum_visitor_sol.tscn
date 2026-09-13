@@ -1,0 +1,31 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/resident_base.tscn" id="1_resident"]
+[ext_resource type="Script" path="res://game/actors/character/character_movement.gd" id="2_movement"]
+[ext_resource type="Script" path="res://game/actors/npcs/shared/npc_controller.gd" id="3_controller"]
+[ext_resource type="Script" path="res://game/actors/npcs/residents/behaviors/roaming_town_npc_behavior.gd" id="4_behavior"]
+[ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_tourist.tres" id="5_art"]
+
+[sub_resource type="Resource" id="Movement"]
+resource_local_to_scene = true
+script = ExtResource("2_movement")
+move_speed = 1.15
+
+[sub_resource type="Resource" id="Behavior"]
+resource_local_to_scene = true
+script = ExtResource("4_behavior")
+roaming_radius = 0.9
+minimum_pause_seconds = 1.3
+maximum_pause_seconds = 3.3
+speaker_name = "Sol"
+dialog_lines = Array[String](["The oldest exhibits show people and Pokémon rebuilding after the borough disputes.", "History feels less distant when you can see the worn tools in front of you."])
+
+[sub_resource type="Resource" id="Controller"]
+resource_local_to_scene = true
+script = ExtResource("3_controller")
+npc_behavior = SubResource("Behavior")
+
+[node name="Sol" instance=ExtResource("1_resident")]
+character_movement = SubResource("Movement")
+controller = SubResource("Controller")
+character_art_asset_pack = ExtResource("5_art")

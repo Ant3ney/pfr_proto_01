@@ -12,11 +12,20 @@ These Godot scenes provide the city-connected destinations for the solid importe
 | West and north tenant doors | `west_tenant_lobby.tscn`, `north_tenant_lobby.tscn` | `EntrySpawn` / `ExitToCity` |
 | Museum doors | `museum_gallery.tscn` | `EntrySpawn` / `ExitToCity` |
 
-`shared/` owns the reusable brick room, one-shadow-light setup, and door visual.
+`shared/` owns the reusable brick room, one-shadow-light setup, door visual, and
+small ambient-roaming navigation patch. Every authored interior, including the
+two development-only rooms, places one conversational resident on a clear
+instance of that patch. The patch supports a short local stroll without adding
+or changing collision.
+
 Every interior inherits the common interior level base, which owns its nested
 player/camera/UI runtime and standard level hierarchy. Each exit returns to a
 dedicated marker beyond its exterior trigger, so arrival never immediately
 reverses the scene transfer.
+
+Miare Station places a thin red `CityExitMat` on the floor directly beneath the
+`ExitToCity` contact volume. Its 2.9 × 0.9 m footprint matches that trigger, but
+the mat is visual-only; the transition transform and collision stay unchanged.
 
 `rouge_tower_lobby.tscn` and `garage_workshop.tscn` remain as authored development assets, but the modular city no longer has Rouge Tower or garage transfer triggers or return markers. The Gate Building similarly has only one city-side transition; its clearly labeled rear door leads directly to Route 0 instead of back to a second city doorway. The front arrival marker is inset and faces into the room, outside the narrowed city-exit threshold. A blue `CITY EXIT` guide and green `ROUTE 0` guide distinguish the two directions.
 
@@ -28,6 +37,7 @@ Because destination paths are strings, all eight live top-level destination scen
 
 ```sh
 godot --headless --rendering-method gl_compatibility --path . --scene res://tests/scenes/modular_city_scene_transfer_smoke_test.tscn
+godot --headless --path . --scene res://tests/scenes/town_npc_smoke_test.tscn
 ```
 
-The test checks all 10 live city openings, destination spawns, matching indoor exits, safe outdoor markers, and live player overlap at collision-free approach points. It verifies that removed Rouge Tower, garage, and duplicate Gate Building transition nodes stay absent, every non-Pokemon-Center strip ignores a nearby player, and Miare Station contains Stretchman. `area_gateway_smoke_test.tscn` separately proves that an idle Gate Building arrival does not bounce outside, checks both exit guides, traverses the rear Route 0 door by contact, and uses the red interactive object at `Route0Start` to return safely.
+The transfer test checks all 10 live city openings, destination spawns, matching indoor exits, safe outdoor markers, and live player overlap at collision-free approach points. It verifies that removed Rouge Tower, garage, and duplicate Gate Building transition nodes stay absent, every non-Pokemon-Center strip ignores a nearby player, and Miare Station contains Stretchman. The town-NPC test verifies all ten interior roamers can move, and checks that the red station mat matches the unchanged exit collision. `area_gateway_smoke_test.tscn` separately proves that an idle Gate Building arrival does not bounce outside, checks both exit guides, traverses the rear Route 0 door by contact, and uses the red interactive object at `Route0Start` to return safely.

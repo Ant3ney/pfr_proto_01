@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" path="res://art/environments/new_bouffalant_city/pokemon_center_annex/pokemon_center_annex_environment.glb" id="1_environment"]
 [ext_resource type="PackedScene" path="res://game/world/level_bases/level_base.tscn" id="1_pnlgv"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="5_transfer"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/annex_customer_miko.tscn" id="6_miko"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/ambient_roaming_navigation.tscn" id="7_ambient_nav"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_annex"]
 sky_top_color = Color(0.14, 0.34, 0.52, 1)
@@ -161,6 +163,12 @@ shape = SubResource("CylinderShape_planter")
 [node name="EntrancePlanterRight" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/Collision/Planters" index="1" unique_id=279545698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.75, 3.55)
 shape = SubResource("CylinderShape_planter")
+
+[node name="MikoRoamingNavigation" parent="." instance=ExtResource("7_ambient_nav")]
+position = Vector3(1.8, 0, 1.7)
+
+[node name="Miko" parent="Gameplay/Actors" index="0" instance=ExtResource("6_miko")]
+position = Vector3(1.8, 0, 1.7)
 
 [node name="ExitToCity" parent="Gameplay/Transitions" index="0" unique_id=1589401118 instance=ExtResource("5_transfer")]
 transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 0, 4.28)

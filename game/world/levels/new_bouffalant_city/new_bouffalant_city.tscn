@@ -23,6 +23,12 @@
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_operator.tres" id="28_cam_art"]
 [ext_resource type="Resource" path="res://game/actors/character/art_packs/za_city_elite.tres" id="29_lumen_art"]
 [ext_resource type="Script" uid="uid://612o3w1oe5p0" path="res://game/actors/npcs/residents/behaviors/roaming_town_npc_behavior.gd" id="30_roaming_behavior"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/civic_aide_elian.tscn" id="31_elian"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/station_commuter_pia.tscn" id="32_pia"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/gate_courier_ren.tscn" id="33_ren"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/museum_visitor_sol.tscn" id="34_sol"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/city_jogger_aya.tscn" id="35_aya"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/garage_mechanic_dax.tscn" id="36_dax"]
 
 [ext_resource type="Script" path="res://game/world/level_kits/gameplay/transitions/route_travel_trigger.gd" id="route_travel"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/props/route_trail_sign.tscn" id="route_sign"]
@@ -376,6 +382,24 @@ transform = Transform3D(-5.9604645e-08, 0, 1, 0, 1, 0, -1, 0, -5.9604645e-08, 10
 character_movement = SubResource("Resource_gjqd2")
 controller = SubResource("Resource_48jeg")
 character_art_asset_pack = ExtResource("29_lumen_art")
+
+[node name="Elian" parent="Gameplay/Actors/TownResidents" index="7" instance=ExtResource("31_elian")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 7, 0, 1)
+
+[node name="Pia" parent="Gameplay/Actors/TownResidents" index="8" instance=ExtResource("32_pia")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 16, 0, 5.5)
+
+[node name="Ren" parent="Gameplay/Actors/TownResidents" index="9" instance=ExtResource("33_ren")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0, -9.5)
+
+[node name="Sol" parent="Gameplay/Actors/TownResidents" index="10" instance=ExtResource("34_sol")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10.5, 0, -10)
+
+[node name="Aya" parent="Gameplay/Actors/TownResidents" index="11" instance=ExtResource("35_aya")]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 3, 0, -6)
+
+[node name="Dax" parent="Gameplay/Actors/TownResidents" index="12" instance=ExtResource("36_dax")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -13, 0, -12.5)
 
 [node name="NorthTenantEntranceTrigger2" parent="Gameplay/Transitions" index="0" unique_id=610409237 instance=ExtResource("12_transfer")]
 transform = Transform3D(-1, 0, 6.2783295e-07, 0, 1, 0, -6.2783295e-07, 0, -1, -8.411442, 1.208044, 7.000343)

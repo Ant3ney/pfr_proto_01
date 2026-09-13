@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_city_room.tscn" id="1_room"]
 [ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/classic_interior_lighting.tscn" id="2_lighting"]
 [ext_resource type="PackedScene" path="res://game/world/level_kits/gameplay/transitions/scene_transfer_trigger.tscn" id="4_transfer"]
+[ext_resource type="PackedScene" path="res://game/actors/npcs/residents/ambient/tenant_neighbor_jo.tscn" id="5_jo"]
+[ext_resource type="PackedScene" path="res://game/world/levels/new_bouffalant_city/interiors/shared/ambient_roaming_navigation.tscn" id="6_ambient_nav"]
 
 [sub_resource type="StandardMaterial3D" id="Material_mailbox"]
 albedo_color = Color(0.35, 0.39, 0.38, 1)
@@ -85,6 +87,12 @@ shape = SubResource("Shape_mailboxes")
 [node name="Bench" type="CollisionShape3D" parent="NavigationRegion3D/WorldGeometry/Boundaries/FurnitureCollision" index="1" unique_id=768108556]
 transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -2.65, 0.31, -0.35)
 shape = SubResource("Shape_bench")
+
+[node name="JoRoamingNavigation" parent="." instance=ExtResource("6_ambient_nav")]
+position = Vector3(0.4, 0, -1.1)
+
+[node name="Jo" parent="Gameplay/Actors" index="0" instance=ExtResource("5_jo")]
+position = Vector3(0.4, 0, -1.1)
 
 [node name="ExitToCity" parent="Gameplay/Transitions" index="0" unique_id=1187947402 instance=ExtResource("4_transfer")]
 transform = Transform3D(1.05, 0, 0, 0, 1, 0, 0, 0, 0.78, 0, 0, 3.42)
