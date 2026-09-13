@@ -10,9 +10,11 @@ const TAB_POKEMON := "pokemon"
 const TAB_BAG := "bag"
 const TAB_POKEDEX := "pokedex"
 const SpriteMapping := preload("res://game/battle/system/battle_species_mapping.gd")
+const RESET_CONFIRMATION_SCENE: PackedScene = preload(
+	"res://game/ui/reset_progress/progress_reset_confirmation.tscn"
+)
 const SPRITE_ANIMATION := &"idle"
 const POKEMON_ICON_SIZE := Vector2i(48, 48)
-const RESET_CONFIRMATION_PHRASE := "RESET FOREVER"
 const TOUCH_KEYBOARD_DEBOUNCE_MSEC := 120
 
 var _tab := TAB_POKEMON
@@ -29,7 +31,6 @@ var _pending_discard_key := ""
 var _pending_discard_quantity := 0
 var _pending_evolution_pcl_id := ""
 var _pending_evolution_options: Array[Dictionary] = []
-var _reset_warning_step := 0
 var _last_touch_keyboard_request_msec := -TOUCH_KEYBOARD_DEBOUNCE_MSEC
 
 var _summary: Label
@@ -56,15 +57,7 @@ var _evolution_message: Label
 var _evolution_choice: OptionButton
 var _evolution_confirm: Button
 var _reset_button: Button
-var _reset_prompt: Control
-var _reset_step_label: Label
-var _reset_title: Label
-var _reset_message: Label
-var _reset_ack_pokemon: CheckButton
-var _reset_ack_backup: CheckButton
-var _reset_phrase: LineEdit
-var _reset_continue: Button
-var _reset_final: Button
+var _reset_prompt: ProgressResetConfirmation
 var _save_data_button: Button
 var _save_data_prompt: Control
 var _save_data_status: Label
@@ -349,54 +342,25 @@ func opt_out_of_cloud_save() -> void:
 func open_reset_warnings() -> void:
 	if _closing:
 		return
-	_reset_warning_step = 1
-	_reset_prompt.visible = true
-	_show_reset_warning_step()
+	_reset_prompt.open()
 
 
 func advance_reset_warning() -> bool:
-	if _reset_warning_step == 1:
-		_reset_warning_step = 2
-		_show_reset_warning_step()
-		return true
-	if (
-		_reset_warning_step == 2
-		and _reset_ack_pokemon.button_pressed
-		and _reset_ack_backup.button_pressed
-	):
-		_reset_warning_step = 3
-		_show_reset_warning_step()
-		return true
-	return false
+	return _reset_prompt.press_yes()
 
 
 func cancel_reset_warnings() -> void:
-	_reset_warning_step = 0
-	_reset_prompt.visible = false
-	_reset_phrase.text = ""
-	_reset_ack_pokemon.button_pressed = false
-	_reset_ack_backup.button_pressed = false
+	_reset_prompt.cancel()
 	if is_instance_valid(_reset_button):
 		_reset_button.grab_focus()
 
 
 func confirm_progress_reset() -> bool:
-	if (
-		_reset_warning_step != 3
-		or _reset_phrase.text.strip_edges().to_upper()
-		!= RESET_CONFIRMATION_PHRASE
-	):
-		return false
-	_reset_final.disabled = true
-	_reset_phrase.editable = false
-	_reset_title.text = "ERASING ALL PROGRESS…"
-	_reset_message.text = "The confirmed reset request is being applied."
-	reset_progress_confirmed.emit()
-	return true
+	return _reset_prompt.press_yes()
 
 
 func get_reset_warning_step() -> int:
-	return _reset_warning_step
+	return _reset_prompt.get_warning_step()
 
 
 func select_tab(tab: String) -> void:
@@ -1291,172 +1255,15 @@ func _build_cloud_prompt() -> void:
 
 
 func _build_reset_prompt() -> void:
-	_reset_prompt = ColorRect.new()
-	_reset_prompt.name = "ResetWarningPrompt"
-	_reset_prompt.color = Color(0.04, 0.0, 0.005, 0.96)
-	_reset_prompt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_reset_prompt.mouse_filter = Control.MOUSE_FILTER_STOP
-	_reset_prompt.z_index = 60
-	_reset_prompt.visible = false
+	_reset_prompt = (
+		RESET_CONFIRMATION_SCENE.instantiate() as ProgressResetConfirmation
+	)
+	if _reset_prompt == null:
+		push_error("The shared progress-reset confirmation could not be created.")
+		return
+	_reset_prompt.confirmed.connect(_on_reset_confirmation_confirmed)
+	_reset_prompt.cancelled.connect(_on_reset_confirmation_cancelled)
 	add_child(_reset_prompt)
-
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_reset_prompt.add_child(center)
-	var panel := PanelContainer.new()
-	panel.name = "ResetDangerPanel"
-	panel.custom_minimum_size = Vector2(650.0, 410.0)
-	panel.add_theme_stylebox_override(
-		"panel",
-		_danger_style(Color("21070a"), Color("ff263d"), 5, 14)
-	)
-	center.add_child(panel)
-	var margin := MarginContainer.new()
-	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
-		margin.add_theme_constant_override(side, 24)
-	panel.add_child(margin)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
-	margin.add_child(column)
-
-	_reset_step_label = Label.new()
-	_reset_step_label.name = "ResetWarningStep"
-	_reset_step_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_reset_step_label.add_theme_color_override("font_color", Color("ff7785"))
-	_reset_step_label.add_theme_font_size_override("font_size", 13)
-	column.add_child(_reset_step_label)
-	_reset_title = Label.new()
-	_reset_title.name = "ResetWarningTitle"
-	_reset_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_reset_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_reset_title.add_theme_color_override("font_color", Color("ff263d"))
-	_reset_title.add_theme_color_override("font_shadow_color", Color.BLACK)
-	_reset_title.add_theme_constant_override("shadow_offset_x", 2)
-	_reset_title.add_theme_constant_override("shadow_offset_y", 2)
-	_reset_title.add_theme_font_size_override("font_size", 29)
-	column.add_child(_reset_title)
-	_reset_message = Label.new()
-	_reset_message.name = "ResetWarningMessage"
-	_reset_message.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_reset_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_reset_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_reset_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_reset_message.add_theme_color_override("font_color", Color("ffe7e9"))
-	_reset_message.add_theme_font_size_override("font_size", 16)
-	column.add_child(_reset_message)
-
-	_reset_ack_pokemon = CheckButton.new()
-	_reset_ack_pokemon.name = "AcknowledgePokemonDeletion"
-	_reset_ack_pokemon.text = "I understand every party and PC Pokémon will be deleted."
-	_reset_ack_pokemon.toggled.connect(_on_reset_acknowledgement_changed)
-	column.add_child(_reset_ack_pokemon)
-	_reset_ack_backup = CheckButton.new()
-	_reset_ack_backup.name = "AcknowledgeBackupRequirement"
-	_reset_ack_backup.text = (
-		"I understand recovery requires a JSON backup exported before this reset."
-	)
-	_reset_ack_backup.toggled.connect(_on_reset_acknowledgement_changed)
-	column.add_child(_reset_ack_backup)
-
-	_reset_phrase = LineEdit.new()
-	_reset_phrase.name = "ResetConfirmationPhrase"
-	_reset_phrase.placeholder_text = "Type %s exactly" % RESET_CONFIRMATION_PHRASE
-	_configure_text_input(_reset_phrase)
-	_reset_phrase.custom_minimum_size = Vector2(0.0, 48.0)
-	_reset_phrase.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_reset_phrase.add_theme_color_override("font_color", Color("ffb8bf"))
-	_reset_phrase.add_theme_font_size_override("font_size", 19)
-	_reset_phrase.text_changed.connect(_on_reset_phrase_changed)
-	column.add_child(_reset_phrase)
-
-	var buttons := HBoxContainer.new()
-	buttons.add_theme_constant_override("separation", 12)
-	column.add_child(buttons)
-	var cancel := Button.new()
-	cancel.name = "CancelReset"
-	cancel.text = "CANCEL — KEEP MY SAVE"
-	cancel.custom_minimum_size = Vector2(210.0, 50.0)
-	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	cancel.pressed.connect(cancel_reset_warnings)
-	buttons.add_child(cancel)
-	_reset_continue = Button.new()
-	_reset_continue.name = "ContinueResetWarning"
-	_reset_continue.custom_minimum_size = Vector2(250.0, 50.0)
-	_reset_continue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_reset_continue.pressed.connect(advance_reset_warning)
-	buttons.add_child(_reset_continue)
-	_reset_final = Button.new()
-	_reset_final.name = "ConfirmProgressReset"
-	_reset_final.text = "ERASE EVERYTHING NOW"
-	_reset_final.custom_minimum_size = Vector2(250.0, 50.0)
-	_reset_final.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_reset_final.add_theme_color_override("font_color", Color.WHITE)
-	_reset_final.add_theme_color_override("font_hover_color", Color.WHITE)
-	_reset_final.add_theme_stylebox_override(
-		"normal",
-		_danger_style(Color("7e0d19"), Color("ff263d"), 3, 9)
-	)
-	_reset_final.add_theme_stylebox_override(
-		"hover",
-		_danger_style(Color("b31020"), Color("ff8290"), 3, 9)
-	)
-	_reset_final.pressed.connect(confirm_progress_reset)
-	buttons.add_child(_reset_final)
-
-
-func _show_reset_warning_step() -> void:
-	_reset_ack_pokemon.visible = false
-	_reset_ack_backup.visible = false
-	_reset_phrase.visible = false
-	_reset_continue.visible = false
-	_reset_final.visible = false
-	match _reset_warning_step:
-		1:
-			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  WARNING 1 OF 3"
-			_reset_title.text = "⚠ DANGER: FULL PROGRESS RESET ⚠"
-			_reset_message.text = (
-				"This is not a logout, restart, or temporary reset. Continuing begins "
-				+ "a permanent deletion sequence for this active local save and any linked "
-				+ "cloud copy. Only a JSON backup exported beforehand can restore it later."
-			)
-			_reset_continue.text = "I UNDERSTAND — SHOW THE NEXT WARNING"
-			_reset_continue.disabled = false
-			_reset_continue.visible = true
-			_reset_continue.grab_focus()
-		2:
-			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  WARNING 2 OF 3"
-			_reset_title.text = "EVERYTHING YOU EARNED WILL BE REMOVED"
-			_reset_message.text = (
-				"All Pokémon, levels, XP, equipped moves, pending move choices, items, "
-				+ "money, badges, Champion progress, route progress, and saved world "
-				+ "position will be erased from the active local and cloud saves. Without "
-				+ "a separately exported JSON backup, this cannot be recovered."
-			)
-			_reset_ack_pokemon.button_pressed = false
-			_reset_ack_backup.button_pressed = false
-			_reset_ack_backup.text = (
-				"I understand recovery requires a JSON backup exported before this reset."
-			)
-			_reset_ack_pokemon.visible = true
-			_reset_ack_backup.visible = true
-			_reset_continue.text = "I ACCEPT BOTH WARNINGS"
-			_reset_continue.disabled = true
-			_reset_continue.visible = true
-			_reset_ack_pokemon.grab_focus()
-		3:
-			_reset_step_label.text = "DESTRUCTIVE ACTION  ·  FINAL WARNING 3 OF 3"
-			_reset_title.text = "FINAL DELETION CONFIRMATION"
-			_reset_message.text = (
-				"Type %s exactly. The red button will erase local progress, mark any linked "
-				+ "cloud profile as reset, return to the main development environment, and "
-				+ "force a new starter choice. Separately exported JSON files are not deleted."
-			) % RESET_CONFIRMATION_PHRASE
-			_reset_phrase.text = ""
-			_reset_phrase.editable = true
-			_reset_phrase.visible = true
-			_reset_final.disabled = true
-			_reset_final.visible = true
-			_activate_text_input(_reset_phrase)
 
 
 func _configure_text_input(field: LineEdit) -> void:
@@ -1510,17 +1317,13 @@ func _activate_text_input(field: LineEdit) -> void:
 	)
 
 
-func _on_reset_acknowledgement_changed(_pressed: bool) -> void:
-	_reset_continue.disabled = not (
-		_reset_ack_pokemon.button_pressed
-		and _reset_ack_backup.button_pressed
-	)
+func _on_reset_confirmation_confirmed() -> void:
+	reset_progress_confirmed.emit()
 
 
-func _on_reset_phrase_changed(value: String) -> void:
-	_reset_final.disabled = (
-		value.strip_edges().to_upper() != RESET_CONFIRMATION_PHRASE
-	)
+func _on_reset_confirmation_cancelled() -> void:
+	if is_instance_valid(_reset_button):
+		_reset_button.grab_focus()
 
 
 func _danger_style(

@@ -44,6 +44,15 @@ func _run() -> void:
 		and CloudSaveSync.enable_with_save_id(PRIVATE_SAVE_ID),
 		"Cloud sync should reject weak IDs and accept a private 12+ character ID."
 	)
+	CloudSaveSync._sync_requested = false
+	ProgressionAutosave._startup_in_progress = true
+	_check(
+		not CloudSaveSync.request_sync(true)
+		and not CloudSaveSync._sync_requested
+		and not CloudSaveSync._can_apply_cloud_payload(),
+		"Cloud traffic and cloud payload application should wait until startup finishes."
+	)
+	ProgressionAutosave._startup_in_progress = false
 	_check(
 		ProgressionAutosave.save_now(true),
 		"The cloud-sync fixture should write its timestamped local baseline."

@@ -177,6 +177,10 @@ func set_automatic_presentation_enabled_for_testing(enabled: bool) -> void:
 		_try_present_pending_automatically()
 
 
+func notify_startup_finished() -> void:
+	_try_present_pending_automatically()
+
+
 func reset_for_testing() -> void:
 	_pending_requests.clear()
 	_snapshot_current_levels()
@@ -474,6 +478,7 @@ func _try_present_pending_automatically() -> void:
 		or GameInstance.is_battle_start_in_progress()
 		or GameInstance.is_battle_return_in_progress()
 		or GameInstance.is_scene_transfer_in_progress()
+		or ProgressionAutosave.is_startup_in_progress()
 	):
 		return
 	_automatic_presentation_scheduled = true
@@ -489,6 +494,7 @@ func _present_automatically() -> void:
 		or _presenting
 		or _pending_requests.is_empty()
 		or BattleSystem.get_state() != BattleSystem.State.IDLE
+		or ProgressionAutosave.is_startup_in_progress()
 	):
 		return
 	await present_all_pending()

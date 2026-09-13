@@ -249,63 +249,88 @@ func _test_scary_reset_warnings() -> void:
 	add_child(menu)
 	await get_tree().process_frame
 	var reset_button := menu.find_child("ResetProgress", true, false) as Button
-	var prompt := menu.find_child("ResetWarningPrompt", true, false) as Control
-	var acknowledge_pokemon := menu.find_child(
-		"AcknowledgePokemonDeletion", true, false
-	) as CheckButton
-	var acknowledge_backup := menu.find_child(
-		"AcknowledgeBackupRequirement", true, false
-	) as CheckButton
-	var phrase := menu.find_child("ResetConfirmationPhrase", true, false) as LineEdit
+	var prompt := menu.find_child(
+		"ProgressResetConfirmation", true, false
+	) as ProgressResetConfirmation
+	var warning_message := menu.find_child("ResetWarningMessage", true, false) as Label
 	var final_button := menu.find_child("ConfirmProgressReset", true, false) as Button
 	_check(
 		reset_button != null and reset_button.visible and reset_button.focus_mode != Control.FOCUS_NONE,
 		"The permanent player menu should expose a keyboard/gamepad-focusable reset button."
 	)
+	_check(
+		prompt != null
+		and prompt.find_children("*", "CheckButton", true, false).is_empty()
+		and prompt.find_children("*", "LineEdit", true, false).is_empty(),
+		"The shared reset sequence should require no checkboxes or typed phrase."
+	)
+	var progression_before_cancel := JSON.stringify(CollectionSystem.get_save_data())
 	menu.open_reset_warnings()
 	_check(
 		prompt.visible and menu.get_reset_warning_step() == 1,
 		"Reset should begin with the first full-screen danger warning."
 	)
+	menu.cancel_reset_warnings()
+	_check(
+		not prompt.visible
+		and JSON.stringify(CollectionSystem.get_save_data()) == progression_before_cancel,
+		"Canceling warning one should preserve progression."
+	)
+	menu.open_reset_warnings()
 	_check(
 		menu.advance_reset_warning() and menu.get_reset_warning_step() == 2,
-		"Accepting warning one should reveal the detailed deletion disclaimer."
+		"The first Yes should reveal the irreversible-backup warning."
 	)
+	var combined_warning_text := warning_message.text
+	menu.cancel_reset_warnings()
 	_check(
-		not menu.advance_reset_warning(),
-		"Warning two should block progress until both deletion acknowledgements are checked."
+		not prompt.visible
+		and JSON.stringify(CollectionSystem.get_save_data()) == progression_before_cancel,
+		"Canceling warning two should preserve progression."
 	)
-	acknowledge_pokemon.button_pressed = true
-	acknowledge_backup.button_pressed = true
+	menu.open_reset_warnings()
+	menu.advance_reset_warning()
 	_check(
-		"JSON backup" in acknowledge_backup.text
-		and menu.advance_reset_warning()
+		menu.advance_reset_warning()
 		and menu.get_reset_warning_step() == 3,
-		"Both acknowledgements should unlock the truthful final deletion warning."
+		"The second Yes should reveal the linked-cloud replacement warning."
 	)
-	phrase.release_focus()
-	phrase.unedit()
-	var reset_touch := InputEventScreenTouch.new()
-	reset_touch.pressed = true
-	phrase.gui_input.emit(reset_touch)
+	combined_warning_text += " " + warning_message.text
+	menu.cancel_reset_warnings()
 	_check(
-		phrase.virtual_keyboard_enabled and phrase.has_focus() and phrase.is_editing(),
-		"Tapping the reset phrase should explicitly enter touchscreen edit mode."
+		not prompt.visible
+		and JSON.stringify(CollectionSystem.get_save_data()) == progression_before_cancel,
+		"Canceling warning three should preserve progression."
 	)
-	_check(final_button.disabled, "The final destructive button should begin disabled.")
-	phrase.text = "reset"
-	phrase.text_changed.emit(phrase.text)
-	_check(final_button.disabled, "An incomplete confirmation phrase should remain rejected.")
-	phrase.text = PlayerMenuUI.RESET_CONFIRMATION_PHRASE
-	phrase.text_changed.emit(phrase.text)
-	_check(not final_button.disabled, "Typing RESET FOREVER should unlock the last red button.")
-	var signal_state := {"confirmed": false}
+	_check(
+		"JSON backup" in combined_warning_text
+		and "cloud" in combined_warning_text,
+		"The warnings should explain exported-backup recovery and cloud replacement."
+	)
+	var signal_state := {"confirmations": 0, "reset_calls": 0}
 	menu.reset_progress_confirmed.connect(
-		func() -> void: signal_state["confirmed"] = true
+		func() -> void:
+			signal_state["confirmations"] += 1
+			signal_state["reset_calls"] += 1
+			ProgressionAutosave.reset_all_progress(false)
 	)
+	menu.open_reset_warnings()
 	_check(
-		menu.confirm_progress_reset() and bool(signal_state["confirmed"]),
-		"Only the third warning and exact phrase should emit the reset confirmation."
+		menu.advance_reset_warning()
+		and menu.advance_reset_warning()
+		and final_button.text == "YES — ERASE EVERYTHING"
+		and menu.confirm_progress_reset()
+		and int(signal_state["confirmations"]) == 1
+		and not menu.confirm_progress_reset()
+		and int(signal_state["confirmations"]) == 1,
+		"Exactly three separate Yes presses should emit one final reset confirmation."
+	)
+	await get_tree().process_frame
+	_check(
+		int(signal_state["reset_calls"]) == 1
+		and not FileAccess.file_exists(TEST_SAVE_PATH)
+		and CollectionSystem.get_collection().is_empty(),
+		"The third Yes should erase progress exactly once; earlier Yes presses must not."
 	)
 	menu.queue_free()
 	await get_tree().process_frame

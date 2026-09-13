@@ -90,7 +90,8 @@ func _initialize() -> void:
 	add_child(_sync_timer)
 	if _enabled:
 		_set_status("pending", "Cloud save is enabled. Waiting to synchronize…")
-		_schedule_sync(0.5)
+		if not ProgressionAutosave.is_startup_in_progress():
+			_schedule_sync(0.5)
 
 
 func _notification(what: int) -> void:
@@ -190,14 +191,22 @@ func request_sync(immediate := false) -> bool:
 	if not _enabled:
 		_set_status("disabled", "Cloud sync is off. Local saves remain enabled.")
 		return false
-	if ProgressionAutosave.is_profile_initialization_pending():
-		_set_status("pending", "Cloud sync will start after a starter is selected.")
+	if (
+		ProgressionAutosave.is_startup_in_progress()
+		or ProgressionAutosave.is_profile_initialization_pending()
+	):
+		_set_status("pending", "Cloud sync will start after gameplay begins.")
 		return false
 	_sync_requested = true
 	if _sync_in_flight:
 		return true
 	_schedule_sync(0.05 if immediate else LOCAL_CHANGE_DEBOUNCE_SECONDS)
 	return true
+
+
+func notify_startup_finished() -> void:
+	if _enabled:
+		request_sync(true)
 
 
 func _connect_progression_signals() -> void:
@@ -456,6 +465,7 @@ func _can_apply_cloud_payload() -> bool:
 		and not GameInstance.is_battle_start_in_progress()
 		and not GameInstance.is_battle_return_in_progress()
 		and not GameInstance.is_scene_transfer_in_progress()
+		and not ProgressionAutosave.is_startup_in_progress()
 		and not ProgressionAutosave.is_profile_initialization_pending()
 	)
 

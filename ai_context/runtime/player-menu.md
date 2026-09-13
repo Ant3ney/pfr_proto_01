@@ -25,14 +25,15 @@ menu text field also handles a touchscreen press by explicitly entering edit
 mode and requesting the native keyboard, including when the field already owns
 GUI focus.
 
-The header's red `RESET PROGRESS` action is intentionally difficult to finish:
-three full-screen danger stages enumerate deleted state, require two separate
-deletion acknowledgements, and finally require typing `RESET FOREVER`. Only
-then does the HUD close its own movement lock and call the save owner's complete
-reset. The warnings include any linked cloud copy, whose reset epoch advances
-before the new starter checkpoint, and accurately state that only a portable
-JSON backup exported beforehand can later restore the deleted progression. See
-[`starter-selection.md`](starter-selection.md).
+The header's red `RESET PROGRESS` action is intentionally difficult to finish.
+It opens the same shared component as main-menu New Game replacement: three
+full-screen danger stages covering progression loss, backup-only recovery, and
+linked-cloud replacement. Each stage requires a separate **Yes** and offers
+**Cancel**; there are no acknowledgements or typed phrase. Only the third Yes
+emits once. The HUD then closes its own movement lock and calls the save owner's
+complete reset, which returns through the full startup introduction. See
+[`starter-selection.md`](starter-selection.md) and
+[`startup-flow.md`](startup-flow.md).
 
 ## Party and PC organization
 

@@ -62,6 +62,14 @@ learnset before replacing state. Collection restore is bracketed by
 mistaken for newly earned levels. Schema-1 and schema-2 saves load with an empty
 move-learning queue.
 
+Automatic presentation is suppressed while `ProgressionAutosave` owns startup,
+including menu display, Continue loading, and gameplay placement. A pending
+choice loaded from disk therefore cannot cover the startup UI or take movement
+before the player reaches the saved scene. Successful entry calls
+`notify_startup_finished()`, which retries automatic presentation after control
+and pose restoration. Explicit battle-owned presentation remains governed by
+the battle sequence above.
+
 ## Regression checks
 
 ```bash
@@ -69,6 +77,7 @@ node tools/creatures/generate_move_learnsets.mjs --check
 godot --headless --path . --scene res://tests/integration/move_learning_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/collection_system_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/startup_continue_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
 ```
 

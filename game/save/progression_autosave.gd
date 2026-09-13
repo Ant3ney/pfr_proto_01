@@ -13,6 +13,9 @@ signal load_completed(source_label: String)
 signal load_failed(message: String)
 signal progress_reset_started
 signal progress_reset_completed(starter_pokemon_id: int)
+signal startup_entry_started(destination_scene_path: String)
+signal startup_entry_completed(destination_scene_path: String, used_fallback: bool)
+signal startup_entry_failed(message: String)
 
 const SAVE_SCHEMA_VERSION := 6
 const LEGACY_SAVE_SCHEMA_VERSION := 1
@@ -33,9 +36,24 @@ const SAVE_SECTIONS: Array[String] = [
 ]
 const DEFAULT_SAVE_PATH := "user://pfr_rnd_progression.json"
 const MAIN_SCENE_PATH := "res://game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn"
+const STARTUP_SCENE_PATH := "res://game/startup/startup_controller.tscn"
+const FIRST_GAMEPLAY_SCENE_PATH := (
+	"res://game/world/levels/new_bouffalant_city/interiors/miare_station_concourse.tscn"
+)
+const FIRST_GAMEPLAY_SPAWN: StringName = &"StretchmanReturnSpawn"
+const COLLECTION_SERVICE_SCRIPT: Script = preload(
+	"res://game/progression/collection/collection_system.gd"
+)
 const TEST_SCENE_PREFIXES: Array[String] = [
 	"res://tests/",
 ]
+
+enum StartupEntryMode {
+	NONE,
+	NEW_GAME,
+	CONTINUE_LOCATION,
+	CONTINUE_FALLBACK,
+}
 
 @export_range(0.1, 60.0, 0.1, "or_greater", "suffix:s")
 var save_debounce_seconds := 0.35
@@ -51,6 +69,12 @@ var _is_loading := false
 var _profile_initialization_pending := false
 var _reset_in_progress := false
 var _explicit_reset_pending := false
+var _startup_in_progress := false
+var _startup_intro_pending := false
+var _startup_entry_mode := StartupEntryMode.NONE
+var _startup_retry_scene_path := ""
+var _startup_retry_spawn_marker: StringName = &""
+var _startup_entry_error := ""
 var _starter_pokemon_id := 0
 var _saved_world_state: Dictionary = {}
 var _last_payload_fingerprint := ""
@@ -72,6 +96,7 @@ func _notification(what: int) -> void:
 	if (
 		what == NOTIFICATION_WM_CLOSE_REQUEST
 		and _automatic_io_enabled
+		and not _startup_in_progress
 		and not _profile_initialization_pending
 		and not _reset_in_progress
 	):
@@ -83,7 +108,7 @@ func _notification(what: int) -> void:
 ## milestone in addition to the automatic hooks.
 func save_now(force := false) -> bool:
 	_last_error = ""
-	if _profile_initialization_pending or _reset_in_progress:
+	if _startup_in_progress or _profile_initialization_pending or _reset_in_progress:
 		return false
 	var payload := _build_payload()
 	var fingerprint := JSON.stringify(payload)
@@ -122,7 +147,7 @@ func load_now() -> bool:
 ## Returns the same validated, timestamped snapshot written to local storage.
 ## The Save ID is deliberately not part of this payload.
 func get_save_payload() -> Dictionary:
-	if _profile_initialization_pending or _reset_in_progress:
+	if _startup_in_progress or _profile_initialization_pending or _reset_in_progress:
 		return {}
 	return _build_payload().duplicate(true)
 
@@ -215,6 +240,7 @@ func _can_replace_progress() -> bool:
 		and not GameInstance.is_battle_start_in_progress()
 		and not GameInstance.is_battle_return_in_progress()
 		and not GameInstance.is_scene_transfer_in_progress()
+		and not _startup_in_progress
 		and not _profile_initialization_pending
 		and not _reset_in_progress
 	)
@@ -232,16 +258,21 @@ func _retimestamp_imported_sections(previous_saved_at_ms: int) -> void:
 	_last_payload_fingerprint = ""
 
 
-func _apply_payload(payload: Dictionary, source_label: String) -> bool:
+func _decode_payload(payload: Dictionary, source_label: String) -> Dictionary:
 	var schema_version := int(payload.get("schema_version", -1))
 	if schema_version < LEGACY_SAVE_SCHEMA_VERSION or schema_version > SAVE_SCHEMA_VERSION:
-		return _report_load_failure(
-			"Unsupported progression save schema from %s." % source_label
-		)
+		return {
+			"error": "Unsupported progression save schema from %s." % source_label,
+		}
 
 	var collection_value: Variant = payload.get("collection")
 	if typeof(collection_value) != TYPE_ARRAY:
-		return _report_load_failure("Progression save has no valid collection array.")
+		return {"error": "Progression save has no valid collection array."}
+	var collection_error := _validate_collection_without_applying(
+		collection_value as Array
+	)
+	if not collection_error.is_empty():
+		return {"error": "Collection save data was rejected: %s" % collection_error}
 	var loaded_starter_pokemon_id := 0
 	if schema_version >= STARTER_PROFILE_SAVE_SCHEMA_VERSION:
 		var profile_error := _validate_profile_data(
@@ -249,7 +280,7 @@ func _apply_payload(payload: Dictionary, source_label: String) -> bool:
 			collection_value as Array
 		)
 		if not profile_error.is_empty():
-			return _report_load_failure(profile_error)
+			return {"error": profile_error}
 		loaded_starter_pokemon_id = int(
 			(payload.get("profile") as Dictionary).get("starter_pokemon_id", 0)
 		)
@@ -265,22 +296,22 @@ func _apply_payload(payload: Dictionary, source_label: String) -> bool:
 		var migrated_domains := _migrate_legacy_stretch_data(payload.get("stretch"))
 		var migration_error := String(migrated_domains.get("error", ""))
 		if not migration_error.is_empty():
-			return _report_load_failure(migration_error)
+			return {"error": migration_error}
 		economy_value = migrated_domains.get("economy")
 		inventory_value = migrated_domains.get("inventory")
 		challenge_value = migrated_domains.get("challenge_progression")
 
 	var economy_error := EconomySystem.validate_save_data(economy_value)
 	if not economy_error.is_empty():
-		return _report_load_failure(economy_error)
+		return {"error": economy_error}
 	var inventory_error := InventorySystem.validate_save_data(inventory_value)
 	if not inventory_error.is_empty():
-		return _report_load_failure(inventory_error)
+		return {"error": inventory_error}
 	var challenge_error := ChallengeProgressionSystem.validate_save_data(
 		challenge_value
 	)
 	if not challenge_error.is_empty():
-		return _report_load_failure(challenge_error)
+		return {"error": challenge_error}
 
 	var move_learning_value: Variant = payload.get("move_learning", {"pending": []})
 	if schema_version >= MOVE_LEARNING_SAVE_SCHEMA_VERSION:
@@ -289,13 +320,46 @@ func _apply_payload(payload: Dictionary, source_label: String) -> bool:
 			collection_value as Array
 		)
 		if not move_learning_error.is_empty():
-			return _report_load_failure(move_learning_error)
+			return {"error": move_learning_error}
 	if schema_version >= TIMESTAMPED_SAVE_SCHEMA_VERSION:
 		var save_meta_error := _validate_save_meta(
 			payload.get("save_meta"), schema_version
 		)
 		if not save_meta_error.is_empty():
-			return _report_load_failure(save_meta_error)
+			return {"error": save_meta_error}
+
+	return {
+		"schema_version": schema_version,
+		"starter_pokemon_id": loaded_starter_pokemon_id,
+		"collection": collection_value,
+		"move_learning": (
+			move_learning_value
+			if schema_version >= MOVE_LEARNING_SAVE_SCHEMA_VERSION
+			else {"pending": []}
+		),
+		"economy": economy_value,
+		"inventory": inventory_value,
+		"challenge_progression": challenge_value,
+		"world": _migrate_legacy_world_data(
+			payload.get("world", {}),
+			String((challenge_value as Dictionary).get("active_area_id", "")),
+			schema_version
+		),
+	}
+
+
+func _apply_payload(payload: Dictionary, source_label: String) -> bool:
+	var decoded := _decode_payload(payload, source_label)
+	var decode_error := String(decoded.get("error", ""))
+	if not decode_error.is_empty():
+		return _report_load_failure(decode_error)
+	var schema_version := int(decoded.get("schema_version", -1))
+	var collection_value: Variant = decoded.get("collection")
+	var loaded_starter_pokemon_id := int(decoded.get("starter_pokemon_id", 0))
+	var economy_value: Variant = decoded.get("economy")
+	var inventory_value: Variant = decoded.get("inventory")
+	var challenge_value: Variant = decoded.get("challenge_progression")
+	var move_learning_value: Variant = decoded.get("move_learning")
 
 	MoveLearningSystem.begin_save_restore()
 	_is_loading = true
@@ -342,11 +406,7 @@ func _apply_payload(payload: Dictionary, source_label: String) -> bool:
 	_explicit_reset_pending = false
 	StarterSelectionSystem.mark_profile_loaded(_starter_pokemon_id)
 
-	_saved_world_state = _migrate_legacy_world_data(
-		payload.get("world", {}),
-		String((challenge_value as Dictionary).get("active_area_id", "")),
-		schema_version
-	)
+	_saved_world_state = (decoded.get("world", {}) as Dictionary).duplicate(true)
 	_restore_saved_world_state_for_current_scene()
 	if schema_version >= TIMESTAMPED_SAVE_SCHEMA_VERSION:
 		_load_save_meta(payload.get("save_meta") as Dictionary, schema_version)
@@ -364,6 +424,7 @@ func request_autosave() -> void:
 	if (
 		not _automatic_io_enabled
 		or _is_loading
+		or _startup_in_progress
 		or _profile_initialization_pending
 		or _reset_in_progress
 	):
@@ -385,10 +446,152 @@ func get_starter_pokemon_id() -> int:
 	return _starter_pokemon_id
 
 
-## Erases the save file and every in-memory progression owner after the player
-## completes the menu's destructive confirmation sequence. Normal gameplay
-## returns to the main scene before the mandatory starter picker is shown.
-func reset_all_progress(return_to_main_scene := true) -> bool:
+## Reads and validates the local save without mutating any progression owner.
+## A missing or unusable world location does not invalidate otherwise sound
+## progression; Continue will place that profile at the safe station fallback.
+func inspect_local_save() -> Dictionary:
+	if not FileAccess.file_exists(save_path):
+		return {
+			"exists": false,
+			"valid": false,
+			"error": "",
+			"has_usable_location": false,
+			"scene_path": "",
+		}
+	var source := FileAccess.get_file_as_string(save_path)
+	var json := JSON.new()
+	var parse_error := json.parse(source)
+	if parse_error != OK or typeof(json.data) != TYPE_DICTIONARY:
+		var message := "Progression save is not a valid JSON object."
+		if parse_error != OK:
+			message = "Progression save contains invalid JSON (line %d)." % json.get_error_line()
+		return {
+			"exists": true,
+			"valid": false,
+			"error": message,
+			"has_usable_location": false,
+			"scene_path": "",
+		}
+	var decoded := _decode_payload(json.data as Dictionary, save_path)
+	var validation_error := String(decoded.get("error", ""))
+	if not validation_error.is_empty():
+		return {
+			"exists": true,
+			"valid": false,
+			"error": validation_error,
+			"has_usable_location": false,
+			"scene_path": "",
+		}
+	var world := decoded.get("world", {}) as Dictionary
+	return {
+		"exists": true,
+		"valid": true,
+		"error": "",
+		"has_usable_location": _is_usable_world_state(world),
+		"scene_path": String(world.get("scene_path", "")),
+	}
+
+
+## Called by the project entry scene before it presents the menu. Automatic
+## checkpoints, cloud traffic, prompts, and player control remain suspended
+## until a gameplay scene has been placed successfully.
+func begin_startup_session() -> Dictionary:
+	_startup_in_progress = true
+	if is_instance_valid(_location_timer):
+		_location_timer.stop()
+	GameInstance.set_player_movement_enabled(false)
+	PlayerController.set_floating_joystick_input(Vector2.ZERO)
+	var status := inspect_local_save()
+	status["intro_pending"] = _startup_intro_pending
+	status["entry_error"] = _startup_entry_error
+	return status
+
+
+func is_startup_in_progress() -> bool:
+	return _startup_in_progress
+
+
+func is_startup_intro_pending() -> bool:
+	return _startup_intro_pending
+
+
+func get_startup_entry_error() -> String:
+	return _startup_entry_error
+
+
+## Initializes a first-ever profile. It never erases an existing file; callers
+## must use the shared three-warning reset path when inspect_local_save().exists
+## is true, including when that file is invalid.
+func prepare_new_profile_for_startup() -> bool:
+	if FileAccess.file_exists(save_path) or GameInstance.is_scene_transfer_in_progress():
+		return false
+	_startup_in_progress = true
+	_startup_intro_pending = true
+	_startup_entry_mode = StartupEntryMode.NONE
+	_startup_entry_error = ""
+	_explicit_reset_pending = false
+	_reset_in_progress = false
+	_prepare_fresh_profile_state()
+	GameInstance.set_player_movement_enabled(false)
+	return true
+
+
+func show_startup_starter_selection() -> bool:
+	if not _startup_in_progress or not _profile_initialization_pending:
+		return false
+	_startup_intro_pending = false
+	return StarterSelectionSystem.show_selection()
+
+
+func continue_from_startup() -> bool:
+	if not _startup_in_progress or GameInstance.is_scene_transfer_in_progress():
+		return false
+	var inspection := inspect_local_save()
+	if not bool(inspection.get("valid", false)):
+		_fail_startup_entry(String(inspection.get("error", "The save is invalid.")))
+		return false
+	if not load_now():
+		_fail_startup_entry(get_last_error())
+		return false
+
+	var use_saved_location := _is_usable_world_state(_saved_world_state)
+	var destination := (
+		String(_saved_world_state.get("scene_path", ""))
+		if use_saved_location
+		else FIRST_GAMEPLAY_SCENE_PATH
+	)
+	var marker: StringName = &"" if use_saved_location else FIRST_GAMEPLAY_SPAWN
+	_queue_startup_entry(
+		destination,
+		marker,
+		StartupEntryMode.CONTINUE_LOCATION
+		if use_saved_location
+		else StartupEntryMode.CONTINUE_FALLBACK
+	)
+	return true
+
+
+func retry_startup_entry() -> bool:
+	if (
+		not _startup_in_progress
+		or _startup_entry_mode == StartupEntryMode.NONE
+		or _startup_retry_scene_path.is_empty()
+		or GameInstance.is_scene_transfer_in_progress()
+	):
+		return false
+	_startup_entry_error = ""
+	_queue_startup_entry(
+		_startup_retry_scene_path,
+		_startup_retry_spawn_marker,
+		_startup_entry_mode
+	)
+	return true
+
+
+## Erases the save file and every in-memory progression owner only after the
+## shared confirmation UI has emitted its third Yes. Normal gameplay returns
+## to the startup scene and replays the complete introduction.
+func reset_all_progress(return_to_startup_scene := true) -> bool:
 	if (
 		_reset_in_progress
 		or BattleSystem.get_state() != BattleSystem.State.IDLE
@@ -409,16 +612,28 @@ func reset_all_progress(return_to_main_scene := true) -> bool:
 	progress_reset_started.emit()
 	_explicit_reset_pending = true
 	_reset_in_progress = true
+	_startup_intro_pending = true
 	_prepare_fresh_profile_state()
 
 	var scene := get_tree().current_scene
 	var current_scene_path := scene.scene_file_path if scene != null else ""
 	if (
-		return_to_main_scene
-		and current_scene_path != MAIN_SCENE_PATH
-		and GameInstance.transfer_to_scene(MAIN_SCENE_PATH)
+		return_to_startup_scene
+		and current_scene_path != STARTUP_SCENE_PATH
 	):
+		_startup_in_progress = true
+		GameInstance.set_player_movement_enabled(false)
+		if GameInstance.transfer_to_scene(STARTUP_SCENE_PATH):
+			return true
+		_startup_in_progress = false
+
+	_reset_in_progress = false
+	if current_scene_path == STARTUP_SCENE_PATH or _startup_in_progress:
+		_startup_in_progress = true
+		GameInstance.set_player_movement_enabled(false)
 		return true
+	# Direct-scene test and editor launches retain their convenient picker-only
+	# handoff; the configured project entry always uses the full intro above.
 	_finish_fresh_profile_handoff.call_deferred()
 	return true
 
@@ -441,7 +656,6 @@ func _initialize_automatic_io() -> void:
 	_location_timer.wait_time = location_autosave_seconds
 	_location_timer.timeout.connect(save_now)
 	add_child(_location_timer)
-	_location_timer.start()
 
 	CollectionSystem.collection_changed.connect(_on_collection_changed)
 	MoveLearningSystem.progression_changed.connect(
@@ -459,6 +673,12 @@ func _initialize_automatic_io() -> void:
 	GameInstance.scene_transfer_failed.connect(_on_scene_transfer_failed)
 	get_tree().scene_changed.connect(_on_scene_changed)
 
+	if scene_path == STARTUP_SCENE_PATH or _startup_in_progress:
+		_startup_in_progress = true
+		GameInstance.set_player_movement_enabled(false)
+		return
+
+	_location_timer.start()
 	if not load_now():
 		_prepare_fresh_profile_state()
 		_finish_fresh_profile_handoff.call_deferred()
@@ -485,7 +705,7 @@ func _on_scene_transfer_started(
 	_destination_scene_path: String,
 	_destination_spawn_marker: StringName
 ) -> void:
-	if _reset_in_progress:
+	if _startup_in_progress or _reset_in_progress:
 		return
 	save_now()
 
@@ -495,14 +715,34 @@ func _on_scene_transfer_finished(
 	_destination_spawn_marker: StringName,
 	_spawn_marker_applied: bool
 ) -> void:
+	if _startup_in_progress:
+		if (
+			_destination_scene_path == STARTUP_SCENE_PATH
+			and not _startup_entry_error.is_empty()
+		):
+			_reset_in_progress = false
+			return
+		if _startup_entry_mode != StartupEntryMode.NONE:
+			_complete_startup_entry(
+				_destination_scene_path,
+				_spawn_marker_applied
+			)
+			return
+		if _reset_in_progress and _destination_scene_path == STARTUP_SCENE_PATH:
+			_reset_in_progress = false
+			return
 	if _reset_in_progress:
 		_finish_fresh_profile_handoff.call_deferred()
 		return
 	save_now()
 
 
-func _on_scene_transfer_failed(_message: String) -> void:
+func _on_scene_transfer_failed(message: String) -> void:
+	if _startup_in_progress and _startup_entry_mode != StartupEntryMode.NONE:
+		_fail_startup_entry(message)
+		return
 	if _reset_in_progress:
+		_startup_in_progress = false
 		_finish_fresh_profile_handoff.call_deferred()
 
 
@@ -511,7 +751,7 @@ func _on_world_transition_finished() -> void:
 
 
 func _on_scene_changed() -> void:
-	if _reset_in_progress or _profile_initialization_pending:
+	if _startup_in_progress or _reset_in_progress or _profile_initialization_pending:
 		return
 	_restore_saved_world_state_for_current_scene.call_deferred()
 	request_autosave()
@@ -588,6 +828,7 @@ func _finish_fresh_profile_handoff() -> void:
 	if not _profile_initialization_pending:
 		return
 	_reset_in_progress = false
+	_startup_intro_pending = false
 	StarterSelectionSystem.show_selection()
 
 
@@ -595,6 +836,15 @@ func _on_starter_selected(pokemon_id: int, _pcl: Dictionary) -> void:
 	if not _profile_initialization_pending:
 		return
 	_starter_pokemon_id = pokemon_id
+	if _startup_in_progress:
+		_startup_intro_pending = false
+		_startup_entry_mode = StartupEntryMode.NEW_GAME
+		_startup_retry_scene_path = FIRST_GAMEPLAY_SCENE_PATH
+		_startup_retry_spawn_marker = FIRST_GAMEPLAY_SPAWN
+		_startup_entry_error = ""
+		GameInstance.set_player_movement_enabled(false)
+		_begin_queued_startup_entry.call_deferred()
+		return
 	_profile_initialization_pending = false
 	_reset_in_progress = false
 	_saved_world_state.clear()
@@ -605,12 +855,111 @@ func _on_starter_selected(pokemon_id: int, _pcl: Dictionary) -> void:
 		progress_reset_completed.emit(pokemon_id)
 
 
+func _queue_startup_entry(
+	destination_scene_path: String,
+	destination_spawn_marker: StringName,
+	mode: StartupEntryMode
+) -> void:
+	_startup_entry_mode = mode
+	_startup_retry_scene_path = destination_scene_path
+	_startup_retry_spawn_marker = destination_spawn_marker
+	_startup_entry_error = ""
+	GameInstance.set_player_movement_enabled(false)
+	PlayerController.set_floating_joystick_input(Vector2.ZERO)
+	_begin_queued_startup_entry.call_deferred()
+
+
+func _begin_queued_startup_entry() -> void:
+	if (
+		not _startup_in_progress
+		or _startup_entry_mode == StartupEntryMode.NONE
+		or _startup_retry_scene_path.is_empty()
+		or GameInstance.is_scene_transfer_in_progress()
+	):
+		return
+	startup_entry_started.emit(_startup_retry_scene_path)
+	if not GameInstance.transfer_to_scene(
+		_startup_retry_scene_path,
+		_startup_retry_spawn_marker
+	) and _startup_entry_error.is_empty():
+		_fail_startup_entry("The gameplay scene could not be opened.")
+
+
+func _complete_startup_entry(
+	destination_scene_path: String,
+	spawn_marker_applied: bool
+) -> void:
+	var mode := _startup_entry_mode
+	var expected_destination := _startup_retry_scene_path
+	var placement_succeeded := destination_scene_path == expected_destination
+	if mode == StartupEntryMode.CONTINUE_LOCATION:
+		placement_succeeded = (
+			placement_succeeded
+			and _restore_saved_world_state_for_current_scene()
+		)
+	else:
+		placement_succeeded = placement_succeeded and spawn_marker_applied
+	if not placement_succeeded:
+		_fail_startup_entry(
+			"The gameplay scene opened, but the saved arrival position could not be applied."
+		)
+		if destination_scene_path != STARTUP_SCENE_PATH:
+			GameInstance.transfer_to_scene.call_deferred(STARTUP_SCENE_PATH)
+		return
+
+	var used_fallback := mode == StartupEntryMode.CONTINUE_FALLBACK
+	var requires_first_checkpoint := (
+		mode == StartupEntryMode.NEW_GAME or used_fallback
+	)
+	_profile_initialization_pending = false
+	_reset_in_progress = false
+	_startup_intro_pending = false
+	_startup_entry_mode = StartupEntryMode.NONE
+	_startup_retry_scene_path = ""
+	_startup_retry_spawn_marker = &""
+	_startup_entry_error = ""
+	_startup_in_progress = false
+	GameInstance.set_player_movement_enabled(true)
+	if is_instance_valid(_location_timer):
+		_location_timer.start()
+	if requires_first_checkpoint:
+		_saved_world_state.clear()
+		_last_payload_fingerprint = ""
+		save_now(true)
+	startup_entry_completed.emit(destination_scene_path, used_fallback)
+	if _explicit_reset_pending:
+		_explicit_reset_pending = false
+		progress_reset_completed.emit(_starter_pokemon_id)
+	MoveLearningSystem.notify_startup_finished()
+	CloudSaveSync.notify_startup_finished()
+
+
+func _fail_startup_entry(message: String) -> void:
+	_startup_entry_error = (
+		message.strip_edges()
+		if not message.strip_edges().is_empty()
+		else "The gameplay scene could not be opened."
+	)
+	GameInstance.set_player_movement_enabled(false)
+	startup_entry_failed.emit(_startup_entry_error)
+
+
 func _default_economy_data() -> Dictionary:
 	return {
 		"version": EconomyService.CURRENT_ECONOMY_VERSION,
 		"balance": EconomyService.STARTING_BALANCE,
 		"last_battle_reward": {},
 	}
+
+
+func _validate_collection_without_applying(collection_data: Array) -> String:
+	var validator := COLLECTION_SERVICE_SCRIPT.new() as Node
+	if validator == null:
+		return "The collection validator could not be created."
+	var valid := bool(validator.call("load_save_data", collection_data))
+	var validation_error := String(validator.call("get_last_error"))
+	validator.free()
+	return "" if valid else validation_error
 
 
 func _default_inventory_data() -> Dictionary:
@@ -908,6 +1257,27 @@ func _capture_current_world_state() -> Dictionary:
 		),
 	}
 	return _saved_world_state.duplicate(true)
+
+
+func _is_usable_world_state(world: Dictionary) -> bool:
+	var scene_path := String(world.get("scene_path", "")).strip_edges()
+	if (
+		scene_path.is_empty()
+		or not _is_vector_array(world.get("player_position"))
+		or not _is_vector_array(world.get("player_rotation"))
+		or not _is_vector_array(world.get("visual_rotation"))
+		or not ResourceLoader.exists(scene_path, "PackedScene")
+	):
+		return false
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		return false
+	var instance := packed.instantiate()
+	if instance == null:
+		return false
+	var has_player := _find_player_character(instance) != null
+	instance.free()
+	return has_player
 
 
 func _restore_saved_world_state_for_current_scene() -> bool:

@@ -86,6 +86,14 @@ Trainer dialog data is assigned through the exported `dialog` property on
 scene demonstrates that resource assignment in
 [`TrainerKyle.tscn`](../../game/actors/npcs/trainers/presets/trainer_kyle.tscn).
 
+[`StartupController`](../../game/startup/startup_controller.gd) is the
+non-`Dialog` multi-line example. It owns its fixed eight-message Cypress array
+and line index, shows one template over the professor illustration, sets the
+speaker to Professor Cypress, hides dismissal, and advances with `Next`. After
+the last line it closes that template before opening starter selection. Startup
+keeps player control and progression side effects suspended throughout; see
+[`startup-flow.md`](startup-flow.md).
+
 [`PokemonCenterHealerBehavior`](../../game/actors/npcs/services/pokemon_center_healer/pokemon_center_healer_behavior.gd) is
 the current confirmation-and-result example. Its authored scene waits for the
 shared look-interaction HUD, then opens one template with **Heal** and **Not

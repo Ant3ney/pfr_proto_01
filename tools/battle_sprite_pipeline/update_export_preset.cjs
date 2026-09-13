@@ -56,13 +56,14 @@ const required = [
   'res://art/battle/ui/icons/pokeball_icon.png',
   'res://art/battle/ui/icons/run_icon.png',
   'res://art/battle/ui/icons/sword_icon.png',
+  'res://art/ui/startup/professor_cypress_intro.png',
   ...catalog.entries.map((entry) => String(entry.atlas)),
 ];
 
 for (const resourcePath of required) {
   const localPath = path.join(projectRoot, resourcePath.slice('res://'.length));
   if (!fs.existsSync(localPath)) {
-    throw new Error(`Required Web battle resource does not exist: ${resourcePath}`);
+    throw new Error(`Required Web runtime resource does not exist: ${resourcePath}`);
   }
 }
 const retainedExisting = existing.filter((file) => {

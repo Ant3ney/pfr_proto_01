@@ -85,13 +85,16 @@ the mismatch guard intentionally rejects cross-wired trainer and battle scenes.
 ## Completion and return
 
 After all response events are acknowledged, `BattleSystem` emits the server
-result and waits for `continue_after_result()`. Win, loss, tie, forfeit, and
-unrecoverable-error returns all use this ordering:
+result and waits for `continue_after_result()`. An authoritative non-forfeit
+opponent win returns to the staffed main Pokémon Center interior in New
+Buffalant City. Wins, ties, forfeits, and unrecoverable errors retain their
+existing source or explicit return destination. Every return uses this ordering:
 
 1. Enter `RETURNING`, cancel callbacks, and clear token/session data.
 2. Ask `GameInstance.return_from_battle()` to cover the battlefield.
-3. Resolve an explicit launch override when present, otherwise change back to
-   the captured source scene.
+3. Override non-forfeit opponent-win returns with the main Pokémon Center
+   interior; otherwise resolve an explicit launch override or the captured
+   source scene.
 4. When returning to that source, restore the player's exact pre-battle global
    transform, zero velocity, and visual facing from `scene_changed` after the
    new scene is ready. An explicit different-scene override uses that scene's
@@ -133,9 +136,11 @@ godot --headless --path . --scene res://tests/scenes/trainer_dialog_battle_start
 godot --headless --path . --scene res://tests/integration/battle_system_session_test.tscn
 godot --headless --path . --scene res://tests/scenes/battle_scene_lifecycle_test.tscn
 godot --headless --path . --scene res://tests/integration/battle_return_position_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/battle_loss_pokemon_center_return_smoke_test.tscn
 ```
 
 These cover the offline preview path, concrete provider discovery, covered
 connection, deep-copy boundaries, request-driven locking, event acknowledgement,
-confirmed forfeit, ordered return, movement restoration, one-time Kyle sight,
-and manual-rematch availability.
+confirmed forfeit, source-position restoration, loss return to the Pokémon
+Center, movement restoration, one-time Kyle sight, and manual-rematch
+availability.

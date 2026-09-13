@@ -23,6 +23,10 @@ enum State {
 const START_ROUTE := "/battles"
 const ACTION_ROUTE := "/battles/actions"
 const MAX_RESPONSE_BYTES := 512 * 1024
+const DEFEAT_RETURN_SCENE_PATH := (
+	"res://game/world/levels/new_bouffalant_city/interiors/"
+	+ "pokemon_center/pokemon_center_interior.tscn"
+)
 const ExperiencePolicy := preload("res://game/battle/system/battle_experience.gd")
 const XP_SHARE_ITEM_KEY := "exp-share"
 const XP_SHARE_REWARD_MULTIPLIER := 0.5
@@ -264,8 +268,9 @@ func continue_after_result() -> bool:
 	_set_state(State.RETURNING)
 	_cancel_inflight()
 	var suppression_id := _encounter_id
+	var return_scene_path := _return_scene_path_for_result(_result)
 	_clear_sensitive_session_state()
-	if not GameInstance.return_from_battle("", suppression_id):
+	if not GameInstance.return_from_battle(return_scene_path, suppression_id):
 		_end_with_error(
 			"return_failed",
 			"The overworld could not be loaded.",
@@ -279,6 +284,14 @@ func continue_after_result() -> bool:
 	choice_request_changed.emit({})
 	battle_error_changed.emit({})
 	return true
+
+
+func _return_scene_path_for_result(result: Dictionary) -> String:
+	var winner := String(result.get("winner", "")).strip_edges().to_lower()
+	var reason := String(result.get("reason", "")).strip_edges().to_lower()
+	if winner == "opponent" and reason != "forfeit":
+		return DEFEAT_RETURN_SCENE_PATH
+	return ""
 
 
 ## Test-only dependency injection. Production always uses BattleRestClient.

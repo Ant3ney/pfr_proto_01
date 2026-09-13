@@ -9,12 +9,15 @@ contract.
 
 [`StarterSelectionSystem.gd`](../../game/progression/starter_selection/starter_selection_system.gd)
 is the `StarterSelectionSystem` autoload. It does not decide whether a save
-is new: `ProgressionAutosave` calls `prepare_new_profile()` only after no valid
-save exists or after an explicitly confirmed reset. The system then blocks
-movement, presents the mandatory picker, validates the selected ID, and creates
+is new: `ProgressionAutosave` prepares it only after the startup menu finds no
+save or after an explicitly confirmed reset. The configured project entry first
+plays the eight-message Cypress introduction; its final Next action asks the
+system to present the mandatory picker. The system blocks movement, validates
+the selected ID, and creates
 exactly one full-health level-5 PCL in party slot 1 through
 `CollectionSystem.add_pokemon()`. Existing saves, including schema-1 through
-schema-3 saves, load without being forced through onboarding.
+schema-3 saves, load without being forced through onboarding. Direct F6 scene
+launches retain a picker-only first-run path for editor work.
 
 The roster is fixed and ordered:
 
@@ -44,44 +47,36 @@ the economy, inventory, and challenge sections without changing starter
 identity. An initialized schema-6 profile cannot have an empty
 collection.
 
-A fresh profile is deliberately not written while starter selection is
-pending. Closing the application on the picker therefore leaves no empty save;
-the picker appears again next launch. The first starter confirmation creates
-the PCL, records its original starter ID, captures the main-scene pose, and
-writes the first schema-6 checkpoint. Later evolution does not change the
-recorded original choice.
+A fresh profile is deliberately not written while the introduction, starter
+selection, or station entry is pending. Closing the application during that
+handoff therefore leaves no empty save; the complete introduction appears
+again next launch. Starter confirmation creates the PCL and records its
+original starter ID, but the first schema-6 checkpoint waits until the station
+concourse has applied `StretchmanReturnSpawn` and startup has enabled player
+control. Later evolution does not change the recorded original choice.
 
 ## Destructive reset sequence
 
-The permanent player menu exposes a red `RESET PROGRESS` button. It never calls
-the reset API immediately. [`PlayerMenuUI`](../../game/ui/player_menu/player_menu_ui.gd)
-requires all of these gates:
-
-1. A full-screen permanent-deletion warning.
-2. A detailed list of erased systems plus separate acknowledgements for Pokemon
-   deletion and the requirement for a previously exported JSON backup to
-   recover it.
-3. A final deletion warning and the exact phrase `RESET FOREVER`.
-
-Only the last red button emits `reset_progress_confirmed`. `PlayerMenuHUD`
-closes its menu first so the menu releases its movement lock, then calls
-`ProgressionAutosave.reset_all_progress()`.
-
-The final phrase field keeps `LineEdit.virtual_keyboard_enabled` on and handles
-its touchscreen press by explicitly entering edit mode and requesting
-`DisplayServer.virtual_keyboard_show()`. The Web export must also set
-`html/experimental_virtual_keyboard=true`. These boundaries are required for a
-tap to summon a phone's native keyboard even when the field already owns focus;
-the Netlify build rejects generated HTML whose Godot config disables support.
+The permanent player menu exposes a red `RESET PROGRESS` button, and menu New
+Game uses the same
+[`ProgressResetConfirmation`](../../game/ui/reset_progress/progress_reset_confirmation.gd)
+when any local file exists. It never calls the reset API immediately. The
+component presents three red warning dialogs: progression loss, irreversibility
+without a previously exported JSON backup, and replacement of a linked cloud
+save. Every stage requires its own **Yes** press and offers **Cancel**. There is
+no text entry or checkbox; only the third Yes emits confirmation, exactly once.
+`PlayerMenuHUD` closes its menu first so the menu releases its movement lock,
+then calls `ProgressionAutosave.reset_all_progress()`.
 
 The save owner deletes the disk checkpoint, clears the collection and pending
 move choices, resets economy, inventory, and challenge progression,
 clears process-only standard-trainer sight history, drops the saved world pose,
 and returns to
-[`new_bouffalant_city.tscn`](../../game/world/levels/new_bouffalant_city/new_bouffalant_city.tscn).
-Autosave remains suppressed throughout the transfer. The starter picker then
-acquires movement control, and no new save exists until a new starter is
-confirmed. If optional cloud saving is linked, `CloudSaveSync` advances its
+[`startup_controller.tscn`](../../game/startup/startup_controller.tscn).
+Autosave remains suppressed throughout the transfer. The complete Cypress
+introduction and starter picker replay, and no new save exists until the
+replacement starter reaches Stretchman's room. If optional cloud saving is
+linked, `CloudSaveSync` advances its
 reset epoch before the owners are cleared; the new starter checkpoint then
 supersedes older cloud copies, including a later upload from an offline old
 device. A separately exported JSON file is outside both deletion targets and
@@ -95,13 +90,17 @@ only while battle and scene transitions are idle.
 godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/startup_entry_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/reset_restart_smoke_test.tscn
 ```
 
 The focused test verifies exact IDs and regions, multi-frame front animations,
 three-card 960-by-540 fit, confirmation, a single battle-ready level-5 PCL,
 schema-6 disk output, full owner reset, transient trainer reset, every warning
-gate, touchscreen-keyboard-enabled reset focus, exact-phrase enforcement, and
-cloud-reset/portable-backup warning language. The
+gate and cancellation point, exactly three Yes presses, one reset emission, and
+cloud-reset/portable-backup warning language. The startup entry test verifies
+each starter at level 5 and the station checkpoint; the reset restart test
+verifies the complete introduction repeats before replacement. The
 selected-resource Web export explicitly
 includes both starter scripts and its scene. Keep starter implementation under
 `game/progression/starter_selection/` and preserve the autoload/save/menu,

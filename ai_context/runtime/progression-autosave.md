@@ -92,14 +92,34 @@ replacing it with an empty battle location. Identical payloads do not rewrite
 the file. The timestamp for a section advances only when that section's JSON
 changes.
 
-## Load, location, and reset behavior
+## Startup load, location, and reset behavior
 
-The autoload attempts a load after the initial scene is ready. Without a valid
-save it clears bootstrap collection/domain state and opens the mandatory
-starter picker without writing an empty profile. Starter confirmation creates
-the only initial PCL and writes the first checkpoint. A pose is applied only
-when its `scene_path` equals the active scene, so F6 scene authoring does not
-silently navigate elsewhere.
+The configured project entry uses
+[`StartupController`](../../game/startup/startup_controller.gd).
+`inspect_local_save()` parses and validates the complete payload without
+mutating any progression owner. This lets the menu expose Continue only for a
+valid save. A valid schema-1-through-6 profile whose world section is missing,
+unusable, or no longer instantiates a `PlayerCharacter` remains loadable; its
+safe Continue destination is the station concourse at
+`StretchmanReturnSpawn`. Invalid data is reported to the menu and can be
+replaced only through the normal destructive-reset confirmations.
+
+`begin_startup_session()` suspends location autosave, disk writes, player
+control, automatic move-choice presentation, and cloud synchronization.
+Continue first applies the validated payload, then changes to the saved scene
+and restores position, player rotation, and visual rotation before releasing
+control. New Game waits through the introduction and starter picker, then
+places the selected profile at `StretchmanReturnSpawn`. The first schema-6
+checkpoint is deliberately written only after station placement succeeds. A
+legacy-location fallback is likewise checkpointed only after safe placement.
+Failed scene loads retain the loaded profile or selected starter and offer a
+retry without duplicating collection members.
+
+For direct F6 scene authoring, the save autoload still initializes after that
+scene is ready, restores a pose only when its `scene_path` equals the active
+scene, and opens the picker directly if no valid save exists. It never silently
+navigates a direct scene launch to a different saved scene. See
+[`startup-flow.md`](startup-flow.md) for the configured-entry lifecycle.
 
 `save_now(force := false)`, `load_now()`, `request_autosave()`, and the
 confirmation-gated `reset_all_progress()` are the checkpoint API.
@@ -111,11 +131,15 @@ validators and immediately checkpoints it. `get_export_json()` and
 re-timestamps every imported section as a fresh local edit, and refuses
 replacement during a battle, transfer, reset, or starter handoff.
 
-Reset deletes the old local checkpoint, clears every progression owner and
-session-level trainer state, returns to the canonical New Bouffalant City scene,
-and suppresses saving until a new starter is chosen. Automatic disk I/O is
-disabled when the process starts under `res://tests/`; focused tests may still
-call immediate methods with an isolated temporary path.
+Reset deletes the old local checkpoint, advances the linked cloud reset epoch,
+clears every progression owner and session-level trainer state, and suppresses
+saving. Configured gameplay returns to the startup scene and replays the full
+Cypress introduction before starter selection. A new checkpoint is still
+withheld until the replacement starter has been placed in the station. Direct
+scene/test reset calls may opt out of the startup transfer and retain the
+picker-only handoff. Automatic disk I/O is disabled when the process starts
+under `res://tests/`; focused tests may still call immediate methods with an
+isolated temporary path.
 
 Standard authored trainers' consumed automatic-sight IDs remain session-only.
 Standalone challenge runs persist non-wild defeated encounter IDs so returning
@@ -130,10 +154,15 @@ restart.
 godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/starter_selection_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/startup_entry_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/startup_continue_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/reset_restart_smoke_test.tscn
 ```
 
 The autosave regression covers schema-6 disk output, all independent domain
 sections, held items and claimed gifts, route unlocks and active challenge runs,
 schema-5 migration, older schema defaults, legacy scene/encounter mapping,
 credential-free JSON round trips, validated cloud application, and same-scene
-pose restore.
+pose restore. The startup suites cover all three starter checkpoints, exact
+cross-scene position/facing restoration, legacy-location fallback, delayed
+pending prompts, retry safety, and reset-to-introduction behavior.

@@ -73,8 +73,12 @@ request is in flight is rebased onto the response and sent in the next pass,
 rather than being overwritten. That pass explicitly marks the section as
 divergent so the server performs its intelligent conflict merge even when the
 cloud revision itself did not advance during the request. A response received
-during a battle, battle return, scene transfer, or starter handoff waits locally
-and applies only after those transition-sensitive owners are idle.
+during a battle, battle return, scene transfer, startup, or starter handoff
+waits locally and applies only after those transition-sensitive owners are
+idle. The initial enabled-sync request is also withheld while the startup menu,
+introduction, save entry, or station placement is active.
+`ProgressionAutosave` explicitly notifies this owner once gameplay entry
+succeeds.
 
 ## Resolver order
 
@@ -107,10 +111,11 @@ replacing in-memory or local disk state.
 
 ## Reset and verification
 
-The existing three-warning `RESET FOREVER` flow also advances the linked cloud
-epoch. No empty profile is uploaded while the starter picker is pending. The
-new starter checkpoint then replaces the previous cloud generation; an old
-offline device subsequently pulls that newer epoch. A portable JSON file
+The shared three-warning flow also advances the linked cloud epoch; it requires
+three separate Yes presses and no text entry. No empty profile is uploaded
+while the introduction, starter picker, or station placement is pending. The
+new starter's station checkpoint then replaces the previous cloud generation;
+an old offline device subsequently pulls that newer epoch. A portable JSON file
 exported before reset is not part of the active local/cloud deletion. Importing
 it after the new starter handoff preserves the advanced epoch and sends the
 restored payload as a fresh local change.
@@ -120,6 +125,7 @@ npm run test:cloud-save
 godot --headless --path . --scene res://tests/integration/cloud_save_sync_smoke_test.tscn
 godot --headless --path . --scene res://tests/integration/progression_autosave_smoke_test.tscn
 godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.tscn
+godot --headless --path . --scene res://tests/integration/startup_continue_smoke_test.tscn
 ```
 
 The Node suite covers first link, causal updates, forced first-link conflicts,
