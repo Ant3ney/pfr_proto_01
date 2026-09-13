@@ -80,6 +80,7 @@ var _save_status: Dictionary = {}
 
 
 func _ready() -> void:
+	MusicManager.ensure_main_menu_theme()
 	GameInstance.set_player_movement_enabled(false)
 	PlayerController.set_floating_joystick_input(Vector2.ZERO)
 	_build_interface()

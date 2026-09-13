@@ -101,6 +101,16 @@ func get_current_playback_position() -> float:
 	return player.get_playback_position() if player.playing else 0.0
 
 
+## Guarantees that startup/menu presentation uses the main theme. Repeating the
+## request while the main theme is already playing preserves its player and
+## playback position through the ordinary same-track continuity rule.
+func ensure_main_menu_theme() -> void:
+	if _battle_active:
+		_resume_after_battle(MAIN_TRACK_ID)
+		return
+	_crossfade_to(MAIN_TRACK_ID, 0.0)
+
+
 ## Resolves a scene Node, resource path, or the current scene when omitted.
 ## Unknown paths intentionally use the main theme.
 func resolve_track_for_scene(scene: Variant = null) -> StringName:

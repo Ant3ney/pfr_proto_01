@@ -36,6 +36,12 @@ and incoming amplitude uses sine. Superseding requests reuse the relevant live
 player, replace the other, and invalidate the prior transition state, so no stale
 completion can stop the final target.
 
+`StartupController._ready()` also calls the manager's idempotent
+`ensure_main_menu_theme()` entry point. This guarantees audible main-theme
+playback when the title menu is entered even if global scene-change timing has
+not settled yet. If the main theme is already active, the request retains the
+same player and playback position.
+
 The read-only diagnostic surface is:
 
 - `track_changed(track_id)`, emitted when the logical ID changes;

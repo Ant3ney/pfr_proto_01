@@ -23,7 +23,9 @@ keyboard focus, and controller focus share one path. The menu uses the
 project's blue/red identity over an opaque-enough navy panel. It creates no
 scene-local audio player; the persistent
 [`MusicManager`](music.md) selects and starts the main theme for this startup
-scene.
+scene. `StartupController._ready()` makes an explicit idempotent main-menu
+request so entering the title reliably starts that theme; an already-playing
+main theme continues without restarting.
 
 ## Isolated Route 0 backdrop
 

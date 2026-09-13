@@ -4,6 +4,9 @@ const TEST_SAVE_PATH := "user://pfr_startup_flow_smoke_test.json"
 const StartupScene: PackedScene = preload(
 	"res://game/startup/startup_controller.tscn"
 )
+const ROUTE_ZERO_PATH := (
+	"res://game/world/levels/standalone_areas/routes/route_00/route_00.tscn"
+)
 const EXPECTED_INTRO: Array[String] = [
 	"Welcome, young Trainer. I’m Professor Cypress.",
 	"Pokémon share our homes, our cities, and the wild places beyond.",
@@ -34,6 +37,17 @@ func _run() -> void:
 	var original_movement := GameInstance.is_player_movement_enabled()
 	ProgressionAutosave.save_path = TEST_SAVE_PATH
 	MoveLearningSystem.set_automatic_presentation_enabled_for_testing(false)
+	MusicManager.call("_handle_scene_path", ROUTE_ZERO_PATH)
+	await get_tree().create_timer(
+		MusicManager.CROSSFADE_SECONDS + 0.12,
+		true,
+		false,
+		true
+	).timeout
+	_check(
+		MusicManager.get_current_track_id() == MusicManager.ROUTE_TRACK_ID,
+		"The startup music fixture should begin on the route theme."
+	)
 
 	# A valid schema-6 profile without a usable location still exposes Continue
 	# and advertises the safe Stretchman-room fallback.
@@ -46,6 +60,17 @@ func _run() -> void:
 		and continue_button.visible
 		and "Stretchman’s room" in save_status.text,
 		"A valid save with no location should offer Continue through the station fallback."
+	)
+	await get_tree().create_timer(
+		MusicManager.CROSSFADE_SECONDS + 0.12,
+		true,
+		false,
+		true
+	).timeout
+	_check(
+		MusicManager.get_current_track_id() == MusicManager.MAIN_TRACK_ID
+		and _main_theme_player_is_audible(),
+		"Opening the main menu should settle on the audible main theme."
 	)
 	await _dispose_startup(startup)
 
@@ -217,7 +242,8 @@ func _run() -> void:
 	if _failures.is_empty():
 		print(
 			"Startup-flow smoke test passed: save visibility, invalid replacement, "
-			+ "isolated Route 0 camera, Cypress art, and exact eight-line intro verified."
+			+ "main-theme entry, isolated Route 0 camera, Cypress art, and exact "
+			+ "eight-line intro verified."
 		)
 		get_tree().quit(0)
 		return
@@ -278,6 +304,21 @@ func _write_text(path: String, contents: String) -> void:
 func _remove_test_save() -> void:
 	if FileAccess.file_exists(TEST_SAVE_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_SAVE_PATH))
+
+
+func _main_theme_player_is_audible() -> bool:
+	for child in MusicManager.get_children():
+		if child is not AudioStreamPlayer:
+			continue
+		var player := child as AudioStreamPlayer
+		if (
+			player.playing
+			and player.stream != null
+			and player.stream.resource_path == MusicManager.MAIN_TRACK_PATH
+			and is_equal_approx(player.volume_db, MusicManager.MAIN_GAIN_DB)
+		):
+			return true
+	return false
 
 
 func _check(condition: bool, message: String) -> void:
