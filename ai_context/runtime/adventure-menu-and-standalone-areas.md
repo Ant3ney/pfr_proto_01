@@ -60,6 +60,15 @@ subjective-coolness sort. Visible list rows use
 `BattleSpriteCatalog.load_front_thumbnail`; the detail panel uses the existing
 animated front atlas. Do not add network lookup or a second GIF decoder.
 
+`AdventureMenu` owns pointer input over its `ItemList` because Godot's native
+list selects on a touch-emulated mouse press but does not drag-scroll its
+contents. A pointer may move within a 12 px dead zone; movement beyond it drives
+the vertical scrollbar and suppresses selection, while a stationary release
+selects the touched row. Duplicate mouse events marked with
+`InputEvent.DEVICE_ID_EMULATION` are consumed so one physical touch cannot also
+reach the native list handler. Keep this gesture boundary when changing menu
+input; the separate action button remains the touch activation path.
+
 ## Shop and loot-box rules
 
 [`items.json`](../../game/economy/shop/catalogs/items.json) contains 2,223
@@ -270,4 +279,6 @@ loadable menu areas, static trainers and encounter resources, manual-only gym
 and Champion bosses, and the absence of the former procedural
 destination/content classes. The focused boss test verifies no sight approach,
 HUD-driven dialog and battle launch, and manual rematch availability during the
-immediate post-battle suppression window.
+immediate post-battle suppression window. The Adventure Menu smoke test also
+drags and taps synthetic screen touches to verify scrolling never selects an
+entry and selection waits for a stationary release.

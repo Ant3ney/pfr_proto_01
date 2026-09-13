@@ -51,6 +51,8 @@ func _run() -> void:
 		_check(panel != null and panel.get_combined_minimum_size().y <= panel.size.y + 1.0, "The complete menu should fit the 960x540 viewport.")
 		_check(offers != null and offers.item_count == 2223, "The default tab should render the complete item catalog.")
 		_check(search != null and filter != null and action != null, "Search, filters, and the selected action should remain native editable controls.")
+		if offers != null:
+			_verify_touch_scroll(menu, offers)
 		if search != null and offers != null:
 			search.text = "exp share"
 			await get_tree().process_frame
@@ -92,9 +94,62 @@ func _list_contains(list: ItemList, fragment: String) -> bool:
 	return false
 
 
+func _verify_touch_scroll(menu: AdventureMenu, offers: ItemList) -> void:
+	var selected_before := offers.get_selected_items()
+	var scroll_bar := offers.get_v_scroll_bar()
+	var scroll_before := scroll_bar.value
+	var start_local := Vector2(32.0, offers.size.y * 0.72)
+	var end_local := start_local + Vector2(0.0, -80.0)
+	var transform := offers.get_global_transform_with_canvas()
+	var start := transform * start_local
+	var finish := transform * end_local
+
+	var press := InputEventScreenTouch.new()
+	press.index = 17
+	press.position = start
+	press.pressed = true
+	menu._input(press)
+	var drag := InputEventScreenDrag.new()
+	drag.index = 17
+	drag.position = finish
+	drag.relative = finish - start
+	menu._input(drag)
+	var release := InputEventScreenTouch.new()
+	release.index = 17
+	release.position = finish
+	release.pressed = false
+	menu._input(release)
+
+	_check(scroll_bar.value > scroll_before + 40.0, "A mobile drag over an offer should scroll the ItemList.")
+	_check(offers.get_selected_items() == selected_before, "A mobile drag should not select or activate the touched offer.")
+
+	var tap_local := Vector2(32.0, offers.size.y * 0.55)
+	var tapped_item := offers.get_item_at_position(tap_local, true)
+	_check(tapped_item >= 0, "The touch-scroll test should find a visible offer to tap.")
+	if tapped_item < 0:
+		return
+	var tap_position := transform * tap_local
+	var tap_press := InputEventScreenTouch.new()
+	tap_press.index = 18
+	tap_press.position = tap_position
+	tap_press.pressed = true
+	menu._input(tap_press)
+	_check(offers.get_selected_items() == selected_before, "A touch press should wait for release before changing selection.")
+	var tap_release := InputEventScreenTouch.new()
+	tap_release.index = 18
+	tap_release.position = tap_position
+	tap_release.pressed = false
+	menu._input(tap_release)
+	var tapped_selection := offers.get_selected_items()
+	_check(
+		not tapped_selection.is_empty() and tapped_selection[0] == tapped_item,
+		"A stationary mobile tap should still select its offer on release."
+	)
+
+
 func _finish() -> void:
 	if _failures.is_empty():
-		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, complete catalogs, 50 destinations, and direct launch contract verified.")
+		print("Adventure Menu smoke test passed: ordinary NPC inheritance, Inspector-assigned generic behavior, movement lock, touch-safe scrolling, complete catalogs, 50 destinations, and direct launch contract verified.")
 		get_tree().quit(0)
 		return
 	for failure in _failures:

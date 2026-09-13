@@ -122,9 +122,17 @@ before a high-risk release.
 ## itch.io release channels
 
 The linked itch.io project is `ant3ney/pokemon-fracture-revolt`. Butler uploads
-the unpacked export directories to `windows`, `linux`, and `html5`; these names
-let itch.io identify each platform. The `Linux` and `Windows` Godot export
-presets use the same selected-resource list as `WebBuild`, kept synchronized by
+the unpacked export directories to `windows`, `linux`, and `html5`. The Windows
+and Linux names provide their initial platform tags, but an `html5` channel name
+does not make a build playable by itself. The project is set to **HTML**, upload
+`19216660` is marked **This file will be played in the browser**, and the embed
+is marked mobile-friendly with itch.io's fullscreen control enabled. Those
+settings live on the itch.io Edit project page and Butler cannot recreate them;
+if the HTML upload/channel is replaced, reselect its browser checkbox before
+publishing.
+
+The `Linux` and `Windows` Godot export presets use the same selected-resource
+list as `WebBuild`, kept synchronized by
 `tools/battle_sprite_pipeline/update_export_preset.cjs`. Desktop exports keep
 the executable and PCK separate for patch-efficient Butler updates. The HTML5
 channel receives `build/web/v1` so `index.html` remains at the upload root.

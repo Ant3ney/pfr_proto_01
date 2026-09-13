@@ -15,6 +15,7 @@ const SpriteMapping := preload("res://game/battle/system/battle_species_mapping.
 const LootBoxScene := preload("res://game/economy/loot_boxes/loot_box_roulette.tscn")
 const SPRITE_ANIMATION := &"idle"
 const POKEMON_ICON_SIZE := Vector2i(48, 48)
+const POINTER_SCROLL_DEAD_ZONE := 12.0
 const POKEMON_SORT_POKEDEX := "pokedex"
 const POKEMON_SORT_PRICE_ASCENDING := "price_ascending"
 const POKEMON_SORT_PRICE_DESCENDING := "price_descending"
@@ -55,6 +56,14 @@ var _icon_loader_running := false
 var _icon_reload_requested := false
 var _preview_frame := 0
 var _preview_elapsed := 0.0
+var _list_pointer_active := false
+var _list_pointer_is_touch := false
+var _list_pointer_index := -1
+var _list_pointer_start := Vector2.ZERO
+var _list_pointer_start_scroll := 0.0
+var _list_pointer_start_item := -1
+var _list_pointer_dragged := false
+var _list_pointer_activate_on_release := false
 
 var _balance_label: Label
 var _search: LineEdit
@@ -86,8 +95,30 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	_reset_list_pointer()
 	if _sprite_catalog != null:
 		_sprite_catalog.release_all()
+
+
+func _notification(what: int) -> void:
+	if what in [
+		NOTIFICATION_APPLICATION_FOCUS_OUT,
+		NOTIFICATION_WM_WINDOW_FOCUS_OUT,
+	]:
+		_reset_list_pointer()
+
+
+func _input(event: InputEvent) -> void:
+	if not is_instance_valid(_list) or not _list.is_visible_in_tree():
+		return
+	if event is InputEventScreenTouch:
+		_handle_list_screen_touch(event as InputEventScreenTouch)
+	elif event is InputEventScreenDrag:
+		_handle_list_screen_drag(event as InputEventScreenDrag)
+	elif event is InputEventMouseButton:
+		_handle_list_mouse_button(event as InputEventMouseButton)
+	elif event is InputEventMouseMotion:
+		_handle_list_mouse_motion(event as InputEventMouseMotion)
 
 
 func _process(delta: float) -> void:
@@ -148,6 +179,139 @@ func _unhandled_input(event: InputEvent) -> void:
 	):
 		get_viewport().set_input_as_handled()
 		close_hub()
+
+
+func _handle_list_screen_touch(event: InputEventScreenTouch) -> void:
+	if event.pressed:
+		if _list_pointer_active or not _list_contains_viewport_point(event.position):
+			return
+		_begin_list_pointer(event.position, true, event.index, false)
+		get_viewport().set_input_as_handled()
+	elif (
+		_list_pointer_active
+		and _list_pointer_is_touch
+		and event.index == _list_pointer_index
+	):
+		get_viewport().set_input_as_handled()
+		_finish_list_pointer(event.position, event.canceled)
+
+
+func _handle_list_screen_drag(event: InputEventScreenDrag) -> void:
+	if (
+		not _list_pointer_active
+		or not _list_pointer_is_touch
+		or event.index != _list_pointer_index
+	):
+		return
+	_drag_list_pointer(event.position)
+	get_viewport().set_input_as_handled()
+
+
+func _handle_list_mouse_button(event: InputEventMouseButton) -> void:
+	# Godot emits mouse events alongside touchscreen events. The touch path above
+	# owns those gestures so its synthetic mouse press cannot select an item.
+	if event.device == InputEvent.DEVICE_ID_EMULATION:
+		if _list_pointer_active or _list_contains_viewport_point(event.position):
+			get_viewport().set_input_as_handled()
+		return
+	if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		if event.pressed and _list_contains_viewport_point(event.position):
+			var direction := -1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0
+			var scroll_bar := _list.get_v_scroll_bar()
+			scroll_bar.value += direction * scroll_bar.page / 8.0 * event.factor
+			get_viewport().set_input_as_handled()
+		return
+	if event.button_index != MOUSE_BUTTON_LEFT:
+		return
+	if event.pressed:
+		if _list_pointer_active or not _list_contains_viewport_point(event.position):
+			return
+		_begin_list_pointer(event.position, false, -1, event.double_click)
+		get_viewport().set_input_as_handled()
+	elif _list_pointer_active and not _list_pointer_is_touch:
+		get_viewport().set_input_as_handled()
+		_finish_list_pointer(event.position, false)
+
+
+func _handle_list_mouse_motion(event: InputEventMouseMotion) -> void:
+	if event.device == InputEvent.DEVICE_ID_EMULATION:
+		if _list_pointer_active or _list_contains_viewport_point(event.position):
+			get_viewport().set_input_as_handled()
+		return
+	if not _list_pointer_active or _list_pointer_is_touch:
+		return
+	if (event.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
+		_reset_list_pointer()
+		return
+	_drag_list_pointer(event.position)
+	get_viewport().set_input_as_handled()
+
+
+func _begin_list_pointer(
+	viewport_position: Vector2,
+	is_touch: bool,
+	pointer_index: int,
+	activate_on_release: bool
+) -> void:
+	_list_pointer_active = true
+	_list_pointer_is_touch = is_touch
+	_list_pointer_index = pointer_index
+	_list_pointer_start = viewport_position
+	_list_pointer_start_scroll = _list.get_v_scroll_bar().value
+	_list_pointer_start_item = _list.get_item_at_position(
+		_list_viewport_to_local(viewport_position),
+		true
+	)
+	_list_pointer_dragged = false
+	_list_pointer_activate_on_release = activate_on_release
+
+
+func _drag_list_pointer(viewport_position: Vector2) -> void:
+	var offset := viewport_position - _list_pointer_start
+	if not _list_pointer_dragged and offset.length() < POINTER_SCROLL_DEAD_ZONE:
+		return
+	_list_pointer_dragged = true
+	_list.get_v_scroll_bar().value = _list_pointer_start_scroll - offset.y
+
+
+func _finish_list_pointer(viewport_position: Vector2, cancelled: bool) -> void:
+	var dragged := _list_pointer_dragged
+	var start_item := _list_pointer_start_item
+	var activate := _list_pointer_activate_on_release
+	_reset_list_pointer()
+	if cancelled or dragged or not _list_contains_viewport_point(viewport_position):
+		return
+	var released_item := _list.get_item_at_position(
+		_list_viewport_to_local(viewport_position),
+		true
+	)
+	if released_item < 0 or released_item != start_item:
+		return
+	_list.select(released_item)
+	_on_item_selected(released_item)
+	_list.grab_focus()
+	if activate:
+		_activate_selected()
+
+
+func _reset_list_pointer() -> void:
+	_list_pointer_active = false
+	_list_pointer_is_touch = false
+	_list_pointer_index = -1
+	_list_pointer_start = Vector2.ZERO
+	_list_pointer_start_scroll = 0.0
+	_list_pointer_start_item = -1
+	_list_pointer_dragged = false
+	_list_pointer_activate_on_release = false
+
+
+func _list_contains_viewport_point(viewport_position: Vector2) -> bool:
+	var local_position := _list_viewport_to_local(viewport_position)
+	return Rect2(Vector2.ZERO, _list.size).has_point(local_position)
+
+
+func _list_viewport_to_local(viewport_position: Vector2) -> Vector2:
+	return _list.get_global_transform_with_canvas().affine_inverse() * viewport_position
 
 
 func _build_interface() -> void:
