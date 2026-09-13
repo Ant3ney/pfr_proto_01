@@ -88,7 +88,11 @@ func _run() -> void:
 		) as Button
 		var cloud_button := menu.find_child("CloudSave", true, false) as Button
 		var cloud_prompt := menu.find_child("CloudSavePrompt", true, false) as Control
-		var cloud_save_id := menu.find_child("CloudSaveId", true, false) as LineEdit
+		var cloud_panel := menu.find_child("CloudSavePanel", true, false) as PanelContainer
+		var cloud_save_id := menu.find_child("CloudSaveId", true, false) as Label
+		var cloud_keypad := menu.find_child("CloudSaveKeypad", true, false) as GridContainer
+		var cloud_show_id := menu.find_child("ShowCloudSaveId", true, false) as CheckButton
+		var cloud_apply := menu.find_child("ApplyCloudSaveId", true, false) as Button
 		var cloud_status := menu.find_child("CloudSaveStatus", true, false) as Label
 		_check(
 			menu._tab_buttons.size() == 3,
@@ -129,40 +133,81 @@ func _run() -> void:
 		)
 		menu.close_save_data()
 		menu.open_cloud_save()
+		await get_tree().process_frame
 		_check(
-			cloud_prompt.visible and cloud_save_id.secret,
-			"Cloud-save settings should open with the private Save ID masked."
+			cloud_prompt.visible
+			and cloud_panel != null
+			and cloud_panel.get_combined_minimum_size().y <= cloud_panel.size.y + 1.0,
+			"The cloud keypad should fit the project's 960x540 viewport."
 		)
 		_check(
-			search.virtual_keyboard_enabled and cloud_save_id.virtual_keyboard_enabled,
-			"Player-menu text fields should request the touchscreen virtual keyboard."
+			cloud_save_id != null
+			and cloud_save_id.text == "_ _ _ _"
+			and cloud_keypad != null
+			and cloud_keypad.get_child_count() == 12
+			and cloud_prompt.find_children("*", "LineEdit", true, false).is_empty(),
+			"Cloud Save should use its own 12-button number pad with no editable text field."
 		)
-		cloud_save_id.release_focus()
-		cloud_save_id.unedit()
-		var cloud_touch := InputEventScreenTouch.new()
-		cloud_touch.pressed = true
-		cloud_save_id.gui_input.emit(cloud_touch)
+		var digit_zero := menu.find_child("CloudSaveDigit0", true, false) as Button
+		var digit_one := menu.find_child("CloudSaveDigit1", true, false) as Button
+		var digit_two := menu.find_child("CloudSaveDigit2", true, false) as Button
+		var digit_three := menu.find_child("CloudSaveDigit3", true, false) as Button
+		var digit_four := menu.find_child("CloudSaveDigit4", true, false) as Button
+		var digit_seven := menu.find_child("CloudSaveDigit7", true, false) as Button
+		var digit_nine := menu.find_child("CloudSaveDigit9", true, false) as Button
+		var clear_id := menu.find_child("ClearCloudSaveId", true, false) as Button
+		var backspace_id := menu.find_child("BackspaceCloudSaveId", true, false) as Button
 		_check(
-			cloud_save_id.has_focus() and cloud_save_id.is_editing(),
-			"Tapping the cloud Save ID should explicitly enter focused edit mode."
+			digit_zero != null
+			and digit_zero.focus_mode != Control.FOCUS_NONE
+			and digit_one != null
+			and digit_one.has_focus()
+			and digit_two != null
+			and digit_three != null
+			and digit_four != null
+			and digit_seven != null
+			and digit_nine != null
+			and clear_id != null
+			and backspace_id != null
+			and cloud_show_id != null
+			and cloud_apply != null,
+			"Every digit plus Clear and Backspace should be keyboard/gamepad/touch buttons."
 		)
-		cloud_save_id.text = "short"
+		digit_one.pressed.emit()
+		digit_two.pressed.emit()
+		digit_three.pressed.emit()
 		_check(
 			not menu.apply_cloud_save_id()
-			and "12" in cloud_status.text,
-			"A guessable short Save ID should be rejected with an inline explanation."
+			and cloud_save_id.text == "● ● ● _"
+			and "4 digits" in cloud_status.text,
+			"An incomplete keypad ID should be rejected with an inline explanation."
 		)
-		cloud_save_id.text = "menu-smoke-private-save-id"
+		backspace_id.pressed.emit()
+		clear_id.pressed.emit()
+		digit_zero.pressed.emit()
+		digit_four.pressed.emit()
+		digit_two.pressed.emit()
+		digit_seven.pressed.emit()
 		_check(
-			menu.apply_cloud_save_id()
+			cloud_save_id.text == "● ● ● ●",
+			"The complete four-digit Save ID should remain masked by default."
+		)
+		digit_nine.pressed.emit()
+		cloud_show_id.button_pressed = true
+		_check(
+			cloud_save_id.text == "0 4 2 7"
+			and not cloud_apply.disabled
+			and menu.apply_cloud_save_id()
 			and CloudSaveSync.is_enabled()
+			and CloudSaveSync.get_save_id() == "0427"
 			and menu.sync_cloud_save_now(),
-			"A valid Save ID should opt in and allow an immediate background sync request."
+			"The keypad should preserve a four-digit ID and ignore input after its fourth digit."
 		)
 		menu.opt_out_of_cloud_save()
 		_check(
 			not CloudSaveSync.is_enabled()
-			and cloud_save_id.text.is_empty(),
+			and cloud_save_id.text == "_ _ _ _"
+			and cloud_apply.disabled,
 			"Opting out should forget the Save ID without disabling local progress saves."
 		)
 		menu.close_cloud_save()

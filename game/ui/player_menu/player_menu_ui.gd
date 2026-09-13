@@ -79,8 +79,10 @@ var _web_import_error_callback: Variant
 var _web_import_filename := ""
 var _cloud_button: Button
 var _cloud_prompt: Control
-var _cloud_save_id: LineEdit
+var _cloud_save_id_digits := ""
+var _cloud_save_id_display: Label
 var _cloud_show_id: CheckButton
+var _cloud_digit_buttons: Array[Button] = []
 var _cloud_status: Label
 var _cloud_apply: Button
 var _cloud_sync_now: Button
@@ -299,34 +301,34 @@ func cancel_json_import() -> void:
 func open_cloud_save() -> void:
 	if _closing:
 		return
-	_cloud_save_id.text = CloudSaveSync.get_save_id()
-	_cloud_save_id.secret = true
-	_cloud_show_id.button_pressed = false
+	_cloud_save_id_digits = CloudSaveSync.get_save_id()
+	_cloud_show_id.set_pressed_no_signal(false)
 	_cloud_prompt.visible = true
+	_update_cloud_save_id_display()
 	_refresh_cloud_controls()
-	_activate_text_input(_cloud_save_id)
+	_focus_cloud_keypad()
 
 
 func close_cloud_save() -> void:
 	_cloud_prompt.visible = false
-	_cloud_save_id.release_focus()
 	if is_instance_valid(_cloud_button):
 		_cloud_button.grab_focus()
 
 
 func apply_cloud_save_id() -> bool:
-	if not CloudSaveSync.enable_with_save_id(_cloud_save_id.text):
+	if not CloudSaveSync.enable_with_save_id(_cloud_save_id_digits):
 		_refresh_cloud_controls()
 		return false
-	_cloud_save_id.text = CloudSaveSync.get_save_id()
+	_cloud_save_id_digits = CloudSaveSync.get_save_id()
+	_update_cloud_save_id_display()
 	_refresh_cloud_controls()
 	return true
 
 
 func sync_cloud_save_now() -> bool:
 	if not CloudSaveSync.is_enabled():
-		_cloud_status.text = "Enter a private Save ID, then choose Use ID & Sync."
-		_activate_text_input(_cloud_save_id)
+		_cloud_status.text = "Enter a four-digit Save ID, then choose Use ID & Sync."
+		_focus_cloud_keypad()
 		return false
 	var requested := CloudSaveSync.request_sync(true)
 	_refresh_cloud_controls()
@@ -335,8 +337,9 @@ func sync_cloud_save_now() -> bool:
 
 func opt_out_of_cloud_save() -> void:
 	CloudSaveSync.disable_cloud_sync()
-	_cloud_save_id.text = ""
-	_cloud_show_id.button_pressed = false
+	_cloud_save_id_digits = ""
+	_cloud_show_id.set_pressed_no_signal(false)
+	_update_cloud_save_id_display()
 	_refresh_cloud_controls()
 
 
@@ -923,7 +926,7 @@ func _build_save_data_prompt() -> void:
 	var explanation := Label.new()
 	explanation.text = (
 		"Export a readable backup of the exact progression payload used by local "
-		+ "and cloud saves. The private cloud Save ID and device linkage are excluded. "
+		+ "and cloud saves. The cloud Save ID and device linkage are excluded. "
 		+ "Import validates the whole payload before replacing local progress."
 	)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1208,16 +1211,16 @@ func _build_cloud_prompt() -> void:
 	_cloud_prompt.add_child(center)
 	var panel := PanelContainer.new()
 	panel.name = "CloudSavePanel"
-	panel.custom_minimum_size = Vector2(680.0, 360.0)
+	panel.custom_minimum_size = Vector2(680.0, 460.0)
 	center.add_child(panel)
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 24)
-	margin.add_theme_constant_override("margin_top", 20)
-	margin.add_theme_constant_override("margin_right", 24)
-	margin.add_theme_constant_override("margin_bottom", 20)
+	margin.add_theme_constant_override("margin_left", 20)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 20)
+	margin.add_theme_constant_override("margin_bottom", 12)
 	panel.add_child(margin)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
+	column.add_theme_constant_override("separation", 7)
 	margin.add_child(column)
 
 	var title := Label.new()
@@ -1227,8 +1230,8 @@ func _build_cloud_prompt() -> void:
 	column.add_child(title)
 	var explanation := Label.new()
 	explanation.text = (
-		"Choose a private Save ID to synchronize this profile across devices. "
-		+ "The Save ID acts like a password: anyone who knows it can load this save. "
+		"Enter a four-digit Save ID to synchronize this profile across devices. "
+		+ "Anyone who enters the same number can load and sync this save. "
 		+ "Local saving continues while offline and also works when cloud sync is off."
 	)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1238,23 +1241,53 @@ func _build_cloud_prompt() -> void:
 	var id_row := HBoxContainer.new()
 	id_row.add_theme_constant_override("separation", 10)
 	column.add_child(id_row)
-	_cloud_save_id = LineEdit.new()
-	_cloud_save_id.name = "CloudSaveId"
-	_cloud_save_id.placeholder_text = "Private Save ID — 12 to 128 characters"
-	_cloud_save_id.secret = true
-	_cloud_save_id.secret_character = "●"
-	_cloud_save_id.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_PASSWORD
-	_configure_text_input(_cloud_save_id)
-	_cloud_save_id.max_length = CloudSaveSyncService.SAVE_ID_MAX_LENGTH
-	_cloud_save_id.custom_minimum_size = Vector2(420.0, 44.0)
-	_cloud_save_id.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_cloud_save_id.text_submitted.connect(_on_cloud_save_id_submitted)
-	id_row.add_child(_cloud_save_id)
+	var display_panel := PanelContainer.new()
+	display_panel.name = "CloudSaveIdPanel"
+	display_panel.custom_minimum_size = Vector2(420.0, 44.0)
+	display_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	id_row.add_child(display_panel)
+	_cloud_save_id_display = Label.new()
+	_cloud_save_id_display.name = "CloudSaveId"
+	_cloud_save_id_display.text = "_ _ _ _"
+	_cloud_save_id_display.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_cloud_save_id_display.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_cloud_save_id_display.add_theme_font_size_override("font_size", 28)
+	_cloud_save_id_display.tooltip_text = "Four-digit cloud Save ID"
+	display_panel.add_child(_cloud_save_id_display)
 	_cloud_show_id = CheckButton.new()
 	_cloud_show_id.name = "ShowCloudSaveId"
 	_cloud_show_id.text = "Show ID"
 	_cloud_show_id.toggled.connect(_on_cloud_show_id_toggled)
 	id_row.add_child(_cloud_show_id)
+
+	var keypad_center := CenterContainer.new()
+	column.add_child(keypad_center)
+	var keypad := GridContainer.new()
+	keypad.name = "CloudSaveKeypad"
+	keypad.columns = 3
+	keypad.add_theme_constant_override("h_separation", 8)
+	keypad.add_theme_constant_override("v_separation", 6)
+	keypad_center.add_child(keypad)
+	_cloud_digit_buttons.clear()
+	for digit in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+		var digit_button := _cloud_keypad_button(
+			keypad,
+			"CloudSaveDigit%s" % digit,
+			digit
+		)
+		digit_button.pressed.connect(_append_cloud_save_digit.bind(digit))
+		_cloud_digit_buttons.append(digit_button)
+	var clear_button := _cloud_keypad_button(keypad, "ClearCloudSaveId", "Clear")
+	clear_button.pressed.connect(_clear_cloud_save_id)
+	var zero_button := _cloud_keypad_button(keypad, "CloudSaveDigit0", "0")
+	zero_button.pressed.connect(_append_cloud_save_digit.bind("0"))
+	_cloud_digit_buttons.append(zero_button)
+	var backspace_button := _cloud_keypad_button(
+		keypad,
+		"BackspaceCloudSaveId",
+		"Backspace"
+	)
+	backspace_button.pressed.connect(_backspace_cloud_save_id)
 
 	_cloud_status = Label.new()
 	_cloud_status.name = "CloudSaveStatus"
@@ -1292,6 +1325,79 @@ func _build_cloud_prompt() -> void:
 	_cloud_apply.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_cloud_apply.pressed.connect(apply_cloud_save_id)
 	buttons.add_child(_cloud_apply)
+	_update_cloud_save_id_display()
+
+
+func _cloud_keypad_button(
+	parent: GridContainer,
+	node_name: String,
+	label: String
+) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.text = label
+	button.custom_minimum_size = Vector2(120.0, 38.0)
+	button.focus_mode = Control.FOCUS_ALL
+	button.add_theme_font_size_override("font_size", 17)
+	parent.add_child(button)
+	return button
+
+
+func _append_cloud_save_digit(digit: String) -> void:
+	if _cloud_save_id_digits.length() >= CloudSaveSyncService.SAVE_ID_LENGTH:
+		return
+	if digit.length() != 1:
+		return
+	var character := digit.unicode_at(0)
+	if character < 48 or character > 57:
+		return
+	_cloud_save_id_digits += digit
+	_update_cloud_save_id_display()
+	_refresh_cloud_controls()
+
+
+func _backspace_cloud_save_id() -> void:
+	if _cloud_save_id_digits.is_empty():
+		return
+	_cloud_save_id_digits = _cloud_save_id_digits.left(
+		_cloud_save_id_digits.length() - 1
+	)
+	_update_cloud_save_id_display()
+	_refresh_cloud_controls()
+
+
+func _clear_cloud_save_id() -> void:
+	_cloud_save_id_digits = ""
+	_update_cloud_save_id_display()
+	_refresh_cloud_controls()
+
+
+func _update_cloud_save_id_display() -> void:
+	if not is_instance_valid(_cloud_save_id_display):
+		return
+	var cells := PackedStringArray()
+	var reveal_digits := (
+		is_instance_valid(_cloud_show_id)
+		and _cloud_show_id.button_pressed
+	)
+	for index in CloudSaveSyncService.SAVE_ID_LENGTH:
+		if index >= _cloud_save_id_digits.length():
+			cells.append("_")
+		elif reveal_digits:
+			cells.append(_cloud_save_id_digits[index])
+		else:
+			cells.append("●")
+	_cloud_save_id_display.text = " ".join(cells)
+
+
+func _focus_cloud_keypad() -> void:
+	if (
+		_cloud_save_id_digits.length() == CloudSaveSyncService.SAVE_ID_LENGTH
+		and is_instance_valid(_cloud_apply)
+	):
+		_cloud_apply.grab_focus()
+	elif not _cloud_digit_buttons.is_empty():
+		_cloud_digit_buttons[0].grab_focus()
 
 
 func _build_reset_prompt() -> void:
@@ -2241,14 +2347,8 @@ func _on_filter_selected(_index: int) -> void:
 	_refresh_entries()
 
 
-func _on_cloud_save_id_submitted(_value: String) -> void:
-	apply_cloud_save_id()
-
-
-func _on_cloud_show_id_toggled(show_id: bool) -> void:
-	_cloud_save_id.secret = not show_id
-	_cloud_save_id.caret_column = _cloud_save_id.text.length()
-	_activate_text_input(_cloud_save_id)
+func _on_cloud_show_id_toggled(_show_id: bool) -> void:
+	_update_cloud_save_id_display()
 
 
 func _on_cloud_status_changed(_state: String, _message: String) -> void:
@@ -2282,6 +2382,9 @@ func _refresh_cloud_controls() -> void:
 		]
 	_cloud_opt_out.disabled = not cloud_enabled
 	_cloud_sync_now.disabled = not cloud_enabled or cloud_state == "syncing"
+	_cloud_apply.disabled = (
+		_cloud_save_id_digits.length() != CloudSaveSyncService.SAVE_ID_LENGTH
+	)
 
 
 func _on_collection_changed() -> void:

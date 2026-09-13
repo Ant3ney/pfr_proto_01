@@ -63,7 +63,7 @@ function payload(timestamp = 1000) {
 function incoming(overrides = {}) {
   return {
     protocol_version: 1,
-    save_id: "a-private-save-id",
+    save_id: "0427",
     device_id: "0123456789abcdef0123456789abcdef",
     epoch: 0,
     base_revision: 0,
@@ -88,11 +88,27 @@ function documentFrom(
   };
 }
 
-test("validates schema 6 without accepting short Save IDs", () => {
+test("validates schema 6 with an exact four-digit Save ID", () => {
   assert.equal(validateCloudSaveRequest(incoming()), "");
+  assert.equal(
+    validateCloudSaveRequest(incoming({ save_id: "0000" })),
+    "",
+  );
   assert.match(
-    validateCloudSaveRequest(incoming({ save_id: "too-short" })),
-    /12–128/,
+    validateCloudSaveRequest(incoming({ save_id: "123" })),
+    /exactly 4 digits/,
+  );
+  assert.match(
+    validateCloudSaveRequest(incoming({ save_id: "12345" })),
+    /exactly 4 digits/,
+  );
+  assert.match(
+    validateCloudSaveRequest(incoming({ save_id: "12a4" })),
+    /exactly 4 digits/,
+  );
+  assert.match(
+    validateCloudSaveRequest(incoming({ save_id: 1234 })),
+    /required/,
   );
   const invalidClock = incoming();
   invalidClock.payload.save_meta.saved_at_ms = -1;

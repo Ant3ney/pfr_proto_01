@@ -1,9 +1,10 @@
 # Cloud save function
 
 `cloud-save.mjs` is the server-only Atlas boundary for the optional in-game
-cloud save. The browser sends a player-chosen Save ID over HTTPS; the function
-HMACs that ID before using it as a MongoDB document key. Neither the raw Save ID
-nor the Atlas URI is stored in the cloud-save document.
+cloud save. The browser sends an exact four-digit, player-chosen Save ID over
+HTTPS; the function validates and HMACs that string before using it as a MongoDB
+document key. Leading zeroes remain significant. Neither the raw Save ID nor
+the Atlas URI is stored in the cloud-save document.
 
 Before deploying, create these production Netlify site environment variables.
 Mark the URI and pepper as secrets, and select Functions-only scope when the

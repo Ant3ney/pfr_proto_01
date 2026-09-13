@@ -16,8 +16,9 @@ const WEB_ENDPOINT_PATH := "/api/cloud-save"
 const NATIVE_DEFAULT_ENDPOINT := (
 	"https://pfr-early-alpha.netlify.app/api/cloud-save"
 )
-const SAVE_ID_MIN_LENGTH := 12
-const SAVE_ID_MAX_LENGTH := 128
+const SAVE_ID_LENGTH := 4
+const SAVE_ID_MIN_LENGTH := SAVE_ID_LENGTH
+const SAVE_ID_MAX_LENGTH := SAVE_ID_LENGTH
 const REQUEST_TIMEOUT_SECONDS := 18.0
 const LOCAL_CHANGE_DEBOUNCE_SECONDS := 1.0
 const POLL_SECONDS := 45.0
@@ -125,15 +126,12 @@ func get_base_revision() -> int:
 
 func validate_save_id(value: String) -> String:
 	var normalized := value.strip_edges()
-	if (
-		normalized.length() < SAVE_ID_MIN_LENGTH
-		or normalized.length() > SAVE_ID_MAX_LENGTH
-	):
-		return "Use a private Save ID between 12 and 128 characters."
+	if normalized.length() != SAVE_ID_LENGTH:
+		return "Enter exactly 4 digits for the Save ID."
 	for index in normalized.length():
 		var character := normalized.unicode_at(index)
-		if character < 32 or character == 127:
-			return "Save IDs cannot contain control characters."
+		if character < 48 or character > 57:
+			return "Enter exactly 4 digits for the Save ID."
 	return ""
 
 

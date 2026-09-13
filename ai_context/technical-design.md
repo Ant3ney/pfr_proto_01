@@ -14,7 +14,7 @@ input adapters; they do not construct REST commands or calculate results. See
 
 `ProgressionAutosave` owns the validated schema-6 local checkpoint and
 per-section offline timestamps. Optional `CloudSaveSync` sends that payload to
-a same-origin Netlify Function only after a player enters a private Save ID;
+a same-origin Netlify Function only after a player enters a four-digit Save ID;
 opting out never disables local saving. MongoDB Atlas credentials remain
 server-side, Save IDs are HMACed before becoming document keys, and
 revision/timestamp/epoch conflict resolution prevents an old offline device

@@ -299,12 +299,8 @@ export function validateCloudSaveRequest(value) {
   }
   if (typeof value.save_id !== "string") return "A Save ID is required.";
   const saveId = value.save_id.trim();
-  if (
-    saveId.length < 12
-    || saveId.length > 128
-    || /[\u0000-\u001f\u007f]/u.test(saveId)
-  ) {
-    return "Save ID must contain 12–128 printable characters.";
+  if (!/^[0-9]{4}$/u.test(saveId)) {
+    return "Save ID must contain exactly 4 digits.";
   }
   if (
     typeof value.device_id !== "string"

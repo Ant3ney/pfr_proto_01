@@ -41,13 +41,13 @@ HMAC-SHA-256 lookup key; they do not store the raw Save ID.
 ## Player linkage and offline behavior
 
 The player menu's `Cloud Save` overlay makes this feature explicitly optional.
-A Save ID is 12–128 printable characters and acts as the profile's password:
-anyone who knows it can load that save. The field is masked by default. `Opt
-Out` clears the local ID and cloud linkage without touching the ordinary save.
-On touchscreen Web builds, the field's press handler explicitly enters edit
-mode and calls `DisplayServer.virtual_keyboard_show()` during the gesture; do
-not rely only on a prior programmatic `grab_focus()`, which a mobile browser can
-accept without opening its keyboard.
+A Save ID is stored and transported as exactly four ASCII digits, including
+leading zeroes (`0000`–`9999`). Anyone who enters the same number can load and
+sync that save. The panel uses a non-editable, masked-by-default four-slot
+display plus its own focusable 0–9, Clear, and Backspace buttons. It contains no
+`LineEdit` and never opens or depends on the desktop or mobile native keyboard.
+`Opt Out` clears the local ID and cloud linkage without touching the ordinary
+save.
 The local linkage file is `user://pfr_cloud_sync.json`; it stores the enabled
 flag, raw player-entered ID, random device ID, reset epoch, last cloud revision,
 base section fingerprints, and last successful-sync time. It is never uploaded
@@ -128,9 +128,10 @@ godot --headless --path . --scene res://tests/scenes/player_menu_hud_smoke_test.
 godot --headless --path . --scene res://tests/integration/startup_continue_smoke_test.tscn
 ```
 
-The Node suite covers first link, causal updates, forced first-link conflicts,
-divergent collection/inventory/challenge merges, and reset epochs. The Godot tests
-cover private-ID validation, opt-in/out, masked UI, schema-6 timestamps, normal
-save validation, linked JSON import, and in-flight local-change rebasing. The
-selected-resource export must include `CloudSaveSync.gd`; Netlify deploys the
-function separately from the Web PCK.
+The Node suite covers exact four-digit validation, first link, causal updates,
+forced first-link conflicts, divergent collection/inventory/challenge merges,
+and reset epochs. The Godot tests cover leading-zero ID validation, keypad-only
+entry, opt-in/out, masked display, schema-6 timestamps, normal save validation,
+linked JSON import, and in-flight local-change rebasing. The selected-resource
+export must include `CloudSaveSync.gd`; Netlify deploys the function separately
+from the Web PCK.

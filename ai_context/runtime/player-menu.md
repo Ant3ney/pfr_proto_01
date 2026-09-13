@@ -93,21 +93,22 @@ entry plays the existing full front GIF atlas with original frame timing.
 ## Optional cloud-save panel
 
 The tab row's `Cloud Save` button opens a blocking settings overlay without
-adding a fourth collection tab. Its 12–128 character Save ID field is masked by
-default and explicitly warns that the ID acts like a password. `Use ID & Sync`
-enables background sync, `Sync Now` requests an immediate pass, and `Opt Out`
-clears the local cloud linkage while leaving ordinary autosave enabled. Status
-text exposes pending, syncing, offline, server-configuration, merged, and
-successful states plus the last revision/time; it never prints database
-credentials. See [`cloud-save.md`](cloud-save.md) for persistence and merge
-ownership.
+adding a fourth collection tab. Its Save ID is exactly four digits and is entered
+through an in-game 0–9/Clear/Backspace keypad. A non-editable four-slot display
+is masked by default with a Show ID toggle; the overlay has no `LineEdit` and
+does not request a native desktop or phone keyboard. `Use ID & Sync` enables
+background sync, `Sync Now` requests an immediate pass, and `Opt Out` clears the
+local cloud linkage while leaving ordinary autosave enabled. Status text exposes
+pending, syncing, offline, server-configuration, merged, and successful states
+plus the last revision/time; it never prints database credentials. See
+[`cloud-save.md`](cloud-save.md) for persistence and merge ownership.
 
 ## Portable JSON save panel
 
 The tab row's separate `Save Data` button opens a blocking export/import
 overlay that works whether cloud sync is enabled or not. `Export JSON` emits
 the exact schema-6 progression payload returned by `ProgressionAutosave`, but
-never the private Save ID, device ID, reset epoch, revision, or other cloud
+never the Save ID, device ID, reset epoch, revision, or other cloud
 linkage. Native builds use filesystem dialogs; Web builds use
 `JavaScriptBridge.download_buffer()` for a real browser download and a hidden
 browser file input plus `FileReader` for upload because Godot `FileDialog`

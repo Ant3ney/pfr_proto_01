@@ -1,7 +1,7 @@
 extends Node
 
 const TEST_SAVE_PATH := "user://pfr_cloud_sync_progression_smoke_test.json"
-const PRIVATE_SAVE_ID := "cloud-sync-smoke-private-id"
+const FOUR_DIGIT_SAVE_ID := "0427"
 
 var _failures: Array[String] = []
 
@@ -40,9 +40,12 @@ func _run() -> void:
 			original_endpoint_environment,
 		)
 	_check(
-		not CloudSaveSync.enable_with_save_id("short")
-		and CloudSaveSync.enable_with_save_id(PRIVATE_SAVE_ID),
-		"Cloud sync should reject weak IDs and accept a private 12+ character ID."
+		not CloudSaveSync.enable_with_save_id("123")
+		and not CloudSaveSync.enable_with_save_id("12345")
+		and not CloudSaveSync.enable_with_save_id("12a4")
+		and CloudSaveSync.enable_with_save_id(FOUR_DIGIT_SAVE_ID)
+		and CloudSaveSync.get_save_id() == FOUR_DIGIT_SAVE_ID,
+		"Cloud sync should accept exactly four digits and preserve a leading zero."
 	)
 	CloudSaveSync._sync_requested = false
 	ProgressionAutosave._startup_in_progress = true
@@ -166,7 +169,7 @@ func _run() -> void:
 
 	if _failures.is_empty():
 		print(
-			"Cloud-save sync smoke test passed: private-ID opt-in, validated cloud apply, "
+			"Cloud-save sync smoke test passed: four-digit ID opt-in, validated cloud apply, "
 			+ "linked JSON import, safe transition deferral, local checkpoint, and "
 			+ "in-flight change rebase verified."
 		)
