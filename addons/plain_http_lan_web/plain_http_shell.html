@@ -1308,14 +1308,11 @@ window.PFRBoot = Object.freeze((function () {
 		return url.href;
 	}
 
-	function formatBytes(value) {
-		const bytes = Number.isFinite(value) && value > 0 ? value : 0;
-		if (bytes < 1024) return `${Math.round(bytes)} B`;
-		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`;
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`;
+	function exactByteCount(value) {
+		return String(Math.round(Number.isFinite(value) && value > 0 ? value : 0));
 	}
 
-	return { cleanModeUrl, formatBytes, handoffUrl, monotonicProgress, selectLaunchMode };
+	return { cleanModeUrl, exactByteCount, handoffUrl, monotonicProgress, selectLaunchMode };
 }()));
 /* PFR_BOOT_API_END */
 
@@ -1777,10 +1774,13 @@ if (!window.isSecureContext) {
 		);
 		backgroundLoaded = progress.loaded;
 		const ratio = progress.total > 0 ? progress.loaded / progress.total : 0;
-		const percentage = Math.round(ratio * 100);
+		const percentageValue = ratio * 100;
+		const percentage = percentageValue >= 100
+			? '100'
+			: percentageValue.toFixed(1).replace(/\.0$/, '');
 		bootDockProgressFill.style.transform = `scaleX(${ratio})`;
-		bootDockProgress.setAttribute('aria-valuenow', String(percentage));
-		bootDockBytes.value = `${percentage}% · ${window.PFRBoot.formatBytes(progress.loaded)} / ${window.PFRBoot.formatBytes(progress.total)}`;
+		bootDockProgress.setAttribute('aria-valuenow', percentageValue.toFixed(3));
+		bootDockBytes.value = `${percentage}% · ${window.PFRBoot.exactByteCount(progress.loaded)}/${window.PFRBoot.exactByteCount(progress.total)} B`;
 		backgroundLastActivity = performance.now();
 	}
 

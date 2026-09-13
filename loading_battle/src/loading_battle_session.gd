@@ -200,6 +200,9 @@ func _prepare_pending_request(route: String, payload: Dictionary, kind: String) 
 
 
 func _dispatch_pending_request() -> bool:
+	if _network_error_code() == "offline":
+		_set_retryable_error("offline", "Practice is paused until this device reconnects.")
+		return false
 	if not is_instance_valid(_transport) or not _transport.has_method("post_json_bytes"):
 		_set_retryable_error("network_error", "The practice server is unavailable.")
 		return false

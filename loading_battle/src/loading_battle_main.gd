@@ -293,10 +293,21 @@ func _update_responsive_layout() -> void:
 	var viewport_size := get_viewport_rect().size
 	var portrait := viewport_size.y > viewport_size.x
 	_starter_grid.columns = 1 if portrait else 3
+	_apply_font_scale(self, 1.3 if portrait else 1.0)
 	for card in _starter_cards:
 		card.custom_minimum_size = Vector2(210, 350 if portrait else 280)
 	for button in _starter_buttons:
 		button.custom_minimum_size.y = 108 if portrait else 76
+		button.add_theme_font_size_override("font_size", 24 if portrait else 14)
+
+
+func _apply_font_scale(node: Node, scale: float) -> void:
+	if node is Control and node.has_meta("loading_battle_font_size"):
+		var control := node as Control
+		var base_size := int(node.get_meta("loading_battle_font_size"))
+		control.add_theme_font_size_override("font_size", roundi(base_size * scale))
+	for child in node.get_children():
+		_apply_font_scale(child, scale)
 
 
 func _status_card(opponent: bool) -> PanelContainer:
@@ -499,6 +510,7 @@ func _set_choices_enabled(enabled: bool) -> void:
 func _button(text_value: String, accent: Color) -> Button:
 	var button := Button.new()
 	button.text = text_value
+	button.set_meta("loading_battle_font_size", 14)
 	button.add_theme_font_size_override("font_size", 14)
 	button.add_theme_color_override("font_color", CREAM)
 	button.add_theme_color_override("font_disabled_color", Color("#74839a"))
@@ -512,6 +524,7 @@ func _button(text_value: String, accent: Color) -> Button:
 func _label(text_value: String, size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.text = text_value
+	label.set_meta("loading_battle_font_size", size)
 	label.add_theme_font_size_override("font_size", size)
 	label.add_theme_color_override("font_color", color)
 	return label

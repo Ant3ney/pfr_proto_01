@@ -81,7 +81,7 @@ test('background progress remains monotonic through retries and reports exact by
 		JSON.parse(JSON.stringify(api.monotonicProgress(70, 140, 100))),
 		{ loaded: 100, total: 100 },
 	);
-	assert.equal(api.formatBytes(8 * 1024 * 1024), '8.0 MiB');
+	assert.equal(api.exactByteCount(8 * 1024 * 1024), '8388608');
 });
 
 test('shell keeps readiness explicit and provides independent recovery controls', async () => {
