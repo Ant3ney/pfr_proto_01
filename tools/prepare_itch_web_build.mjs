@@ -65,6 +65,9 @@ async function prepare() {
     await fs.rm(path.join(outputRoot, entry), { recursive: true, force: true });
   }
   await fs.cp(sourceRoot, outputRoot, { recursive: true });
+  // This staging directory lives beneath res:// but must never be imported as
+  // project source; its copied icon imports otherwise collide with Web output.
+  await fs.writeFile(path.join(outputRoot, '.gdignore'), '', 'utf8');
 
   const htmlPath = path.join(outputRoot, 'index.html');
   const html = await fs.readFile(htmlPath, 'utf8');
