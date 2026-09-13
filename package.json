@@ -8,6 +8,7 @@
     "node": ">=20.19 <25"
   },
   "scripts": {
+    "build:itch-web": "node tools/prepare_itch_web_build.mjs",
     "test:cloud-save": "node --test netlify/cloud-save/cloud-save-resolver.test.mjs",
     "test:web-loader": "node --test tests/web/*.test.mjs"
   },

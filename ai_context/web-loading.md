@@ -17,6 +17,10 @@ current generated export and tests before relying on these contracts.
   enforces its pack allowlist and 4 MiB ceiling, then exports the full game,
   applies the fail-closed loader patch, generates the asset manifest, and runs
   the generated-loader and both PCK verification gates.
+- [`../tools/prepare_itch_web_build.mjs`](../tools/prepare_itch_web_build.mjs)
+  derives the itch.io HTML container from that verified Netlify output. It
+  precompresses the PCK and disables the range-cache launch path only in the
+  derived artifact; it never mutates `build/web/v1`.
 - [`../loading_battle/`](../loading_battle/) is source for the isolated boot
   project. The build copies it to a temporary project with the shared REST
   transport, DTO validator, event translator, and exactly eight approved sprite
@@ -106,6 +110,7 @@ Run:
 ```bash
 npm run test:web-loader
 bash tools/netlify_build_web.sh
+npm run build:itch-web
 git diff --check
 ```
 
@@ -135,4 +140,12 @@ The `Linux` and `Windows` Godot export presets use the same selected-resource
 list as `WebBuild`, kept synchronized by
 `tools/battle_sprite_pipeline/update_export_preset.cjs`. Desktop exports keep
 the executable and PCK separate for patch-efficient Butler updates. The HTML5
-channel receives `build/web/v1` so `index.html` remains at the upload root.
+channel receives `build/itch/html5`, derived only after `build/web/v1` passes
+its normal verification pipeline. The staging command Gzip-compresses the full
+PCK byte-for-byte while retaining the `index.pck` name; itch.io recognizes the
+stream encoding and browsers transparently restore the original PCK. The
+command verifies the restored SHA-256 and enforces itch.io's 200 MiB per-file
+limit. Because byte ranges address the compressed representation on that host,
+the derived `index.html` disables the production range-cache/loading-battle
+path and starts Godot through its ordinary full-pack loader. Netlify continues
+to receive the unmodified, resumable `build/web/v1` artifact.
